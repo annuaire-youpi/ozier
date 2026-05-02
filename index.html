@@ -54,11 +54,13 @@
       align-items: center;
       background: linear-gradient(90deg,#e0ecff,#f9fafb);
     }
+
     .brand {
       display: flex;
       align-items: center;
       gap: 12px;
     }
+
     .brand-logo {
       width: 36px;
       height: 36px;
@@ -71,16 +73,19 @@
       letter-spacing: 0.06em;
       color: #f9fafb;
     }
+
     .brand-text h1 {
       font-size: 17px;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: #1f2937;
     }
+
     .brand-text p {
       font-size: 12px;
       color: var(--muted);
     }
+
     .tag {
       font-size: 11px;
       text-transform: uppercase;
@@ -97,6 +102,7 @@
       min-height: 540px;
       padding: 20px 22px 24px;
     }
+
     .page.active { display: flex; }
 
     .landing-inner {
@@ -105,6 +111,7 @@
       gap: 22px;
       width: 100%;
     }
+
     .hero {
       border-radius: var(--radius-lg);
       padding: 24px 22px;
@@ -113,6 +120,7 @@
       position: relative;
       overflow: hidden;
     }
+
     .hero-title {
       font-size: 30px;
       font-weight: 600;
@@ -121,17 +129,20 @@
       margin-bottom: 8px;
       color: #111827;
     }
+
     .hero-sub {
       max-width: 40ch;
       font-size: 14px;
       color: var(--text-soft);
     }
+
     .hero-grid {
       margin-top: 18px;
       display: grid;
       grid-template-columns: repeat(3,minmax(0,1fr));
       gap: 10px;
     }
+
     .hero-card {
       border-radius: 18px;
       padding: 10px 12px;
@@ -139,6 +150,7 @@
       border: 1px solid rgba(148,163,184,0.35);
       font-size: 12px;
     }
+
     .hero-card strong {
       display: block;
       margin-bottom: 3px;
@@ -154,6 +166,7 @@
       flex-direction: column;
       gap: 14px;
     }
+
     .switch {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -161,6 +174,7 @@
       padding: 4px;
       border-radius: var(--radius-pill);
     }
+
     .switch button {
       border-radius: var(--radius-pill);
       border: none;
@@ -170,23 +184,29 @@
       background: transparent;
       cursor: pointer;
     }
+
     .switch button.active {
       background: #ffffff;
       color: #1d4ed8;
       font-weight: 600;
     }
+
     .auth h2 {
       font-size: 20px;
       margin-top: 8px;
       color: #111827;
     }
+
     .auth p {
       font-size: 13px;
       color: var(--text-soft);
     }
+
     .panel { display:none; margin-top:8px; }
     .panel.active { display:block; }
+
     .field-wrap { margin-top:10px; }
+
     .field-wrap label {
       display:block;
       font-size:12px;
@@ -194,6 +214,7 @@
       color:var(--text-soft);
       font-weight:500;
     }
+
     .field {
       width:100%;
       border-radius:12px;
@@ -203,7 +224,9 @@
       color:var(--text);
       font-size:13px;
     }
+
     .pin-row { margin-top:14px; display:flex; gap:8px; }
+
     .pin {
       width:40px;
       height:44px;
@@ -214,7 +237,9 @@
       font-size:20px;
       text-align:center;
     }
+
     .actions { display:flex; gap:8px; margin-top:16px; }
+
     .btn {
       border-radius:999px;
       padding:8px 14px;
@@ -228,28 +253,35 @@
       white-space:nowrap;
       transition:background .15s ease, box-shadow .15s ease, transform .1s ease;
     }
+
     .btn-primary {
       background:linear-gradient(135deg,#3b82f6,#2563eb);
       color:var(--accent-text);
       font-weight:600;
       box-shadow:0 8px 20px rgba(37,99,235,0.25);
     }
+
     .btn-primary:hover {
       transform:translateY(-1px);
       box-shadow:0 10px 24px rgba(37,99,235,0.3);
     }
+
     .btn-ghost {
       background:#ffffff;
       color:var(--text-soft);
       border:1px solid rgba(148,163,184,0.6);
     }
+
     .btn-ghost:hover { background:#f9fafb; }
+
     .btn-danger {
       background:#fee2e2;
       color:#b91c1c;
       border:1px solid rgba(239,68,68,0.5);
     }
+
     .btn-danger:hover { background:#fecaca; }
+
     .error {
       margin-top:8px;
       font-size:12px;
@@ -259,7 +291,9 @@
       color:var(--danger);
       display:none;
     }
+
     .error.show { display:block; }
+
     .demo-pins {
       margin-top:10px;
       font-size:11px;
@@ -272,6 +306,7 @@
       gap:16px;
       width:100%;
     }
+
     .sidebar {
       border-radius:var(--radius-lg);
       background:#f3f6fc;
@@ -281,7 +316,9 @@
       flex-direction:column;
       justify-content:space-between;
     }
+
     .nav { display:grid; gap:6px; }
+
     .nav button {
       border-radius:14px;
       border:none;
@@ -295,12 +332,15 @@
       font-size:13px;
       cursor:pointer;
     }
+
     .nav button span:first-child { max-width:150px; }
+
     .nav button.active,
     .nav button:hover {
       background:#e0ebff;
       color:#1d4ed8;
     }
+
     .badge {
       border-radius:999px;
       padding:2px 8px;
@@ -309,21 +349,25 @@
       background:#ffffff;
       color:#4b5563;
     }
+
     .badge.ok {
       background:#ecfdf3;
       color:#16a34a;
       border-color:rgba(22,163,74,0.4);
     }
+
     .badge.info {
       background:#eff6ff;
       color:#2563eb;
       border-color:rgba(37,99,235,0.4);
     }
+
     .badge.wait {
       background:#fffbeb;
       color:#d97706;
       border-color:rgba(234,179,8,0.5);
     }
+
     .side-bottom {
       margin-top:18px;
       display:flex;
@@ -331,6 +375,7 @@
       align-items:center;
       gap:8px;
     }
+
     .pill {
       border-radius:999px;
       padding:5px 10px;
@@ -349,18 +394,25 @@
       flex-direction:column;
       gap:14px;
     }
+
     .topbar {
       display:flex;
       justify-content:space-between;
       align-items:center;
       gap:8px;
     }
+
     .topbar h1 {
       font-size:22px;
       letter-spacing:-0.02em;
       color:#111827;
     }
-    .topbar p { font-size:12px; color:var(--muted); }
+
+    .topbar p {
+      font-size:12px;
+      color:var(--muted);
+    }
+
     .toolbar {
       display:flex;
       gap:8px;
@@ -377,6 +429,7 @@
       gap:10px;
       margin-top:14px;
     }
+
     .kpi {
       border-radius:16px;
       padding:10px 12px;
@@ -384,19 +437,122 @@
       border:1px solid rgba(148,163,184,0.5);
       font-size:12px;
     }
+
     .kpi span { color:var(--muted); }
+
     .kpi strong {
       display:block;
       margin-top:4px;
       font-size:17px;
       color:#111827;
     }
+
     .grid-2 {
       margin-top:14px;
       display:grid;
       grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
       gap:12px;
     }
+
+    .orders-layout{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns:minmax(320px,0.9fr) minmax(620px,1.45fr);
+      gap:12px;
+      align-items:start;
+    }
+
+    .orders-form-card,
+    .orders-table-card{
+      min-width:0;
+    }
+
+    .orders-table-wrap{
+      width:100%;
+      overflow:auto;
+      max-height:420px;
+      border-radius:14px;
+      border:1px solid rgba(148,163,184,0.22);
+      background:#fff;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .orders-table{
+      min-width:980px;
+    }
+
+    .orders-table th,
+    .orders-table td{
+      white-space:nowrap;
+    }
+
+    .orders-table td.col-address{
+      min-width:220px;
+      white-space:normal;
+    }
+
+    .order-actions{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+    }
+
+    .btn-xs{
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      border:1px solid rgba(148,163,184,0.45);
+      background:#fff;
+      color:var(--text-soft);
+      cursor:pointer;
+    }
+
+    .btn-xs:hover{
+      background:#f8fafc;
+    }
+
+    .btn-xs.btn-edit{
+      color:#1d4ed8;
+      border-color:rgba(59,130,246,0.35);
+      background:rgba(59,130,246,0.08);
+    }
+
+    .btn-xs.btn-delete{
+      color:#b91c1c;
+      border-color:rgba(239,68,68,0.35);
+      background:rgba(239,68,68,0.08);
+    }
+
+    .order-form-actions{
+      margin-top:12px;
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .order-form-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:6px;
+    }
+
+    .order-edit-badge{
+      font-size:11px;
+      padding:5px 10px;
+      border-radius:999px;
+      background:rgba(59,130,246,0.08);
+      border:1px solid rgba(59,130,246,0.22);
+      color:#1d4ed8;
+      display:none;
+    }
+
+    .order-edit-badge.show{
+      display:inline-flex;
+    }
+
     .card {
       border-radius:18px;
       padding:14px;
@@ -404,16 +560,19 @@
       border:1px solid rgba(148,163,184,0.45);
       font-size:13px;
     }
+
     .card h3 {
       font-size:15px;
       margin-bottom:3px;
       color:#111827;
     }
+
     .card p {
       font-size:12px;
       color:var(--muted);
       margin-bottom:10px;
     }
+
     .list {
       display:flex;
       flex-direction:column;
@@ -421,6 +580,7 @@
       max-height:260px;
       overflow-y:auto;
     }
+
     .item {
       border-radius:14px;
       padding:8px 9px;
@@ -431,13 +591,18 @@
       flex-direction:column;
       gap:3px;
     }
+
     .item-top {
       display:flex;
       justify-content:space-between;
       align-items:center;
       gap:8px;
     }
-    .item-top small { color:var(--muted); font-size:11px; }
+
+    .item-top small {
+      color:var(--muted);
+      font-size:11px;
+    }
 
     .input, .select, textarea {
       width:100%;
@@ -448,20 +613,28 @@
       color:var(--text);
       font-size:13px;
     }
-    .input::placeholder, textarea::placeholder { color:rgba(148,163,184,0.9); }
+
+    .input::placeholder, textarea::placeholder {
+      color:rgba(148,163,184,0.9);
+    }
+
     .label {
       font-size:11px;
       color:var(--muted);
       display:block;
       margin-bottom:4px;
     }
+
     .form-grid {
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
       gap:10px;
       margin-top:6px;
     }
-    .form-grid .full { grid-column:1 / -1; }
+
+    .form-grid .full {
+      grid-column:1 / -1;
+    }
 
     table {
       width:100%;
@@ -469,12 +642,14 @@
       font-size:12px;
       background:#ffffff;
     }
+
     th, td {
       padding:6px;
       border-bottom:1px solid rgba(148,163,184,0.25);
       text-align:left;
       vertical-align:middle;
     }
+
     th {
       font-size:11px;
       color:var(--muted);
@@ -482,7 +657,10 @@
       letter-spacing:0.06em;
       background:#f3f4f6;
     }
-    tbody tr:hover { background:#f9fafb; }
+
+    tbody tr:hover {
+      background:#f9fafb;
+    }
 
     .driver-wrap {
       border-radius:var(--radius-lg);
@@ -494,25 +672,37 @@
       gap:10px;
       width:100%;
     }
+
     .driver-top {
       display:flex;
       justify-content:space-between;
       align-items:center;
       gap:8px;
     }
-    .driver-top h1 { font-size:20px; color:#111827; }
-    .driver-top p { font-size:12px; color:var(--muted); }
+
+    .driver-top h1 {
+      font-size:20px;
+      color:#111827;
+    }
+
+    .driver-top p {
+      font-size:12px;
+      color:var(--muted);
+    }
+
     .driver-grid {
       display:grid;
       grid-template-columns:minmax(0,1.15fr) minmax(0,0.9fr);
       gap:12px;
     }
+
     .mini-grid {
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
       gap:8px;
       margin-top:6px;
     }
+
     .mini {
       border-radius:14px;
       padding:8px 10px;
@@ -520,13 +710,19 @@
       border:1px solid rgba(148,163,184,0.4);
       font-size:12px;
     }
+
     .fuel-grid {
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
       gap:10px;
       margin-top:8px;
     }
-    .fuel-grid .btn { width:100%; justify-content:center; }
+
+    .fuel-grid .btn {
+      width:100%;
+      justify-content:center;
+    }
+
     .fuel-feedback {
       margin-top:8px;
       font-size:11px;
@@ -543,6 +739,7 @@
       padding:20px;
       z-index:9999;
     }
+
     .signature-box{
       width:min(760px, 100%);
       border-radius:20px;
@@ -551,12 +748,14 @@
       border:1px solid rgba(148,163,184,0.45);
       box-shadow:0 20px 50px rgba(15,23,42,0.25);
     }
+
     .signature-head{
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:12px;
     }
+
     .driver-order-btn{
       width:100%;
       text-align:left;
@@ -565,14 +764,17 @@
       padding:0;
       cursor:pointer;
     }
+
     .driver-order-btn .item{
       transition:transform .18s ease, border-color .18s ease, background .18s ease;
     }
+
     .driver-order-btn:hover .item{
       transform:translateY(-1px);
       border-color:rgba(59,130,246,0.6);
       background:#ffffff;
     }
+
     .signature-preview{
       margin-top:6px;
       font-size:11px;
@@ -586,17 +788,20 @@
       margin-top:8px;
       align-items:flex-end;
     }
+
     .monthly-summary{
       margin-top:10px;
       font-size:12px;
       color:var(--muted);
     }
+
     .monthly-types{
       margin-top:8px;
       display:grid;
       grid-template-columns:repeat(4,minmax(0,1fr));
       gap:8px;
     }
+
     .monthly-type-card{
       border-radius:14px;
       padding:8px 10px;
@@ -604,6 +809,7 @@
       border:1px solid rgba(148,163,184,0.45);
       font-size:11px;
     }
+
     .monthly-type-card strong{
       display:block;
       margin-bottom:3px;
@@ -618,11 +824,13 @@
       margin-top:8px;
       flex-wrap:wrap;
     }
+
     .year-summary{
       margin-top:8px;
       font-size:12px;
       color:var(--muted);
     }
+
     .year-table-wrap{
       max-height:220px;
       overflow:auto;
@@ -636,8 +844,21 @@
       .hero-grid { grid-template-columns:1fr; }
       .driver-grid { grid-template-columns:1fr; }
       .grid-2 { grid-template-columns:1fr; }
+      .orders-layout { grid-template-columns:1fr; }
       .kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
-      .monthly-types{grid-template-columns:repeat(2,minmax(0,1fr));}
+      .monthly-types { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+
+    @media (max-width: 768px) {
+      .main { padding:12px; }
+      .topbar { flex-direction:column; align-items:stretch; }
+      .toolbar { justify-content:stretch; }
+      .toolbar .btn { width:100%; justify-content:center; }
+      .card { padding:12px; }
+      .form-grid { grid-template-columns:1fr; }
+      .orders-table-wrap { max-height:none; }
+      .orders-table { min-width:900px; }
+      th, td { padding:8px 10px; }
     }
   </style>
 </head>
@@ -665,6 +886,7 @@
               <p>Version plein écran corrigée</p>
             </div>
           </div>
+
           <div style="margin-top:16px;">
             <div class="hero-title">Une base enfin pensée pour remplir le desktop.</div>
             <div class="hero-sub">
@@ -672,6 +894,7 @@
               et suivi des dépenses véhicules pour les camions OZIER.
             </div>
           </div>
+
           <div class="hero-grid">
             <div class="hero-card">
               <strong>Dashboard gérant</strong>
@@ -693,6 +916,7 @@
             <button class="active" id="managerTab">Connexion gérant</button>
             <button id="driverTab">Connexion chauffeur</button>
           </div>
+
           <h2 id="authTitle">Connexion gérant</h2>
           <p id="authDesc">Accès au dashboard desktop.</p>
 
@@ -740,6 +964,7 @@
               <button data-view="integration"><span>Intégration</span><span>›</span></button>
             </div>
           </div>
+
           <div class="side-bottom">
             <div class="pill">PIN gérant validé</div>
             <button class="btn btn-ghost" id="logoutManager">Retour accueil</button>
@@ -752,6 +977,7 @@
               <h1 id="mainTitle">Dashboard</h1>
               <p id="mainDesc">Vue d’ensemble de l’activité journalière.</p>
             </div>
+
             <div class="toolbar">
               <button class="btn btn-ghost" id="toDrivers">Voir les chauffeurs</button>
               <button class="btn btn-primary" id="toOrders">Nouvelle commande</button>
@@ -762,12 +988,14 @@
           <!-- Dashboard -->
           <section class="view active" id="view-dashboard">
             <div class="kpis" id="managerKpis"></div>
+
             <div class="grid-2">
               <div class="card">
                 <h3>Commandes récentes</h3>
                 <p>Les derniers dossiers et leur état d’avancement.</p>
                 <div class="list" id="recentOrders"></div>
               </div>
+
               <div class="card">
                 <h3>Équipe du jour</h3>
                 <p>Chauffeurs actifs et affectations de base.</p>
@@ -778,35 +1006,47 @@
 
           <!-- Commandes -->
           <section class="view" id="view-commandes">
-            <div class="grid-2">
-              <div class="card">
-                <h3>Créer une commande</h3>
-                <p>Structure prête pour écrire ensuite dans Google Sheets.</p>
+            <div class="orders-layout">
+              <div class="card orders-form-card">
+                <div class="order-form-head">
+                  <div>
+                    <h3 id="orderFormTitle">Créer une commande</h3>
+                    <p id="orderFormDesc">Structure prête pour écrire ensuite dans Google Sheets.</p>
+                  </div>
+                  <span class="order-edit-badge" id="orderEditBadge">Mode modification</span>
+                </div>
+
                 <div class="form-grid">
                   <div>
                     <label class="label">Client</label>
                     <input id="orderClient" class="input" placeholder="Entreprise BTP">
                   </div>
+
                   <div>
                     <label class="label">Téléphone</label>
                     <input id="orderPhone" class="input" placeholder="0696 XX XX XX">
                   </div>
+
                   <div class="full">
                     <label class="label">Adresse chantier</label>
                     <input id="orderAddress" class="input" placeholder="Zone industrielle">
                   </div>
+
                   <div>
                     <label class="label">Quantité</label>
                     <input id="orderQty" class="input" placeholder="12 tonnes">
                   </div>
+
                   <div>
                     <label class="label">Montant TTC</label>
                     <input id="orderAmount" class="input" placeholder="1850">
                   </div>
+
                   <div>
                     <label class="label">Chauffeur</label>
                     <select id="orderDriver" class="select"></select>
                   </div>
+
                   <div>
                     <label class="label">Statut</label>
                     <select id="orderStatus" class="select">
@@ -815,6 +1055,7 @@
                       <option value="Livrée">Livrée</option>
                     </select>
                   </div>
+
                   <div class="full">
                     <label class="label">Source</label>
                     <select id="orderSource" class="select">
@@ -823,19 +1064,31 @@
                     </select>
                   </div>
                 </div>
-                <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;">
+
+                <div class="order-form-actions">
                   <button class="btn btn-ghost" id="resetOrder">Annuler</button>
                   <button class="btn btn-primary" id="saveOrderBtn">Enregistrer la commande</button>
                 </div>
               </div>
-              <div class="card">
+
+              <div class="card orders-table-card">
                 <h3>Tableau des commandes</h3>
-                <p>Simple aperçu pour la démo.</p>
-                <div style="max-height:260px;overflow:auto;">
-                  <table>
+                <p>Vue complète avec actions de modification et suppression.</p>
+
+                <div class="orders-table-wrap">
+                  <table class="orders-table">
                     <thead>
                       <tr>
-                        <th>N°</th><th>Client</th><th>Chantier</th><th>Qté</th><th>Montant</th><th>Statut</th><th>Chauffeur</th>
+                        <th>N°</th>
+                        <th>Client</th>
+                        <th>Chantier</th>
+                        <th>Qté</th>
+                        <th>Montant</th>
+                        <th>Statut</th>
+                        <th>Chauffeur</th>
+                        <th>Source</th>
+                        <th>Date</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody id="ordersTableBody"></tbody>
@@ -844,8 +1097,7 @@
               </div>
             </div>
           </section>
-
-          <!-- Chauffeurs -->
+                    <!-- Chauffeurs -->
           <section class="view" id="view-chauffeurs">
             <div class="grid-2">
               <div class="card">
@@ -853,36 +1105,44 @@
                 <p>Liste gérée uniquement en mémoire pour la démo.</p>
                 <div class="list" id="driversList"></div>
               </div>
+
               <div class="card">
                 <h3>Fiche chauffeur</h3>
                 <p>Les champs servent de base pour le futur CRUD connecté.</p>
+
                 <div class="form-grid">
                   <div>
                     <label class="label">Prénom</label>
                     <input id="driverFirst" class="input" placeholder="Jean">
                   </div>
+
                   <div>
                     <label class="label">Nom complet</label>
                     <input id="driverName" class="input" placeholder="Jean MARTINEAU">
                   </div>
+
                   <div>
                     <label class="label">Téléphone</label>
                     <input id="driverPhone" class="input" placeholder="0696 XX XX XX">
                   </div>
+
                   <div>
                     <label class="label">Email</label>
                     <input id="driverEmail" class="input" placeholder="jean@exemple.com">
                   </div>
+
                   <div>
                     <label class="label">PIN</label>
                     <input id="driverPin" class="input" placeholder="1111">
                   </div>
+
                   <div>
                     <label class="label">Camion attribué</label>
                     <select id="driverTruck" class="select">
                       <option value="">Sans camion</option>
                     </select>
                   </div>
+
                   <div>
                     <label class="label">Statut</label>
                     <select id="driverStatus" class="select">
@@ -890,11 +1150,13 @@
                       <option>En attente</option>
                     </select>
                   </div>
+
                   <div class="full">
                     <label class="label">Identifiant interne</label>
                     <input id="driverId" class="input" placeholder="jean">
                   </div>
                 </div>
+
                 <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
                   <button class="btn btn-ghost" id="newDriverBtn">Nouveau</button>
                   <button class="btn btn-danger" id="deleteDriverBtn">Supprimer</button>
@@ -909,47 +1171,56 @@
             <div class="grid-2">
               <div class="card">
                 <h3>Véhicules de la flotte</h3>
-                <p>Liste des camions / bennes utilisés dans les commandes.</p>
+                <p>Liste des camions bennes utilisés dans les commandes.</p>
                 <div class="list" id="fleetList"></div>
               </div>
+
               <div class="card">
                 <h3>Fiche véhicule</h3>
-                <p>Base pour le futur CRUD connecté (Sheets / Make).</p>
+                <p>Base pour le futur CRUD connecté Sheets / Make.</p>
+
                 <div class="form-grid">
                   <div>
-                    <label class="label">Code camion (clé)</label>
+                    <label class="label">Code camion clé</label>
                     <input id="vehCode" class="input" placeholder="OZ-001">
                   </div>
+
                   <div>
                     <label class="label">Immatriculation</label>
                     <input id="vehPlate" class="input" placeholder="AB-123-CD">
                   </div>
+
                   <div>
                     <label class="label">Marque</label>
                     <input id="vehBrand" class="input" placeholder="Renault, MAN...">
                   </div>
+
                   <div>
                     <label class="label">Modèle</label>
                     <input id="vehModel" class="input" placeholder="Premium Lander">
                   </div>
+
                   <div>
                     <label class="label">Type</label>
                     <select id="vehType" class="select">
                       <option>Camion benne</option>
                       <option>Camion toupie</option>
-                      <option>Tracteur + benne</option>
+                      <option>Tracteur benne</option>
                       <option>Utilitaire</option>
                       <option>Autre</option>
                     </select>
                   </div>
+
                   <div>
                     <label class="label">Année</label>
                     <input id="vehYear" class="input" type="number" placeholder="2018">
                   </div>
+
                   <div>
                     <label class="label">Kilométrage</label>
                     <input id="vehKm" class="input" type="number" placeholder="180000">
                   </div>
+
                   <div>
                     <label class="label">Statut</label>
                     <select id="vehStatus" class="select">
@@ -958,11 +1229,13 @@
                       <option>Hors service</option>
                     </select>
                   </div>
+
                   <div class="full">
                     <label class="label">Commentaires</label>
                     <textarea id="vehNote" class="input" rows="2" placeholder="Infos atelier, pneus, révision..."></textarea>
                   </div>
                 </div>
+
                 <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
                   <button class="btn btn-ghost" id="newVehBtn">Nouveau</button>
                   <button class="btn btn-danger" id="deleteVehBtn">Supprimer</button>
@@ -980,6 +1253,7 @@
                 <p>Chiffres issus des données statiques de la démo.</p>
                 <div class="kpis" id="recapKpis"></div>
               </div>
+
               <div class="card">
                 <h3>Détail par chauffeur</h3>
                 <p>Présentation préparée pour un futur export CSV / Sheets.</p>
@@ -989,23 +1263,23 @@
 
             <div class="card" style="margin-top:12px;">
               <h3>Synthèse annuelle CA / dépenses</h3>
-              <p>Vue annuelle : CA global par mois, dépenses par véhicule et marge.</p>
+              <p>Vue annuelle CA global par mois, dépenses par véhicule et marge.</p>
 
               <div class="year-filters">
                 <div>
                   <label class="label">Année</label>
                   <select id="yearSelect" class="select"></select>
                 </div>
+
                 <div>
-                  <button class="btn btn-primary" id="applyYearFilter">Afficher l'année</button>
+                  <button class="btn btn-primary" id="applyYearFilter">Afficher l’année</button>
                 </div>
               </div>
 
               <div class="year-summary" id="yearSummary">Choisissez une année pour afficher la synthèse.</div>
-
               <div class="kpis" id="yearKpis" style="margin-top:10px;"></div>
 
-              <h4 style="font-size:13px;margin-top:12px;margin-bottom:4px;">Chiffre d'affaires annuel (tous chantiers)</h4>
+              <h4 style="font-size:13px;margin-top:12px;margin-bottom:4px;">Chiffre d’affaires annuel tous chantiers</h4>
               <div class="year-table-wrap">
                 <table>
                   <thead>
@@ -1061,16 +1335,19 @@
                 <div class="kpis" id="vehicleExpenseKpis"></div>
                 <div class="list" id="vehicleTotalsList" style="margin-top:10px;max-height:230px;overflow:auto;"></div>
               </div>
+
               <div class="card">
                 <h3>Ajouter une dépense</h3>
                 <p>Formulaire simplifié pour la démo OZIER.</p>
+
                 <div class="form-grid">
                   <div>
-                    <label class="label">Camion (code)</label>
+                    <label class="label">Camion code</label>
                     <select id="expenseTruck" class="select">
                       <option value="">-- Sélectionner un camion --</option>
                     </select>
                   </div>
+
                   <div>
                     <label class="label">Type</label>
                     <select id="expenseType" class="select">
@@ -1080,18 +1357,22 @@
                       <option>Autre</option>
                     </select>
                   </div>
+
                   <div>
                     <label class="label">Date</label>
                     <input id="expenseDate" type="date" class="input">
                   </div>
+
                   <div>
-                    <label class="label">Montant €</label>
+                    <label class="label">Montant</label>
                     <input id="expenseAmount" class="input" type="number" step="0.01" placeholder="100">
                   </div>
+
                   <div class="full">
                     <label class="label">Libellé</label>
                     <input id="expenseLabel" class="input" placeholder="Pneu avant, vidange...">
                   </div>
+
                   <div class="full">
                     <label class="label">Source</label>
                     <select id="expenseSource" class="select">
@@ -1099,11 +1380,13 @@
                       <option>Validation chauffeur</option>
                     </select>
                   </div>
+
                   <div class="full">
                     <label class="label">Note</label>
                     <textarea id="expenseNote" class="input" rows="2" placeholder="Détail optionnel"></textarea>
                   </div>
                 </div>
+
                 <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;">
                   <button class="btn btn-ghost" id="addExpenseBtn">Voir les dépenses</button>
                   <button class="btn btn-primary" id="saveExpenseBtn">Enregistrer la dépense</button>
@@ -1114,6 +1397,7 @@
             <div class="card" style="margin-top:12px;">
               <h3>Fiche mensuelle par véhicule</h3>
               <p>Filtre par camion et mois, avec synthèse par type de dépense.</p>
+
               <div class="monthly-filters">
                 <div>
                   <label class="label">Camion</label>
@@ -1121,24 +1405,30 @@
                     <option value="">Tous les camions</option>
                   </select>
                 </div>
+
                 <div>
                   <label class="label">Mois</label>
                   <input id="monthlyMonth" class="input" type="month">
                 </div>
+
                 <div>
                   <button class="btn btn-primary" id="applyMonthlyFilter">Afficher le mois</button>
                 </div>
               </div>
 
               <div class="monthly-summary" id="monthlySummary">Sélectionnez un camion et un mois.</div>
-
               <div class="monthly-types" id="monthlyTypes"></div>
 
               <div style="max-height:200px;overflow:auto;margin-top:8px;">
                 <table>
                   <thead>
                     <tr>
-                      <th>Date</th><th>Camion</th><th>Type</th><th>Montant</th><th>Source</th><th>Libellé</th>
+                      <th>Date</th>
+                      <th>Camion</th>
+                      <th>Type</th>
+                      <th>Montant</th>
+                      <th>Source</th>
+                      <th>Libellé</th>
                     </tr>
                   </thead>
                   <tbody id="monthlyExpensesBody"></tbody>
@@ -1149,11 +1439,18 @@
             <div class="card" style="margin-top:12px;">
               <h3>Journal des dépenses véhicules</h3>
               <p>Vue détaillée par ligne pour la démonstration.</p>
+
               <div style="max-height:240px;overflow:auto;margin-top:8px;">
                 <table>
                   <thead>
                     <tr>
-                      <th>Date</th><th>Camion</th><th>Type</th><th>Montant</th><th>Source</th><th>Libellé</th><th>Note</th>
+                      <th>Date</th>
+                      <th>Camion</th>
+                      <th>Type</th>
+                      <th>Montant</th>
+                      <th>Source</th>
+                      <th>Libellé</th>
+                      <th>Note</th>
                     </tr>
                   </thead>
                   <tbody id="vehicleExpensesBody"></tbody>
@@ -1174,6 +1471,7 @@
                   <li>Les dépenses véhicules pourront être synchronisées dans une feuille <strong>Dépenses véhicules</strong>.</li>
                 </ul>
               </div>
+
               <div class="card">
                 <h3>Paramètres de base</h3>
                 <p>Les identifiants chauffeurs / camions servent de clés dans les scénarios Make.</p>
@@ -1203,31 +1501,38 @@
             <p>Les commandes en cours pour ce chauffeur.</p>
             <div class="list" id="driverOrdersList"></div>
           </div>
+
           <div class="card">
             <h3>Camion & carburant</h3>
             <p>Validation simple du plein du soir.</p>
+
             <div class="mini-grid">
               <div class="mini" id="driverTruckCard"></div>
               <div class="mini" id="driverStatsCard"></div>
             </div>
+
             <div class="fuel-grid">
               <div>
                 <label class="label">Station</label>
                 <input id="fuelStation" class="input" placeholder="Total Lamentin">
               </div>
+
               <div>
                 <label class="label">Kilométrage</label>
                 <input id="fuelKm" class="input" placeholder="128450">
               </div>
+
               <div>
                 <label class="label">Litres</label>
                 <input id="fuelLiters" type="number" step="0.1" class="input" placeholder="65">
               </div>
+
               <div>
-                <label class="label">Montant €</label>
+                <label class="label">Montant</label>
                 <input id="fuelAmount" type="number" step="0.01" class="input" placeholder="111.80">
               </div>
             </div>
+
             <button class="btn btn-primary" id="fuelBtn" style="margin-top:10px;">Valider le plein</button>
             <div class="fuel-feedback" id="fuelFeedback">Enregistrez le plein, il remontera dans Dépenses véhicules.</div>
           </div>
@@ -1251,6 +1556,7 @@
             <label class="label">Nom du chef de chantier</label>
             <input id="siteManagerName" class="input" placeholder="Nom et prénom">
           </div>
+
           <div class="full">
             <label class="label">Observation</label>
             <input id="deliveryNote" class="input" placeholder="RAS, livré sur zone nord...">
@@ -1259,7 +1565,12 @@
 
         <div style="margin-top:12px;">
           <label class="label">Signature</label>
-          <canvas id="signaturePad" width="700" height="220" style="width:100%;background:#ffffff;border-radius:14px;border:1px solid rgba(148,163,184,0.35);"></canvas>
+          <canvas
+            id="signaturePad"
+            width="700"
+            height="220"
+            style="width:100%;background:#ffffff;border-radius:14px;border:1px solid rgba(148,163,184,0.35);"
+          ></canvas>
         </div>
 
         <div style="display:flex;justify-content:space-between;gap:8px;margin-top:12px;flex-wrap:wrap;">
@@ -1268,1165 +1579,1504 @@
         </div>
       </div>
     </div>
-  </div>
 
-  <script>
-    const state = {
-      role: 'manager',
-      currentDriver: null,
-      editingDriverId: null,
-      editingVehCode: null,
-      drivers: [
-        {id:'jean', prenom:'Jean', nom:'Jean MARTINEAU', telephone:'0696 12 34 56', email:'jean@example.com', pin:'1111', camion:'OZ-001', statut:'Actif'},
-        {id:'marie', prenom:'Marie', nom:'Marie CELESTE', telephone:'0696 56 78 90', email:'marie@example.com', pin:'2222', camion:'OZ-002', statut:'Actif'},
-        {id:'pierre', prenom:'Pierre', nom:'Pierre BEAUSEJOUR', telephone:'0696 11 22 33', email:'pierre@example.com', pin:'3333', camion:'OZ-003', statut:'En attente'}
-      ],
-      vehicles: [
-        {code:'OZ-001', plate:'AB-123-CD', brand:'Renault', model:'Premium Lander', type:'Camion benne', year:2018, km:182000, status:'En service', note:'Camion principal Jean'},
-        {code:'OZ-002', plate:'CD-456-EF', brand:'MAN', model:'TGS', type:'Camion benne', year:2019, km:165500, status:'En service', note:'Camion Marie'},
-        {code:'OZ-003', plate:'GH-789-IJ', brand:'Renault', model:'Kerax', type:'Camion benne', year:2015, km:210300, status:'Maintenance', note:'Prévoir révision frein'}
-      ],
-      orders: [
-        {id:'CMD-042', client:'SCI des Mangles', adresse:'Zone industrielle, Le Lamentin', qte:'12 t béton B25', montant:1850, statut:'En attente', chauffeurId:'jean', date:'2026-04-15'},
-        {id:'CMD-051', client:'BTP Caraïbes', adresse:'Ducos, Champigny', qte:'14 t gravier', montant:2150, statut:'En cours', chauffeurId:'marie', date:'2026-04-18'},
-        {id:'CMD-049', client:'SARL Océan', adresse:'Le Robert, Pointe Lynch', qte:'9 t sable', montant:1500, statut:'Livrée', chauffeurId:'marie', date:'2026-03-22'}
-      ],
-      vehicleExpenses: [
-        {id:'DEP-001', truck:'OZ-001', type:'Carburant', amount:111.80, date:'2026-04-30', source:'Validation chauffeur', label:'Plein Total Lamentin', note:'Jean · 65 L'},
-        {id:'DEP-002', truck:'OZ-002', type:'Carburant', amount:99.76, date:'2026-04-30', source:'Validation chauffeur', label:'Plein Total FDF', note:'Marie · 58 L'},
-        {id:'DEP-003', truck:'OZ-001', type:'Entretien', amount:185.00, date:'2026-04-29', source:'Saisie gérant', label:'Vidange moteur', note:'Atelier OZIER'},
-        {id:'DEP-004', truck:'OZ-003', type:'Réparation', amount:420.00, date:'2026-04-28', source:'Saisie gérant', label:'Flexible hydraulique', note:'Intervention urgente'}
-      ],
-      fuelLogs: [
-        {chauffeurId:'jean', montant:111.80},
-        {chauffeurId:'marie', montant:99.76}
-      ],
-      selectedOrderId: null
-    };
+    <script>
+            const state = {
+        role: 'manager',
+        currentDriver: null,
+        editingDriverId: null,
+        editingVehCode: null,
+        editingOrderId: null,
+        selectedOrderId: null,
 
-    const $ = s => document.querySelector(s);
-    const $$ = s => Array.from(document.querySelectorAll(s));
-    const pins = $$('.pin');
-    const euro = v => new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(Number(v)||0);
-    const dname = id => (state.drivers.find(x=>x.id===id)||{}).nom || '—';
-    const bcls = s => s==='Livrée'?'ok':s==='En cours'?'info':'wait';
+        drivers: [
+          {
+            id: 'jean',
+            prenom: 'Jean',
+            nom: 'Jean MARTINEAU',
+            telephone: '0696 12 34 56',
+            email: 'jean@example.com',
+            pin: '1111',
+            camion: 'OZ-001',
+            statut: 'Actif'
+          },
+          {
+            id: 'marie',
+            prenom: 'Marie',
+            nom: 'Marie CELESTE',
+            telephone: '0696 56 78 90',
+            email: 'marie@example.com',
+            pin: '2222',
+            camion: 'OZ-002',
+            statut: 'Actif'
+          },
+          {
+            id: 'pierre',
+            prenom: 'Pierre',
+            nom: 'Pierre BEAUSEJOUR',
+            telephone: '0696 11 22 33',
+            email: 'pierre@example.com',
+            pin: '3333',
+            camion: 'OZ-003',
+            statut: 'En attente'
+          }
+        ],
 
-    const signatureModal = $('#signatureModal');
-    const signaturePad = $('#signaturePad');
-    const sigCtx = signaturePad.getContext('2d');
-    let drawing = false;
-    let hasSignature = false;
+        vehicles: [
+          {
+            code: 'OZ-001',
+            plate: 'AB-123-CD',
+            brand: 'Renault',
+            model: 'Premium Lander',
+            type: 'Camion benne',
+            year: 2018,
+            km: 182000,
+            status: 'En service',
+            note: 'Camion principal Jean'
+          },
+          {
+            code: 'OZ-002',
+            plate: 'CD-456-EF',
+            brand: 'MAN',
+            model: 'TGS',
+            type: 'Camion benne',
+            year: 2019,
+            km: 165500,
+            status: 'En service',
+            note: 'Camion Marie'
+          },
+          {
+            code: 'OZ-003',
+            plate: 'GH-789-IJ',
+            brand: 'Renault',
+            model: 'Kerax',
+            type: 'Camion benne',
+            year: 2015,
+            km: 210300,
+            status: 'Maintenance',
+            note: 'Prévoir révision frein'
+          }
+        ],
 
-    function vehicleLabelFromCode(code){
-      if(!code) return '';
-      const v = state.vehicles.find(x=>x.code===code);
-      if(!v) return code;
-      const bits = [v.code, v.model, v.plate].filter(Boolean);
-      return bits.join(' · ');
-    }
+        orders: [
+          {
+            id: 'CMD-042',
+            client: 'SCI des Mangles',
+            phone: '0696 00 11 22',
+            adresse: 'Zone industrielle, Le Lamentin',
+            qte: '12 t béton B25',
+            montant: 1850,
+            statut: 'En attente',
+            chauffeurId: 'jean',
+            source: 'WhatsApp',
+            date: '2026-04-15'
+          },
+          {
+            id: 'CMD-051',
+            client: 'BTP Caraïbes',
+            phone: '0696 22 33 44',
+            adresse: 'Ducos, Champigny',
+            qte: '14 t gravier',
+            montant: 2150,
+            statut: 'En cours',
+            chauffeurId: 'marie',
+            source: 'Téléphone',
+            date: '2026-04-18'
+          },
+          {
+            id: 'CMD-049',
+            client: 'SARL Océan',
+            phone: '0696 44 55 66',
+            adresse: 'Le Robert, Pointe Lynch',
+            qte: '9 t sable',
+            montant: 1500,
+            statut: 'Livrée',
+            chauffeurId: 'marie',
+            source: 'WhatsApp',
+            date: '2026-03-22'
+          }
+        ],
 
-    function showPage(id){
-      ['landingPage','managerPage','driverPage'].forEach(x=>{
-        const el = document.getElementById(x);
-        if(el) el.style.display = 'none';
-      });
-      const t = document.getElementById(id);
-      if(t) t.style.display = 'block';
-    }
+        vehicleExpenses: [
+          {
+            id: 'DEP-001',
+            truck: 'OZ-001',
+            type: 'Carburant',
+            amount: 111.80,
+            date: '2026-04-30',
+            source: 'Validation chauffeur',
+            label: 'Plein Total Lamentin',
+            note: 'Jean 65 L'
+          },
+          {
+            id: 'DEP-002',
+            truck: 'OZ-002',
+            type: 'Carburant',
+            amount: 99.76,
+            date: '2026-04-30',
+            source: 'Validation chauffeur',
+            label: 'Plein Total FDF',
+            note: 'Marie 58 L'
+          },
+          {
+            id: 'DEP-003',
+            truck: 'OZ-001',
+            type: 'Entretien',
+            amount: 185.00,
+            date: '2026-04-29',
+            source: 'Saisie gérant',
+            label: 'Vidange moteur',
+            note: 'Atelier OZIER'
+          },
+          {
+            id: 'DEP-004',
+            truck: 'OZ-003',
+            type: 'Réparation',
+            amount: 420.00,
+            date: '2026-04-28',
+            source: 'Saisie gérant',
+            label: 'Flexible hydraulique',
+            note: 'Intervention urgente'
+          }
+        ],
 
-    function clearPins(){
-      pins.forEach(p=>p.value='');
-      pins[0].focus();
-    }
-    function pin(){ return pins.map(p=>p.value).join(''); }
-
-    function setRole(role){
-      state.role = role;
-      $('#managerTab').classList.toggle('active', role==='manager');
-      $('#driverTab').classList.toggle('active', role==='driver');
-      $('#panelManager').classList.toggle('active', role==='manager');
-      $('#panelDriver').classList.toggle('active', role==='driver');
-      $('#authTitle').textContent = role==='manager' ? 'Connexion gérant' : 'Connexion chauffeur';
-      $('#authDesc').textContent = role==='manager'
-        ? 'Accès au dashboard desktop.'
-        : 'Choisissez un chauffeur puis entrez son PIN.';
-      $('#errorBox').classList.remove('show');
-      renderDriverSelect();
-      clearPins();
-    }
-
-    function renderDriverSelect(){
-      $('#driverSelect').innerHTML = state.drivers.map(d=>{
-        const label = `${d.nom} · ${vehicleLabelFromCode(d.camion)}`;
-        return `<option value="${d.id}">${label}</option>`;
-      }).join('');
-    }
-
-    function fillDriverVehicleSelect(){
-      const sel = $('#driverTruck');
-      if(!sel) return;
-      const current = sel.value;
-      sel.innerHTML = '<option value="">Sans camion</option>' +
-        state.vehicles
-          .slice()
-          .sort((a,b)=>a.code.localeCompare(b.code))
-          .map(v=>{
-            const label = vehicleLabelFromCode(v.code);
-            return `<option value="${v.code}">${label}</option>`;
-          }).join('');
-      if(current) sel.value = current;
-    }
-
-    function login(){
-      const p = pin();
-      $('#errorBox').classList.remove('show');
-      if(p.length!==4){
-        $('#errorBox').textContent = 'Veuillez saisir les 4 chiffres.';
-        $('#errorBox').classList.add('show');
-        return;
-      }
-      if(state.role==='manager'){
-        if(p==='1234'){
-          renderManager();
-          showPage('managerPage');
-          switchView('dashboard');
-          return;
-        }
-      } else {
-        const d = state.drivers.find(x=>x.id===$('#driverSelect').value);
-        if(d && d.pin===p){
-          state.currentDriver = d.id;
-          renderDriver();
-          showPage('driverPage');
-          return;
-        }
-      }
-      $('#errorBox').textContent = 'Code incorrect.';
-      $('#errorBox').classList.add('show');
-      clearPins();
-    }
-
-    function switchView(view){
-      $$('.view').forEach(v=>v.classList.remove('active'));
-      $('#view-'+view).classList.add('active');
-      const meta = {
-        dashboard:['Dashboard','Vue d’ensemble de l’activité journalière.'],
-        commandes:['Commandes','Création et suivi des commandes.'],
-        chauffeurs:['Chauffeurs','Préparation du futur CRUD chauffeurs.'],
-        'vehicules-flotte':['Flotte véhicules','Gestion des camions OZIER.'],
-        recap:['Récapitulatif','Synthèse journalière et annuelle.'],
-        vehicules:['Dépenses véhicules','Toutes les charges par camion.'],
-        integration:['Intégration','Préparation Google Sheets / Make.']
+        fuelLogs: [
+          { chauffeurId: 'jean', montant: 111.80 },
+          { chauffeurId: 'marie', montant: 99.76 }
+        ]
       };
-      const [t,d] = meta[view] || meta.dashboard;
-      $('#mainTitle').textContent = t;
-      $('#mainDesc').textContent = d;
-      $$('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
-      if(view==='dashboard') renderManager();
-      if(view==='commandes') renderOrders();
-      if(view==='chauffeurs'){ fillDriverVehicleSelect(); renderDrivers(); }
-      if(view==='vehicules-flotte') renderFleet();
-      if(view==='recap'){ renderRecap(); renderYearOptions(); applyYearFilter(false); }
-      if(view==='vehicules') renderVehicleExpenses();
-      if(view==='integration') renderIntegration();
-    }
 
-    function renderManager(){
-      const totalCa = state.orders.reduce((s,x)=>s+x.montant,0);
-      const caJour = totalCa;
-      const livrees = state.orders.filter(x=>x.statut==='Livrée').length;
-      const enCours = state.orders.filter(x=>x.statut==='En cours').length;
-      const kpis = [
-        ['CA journée réel', euro(caJour)],
-        ['Nombre de commandes', state.orders.length],
-        ['Livrées', livrees],
-        ['En cours', enCours]
-      ];
-      $('#managerKpis').innerHTML = kpis.map(k=>
-        `
-        <div class="kpi">
-          <span>${k[0]}</span>
-          <strong>${k[1]}</strong>
-        </div>
-      `).join('');
+      const $ = s => document.querySelector(s);
+      const $$ = s => Array.from(document.querySelectorAll(s));
+      const pins = $$('.pin');
 
-      $('#recentOrders').innerHTML = state.orders.slice().reverse().map(o=>{
-        const vehLabel = vehicleLabelFromCode(
-          (state.drivers.find(d=>d.id===o.chauffeurId)||{}).camion
-        );
-        return `
-        <div class="item">
-          <div class="item-top">
-            <div>
-              <strong>${o.id} · ${o.client}</strong>
-              <small>${o.adresse}</small>
-            </div>
-            <span class="badge ${bcls(o.statut)}">${o.statut}</span>
-          </div>
-          <small>${o.qte} · ${euro(o.montant)} · ${dname(o.chauffeurId)} · ${vehLabel || ''}</small>
-        </div>
-      `;
-      }).join('');
+      const euro = v =>
+        new Intl.NumberFormat('fr-FR', {
+          style: 'currency',
+          currency: 'EUR',
+          maximumFractionDigits: 0
+        }).format(Number(v || 0));
 
-      $('#teamList').innerHTML = state.drivers.map(d=>{
-        const o = state.orders.filter(x=>x.chauffeurId===d.id);
-        const total = o.reduce((s,x)=>s+x.montant,0);
-        const vehLabel = vehicleLabelFromCode(d.camion);
-        return `
-          <div class="item">
-            <div class="item-top">
-              <div>
-                <strong>${d.nom}</strong>
-                <small>${vehLabel || 'Sans camion'} · ${d.telephone}</small>
-              </div>
-              <span class="badge info">${euro(total)}</span>
-            </div>
-            <small>${o.length} commande(s) sur la journée · Statut ${d.statut}</small>
-          </div>
-        `;
-      }).join('');
-    }
+      const dname = id => {
+        const d = state.drivers.find(x => x.id === id);
+        return d ? d.nom : 'Non attribuée';
+      };
 
-    function renderOrders(){
-      $('#ordersTableBody').innerHTML = state.orders.map(o=>{
-        const driver = state.drivers.find(d=>d.id===o.chauffeurId);
-        const vehLabel = driver ? vehicleLabelFromCode(driver.camion) : '';
-        return `
-        <tr>
-          <td>${o.id}</td>
-          <td>${o.client}</td>
-          <td>${o.adresse}</td>
-          <td>${o.qte}</td>
-          <td>${euro(o.montant)}</td>
-          <td>${o.statut}</td>
-          <td>${dname(o.chauffeurId)}${vehLabel ? ' · '+vehLabel : ''}</td>
-        </tr>
-      `;
-      }).join('');
-      $('#orderDriver').innerHTML = `<option value="">Non attribuée</option>`+
-        state.drivers.map(d=>{
-          const vehLabel = vehicleLabelFromCode(d.camion);
-          return `<option value="${d.id}">${d.nom} · ${vehLabel || 'Sans camion'}</option>`;
+      const bcls = s => s === 'Livrée' ? 'ok' : s === 'En cours' ? 'info' : 'wait';
+
+      const signatureModal = document.getElementById('signatureModal');
+      const signaturePad = document.getElementById('signaturePad');
+      const sigCtx = signaturePad.getContext('2d');
+      let drawing = false;
+      let hasSignature = false;
+
+      function vehicleLabelFromCode(code) {
+        if (!code) return '';
+        const v = state.vehicles.find(x => x.code === code);
+        if (!v) return code;
+        const bits = [v.code, v.model, v.plate].filter(Boolean);
+        return bits.join(' • ');
+      }
+
+      function showPage(id) {
+        ['landingPage', 'managerPage', 'driverPage'].forEach(x => {
+          const el = document.getElementById(x);
+          if (el) el.style.display = 'none';
+        });
+        const t = document.getElementById(id);
+        if (t) t.style.display = 'block';
+      }
+
+      function clearPins() {
+        pins.forEach(p => p.value = '');
+        if (pins[0]) pins[0].focus();
+      }
+
+      function pin() {
+        return pins.map(p => p.value).join('');
+      }
+
+      function setRole(role) {
+        state.role = role;
+        managerTab.classList.toggle('active', role === 'manager');
+        driverTab.classList.toggle('active', role === 'driver');
+        panelManager.classList.toggle('active', role === 'manager');
+        panelDriver.classList.toggle('active', role === 'driver');
+        authTitle.textContent = role === 'manager' ? 'Connexion gérant' : 'Connexion chauffeur';
+        authDesc.textContent = role === 'manager'
+          ? 'Accès au dashboard desktop.'
+          : 'Choisissez un chauffeur puis entrez son PIN.';
+        errorBox.classList.remove('show');
+        renderDriverSelect();
+        clearPins();
+      }
+
+      function renderDriverSelect() {
+        driverSelect.innerHTML = state.drivers.map(d => {
+          const label = `${d.nom} • ${vehicleLabelFromCode(d.camion)}`;
+          return `<option value="${d.id}">${label}</option>`;
         }).join('');
-    }
-
-    function addOrder(){
-      const client = $('#orderClient').value.trim();
-      const adresse = $('#orderAddress').value.trim();
-      const qte = $('#orderQty').value.trim();
-      const montant = parseFloat($('#orderAmount').value||0);
-      if(!client || !adresse || !qte || !montant) {
-        alert('Client, chantier, quantité et montant sont obligatoires.');
-        return;
-      }
-      const id = 'CMD-'+String(state.orders.length+42).padStart(3,'0');
-      const chauffeurId = $('#orderDriver').value || null;
-      const statut = $('#orderStatus').value || 'En attente';
-      const source = $('#orderSource').value || 'WhatsApp';
-      const date = new Date().toISOString().slice(0,10);
-      state.orders.push({id,client,adresse,qte, montant, statut, chauffeurId, source, date});
-      $('#orderClient').value = '';
-      $('#orderPhone').value = '';
-      $('#orderAddress').value = '';
-      $('#orderQty').value = '';
-      $('#orderAmount').value = '';
-      renderOrders();
-      renderManager();
-      renderRecap();
-      applyYearFilter(false);
-      alert('Commande ajoutée (en mémoire pour la démo).');
-    }
-
-    function renderDrivers(){
-      $('#driversList').innerHTML = state.drivers.map(d=>{
-        const vehLabel = vehicleLabelFromCode(d.camion) || 'Sans camion';
-        return `
-        <div class="item" onclick="editDriver('${d.id}')">
-          <div class="item-top">
-            <div>
-              <strong>${d.nom}</strong>
-              <small>${vehLabel} · ${d.telephone}</small>
-            </div>
-            <span class="badge ${d.statut==='Actif'?'ok':'wait'}">${d.statut}</span>
-          </div>
-          <small>Email : ${d.email || '—'} · PIN ${d.pin} · id interne ${d.id}</small>
-        </div>
-      `;
-      }).join('');
-    }
-
-    window.editDriver = function(id){
-      const d = state.drivers.find(x=>x.id===id);
-      if(!d) return;
-      state.editingDriverId = d.id;
-      $('#driverFirst').value = d.prenom || '';
-      $('#driverName').value = d.nom || '';
-      $('#driverPhone').value = d.telephone || '';
-      $('#driverEmail').value = d.email || '';
-      $('#driverPin').value = d.pin || '';
-      fillDriverVehicleSelect();
-      $('#driverTruck').value = d.camion || '';
-      $('#driverStatus').value = d.statut || 'Actif';
-      $('#driverId').value = d.id || '';
-    };
-
-    function resetDriverForm(){
-      state.editingDriverId = null;
-      $('#driverFirst').value = '';
-      $('#driverName').value = '';
-      $('#driverPhone').value = '';
-      $('#driverEmail').value = '';
-      $('#driverPin').value = '';
-      fillDriverVehicleSelect();
-      $('#driverTruck').value = '';
-      $('#driverStatus').value = 'Actif';
-      $('#driverId').value = '';
-    }
-
-    function saveDriver(){
-      const prenom = $('#driverFirst').value.trim();
-      const nom = $('#driverName').value.trim();
-      const telephone = $('#driverPhone').value.trim();
-      const email = $('#driverEmail').value.trim();
-      const pin = $('#driverPin').value.trim();
-      const camion = $('#driverTruck').value.trim();
-      const statut = $('#driverStatus').value;
-      const idInput = $('#driverId').value.trim();
-      const id = idInput || prenom.toLowerCase();
-
-      if(!prenom || !nom || !pin){
-        alert('Prénom, nom et PIN sont obligatoires.');
-        return;
       }
 
-      const existingIndex = state.drivers.findIndex(x=>x.id===id);
-      const isEditingSameId = state.editingDriverId && state.editingDriverId === id;
-
-      if(existingIndex !== -1 && !isEditingSameId){
-        alert('Cet identifiant interne existe déjà, merci d’en choisir un autre.');
-        return;
-      }
-
-      const payload = {id,prenom,nom,telephone,email,pin,camion,statut};
-
-      if(isEditingSameId || existingIndex !== -1){
-        state.drivers[existingIndex] = payload;
-      } else {
-        state.drivers.push(payload);
-      }
-
-      state.editingDriverId = id;
-      renderDrivers();
-      renderDriverSelect();
-      renderVehicleExpenses();
-      renderRecap();
-      renderIntegration();
-      applyYearFilter(false);
-      alert('Chauffeur enregistré (en mémoire).');
-    }
-
-    function deleteDriver(){
-      if(!state.editingDriverId){
-        alert('Sélectionnez d’abord un chauffeur dans la liste.');
-        return;
-      }
-      const id = state.editingDriverId;
-      const d = state.drivers.find(x=>x.id===id);
-      if(!d){
-        alert('Chauffeur introuvable.');
-        return;
-      }
-      if(!confirm(`Supprimer le chauffeur ${d.nom} ?`)) return;
-
-      state.drivers = state.drivers.filter(x=>x.id!==id);
-      state.orders = state.orders.map(o=>o.chauffeurId===id ? {...o, chauffeurId:null} : o);
-      if(state.currentDriver===id) state.currentDriver = null;
-
-      resetDriverForm();
-      renderDrivers();
-      renderDriverSelect();
-      renderVehicleExpenses();
-      renderRecap();
-      renderManager();
-      renderIntegration();
-      applyYearFilter(false);
-      alert('Chauffeur supprimé (en mémoire).');
-    }
-
-    function renderRecap(){
-      const totalCa = state.orders.reduce((s,x)=>s+x.montant,0);
-      const carburant = state.vehicleExpenses.filter(x=>x.type==='Carburant')
-        .reduce((s,x)=>s+x.amount,0);
-      const autres = state.vehicleExpenses.filter(x=>x.type!=='Carburant')
-        .reduce((s,x)=>s+x.amount,0);
-      const marge = totalCa - carburant - autres;
-      const k = [
-        ['CA réel journée', euro(totalCa)],
-        ['Charges carburant', euro(carburant)],
-        ['Autres charges', euro(autres)],
-        ['Marge estimée', euro(marge)]
-      ];
-      $('#recapKpis').innerHTML = k.map(x=>
-        `
-        <div class="kpi">
-          <span>${x[0]}</span>
-          <strong>${x[1]}</strong>
-        </div>
-      `).join('');
-
-      $('#recapDrivers').innerHTML = state.drivers.map(d=>{
-        const o = state.orders.filter(x=>x.chauffeurId===d.id);
-        const ca = o.reduce((s,x)=>s+x.montant,0);
-        const vehExp = state.vehicleExpenses.filter(x=>x.truck===d.camion);
-        const charges = vehExp.reduce((s,x)=>s+x.amount,0);
-        const margeD = ca - charges;
-        const vehLabel = vehicleLabelFromCode(d.camion) || 'Sans camion';
-        return `
-          <div class="item">
-            <div class="item-top">
-              <div>
-                <strong>${d.nom}</strong>
-                <small>${vehLabel}</small>
-              </div>
-              <span class="badge info">${euro(ca)}</span>
-            </div>
-            <small>Charges véhicule : ${euro(charges)} · Marge estimée : ${euro(margeD)}</small>
-          </div>
+      function fillDriverVehicleSelect() {
+        const sel = driverTruck;
+        if (!sel) return;
+        const current = sel.value;
+        sel.innerHTML = `
+          <option value="">Sans camion</option>
+          ${state.vehicles
+            .slice()
+            .sort((a,b) => a.code.localeCompare(b.code))
+            .map(v => `<option value="${v.code}">${vehicleLabelFromCode(v.code)}</option>`)
+            .join('')}
         `;
-      }).join('');
-    }
-
-    function truckOptions(){
-      const set = new Set();
-      state.vehicles.forEach(v=>set.add(v.code));
-      state.drivers.map(d=>d.camion).filter(Boolean).forEach(c=>set.add(c));
-      state.vehicleExpenses.forEach(e=>set.add(e.truck));
-      return Array.from(set);
-    }
-
-    function renderVehicleExpenses(){
-      const trucks = truckOptions();
-
-      const truckSelect = $('#expenseTruck');
-      if(truckSelect){
-        const current = truckSelect.value;
-        truckSelect.innerHTML = '<option value="">-- Sélectionner un camion --</option>' +
-          trucks
-            .slice()
-            .sort()
-            .map(t=>`<option value="${t}">${vehicleLabelFromCode(t)}</option>`).join('');
-        if(current && trucks.includes(current)) truckSelect.value = current;
+        if (current) sel.value = current;
       }
 
-      const monthlyTruck = $('#monthlyTruck');
-      if(monthlyTruck){
-        const currentM = monthlyTruck.value;
-        monthlyTruck.innerHTML = '<option value="">Tous les camions</option>' +
-          trucks
-            .slice()
-            .sort()
-            .map(t=>`<option value="${t}">${vehicleLabelFromCode(t)}</option>`).join('');
-        if(currentM && trucks.includes(currentM)) monthlyTruck.value = currentM;
+      function login() {
+        const p = pin();
+        errorBox.classList.remove('show');
+
+        if (p.length !== 4) {
+          errorBox.textContent = 'Veuillez saisir les 4 chiffres.';
+          errorBox.classList.add('show');
+          return;
+        }
+
+        if (state.role === 'manager') {
+          if (p === '1234') {
+            renderManager();
+            showPage('managerPage');
+            switchView('dashboard');
+            return;
+          }
+        } else {
+          const d = state.drivers.find(x => x.id === driverSelect.value);
+          if (d && d.pin === p) {
+            state.currentDriver = d.id;
+            renderDriver();
+            showPage('driverPage');
+            return;
+          }
+        }
+
+        errorBox.textContent = 'Code incorrect.';
+        errorBox.classList.add('show');
+        clearPins();
       }
 
-      const total = state.vehicleExpenses.reduce((s,x)=>s+x.amount,0);
-      const fuel = state.vehicleExpenses.filter(x=>x.type==='Carburant')
-        .reduce((s,x)=>s+x.amount,0);
-      const repairs = state.vehicleExpenses.filter(x=>x.type!=='Carburant')
-        .reduce((s,x)=>s+x.amount,0);
-      const avg = trucks.length ? total/trucks.length : 0;
+      function switchView(view) {
+        $$('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(`view-${view}`).classList.add('active');
 
-      $('#vehicleExpenseKpis').innerHTML = [
-        ['Total dépenses', euro(total)],
-        ['Carburant', euro(fuel)],
-        ['Hors carburant', euro(repairs)],
-        ['Moyenne / camion', euro(avg)]
-      ].map(k=>
-        `
-        <div class="kpi">
-          <span>${k[0]}</span>
-          <strong>${k[1]}</strong>
-        </div>
-      `).join('');
-
-      const grouped = trucks.map(truck=>{
-        const rows = state.vehicleExpenses.filter(x=>x.truck===truck);
-        const totalTruck = rows.reduce((s,x)=>s+x.amount,0);
-        const fuelTruck = rows.filter(x=>x.type==='Carburant').reduce((s,x)=>s+x.amount,0);
-        const last = rows.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)))[0];
-        const label = vehicleLabelFromCode(truck);
-        return {
-          truck,
-          label,
-          total: totalTruck,
-          fuel: fuelTruck,
-          count: rows.length,
-          last: last ? last.date : '-'
+        const meta = {
+          dashboard: ['Dashboard', 'Vue d’ensemble de l’activité journalière.'],
+          commandes: ['Commandes', 'Création et suivi des commandes.'],
+          chauffeurs: ['Chauffeurs', 'Préparation du futur CRUD chauffeurs.'],
+          'vehicules-flotte': ['Flotte véhicules', 'Gestion des camions OZIER.'],
+          recap: ['Récapitulatif', 'Synthèse journalière et annuelle.'],
+          vehicules: ['Dépenses véhicules', 'Toutes les charges par camion.'],
+          integration: ['Intégration', 'Préparation Google Sheets / Make.']
         };
-      }).sort((a,b)=>b.total-a.total);
 
-      $('#vehicleTotalsList').innerHTML = (grouped.map(g=>
-        `
-        <div class="item">
-          <div class="item-top">
-            <div>
-              <strong>${g.label}</strong>
-              <small>${g.count} dépense(s) · dernier mouvement ${g.last}</small>
-            </div>
-            <span class="badge info">${euro(g.total)}</span>
+        const [t, d] = meta[view] || meta.dashboard;
+        mainTitle.textContent = t;
+        mainDesc.textContent = d;
+
+        $$('.nav button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+
+        if (view === 'dashboard') renderManager();
+        if (view === 'commandes') renderOrders();
+        if (view === 'chauffeurs') { fillDriverVehicleSelect(); renderDrivers(); }
+        if (view === 'vehicules-flotte') renderFleet();
+        if (view === 'recap') { renderRecap(); renderYearOptions(); applyYearFilter(false); }
+        if (view === 'vehicules') renderVehicleExpenses();
+        if (view === 'integration') renderIntegration();
+      }
+
+      function renderManager() {
+        const totalCa = state.orders.reduce((s, x) => s + Number(x.montant || 0), 0);
+        const livrees = state.orders.filter(x => x.statut === 'Livrée').length;
+        const enCours = state.orders.filter(x => x.statut === 'En cours').length;
+
+        const kpis = [
+          ['CA journée réel', euro(totalCa)],
+          ['Nombre de commandes', state.orders.length],
+          ['Livrées', livrees],
+          ['En cours', enCours]
+        ];
+
+        managerKpis.innerHTML = kpis.map(k => `
+          <div class="kpi">
+            <span>${k[0]}</span>
+            <strong>${k[1]}</strong>
           </div>
-          <small>Carburant : ${euro(g.fuel)} · Autres charges : ${euro(g.total-g.fuel)}</small>
-        </div>
-      `).join('')) || `
-        <div class="item">
-          <strong>Aucun camion disponible.</strong>
-          <small>Ajoutez d'abord un véhicule dans la flotte.</small>
-        </div>
-      `;
-
-      $('#vehicleExpensesBody').innerHTML = state.vehicleExpenses.slice()
-        .sort((a,b)=>String(b.date).localeCompare(String(a.date)))
-        .map(r=>{
-          const label = vehicleLabelFromCode(r.truck);
-          return `
-          <tr>
-            <td>${r.date}</td>
-            <td><strong>${label}</strong></td>
-            <td>${r.type}</td>
-            <td>${euro(r.amount)}</td>
-            <td>${r.source}</td>
-            <td>${r.label}</td>
-            <td>${r.note||''}</td>
-          </tr>
-        `;
-        }).join('');
-
-      applyMonthlyFilter(false);
-    }
-
-    function addVehicleExpense(){
-      const truck = $('#expenseTruck').value;
-      const type = $('#expenseType').value;
-      const date = $('#expenseDate').value || new Date().toISOString().slice(0,10);
-      const amount = parseFloat($('#expenseAmount').value||0);
-      const label = $('#expenseLabel').value.trim();
-      const source = $('#expenseSource').value;
-      const note = $('#expenseNote').value.trim();
-      if(!truck){ alert('Sélectionnez un camion.'); return; }
-      if(!amount || amount<=0){ alert('Indiquez un montant valide.'); return; }
-      if(!label){ alert('Indiquez un libellé.'); return; }
-      state.vehicleExpenses.unshift({
-        id:'DEP-'+String(state.vehicleExpenses.length+1).padStart(3,'0'),
-        truck, type, date, amount, source, label, note
-      });
-      $('#expenseAmount').value = '';
-      $('#expenseLabel').value = '';
-      $('#expenseNote').value = '';
-      renderVehicleExpenses();
-      renderRecap();
-      applyYearFilter(false);
-      alert('Dépense enregistrée (en mémoire).');
-    }
-
-    function renderIntegration(){
-      $('#integrationList').innerHTML = state.drivers.map(d=>{
-        const veh = state.vehicles.find(v=>v.code===d.camion);
-        const vehInfo = veh ? `${veh.code} · ${veh.model || ''} · ${veh.plate || ''}` : 'Sans camion';
-        return `
-        <div class="item">
-          <div class="item-top">
-            <div>
-              <strong>${d.nom}</strong>
-              <small>id « ${d.id} » · camion ${vehInfo}</small>
-            </div>
-          </div>
-          <small>Email : ${d.email || '—'} · Ces clés serviront dans Google Sheets / Make.</small>
-        </div>
-      `;
-      }).join('');
-    }
-
-    function openSignatureModal(orderId){
-      const order = state.orders.find(o => o.id === orderId);
-      if(!order) return;
-      state.selectedOrderId = orderId;
-      $('#signatureOrderTitle').textContent = `${order.id} · ${order.client}`;
-      $('#siteManagerName').value = order.siteManagerName || '';
-      $('#deliveryNote').value = order.deliveryNote || '';
-      clearSignaturePad();
-      signatureModal.style.display = 'flex';
-    }
-
-    function closeSignatureModal(){
-      signatureModal.style.display = 'none';
-      state.selectedOrderId = null;
-    }
-
-    function clearSignaturePad(){
-      sigCtx.fillStyle = '#ffffff';
-      sigCtx.fillRect(0, 0, signaturePad.width, signaturePad.height);
-      hasSignature = false;
-    }
-
-    function getCanvasPos(e){
-      const rect = signaturePad.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      return {
-        x: (clientX - rect.left) * (signaturePad.width / rect.width),
-        y: (clientY - rect.top) * (signaturePad.height / rect.height)
-      };
-    }
-
-    function startSign(e){
-      drawing = true;
-      hasSignature = true;
-      const pos = getCanvasPos(e);
-      sigCtx.beginPath();
-      sigCtx.moveTo(pos.x, pos.y);
-    }
-
-    function moveSign(e){
-      if(!drawing) return;
-      e.preventDefault();
-      const pos = getCanvasPos(e);
-      sigCtx.lineTo(pos.x, pos.y);
-      sigCtx.strokeStyle = '#111827';
-      sigCtx.lineWidth = 2.2;
-      sigCtx.lineCap = 'round';
-      sigCtx.lineJoin = 'round';
-      sigCtx.stroke();
-    }
-
-    function endSign(){ drawing = false; }
-
-    function confirmDelivery(){
-      const order = state.orders.find(o => o.id === state.selectedOrderId);
-      if(!order) return;
-
-      const siteManagerName = $('#siteManagerName').value.trim();
-      const deliveryNote = $('#deliveryNote').value.trim();
-
-      if(!siteManagerName){
-        alert('Veuillez renseigner le nom du chef de chantier.');
-        return;
-      }
-
-      if(!hasSignature){
-        alert('Veuillez faire signer le chef de chantier.');
-        return;
-      }
-
-      order.statut = 'Livrée';
-      order.siteManagerName = siteManagerName;
-      order.deliveryNote = deliveryNote;
-      order.deliverySignedAt = new Date().toLocaleString('fr-FR');
-      order.signatureDataUrl = signaturePad.toDataURL('image/png');
-
-      closeSignatureModal();
-      renderDriver();
-      renderOrders();
-      renderManager();
-      renderRecap();
-      applyYearFilter(false);
-
-      alert('Livraison signée et validée.');
-    }
-
-    function renderDriver(){
-      const d = state.drivers.find(x=>x.id===state.currentDriver) || state.drivers[0];
-      if(!d) return;
-      $('#driverTitle').textContent = `Bonjour ${d.prenom} !`;
-      $('#driverSub').textContent = 'Cliquez sur une mission pour faire signer le chef de chantier à la livraison.';
-      const vehLabel = vehicleLabelFromCode(d.camion) || 'Sans camion';
-      $('#driverTruckCard').innerHTML = `
-        <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Camion</div>
-        <div style="font-size:16px;font-weight:600;">${vehLabel}</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Chauffeur : ${d.nom}</div>
-      `;
-      const orders = state.orders.filter(x=>x.chauffeurId===d.id);
-      const ca = orders.reduce((s,x)=>s+x.montant,0);
-      $('#driverStatsCard').innerHTML = `
-        <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Résumé</div>
-        <div style="font-size:14px;font-weight:600;">${orders.length} commande(s)</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px;">CA estimé : ${euro(ca)}</div>
-      `;
-
-      $('#driverOrdersList').innerHTML = orders.map(o=>{
-        const signedInfo = o.deliverySignedAt
-          ? `<div class="signature-preview">Signé par ${o.siteManagerName || '—'} · ${o.deliverySignedAt}</div>`
-          : '';
-
-        const content = `
-          <div class="item">
-            <div class="item-top">
-              <div>
-                <strong>${o.id} · ${o.client}</strong>
-                <small>${o.adresse}</small>
-              </div>
-              <span class="badge ${bcls(o.statut)}">${o.statut}</span>
-            </div>
-            <small>${o.qte} · ${euro(o.montant)}</small>
-            ${signedInfo}
-          </div>
-        `;
-
-        if(o.statut === 'Livrée'){
-          return content;
-        }
-
-        return `
-          <button class="driver-order-btn" onclick="openSignatureModal('${o.id}')">
-            ${content}
-          </button>
-        `;
-      }).join('') || '<div class="item"><strong>Aucune mission pour le moment.</strong></div>';
-    }
-
-    function validateFuel(){
-      const d = state.drivers.find(x=>x.id===state.currentDriver) || state.drivers[0];
-      const station = $('#fuelStation').value.trim() || 'Station';
-      const km = $('#fuelKm').value.trim() || '';
-      const liters = parseFloat($('#fuelLiters').value||0);
-      const amount = parseFloat($('#fuelAmount').value||0);
-      if(!liters || !amount){
-        alert('Renseignez litres et montant du plein.');
-        return;
-      }
-      state.fuelLogs = state.fuelLogs.filter(f=>f.chauffeurId!==d.id);
-      state.fuelLogs.push({
-        chauffeurId:d.id,
-        station,
-        liters,
-        amount,
-        km,
-        time:new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})
-      });
-      state.vehicleExpenses.unshift({
-        id:'DEP-'+String(state.vehicleExpenses.length+1).padStart(3,'0'),
-        truck:d.camion,
-        type:'Carburant',
-        date:new Date().toISOString().slice(0,10),
-        amount,
-        source:'Validation chauffeur',
-        label:'Plein du soir · '+station,
-        note:`${d.prenom} · ${liters} L · KM ${km}`
-      });
-      $('#fuelFeedback').textContent =
-        `Plein validé : charges transmises pour le camion ${vehicleLabelFromCode(d.camion)}.`;
-      renderVehicleExpenses();
-      renderRecap();
-      applyYearFilter(false);
-      alert('Plein validé et ajouté aux dépenses véhicules.');
-    }
-
-    function applyMonthlyFilter(showAlert = true){
-      const truck = $('#monthlyTruck').value;
-      const monthValue = $('#monthlyMonth').value;
-      const body = $('#monthlyExpensesBody');
-      const summary = $('#monthlySummary');
-      const typesDiv = $('#monthlyTypes');
-
-      if(!monthValue){
-        body.innerHTML = '';
-        typesDiv.innerHTML = '';
-        summary.textContent = 'Sélectionnez un camion et un mois.';
-        if(showAlert) alert('Choisissez un mois.');
-        return;
-      }
-
-      const [year, month] = monthValue.split('-');
-      const rows = state.vehicleExpenses.filter(e=>{
-        if(truck && e.truck !== truck) return false;
-        if(!e.date) return false;
-        const d = String(e.date);
-        return d.startsWith(`${year}-${month}`);
-      });
-
-      if(!rows.length){
-        body.innerHTML = '';
-        typesDiv.innerHTML = '';
-        const camTxt = truck ? ` pour le camion ${vehicleLabelFromCode(truck)}` : '';
-        summary.textContent = `Aucune dépense sur ${monthValue}${camTxt}.`;
-        return;
-      }
-
-      const total = rows.reduce((s,x)=>s+x.amount,0);
-      const byType = rows.reduce((acc,r)=>{
-        const t = r.type || 'Autre';
-        acc[t] = (acc[t]||0) + r.amount;
-        return acc;
-      },{});
-      const fuel = byType['Carburant'] || 0;
-
-      body.innerHTML = rows
-        .sort((a,b)=>String(a.date).localeCompare(String(b.date)))
-        .map(r=>`
-          <tr>
-            <td>${r.date}</td>
-            <td>${vehicleLabelFromCode(r.truck)}</td>
-            <td>${r.type}</td>
-            <td>${euro(r.amount)}</td>
-            <td>${r.source}</td>
-            <td>${r.label}</td>
-          </tr>
         `).join('');
 
-      const camTxt = truck ? ` pour le camion ${vehicleLabelFromCode(truck)}` : ' pour tous les camions';
-      summary.textContent =
-        `Total du mois ${monthValue}${camTxt} : ${euro(total)} · dont carburant ${euro(fuel)}.`;
+        recentOrders.innerHTML = state.orders.slice().reverse().map(o => {
+          const driver = state.drivers.find(dd => dd.id === o.chauffeurId);
+          const vehLabel = driver ? vehicleLabelFromCode(driver.camion) : '';
+          return `
+            <div class="item">
+              <div class="item-top">
+                <div>
+                  <strong>${o.id} · ${o.client}</strong>
+                  <small>${o.adresse}</small>
+                </div>
+                <span class="badge ${bcls(o.statut)}">${o.statut}</span>
+              </div>
+              <small>${o.qte} · ${euro(o.montant)} · ${dname(o.chauffeurId)} ${vehLabel ? `• ${vehLabel}` : ''}</small>
+            </div>
+          `;
+        }).join('');
 
-      const orderedTypes = ['Carburant','Entretien','Réparation','Autre'];
-      typesDiv.innerHTML = orderedTypes.map(t=>{
-        const val = byType[t] || 0;
-        return `
+        teamList.innerHTML = state.drivers.map(d => {
+          const o = state.orders.filter(x => x.chauffeurId === d.id);
+          const total = o.reduce((s, x) => s + Number(x.montant || 0), 0);
+          const vehLabel = vehicleLabelFromCode(d.camion);
+          return `
+            <div class="item">
+              <div class="item-top">
+                <div>
+                  <strong>${d.nom}</strong>
+                  <small>${vehLabel || 'Sans camion'} · ${d.telephone}</small>
+                </div>
+                <span class="badge info">${euro(total)}</span>
+              </div>
+              <small>${o.length} commandes sur la journée · Statut ${d.statut}</small>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function resetOrderForm() {
+        state.editingOrderId = null;
+        orderClient.value = '';
+        orderPhone.value = '';
+        orderAddress.value = '';
+        orderQty.value = '';
+        orderAmount.value = '';
+        orderDriver.value = '';
+        orderStatus.value = 'En attente';
+        orderSource.value = 'WhatsApp';
+
+        orderFormTitle.textContent = 'Créer une commande';
+        orderFormDesc.textContent = 'Structure prête pour écrire ensuite dans Google Sheets.';
+        orderEditBadge.classList.remove('show');
+        saveOrderBtn.textContent = 'Enregistrer la commande';
+      }
+
+      function editOrder(id) {
+        const order = state.orders.find(o => o.id === id);
+        if (!order) return;
+
+        state.editingOrderId = id;
+        orderClient.value = order.client || '';
+        orderPhone.value = order.phone || '';
+        orderAddress.value = order.adresse || '';
+        orderQty.value = order.qte || '';
+        orderAmount.value = order.montant ?? '';
+        orderDriver.value = order.chauffeurId || '';
+        orderStatus.value = order.statut || 'En attente';
+        orderSource.value = order.source || 'WhatsApp';
+
+        orderFormTitle.textContent = `Modifier ${order.id}`;
+        orderFormDesc.textContent = 'Mettez à jour la commande puis enregistrez les changements.';
+        orderEditBadge.classList.add('show');
+        saveOrderBtn.textContent = 'Mettre à jour la commande';
+
+        switchView('commandes');
+      }
+
+      function deleteOrder(id) {
+        const order = state.orders.find(o => o.id === id);
+        if (!order) {
+          alert('Commande introuvable.');
+          return;
+        }
+
+        if (!confirm(`Supprimer la commande ${order.id} ?`)) return;
+
+        state.orders = state.orders.filter(o => o.id !== id);
+
+        if (state.selectedOrderId === id) {
+          state.selectedOrderId = null;
+        }
+
+        if (state.editingOrderId === id) {
+          resetOrderForm();
+        }
+
+        renderOrders();
+        renderManager();
+        renderRecap();
+        applyYearFilter(false);
+        renderDriver();
+
+        alert('Commande supprimée en mémoire.');
+      }
+
+      function renderOrders() {
+        ordersTableBody.innerHTML = state.orders
+          .slice()
+          .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))
+          .map(o => {
+            const driver = state.drivers.find(d => d.id === o.chauffeurId);
+            const vehLabel = driver ? vehicleLabelFromCode(driver.camion) : '';
+            const chauffeur = dname(o.chauffeurId) || 'Non attribuée';
+            const chauffeurFull = vehLabel ? `${chauffeur} • ${vehLabel}` : chauffeur;
+
+            return `
+              <tr>
+                <td>${o.id}</td>
+                <td>${o.client || ''}</td>
+                <td class="col-address">${o.adresse || ''}</td>
+                <td>${o.qte || ''}</td>
+                <td>${euro(o.montant || 0)}</td>
+                <td><span class="badge ${bcls(o.statut)}">${o.statut || 'En attente'}</span></td>
+                <td>${chauffeurFull}</td>
+                <td>${o.source || '-'}</td>
+                <td>${o.date || '-'}</td>
+                <td>
+                  <div class="order-actions">
+                    <button class="btn-xs btn-edit" onclick="editOrder('${o.id}')">Modifier</button>
+                    <button class="btn-xs btn-delete" onclick="deleteOrder('${o.id}')">Supprimer</button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('');
+
+        orderDriver.innerHTML = `
+          <option value="">Non attribuée</option>
+          ${state.drivers.map(d => {
+            const vehLabel = vehicleLabelFromCode(d.camion);
+            return `<option value="${d.id}">${d.nom} • ${vehLabel || 'Sans camion'}</option>`;
+          }).join('')}
+        `;
+      }
+
+      function addOrder() {
+        const client = orderClient.value.trim();
+        const phone = orderPhone.value.trim();
+        const adresse = orderAddress.value.trim();
+        const qte = orderQty.value.trim();
+        const montant = parseFloat(orderAmount.value || 0);
+        const chauffeurId = orderDriver.value || null;
+        const statut = orderStatus.value || 'En attente';
+        const source = orderSource.value || 'WhatsApp';
+        const date = new Date().toISOString().slice(0, 10);
+
+        if (!client || !adresse || !qte || !montant) {
+          alert('Client, chantier, quantité et montant sont obligatoires.');
+          return;
+        }
+
+        if (state.editingOrderId) {
+          const index = state.orders.findIndex(o => o.id === state.editingOrderId);
+
+          if (index === -1) {
+            alert('Commande introuvable.');
+            return;
+          }
+
+          state.orders[index] = {
+            ...state.orders[index],
+            client,
+            phone,
+            adresse,
+            qte,
+            montant,
+            chauffeurId,
+            statut,
+            source
+          };
+
+          alert('Commande modifiée en mémoire.');
+        } else {
+          const id = 'CMD-' + String(state.orders.length + 42).padStart(3, '0');
+
+          state.orders.push({
+            id,
+            client,
+            phone,
+            adresse,
+            qte,
+            montant,
+            statut,
+            chauffeurId,
+            source,
+            date
+          });
+
+          alert('Commande ajoutée en mémoire pour la démo.');
+        }
+
+        resetOrderForm();
+        renderOrders();
+        renderManager();
+        renderRecap();
+        applyYearFilter(false);
+        renderDriver();
+      }
+
+      function renderDrivers() {
+        driversList.innerHTML = state.drivers.map(d => {
+          const vehLabel = vehicleLabelFromCode(d.camion) || 'Sans camion';
+          return `
+            <div class="item" onclick="editDriver('${d.id}')">
+              <div class="item-top">
+                <div>
+                  <strong>${d.nom}</strong>
+                  <small>${vehLabel} · ${d.telephone}</small>
+                </div>
+                <span class="badge ${d.statut === 'Actif' ? 'ok' : 'wait'}">${d.statut}</span>
+              </div>
+              <small>Email ${d.email} · PIN ${d.pin} · id interne ${d.id}</small>
+            </div>
+          `;
+        }).join('');
+      }
+
+      window.editDriver = function(id) {
+        const d = state.drivers.find(x => x.id === id);
+        if (!d) return;
+
+        state.editingDriverId = d.id;
+        driverFirst.value = d.prenom;
+        driverName.value = d.nom;
+        driverPhone.value = d.telephone;
+        driverEmail.value = d.email;
+        driverPin.value = d.pin;
+        fillDriverVehicleSelect();
+        driverTruck.value = d.camion || '';
+        driverStatus.value = d.statut || 'Actif';
+        driverId.value = d.id;
+      };
+
+      function resetDriverForm() {
+        state.editingDriverId = null;
+        driverFirst.value = '';
+        driverName.value = '';
+        driverPhone.value = '';
+        driverEmail.value = '';
+        driverPin.value = '';
+        fillDriverVehicleSelect();
+        driverTruck.value = '';
+        driverStatus.value = 'Actif';
+        driverId.value = '';
+      }
+
+      function saveDriver() {
+        const prenom = driverFirst.value.trim();
+        const nom = driverName.value.trim();
+        const telephone = driverPhone.value.trim();
+        const email = driverEmail.value.trim();
+        const pin = driverPin.value.trim();
+        const camion = driverTruck.value.trim();
+        const statut = driverStatus.value;
+        const idInput = driverId.value.trim();
+        const id = idInput || prenom.toLowerCase();
+
+        if (!prenom || !nom || !pin) {
+          alert('Prénom, nom et PIN sont obligatoires.');
+          return;
+        }
+
+        const existingIndex = state.drivers.findIndex(x => x.id === id);
+        const isEditingSameId = state.editingDriverId && state.editingDriverId === id;
+
+        if (existingIndex !== -1 && !isEditingSameId) {
+          alert('Cet identifiant interne existe déjà, merci d’en choisir un autre.');
+          return;
+        }
+
+        const payload = { id, prenom, nom, telephone, email, pin, camion, statut };
+
+        if (isEditingSameId && existingIndex !== -1) {
+          state.drivers[existingIndex] = payload;
+        } else {
+          state.drivers.push(payload);
+        }
+
+        state.editingDriverId = id;
+        renderDrivers();
+        renderDriverSelect();
+        renderVehicleExpenses();
+        renderRecap();
+        renderIntegration();
+        applyYearFilter(false);
+
+        alert('Chauffeur enregistré en mémoire.');
+      }
+
+      function deleteDriver() {
+        if (!state.editingDriverId) {
+          alert('Sélectionnez d’abord un chauffeur dans la liste.');
+          return;
+        }
+
+        const id = state.editingDriverId;
+        const d = state.drivers.find(x => x.id === id);
+
+        if (!d) {
+          alert('Chauffeur introuvable.');
+          return;
+        }
+
+        if (!confirm(`Supprimer le chauffeur ${d.nom} ?`)) return;
+
+        state.drivers = state.drivers.filter(x => x.id !== id);
+        state.orders = state.orders.map(o => o.chauffeurId === id ? { ...o, chauffeurId: null } : o);
+
+        if (state.currentDriver === id) state.currentDriver = null;
+
+        resetDriverForm();
+        renderDrivers();
+        renderDriverSelect();
+        renderVehicleExpenses();
+        renderRecap();
+        renderManager();
+        renderIntegration();
+        applyYearFilter(false);
+
+        alert('Chauffeur supprimé en mémoire.');
+      }
+            function renderRecap() {
+        const totalCa = state.orders.reduce((s, x) => s + Number(x.montant || 0), 0);
+        const carburant = state.vehicleExpenses
+          .filter(x => x.type === 'Carburant')
+          .reduce((s, x) => s + Number(x.amount || 0), 0);
+        const autres = state.vehicleExpenses
+          .filter(x => x.type !== 'Carburant')
+          .reduce((s, x) => s + Number(x.amount || 0), 0);
+        const marge = totalCa - carburant - autres;
+
+        const k = [
+          ['CA réel journée', euro(totalCa)],
+          ['Charges carburant', euro(carburant)],
+          ['Autres charges', euro(autres)],
+          ['Marge estimée', euro(marge)]
+        ];
+
+        recapKpis.innerHTML = k.map(x => `
+          <div class="kpi">
+            <span>${x[0]}</span>
+            <strong>${x[1]}</strong>
+          </div>
+        `).join('');
+
+        recapDrivers.innerHTML = state.drivers.map(d => {
+          const o = state.orders.filter(x => x.chauffeurId === d.id);
+          const ca = o.reduce((s, x) => s + Number(x.montant || 0), 0);
+          const vehExp = state.vehicleExpenses.filter(x => x.truck === d.camion);
+          const charges = vehExp.reduce((s, x) => s + Number(x.amount || 0), 0);
+          const margeD = ca - charges;
+          const vehLabel = vehicleLabelFromCode(d.camion) || 'Sans camion';
+
+          return `
+            <div class="item">
+              <div class="item-top">
+                <div>
+                  <strong>${d.nom}</strong>
+                  <small>${vehLabel}</small>
+                </div>
+                <span class="badge info">${euro(ca)}</span>
+              </div>
+              <small>Charges véhicule ${euro(charges)} · Marge estimée ${euro(margeD)}</small>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function truckOptions() {
+        const set = new Set();
+        state.vehicles.forEach(v => set.add(v.code));
+        state.drivers.map(d => d.camion).filter(Boolean).forEach(c => set.add(c));
+        state.vehicleExpenses.forEach(e => set.add(e.truck));
+        return Array.from(set);
+      }
+
+      function renderVehicleExpenses() {
+        const trucks = truckOptions();
+
+        if (expenseTruck) {
+          const current = expenseTruck.value;
+          expenseTruck.innerHTML = `
+            <option value="">-- Sélectionner un camion --</option>
+            ${trucks
+              .slice()
+              .sort()
+              .map(t => `<option value="${t}">${vehicleLabelFromCode(t)}</option>`)
+              .join('')}
+          `;
+          if (current && trucks.includes(current)) expenseTruck.value = current;
+        }
+
+        if (monthlyTruck) {
+          const currentM = monthlyTruck.value;
+          monthlyTruck.innerHTML = `
+            <option value="">Tous les camions</option>
+            ${trucks
+              .slice()
+              .sort()
+              .map(t => `<option value="${t}">${vehicleLabelFromCode(t)}</option>`)
+              .join('')}
+          `;
+          if (currentM && trucks.includes(currentM)) monthlyTruck.value = currentM;
+        }
+
+        const total = state.vehicleExpenses.reduce((s, x) => s + Number(x.amount || 0), 0);
+        const fuel = state.vehicleExpenses
+          .filter(x => x.type === 'Carburant')
+          .reduce((s, x) => s + Number(x.amount || 0), 0);
+        const repairs = state.vehicleExpenses
+          .filter(x => x.type !== 'Carburant')
+          .reduce((s, x) => s + Number(x.amount || 0), 0);
+        const avg = trucks.length ? total / trucks.length : 0;
+
+        vehicleExpenseKpis.innerHTML = [
+          ['Total dépenses', euro(total)],
+          ['Carburant', euro(fuel)],
+          ['Hors carburant', euro(repairs)],
+          ['Moyenne camion', euro(avg)]
+        ].map(k => `
+          <div class="kpi">
+            <span>${k[0]}</span>
+            <strong>${k[1]}</strong>
+          </div>
+        `).join('');
+
+        const grouped = trucks.map(truck => {
+          const rows = state.vehicleExpenses.filter(x => x.truck === truck);
+          const totalTruck = rows.reduce((s, x) => s + Number(x.amount || 0), 0);
+          const fuelTruck = rows
+            .filter(x => x.type === 'Carburant')
+            .reduce((s, x) => s + Number(x.amount || 0), 0);
+          const last = rows.slice().sort((a,b) => String(b.date).localeCompare(String(a.date)))[0];
+          const label = vehicleLabelFromCode(truck);
+
+          return {
+            truck,
+            label,
+            total: totalTruck,
+            fuel: fuelTruck,
+            count: rows.length,
+            last: last ? last.date : '-'
+          };
+        }).sort((a,b) => b.total - a.total);
+
+        vehicleTotalsList.innerHTML = grouped.length
+          ? grouped.map(g => `
+              <div class="item">
+                <div class="item-top">
+                  <div>
+                    <strong>${g.label}</strong>
+                    <small>${g.count} dépenses · dernier mouvement ${g.last}</small>
+                  </div>
+                  <span class="badge info">${euro(g.total)}</span>
+                </div>
+                <small>Carburant ${euro(g.fuel)} · Autres charges ${euro(g.total - g.fuel)}</small>
+              </div>
+            `).join('')
+          : `
+            <div class="item">
+              <strong>Aucun camion disponible.</strong>
+              <small>Ajoutez d’abord un véhicule dans la flotte.</small>
+            </div>
+          `;
+
+        vehicleExpensesBody.innerHTML = state.vehicleExpenses
+          .slice()
+          .sort((a,b) => String(b.date).localeCompare(String(a.date)))
+          .map(r => `
+            <tr>
+              <td>${r.date}</td>
+              <td><strong>${vehicleLabelFromCode(r.truck)}</strong></td>
+              <td>${r.type}</td>
+              <td>${euro(r.amount)}</td>
+              <td>${r.source}</td>
+              <td>${r.label}</td>
+              <td>${r.note || ''}</td>
+            </tr>
+          `).join('');
+
+        applyMonthlyFilter(false);
+      }
+
+      function addVehicleExpense() {
+        const truck = expenseTruck.value;
+        const type = expenseType.value;
+        const date = expenseDate.value || new Date().toISOString().slice(0,10);
+        const amount = parseFloat(expenseAmount.value || 0);
+        const label = expenseLabel.value.trim();
+        const source = expenseSource.value;
+        const note = expenseNote.value.trim();
+
+        if (!truck) {
+          alert('Sélectionnez un camion.');
+          return;
+        }
+
+        if (!amount || amount <= 0) {
+          alert('Indiquez un montant valide.');
+          return;
+        }
+
+        if (!label) {
+          alert('Indiquez un libellé.');
+          return;
+        }
+
+        state.vehicleExpenses.unshift({
+          id: 'DEP-' + String(state.vehicleExpenses.length + 1).padStart(3, '0'),
+          truck,
+          type,
+          date,
+          amount,
+          source,
+          label,
+          note
+        });
+
+        expenseAmount.value = '';
+        expenseLabel.value = '';
+        expenseNote.value = '';
+
+        renderVehicleExpenses();
+        renderRecap();
+        applyYearFilter(false);
+
+        alert('Dépense enregistrée en mémoire.');
+      }
+
+      function renderIntegration() {
+        integrationList.innerHTML = state.drivers.map(d => {
+          const veh = state.vehicles.find(v => v.code === d.camion);
+          const vehInfo = veh ? `${veh.code} • ${veh.model} • ${veh.plate}` : 'Sans camion';
+
+          return `
+            <div class="item">
+              <div class="item-top">
+                <div>
+                  <strong>${d.nom}</strong>
+                  <small>id ${d.id} · camion ${vehInfo}</small>
+                </div>
+              </div>
+              <div>
+                <small>Email ${d.email} · Ces clés serviront dans Google Sheets / Make.</small>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderFleet() {
+        fleetList.innerHTML = state.vehicles
+          .slice()
+          .sort((a,b) => a.code.localeCompare(b.code))
+          .map(v => {
+            const assignedDrivers = state.drivers.filter(d => d.camion === v.code);
+            const assignedText = assignedDrivers.length
+              ? assignedDrivers.map(d => d.prenom).join(', ')
+              : 'Aucun chauffeur attribué';
+
+            return `
+              <div class="item" onclick="editVehicle('${v.code}')">
+                <div class="item-top">
+                  <div>
+                    <strong>${vehicleLabelFromCode(v.code)}</strong>
+                    <small>${v.brand}</small>
+                  </div>
+                  <span class="badge ${v.status === 'En service' ? 'ok' : v.status === 'Maintenance' ? 'wait' : 'info'}">${v.status}</span>
+                </div>
+                <small>${v.type} · ${v.year || '-'} · ${v.km ? `${v.km} km` : '-'}</small>
+                <small>Chauffeurs : ${assignedText}</small>
+              </div>
+            `;
+          }).join('') || `
+            <div class="item">
+              <strong>Aucun véhicule enregistré.</strong>
+              <small>Ajoutez votre premier véhicule via le formulaire à droite.</small>
+            </div>
+          `;
+
+        fillDriverVehicleSelect();
+      }
+
+      window.editVehicle = function(code) {
+        const v = state.vehicles.find(x => x.code === code);
+        if (!v) return;
+
+        state.editingVehCode = v.code;
+        vehCode.value = v.code;
+        vehPlate.value = v.plate || '';
+        vehBrand.value = v.brand || '';
+        vehModel.value = v.model || '';
+        vehType.value = v.type || 'Camion benne';
+        vehYear.value = v.year || '';
+        vehKm.value = v.km || '';
+        vehStatus.value = v.status || 'En service';
+        vehNote.value = v.note || '';
+      };
+
+      function resetVehicleForm() {
+        state.editingVehCode = null;
+        vehCode.value = '';
+        vehPlate.value = '';
+        vehBrand.value = '';
+        vehModel.value = '';
+        vehType.value = 'Camion benne';
+        vehYear.value = '';
+        vehKm.value = '';
+        vehStatus.value = 'En service';
+        vehNote.value = '';
+      }
+
+      function saveVehicle() {
+        const code = vehCode.value.trim();
+        const plate = vehPlate.value.trim();
+        const brand = vehBrand.value.trim();
+        const model = vehModel.value.trim();
+        const type = vehType.value;
+        const year = parseInt(vehYear.value || 0, 10) || null;
+        const km = parseInt(vehKm.value || 0, 10) || null;
+        const status = vehStatus.value;
+        const note = vehNote.value.trim();
+
+        if (!code) {
+          alert('Le code camion clé est obligatoire.');
+          return;
+        }
+
+        const existingIndex = state.vehicles.findIndex(v => v.code === code);
+        const isEditingSame = state.editingVehCode && state.editingVehCode === code;
+
+        if (existingIndex !== -1 && !isEditingSame) {
+          alert('Ce code camion existe déjà, merci d’en choisir un autre.');
+          return;
+        }
+
+        const payload = { code, plate, brand, model, type, year, km, status, note };
+
+        if (isEditingSame && existingIndex !== -1) {
+          state.vehicles[existingIndex] = payload;
+        } else {
+          state.vehicles.push(payload);
+        }
+
+        state.editingVehCode = code;
+
+        renderFleet();
+        renderVehicleExpenses();
+        renderIntegration();
+        renderRecap();
+        renderDriverSelect();
+        fillDriverVehicleSelect();
+        applyYearFilter(false);
+
+        alert('Véhicule enregistré en mémoire.');
+      }
+
+      function deleteVehicle() {
+        if (!state.editingVehCode) {
+          alert('Sélectionnez d’abord un véhicule dans la liste.');
+          return;
+        }
+
+        const code = state.editingVehCode;
+        const v = state.vehicles.find(x => x.code === code);
+
+        if (!v) {
+          alert('Véhicule introuvable.');
+          return;
+        }
+
+        if (!confirm(`Supprimer le véhicule ${vehicleLabelFromCode(v.code)} ?`)) return;
+
+        const usedByDriver = state.drivers.some(d => d.camion === code);
+        const usedByExpenses = state.vehicleExpenses.some(e => e.truck === code);
+
+        if (usedByDriver || usedByExpenses) {
+          if (!confirm('Ce véhicule est lié à des chauffeurs ou à des dépenses. Supprimer quand même ?')) return;
+        }
+
+        state.vehicles = state.vehicles.filter(x => x.code !== code);
+        state.editingVehCode = null;
+
+        resetVehicleForm();
+        renderFleet();
+        renderVehicleExpenses();
+        renderIntegration();
+        renderRecap();
+        renderDriverSelect();
+        fillDriverVehicleSelect();
+        applyYearFilter(false);
+
+        alert('Véhicule supprimé en mémoire.');
+      }
+
+      function validateFuel() {
+        const d = state.drivers.find(x => x.id === state.currentDriver) || state.drivers[0];
+        const station = fuelStation.value.trim() || 'Station';
+        const km = fuelKm.value.trim();
+        const liters = parseFloat(fuelLiters.value || 0);
+        const amount = parseFloat(fuelAmount.value || 0);
+
+        if (!liters || !amount) {
+          alert('Renseignez litres et montant du plein.');
+          return;
+        }
+
+        state.fuelLogs = state.fuelLogs.filter(f => f.chauffeurId !== d.id);
+        state.fuelLogs.push({
+          chauffeurId: d.id,
+          station,
+          liters,
+          amount,
+          km,
+          time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+        });
+
+        state.vehicleExpenses.unshift({
+          id: 'DEP-' + String(state.vehicleExpenses.length + 1).padStart(3, '0'),
+          truck: d.camion,
+          type: 'Carburant',
+          date: new Date().toISOString().slice(0,10),
+          amount,
+          source: 'Validation chauffeur',
+          label: `Plein du soir ${station}`,
+          note: `${d.prenom} · ${liters} L · KM ${km || '-'}`
+        });
+
+        fuelFeedback.textContent = `Plein validé, charges transmises pour le camion ${vehicleLabelFromCode(d.camion)}.`;
+        renderVehicleExpenses();
+        renderRecap();
+        applyYearFilter(false);
+
+        alert('Plein validé et ajouté aux dépenses véhicules.');
+      }
+
+      function applyMonthlyFilter(showAlert = true) {
+        const truck = monthlyTruck.value;
+        const monthValue = monthlyMonth.value;
+        const body = monthlyExpensesBody;
+        const summary = monthlySummary;
+        const typesDiv = monthlyTypes;
+
+        if (!monthValue) {
+          body.innerHTML = '';
+          typesDiv.innerHTML = '';
+          summary.textContent = 'Sélectionnez un camion et un mois.';
+          if (showAlert) alert('Choisissez un mois.');
+          return;
+        }
+
+        const [year, month] = monthValue.split('-');
+
+        const rows = state.vehicleExpenses.filter(e => {
+          if (truck && e.truck !== truck) return false;
+          if (!e.date) return false;
+          const d = String(e.date);
+          return d.startsWith(`${year}-${month}`);
+        });
+
+        if (!rows.length) {
+          body.innerHTML = '';
+          typesDiv.innerHTML = '';
+          const camTxt = truck ? ` pour le camion ${vehicleLabelFromCode(truck)}` : '';
+          summary.textContent = `Aucune dépense sur ${monthValue}${camTxt}.`;
+          return;
+        }
+
+        const total = rows.reduce((s, x) => s + Number(x.amount || 0), 0);
+        const byType = rows.reduce((acc, r) => {
+          const t = r.type || 'Autre';
+          acc[t] = (acc[t] || 0) + Number(r.amount || 0);
+          return acc;
+        }, {});
+        const fuel = byType['Carburant'] || 0;
+
+        body.innerHTML = rows
+          .sort((a,b) => String(a.date).localeCompare(String(b.date)))
+          .map(r => `
+            <tr>
+              <td>${r.date}</td>
+              <td>${vehicleLabelFromCode(r.truck)}</td>
+              <td>${r.type}</td>
+              <td>${euro(r.amount)}</td>
+              <td>${r.source}</td>
+              <td>${r.label}</td>
+            </tr>
+          `).join('');
+
+        const camTxt = truck
+          ? ` pour le camion ${vehicleLabelFromCode(truck)}`
+          : ' pour tous les camions';
+
+        summary.textContent = `Total du mois ${monthValue}${camTxt} : ${euro(total)} dont carburant ${euro(fuel)}.`;
+
+        const orderedTypes = ['Carburant', 'Entretien', 'Réparation', 'Autre'];
+        typesDiv.innerHTML = orderedTypes.map(t => `
           <div class="monthly-type-card">
             <strong>${t}</strong>
-            <span>${euro(val)}</span>
+            <span>${euro(byType[t] || 0)}</span>
           </div>
-        `;
-      }).join('');
-    }
-
-    function renderYearOptions(){
-      const years = new Set();
-      state.orders.forEach(o=>{
-        if(o.date) years.add(String(o.date).slice(0,4));
-      });
-      state.vehicleExpenses.forEach(e=>{
-        if(e.date) years.add(String(e.date).slice(0,4));
-      });
-      const list = Array.from(years).sort();
-      const nowYear = new Date().getFullYear().toString();
-      const select = $('#yearSelect');
-      if(!list.length){
-        select.innerHTML = `<option value="${nowYear}">${nowYear}</option>`;
-      } else {
-        select.innerHTML = list.map(y=>`<option value="${y}">${y}</option>`).join('');
-      }
-      if(list.includes(nowYear)) select.value = nowYear;
-    }
-
-    function applyYearFilter(showAlert = true){
-      const year = $('#yearSelect').value;
-      const yearSummary = $('#yearSummary');
-      const yearKpis = $('#yearKpis');
-      const caBody = $('#yearCaBody');
-      const depBody = $('#yearDepBody');
-      const marginBody = $('#yearMarginBody');
-
-      if(!year){
-        yearSummary.textContent = 'Choisissez une année pour afficher la synthèse.';
-        yearKpis.innerHTML = '';
-        caBody.innerHTML = '';
-        depBody.innerHTML = '';
-        marginBody.innerHTML = '';
-        if(showAlert) alert('Choisissez une année.');
-        return;
+        `).join('');
       }
 
-      const caMonths = Array(13).fill(0);
-      state.orders.forEach(o=>{
-        if(!o.date) return;
-        const d = String(o.date);
-        if(!d.startsWith(year)) return;
-        const m = parseInt(d.slice(5,7),10);
-        caMonths[m-1] += o.montant;
-        caMonths[12] += o.montant;
-      });
+      function renderYearOptions() {
+        const years = new Set();
 
-      const depMap = {};
-      const depMonthsTotal = Array(13).fill(0);
-      state.vehicleExpenses.forEach(e=>{
-        if(!e.date) return;
-        const d = String(e.date);
-        if(!d.startsWith(year)) return;
-        const m = parseInt(d.slice(5,7),10);
-        const key = e.truck || 'Véhicule';
-        if(!depMap[key]) depMap[key] = Array(13).fill(0);
-        depMap[key][m-1] += e.amount;
-        depMap[key][12] += e.amount;
-        depMonthsTotal[m-1] += e.amount;
-        depMonthsTotal[12] += e.amount;
-      });
+        state.orders.forEach(o => {
+          if (o.date) years.add(String(o.date).slice(0,4));
+        });
 
-      const totalCaYear = caMonths[12] || 0;
-      const totalDepYear = depMonthsTotal[12] || 0;
-      const margeYear = totalCaYear - totalDepYear;
+        state.vehicleExpenses.forEach(e => {
+          if (e.date) years.add(String(e.date).slice(0,4));
+        });
 
-      yearKpis.innerHTML = [
-        ['CA annuel', euro(totalCaYear)],
-        ['Total dépenses', euro(totalDepYear)],
-        ['Marge estimée', euro(margeYear)],
-        ['Nb véhicules', Object.keys(depMap).length]
-      ].map(k=>`
-        <div class="kpi">
-          <span>${k[0]}</span>
-          <strong>${k[1]}</strong>
-        </div>
-      `).join('');
+        const list = Array.from(years).sort();
+        const nowYear = new Date().getFullYear().toString();
 
-      yearSummary.textContent =
-        `Synthèse ${year} : CA ${euro(totalCaYear)} · Dépenses ${euro(totalDepYear)} · Marge ${euro(margeYear)}.`;
+        if (!list.length) {
+          yearSelect.innerHTML = `<option value="${nowYear}">${nowYear}</option>`;
+        } else {
+          yearSelect.innerHTML = list.map(y => `<option value="${y}">${y}</option>`).join('');
+        }
 
-      const monthsRow = arr =>
-        Array.from({length:12},(_,i)=>euro(arr[i]||0)).join('</td><td>');
-
-      if(totalCaYear === 0){
-        caBody.innerHTML = `<tr><td colspan="14">Aucun chiffre d'affaires sur ${year}.</td></tr>`;
-      } else {
-        caBody.innerHTML = `
-          <tr>
-            <td>CA global</td>
-            <td>${monthsRow(caMonths)}</td>
-            <td>${euro(caMonths[12]||0)}</td>
-          </tr>
-        `;
+        if (list.includes(nowYear)) yearSelect.value = nowYear;
       }
 
-      depBody.innerHTML = Object.entries(depMap).sort((a,b)=>b[1][12]-a[1][12])
-        .map(([truck,vals])=>`
-          <tr>
-            <td>${vehicleLabelFromCode(truck)}</td>
-            <td>${monthsRow(vals)}</td>
-            <td>${euro(vals[12]||0)}</td>
-          </tr>
-        `).join('') || `
-          <tr><td colspan="14">Aucune dépense sur ${year}.</td></tr>
-        `;
+      function applyYearFilter(showAlert = true) {
+        const year = yearSelect.value;
 
-      const marginMonths = caMonths.map((v,i)=>v - (depMonthsTotal[i]||0));
-      if(totalCaYear === 0 && totalDepYear === 0){
-        marginBody.innerHTML = `<tr><td colspan="14">Aucune donnée sur ${year}.</td></tr>`;
-      } else {
-        marginBody.innerHTML = `
-          <tr>
-            <td>Marge CA - dépenses</td>
-            <td>${monthsRow(marginMonths)}</td>
-            <td>${euro(marginMonths[12]||0)}</td>
-          </tr>
-        `;
-      }
-    }
+        if (!year) {
+          yearSummary.textContent = 'Choisissez une année pour afficher la synthèse.';
+          yearKpis.innerHTML = '';
+          yearCaBody.innerHTML = '';
+          yearDepBody.innerHTML = '';
+          yearMarginBody.innerHTML = '';
+          if (showAlert) alert('Choisissez une année.');
+          return;
+        }
 
-    function renderFleet(){
-      $('#fleetList').innerHTML = state.vehicles
-        .slice()
-        .sort((a,b)=>a.code.localeCompare(b.code))
-        .map(v=>{
-          const assignedDrivers = state.drivers.filter(d=>d.camion===v.code);
-          const assignedText = assignedDrivers.length
-            ? assignedDrivers.map(d=>d.prenom).join(', ')
-            : 'Aucun chauffeur attribué';
-          return `
-        <div class="item" onclick="editVehicle('${v.code}')">
-          <div class="item-top">
-            <div>
-              <strong>${vehicleLabelFromCode(v.code)}</strong>
-              <small>${v.brand || ''}</small>
-            </div>
-            <span class="badge ${v.status==='En service'?'ok':(v.status==='Maintenance'?'wait':'info')}">${v.status}</span>
+        const caMonths = Array(13).fill(0);
+
+        state.orders.forEach(o => {
+          if (!o.date) return;
+          const d = String(o.date);
+          if (!d.startsWith(year)) return;
+          const m = parseInt(d.slice(5,7), 10);
+          caMonths[m - 1] += Number(o.montant || 0);
+          caMonths[12] += Number(o.montant || 0);
+        });
+
+        const depMap = {};
+        const depMonthsTotal = Array(13).fill(0);
+
+        state.vehicleExpenses.forEach(e => {
+          if (!e.date) return;
+          const d = String(e.date);
+          if (!d.startsWith(year)) return;
+          const m = parseInt(d.slice(5,7), 10);
+          const key = e.truck || 'Véhicule';
+          if (!depMap[key]) depMap[key] = Array(13).fill(0);
+          depMap[key][m - 1] += Number(e.amount || 0);
+          depMap[key][12] += Number(e.amount || 0);
+          depMonthsTotal[m - 1] += Number(e.amount || 0);
+          depMonthsTotal[12] += Number(e.amount || 0);
+        });
+
+        const totalCaYear = caMonths[12] || 0;
+        const totalDepYear = depMonthsTotal[12] || 0;
+        const margeYear = totalCaYear - totalDepYear;
+
+        yearKpis.innerHTML = [
+          ['CA annuel', euro(totalCaYear)],
+          ['Total dépenses', euro(totalDepYear)],
+          ['Marge estimée', euro(margeYear)],
+          ['Nb véhicules', Object.keys(depMap).length]
+        ].map(k => `
+          <div class="kpi">
+            <span>${k[0]}</span>
+            <strong>${k[1]}</strong>
           </div>
-          <small>${v.type || ''} · ${v.year || ''} · ${v.km ? v.km+' km' : ''}</small>
-          <small>Chauffeur(s) : ${assignedText}</small>
-        </div>
-      `;
-        }).join('') || `
-        <div class="item">
-          <strong>Aucun véhicule enregistré.</strong>
-          <small>Ajoutez votre premier véhicule via le formulaire à droite.</small>
-        </div>
-      `;
-      fillDriverVehicleSelect();
-    }
+        `).join('');
 
-    window.editVehicle = function(code){
-      const v = state.vehicles.find(x=>x.code===code);
-      if(!v) return;
-      state.editingVehCode = v.code;
-      $('#vehCode').value = v.code;
-      $('#vehPlate').value = v.plate || '';
-      $('#vehBrand').value = v.brand || '';
-      $('#vehModel').value = v.model || '';
-      $('#vehType').value = v.type || 'Camion benne';
-      $('#vehYear').value = v.year || '';
-      $('#vehKm').value = v.km || '';
-      $('#vehStatus').value = v.status || 'En service';
-      $('#vehNote').value = v.note || '';
-    };
+        yearSummary.textContent = `Synthèse ${year} · CA ${euro(totalCaYear)} · Dépenses ${euro(totalDepYear)} · Marge ${euro(margeYear)}.`;
 
-    function resetVehicleForm(){
-      state.editingVehCode = null;
-      $('#vehCode').value = '';
-      $('#vehPlate').value = '';
-      $('#vehBrand').value = '';
-      $('#vehModel').value = '';
-      $('#vehType').value = 'Camion benne';
-      $('#vehYear').value = '';
-      $('#vehKm').value = '';
-      $('#vehStatus').value = 'En service';
-      $('#vehNote').value = '';
-    }
+        const monthsRow = arr => Array.from({ length: 12 }, (_, i) => `<td>${euro(arr[i] || 0)}</td>`).join('');
 
-    function saveVehicle(){
-      const code = $('#vehCode').value.trim();
-      const plate = $('#vehPlate').value.trim();
-      const brand = $('#vehBrand').value.trim();
-      const model = $('#vehModel').value.trim();
-      const type = $('#vehType').value;
-      const year = parseInt($('#vehYear').value || 0,10) || null;
-      const km = parseInt($('#vehKm').value || 0,10) || null;
-      const status = $('#vehStatus').value;
-      const note = $('#vehNote').value.trim();
+        if (totalCaYear === 0) {
+          yearCaBody.innerHTML = `<tr><td colspan="14">Aucun chiffre d’affaires sur ${year}.</td></tr>`;
+        } else {
+          yearCaBody.innerHTML = `
+            <tr>
+              <td>CA global</td>
+              ${monthsRow(caMonths)}
+              <td>${euro(caMonths[12] || 0)}</td>
+            </tr>
+          `;
+        }
 
-      if(!code){
-        alert('Le code camion (clé) est obligatoire.');
-        return;
+        yearDepBody.innerHTML = Object.entries(depMap)
+          .sort((a,b) => (b[1][12] || 0) - (a[1][12] || 0))
+          .map(([truck, vals]) => `
+            <tr>
+              <td>${vehicleLabelFromCode(truck)}</td>
+              ${monthsRow(vals)}
+              <td>${euro(vals[12] || 0)}</td>
+            </tr>
+          `).join('') || `<tr><td colspan="14">Aucune dépense sur ${year}.</td></tr>`;
+
+        const marginMonths = caMonths.map((v, i) => v - (depMonthsTotal[i] || 0));
+
+        if (totalCaYear === 0 && totalDepYear === 0) {
+          yearMarginBody.innerHTML = `<tr><td colspan="14">Aucune donnée sur ${year}.</td></tr>`;
+        } else {
+          yearMarginBody.innerHTML = `
+            <tr>
+              <td>Marge CA - dépenses</td>
+              ${monthsRow(marginMonths)}
+              <td>${euro(marginMonths[12] || 0)}</td>
+            </tr>
+          `;
+        }
       }
 
-      const existingIndex = state.vehicles.findIndex(v=>v.code===code);
-      const isEditingSame = state.editingVehCode && state.editingVehCode === code;
+      function openSignatureModal(orderId) {
+        const order = state.orders.find(o => o.id === orderId);
+        if (!order) return;
 
-      if(existingIndex !== -1 && !isEditingSame){
-        alert('Ce code camion existe déjà, merci d’en choisir un autre.');
-        return;
+        state.selectedOrderId = orderId;
+        signatureOrderTitle.textContent = `${order.id} · ${order.client}`;
+        siteManagerName.value = order.siteManagerName || '';
+        deliveryNote.value = order.deliveryNote || '';
+        clearSignaturePad();
+        signatureModal.style.display = 'flex';
       }
 
-      const payload = {code, plate, brand, model, type, year, km, status, note};
-
-      if(isEditingSame || existingIndex !== -1){
-        state.vehicles[existingIndex] = payload;
-      } else {
-        state.vehicles.push(payload);
+      function closeSignatureModal() {
+        signatureModal.style.display = 'none';
+        state.selectedOrderId = null;
       }
 
-      state.editingVehCode = code;
-      renderFleet();
-      renderVehicleExpenses();
-      renderIntegration();
-      renderRecap();
-      renderDriverSelect();
-      fillDriverVehicleSelect();
-      applyYearFilter(false);
-      alert('Véhicule enregistré (en mémoire).');
-    }
-
-    function deleteVehicle(){
-      if(!state.editingVehCode){
-        alert('Sélectionnez d’abord un véhicule dans la liste.');
-        return;
-      }
-      const code = state.editingVehCode;
-      const v = state.vehicles.find(x=>x.code===code);
-      if(!v){
-        alert('Véhicule introuvable.');
-        return;
-      }
-      if(!confirm(`Supprimer le véhicule ${vehicleLabelFromCode(v.code)} ?`)) return;
-
-      const usedByDriver = state.drivers.some(d=>d.camion===code);
-      const usedByExpenses = state.vehicleExpenses.some(e=>e.truck===code);
-      if(usedByDriver || usedByExpenses){
-        if(!confirm('Ce véhicule est lié à des chauffeurs ou des dépenses. Supprimer quand même ?')) return;
+      function clearSignaturePad() {
+        sigCtx.fillStyle = '#ffffff';
+        sigCtx.fillRect(0, 0, signaturePad.width, signaturePad.height);
+        hasSignature = false;
       }
 
-      state.vehicles = state.vehicles.filter(x=>x.code!==code);
-      state.editingVehCode = null;
-      resetVehicleForm();
-      renderFleet();
-      renderVehicleExpenses();
-      renderIntegration();
-      renderRecap();
-      renderDriverSelect();
-      fillDriverVehicleSelect();
-      applyYearFilter(false);
-      alert('Véhicule supprimé (en mémoire).');
-    }
+      function getCanvasPos(e) {
+        const rect = signaturePad.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: (clientX - rect.left) * signaturePad.width / rect.width,
+          y: (clientY - rect.top) * signaturePad.height / rect.height
+        };
+      }
 
-    $('#managerTab').onclick = ()=>setRole('manager');
-    $('#driverTab').onclick = ()=>setRole('driver');
-    $('#loginBtn').onclick = login;
-    $('#resetBtn').onclick = ()=>{
-      $('#errorBox').classList.remove('show');
-      clearPins();
-    };
-    $('#logoutManager').onclick = ()=>{
+      function startSign(e) {
+        drawing = true;
+        hasSignature = true;
+        const pos = getCanvasPos(e);
+        sigCtx.beginPath();
+        sigCtx.moveTo(pos.x, pos.y);
+      }
+
+      function moveSign(e) {
+        if (!drawing) return;
+        e.preventDefault();
+        const pos = getCanvasPos(e);
+        sigCtx.lineTo(pos.x, pos.y);
+        sigCtx.strokeStyle = '#111827';
+        sigCtx.lineWidth = 2.2;
+        sigCtx.lineCap = 'round';
+        sigCtx.lineJoin = 'round';
+        sigCtx.stroke();
+      }
+
+      function endSign() {
+        drawing = false;
+      }
+
+      function confirmDelivery() {
+        const order = state.orders.find(o => o.id === state.selectedOrderId);
+        if (!order) return;
+
+        const siteManager = siteManagerName.value.trim();
+        const note = deliveryNote.value.trim();
+
+        if (!siteManager) {
+          alert('Veuillez renseigner le nom du chef de chantier.');
+          return;
+        }
+
+        if (!hasSignature) {
+          alert('Veuillez faire signer le chef de chantier.');
+          return;
+        }
+
+        order.statut = 'Livrée';
+        order.siteManagerName = siteManager;
+        order.deliveryNote = note;
+        order.deliverySignedAt = new Date().toLocaleString('fr-FR');
+        order.signatureDataUrl = signaturePad.toDataURL('image/png');
+
+        closeSignatureModal();
+        renderDriver();
+        renderOrders();
+        renderManager();
+        renderRecap();
+        applyYearFilter(false);
+
+        alert('Livraison signée et validée.');
+      }
+
+      function renderDriver() {
+        const d = state.drivers.find(x => x.id === state.currentDriver) || state.drivers[0];
+        if (!d) return;
+
+        driverTitle.textContent = `Bonjour ${d.prenom} !`;
+        driverSub.textContent = 'Cliquez sur une mission pour faire signer le chef de chantier à la livraison.';
+
+        const vehLabel = vehicleLabelFromCode(d.camion) || 'Sans camion';
+
+        driverTruckCard.innerHTML = `
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Camion</div>
+          <div style="font-size:16px;font-weight:600;">${vehLabel}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Chauffeur ${d.nom}</div>
+        `;
+
+        const orders = state.orders.filter(x => x.chauffeurId === d.id);
+        const ca = orders.reduce((s, x) => s + Number(x.montant || 0), 0);
+
+        driverStatsCard.innerHTML = `
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Résumé</div>
+          <div style="font-size:14px;font-weight:600;">${orders.length} commandes</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">CA estimé ${euro(ca)}</div>
+        `;
+
+        driverOrdersList.innerHTML = orders.length
+          ? orders.map(o => {
+              const signedInfo = o.deliverySignedAt
+                ? `<div class="signature-preview">Signé par ${o.siteManagerName} · ${o.deliverySignedAt}</div>`
+                : '';
+
+              const content = `
+                <div class="item">
+                  <div class="item-top">
+                    <div>
+                      <strong>${o.id} · ${o.client}</strong>
+                      <small>${o.adresse}</small>
+                    </div>
+                    <span class="badge ${bcls(o.statut)}">${o.statut}</span>
+                  </div>
+                  <small>${o.qte} · ${euro(o.montant)}</small>
+                  ${signedInfo}
+                </div>
+              `;
+
+              if (o.statut === 'Livrée') return content;
+              return `<button class="driver-order-btn" onclick="openSignatureModal('${o.id}')">${content}</button>`;
+            }).join('')
+          : `<div class="item"><strong>Aucune mission pour le moment.</strong></div>`;
+      }
+
+      window.openSignatureModal = openSignatureModal;
+      window.editOrder = editOrder;
+      window.deleteOrder = deleteOrder;
+
+      managerTab.onclick = () => setRole('manager');
+      driverTab.onclick = () => setRole('driver');
+      loginBtn.onclick = login;
+      resetBtn.onclick = () => {
+        errorBox.classList.remove('show');
+        clearPins();
+      };
+
+      logoutManager.onclick = () => {
+        showPage('landingPage');
+        setRole('manager');
+      };
+
+      logoutDriver.onclick = () => {
+        showPage('landingPage');
+        setRole('manager');
+      };
+
+      $$('.nav button').forEach(b => b.onclick = () => switchView(b.dataset.view));
+      toDrivers.onclick = () => switchView('chauffeurs');
+      toOrders.onclick = () => switchView('commandes');
+      toVehicles.onclick = () => switchView('vehicules');
+
+      saveOrderBtn.onclick = addOrder;
+      resetOrder.onclick = resetOrderForm;
+
+      newDriverBtn.onclick = resetDriverForm;
+      saveDriverBtn.onclick = saveDriver;
+      deleteDriverBtn.onclick = deleteDriver;
+
+      addExpenseBtn.onclick = () => switchView('vehicules');
+      saveExpenseBtn.onclick = addVehicleExpense;
+
+      fuelBtn.onclick = validateFuel;
+
+      closeSignatureModal.onclick = closeSignatureModal;
+      clearSignatureBtn.onclick = clearSignaturePad;
+      confirmDeliveryBtn.onclick = confirmDelivery;
+
+      newVehBtn.onclick = resetVehicleForm;
+      saveVehBtn.onclick = saveVehicle;
+      deleteVehBtn.onclick = deleteVehicle;
+
+      signaturePad.addEventListener('mousedown', startSign);
+      signaturePad.addEventListener('mousemove', moveSign);
+      window.addEventListener('mouseup', endSign);
+
+      signaturePad.addEventListener('touchstart', startSign, { passive: false });
+      signaturePad.addEventListener('touchmove', moveSign, { passive: false });
+      window.addEventListener('touchend', endSign);
+
+      applyMonthlyFilter.onclick = () => applyMonthlyFilter(true);
+      applyYearFilter.onclick = () => applyYearFilter(true);
+
+      pins.forEach((p, i) => {
+        p.addEventListener('input', () => {
+          p.value = p.value.replace(/\D/g, '').slice(0, 1);
+          if (p.value && pins[i + 1]) pins[i + 1].focus();
+        });
+
+        p.addEventListener('keydown', e => {
+          if (e.key === 'Backspace' && !p.value && pins[i - 1]) pins[i - 1].focus();
+          if (e.key === 'Enter') login();
+        });
+      });
+
       showPage('landingPage');
       setRole('manager');
-    };
-    $('#logoutDriver').onclick = ()=>{
-      showPage('landingPage');
-      setRole('manager');
-    };
-    $$('.nav button').forEach(b=>b.onclick = ()=>switchView(b.dataset.view));
-    $('#toDrivers').onclick = ()=>switchView('chauffeurs');
-    $('#toOrders').onclick = ()=>switchView('commandes');
-    $('#toVehicles').onclick = ()=>switchView('vehicules');
-    $('#saveOrderBtn').onclick = addOrder;
-    $('#resetOrder').onclick = ()=>{
-      $('#orderClient').value='';
-      $('#orderPhone').value='';
-      $('#orderAddress').value='';
-      $('#orderQty').value='';
-      $('#orderAmount').value='';
-    };
-    $('#newDriverBtn').onclick = resetDriverForm;
-    $('#saveDriverBtn').onclick = saveDriver;
-    $('#deleteDriverBtn').onclick = deleteDriver;
-    $('#addExpenseBtn').onclick = ()=>switchView('vehicules');
-    $('#saveExpenseBtn').onclick = addVehicleExpense;
-    $('#fuelBtn').onclick = validateFuel;
+      fillDriverVehicleSelect();
+      renderManager();
+      renderDrivers();
+      renderFleet();
+      renderOrders();
+      renderRecap();
+      renderVehicleExpenses();
+      renderIntegration();
 
-    window.openSignatureModal = openSignatureModal;
-    $('#closeSignatureModal').onclick = closeSignatureModal;
-    $('#clearSignatureBtn').onclick = clearSignaturePad;
-    $('#confirmDeliveryBtn').onclick = confirmDelivery;
+      expenseDate.value = new Date().toISOString().slice(0,10);
 
-    $('#newVehBtn').onclick = resetVehicleForm;
-    $('#saveVehBtn').onclick = saveVehicle;
-    $('#deleteVehBtn').onclick = deleteVehicle;
-    window.editVehicle = editVehicle;
+      const now = new Date();
+      const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+      if (monthlyMonth) monthlyMonth.value = monthStr;
 
-    signaturePad.addEventListener('mousedown', startSign);
-    signaturePad.addEventListener('mousemove', moveSign);
-    window.addEventListener('mouseup', endSign);
+      renderYearOptions();
+      applyYearFilter(false);
 
-    signaturePad.addEventListener('touchstart', startSign, { passive: false });
-    signaturePad.addEventListener('touchmove', moveSign, { passive: false });
-    window.addEventListener('touchend', endSign);
-
-    $('#applyMonthlyFilter').onclick = ()=>applyMonthlyFilter(true);
-    $('#applyYearFilter').onclick = ()=>applyYearFilter(true);
-
-    pins.forEach((p,i)=>{
-      p.addEventListener('input',()=>{
-        p.value = p.value.replace(/\D/g,'').slice(0,1);
-        if(p.value && pins[i+1]) pins[i+1].focus();
-      });
-      p.addEventListener('keydown',e=>{
-        if(e.key==='Backspace' && !p.value && pins[i-1]) pins[i-1].focus();
-        if(e.key==='Enter') login();
-      });
-    });
-
-    showPage('landingPage');
-    setRole('manager');
-    fillDriverVehicleSelect();
-    renderManager();
-    renderDrivers();
-    renderFleet();
-    renderOrders();
-    renderRecap();
-    renderVehicleExpenses();
-    renderIntegration();
-    $('#expenseDate').value = new Date().toISOString().slice(0,10);
-    const now = new Date();
-    const monthStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-    const monthlyMonthInput = $('#monthlyMonth');
-    if(monthlyMonthInput) monthlyMonthInput.value = monthStr;
-    renderYearOptions();
-    applyYearFilter(false);
-    if(signaturePad && sigCtx) clearSignaturePad();
-  </script>
+      if (signaturePad && sigCtx) clearSignaturePad();
+    </script>
+  </div>
 </body>
 </html>
