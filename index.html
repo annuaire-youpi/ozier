@@ -614,6 +614,30 @@
       font-size:12px;
     }
 
+    /* SYNTHÈSE ANNUELLE */
+    .year-filters{
+      display:flex;
+      gap:10px;
+      align-items:flex-end;
+      margin-top:8px;
+      flex-wrap:wrap;
+    }
+    .year-summary{
+      margin-top:8px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .year-grid{
+      margin-top:8px;
+      display:grid;
+      grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
+      gap:10px;
+    }
+    .year-table-wrap{
+      max-height:220px;
+      overflow:auto;
+    }
+
     @media (max-width: 1100px) {
       .layout { border-radius: 0; margin: 0; }
       .landing-inner { grid-template-columns: 1fr; }
@@ -623,6 +647,7 @@
       .grid-2 { grid-template-columns: 1fr; }
       .kpis { grid-template-columns: repeat(2,minmax(0,1fr)); }
       .monthly-types{grid-template-columns: repeat(2,minmax(0,1fr));}
+      .year-grid{grid-template-columns:1fr;}
     }
   </style>
 </head>
@@ -895,6 +920,60 @@
                 <div class="list" id="recapDrivers"></div>
               </div>
             </div>
+
+            <div class="card" style="margin-top:12px;">
+              <h3>Synthèse annuelle CA / dépenses</h3>
+              <p>Vue annuelle : CA par chantier et dépenses par véhicule, mois par mois.</p>
+
+              <div class="year-filters">
+                <div>
+                  <label class="label">Année</label>
+                  <select id="yearSelect" class="select"></select>
+                </div>
+                <div>
+                  <button class="btn btn-primary" id="applyYearFilter">Afficher l'année</button>
+                </div>
+              </div>
+
+              <div class="year-summary" id="yearSummary">Choisissez une année pour afficher la synthèse.</div>
+
+              <div class="kpis" id="yearKpis" style="margin-top:10px;"></div>
+
+              <div class="year-grid">
+                <div>
+                  <h4 style="font-size:13px;margin-bottom:4px;">Chiffre d'affaires annuel par chantier</h4>
+                  <div class="year-table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Chantier</th>
+                          <th>M01</th><th>M02</th><th>M03</th><th>M04</th><th>M05</th><th>M06</th>
+                          <th>M07</th><th>M08</th><th>M09</th><th>M10</th><th>M11</th><th>M12</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody id="yearCaBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+                <div>
+                  <h4 style="font-size:13px;margin-bottom:4px;">Dépenses annuelles par véhicule</h4>
+                  <div class="year-table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Véhicule</th>
+                          <th>M01</th><th>M02</th><th>M03</th><th>M04</th><th>M05</th><th>M06</th>
+                          <th>M07</th><th>M08</th><th>M09</th><th>M10</th><th>M11</th><th>M12</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody id="yearDepBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
           </section>
 
           <!-- Dépenses véhicules -->
@@ -1126,9 +1205,9 @@
         {id:'pierre', prenom:'Pierre', nom:'Pierre BEAUSEJOUR', telephone:'0696 11 22 33', pin:'3333', camion:'OZ-003', statut:'En attente'}
       ],
       orders: [
-        {id:'CMD-042', client:'SCI des Mangles', adresse:'Zone industrielle, Le Lamentin', qte:'12 t béton B25', montant:1850, statut:'En attente', chauffeurId:'jean'},
-        {id:'CMD-051', client:'BTP Caraïbes', adresse:'Ducos, Champigny', qte:'14 t gravier', montant:2150, statut:'En cours', chauffeurId:'marie'},
-        {id:'CMD-049', client:'SARL Océan', adresse:'Le Robert, Pointe Lynch', qte:'9 t sable', montant:1500, statut:'Livrée', chauffeurId:'marie'}
+        {id:'CMD-042', client:'SCI des Mangles', adresse:'Zone industrielle, Le Lamentin', qte:'12 t béton B25', montant:1850, statut:'En attente', chauffeurId:'jean', date:'2026-04-15'},
+        {id:'CMD-051', client:'BTP Caraïbes', adresse:'Ducos, Champigny', qte:'14 t gravier', montant:2150, statut:'En cours', chauffeurId:'marie', date:'2026-04-18'},
+        {id:'CMD-049', client:'SARL Océan', adresse:'Le Robert, Pointe Lynch', qte:'9 t sable', montant:1500, statut:'Livrée', chauffeurId:'marie', date:'2026-03-22'}
       ],
       vehicleExpenses: [
         {id:'DEP-001', truck:'OZ-001', type:'Carburant', amount:111.80, date:'2026-04-30', source:'Validation chauffeur', label:'Plein Total Lamentin', note:'Jean · 65 L'},
@@ -1228,7 +1307,7 @@
         dashboard:['Dashboard','Vue d’ensemble de l’activité journalière.'],
         commandes:['Commandes','Création et suivi des commandes.'],
         chauffeurs:['Chauffeurs','Préparation du futur CRUD chauffeurs.'],
-        recap:['Récapitulatif','Synthèse journalière par chauffeur.'],
+        recap:['Récapitulatif','Synthèse journalière et annuelle.'],
         vehicules:['Dépenses véhicules','Toutes les charges par camion.'],
         integration:['Intégration','Préparation Google Sheets / Make.']
       };
@@ -1239,7 +1318,7 @@
       if(view==='dashboard') renderManager();
       if(view==='commandes') renderOrders();
       if(view==='chauffeurs') renderDrivers();
-      if(view==='recap') renderRecap();
+      if(view==='recap'){ renderRecap(); renderYearOptions(); applyYearFilter(false); }
       if(view==='vehicules') renderVehicleExpenses();
       if(view==='integration') renderIntegration();
     }
@@ -1325,7 +1404,8 @@
       const chauffeurId = $('#orderDriver').value || null;
       const statut = $('#orderStatus').value || 'En attente';
       const source = $('#orderSource').value || 'WhatsApp';
-      state.orders.push({id,client,adresse,qte, montant, statut, chauffeurId, source});
+      const date = new Date().toISOString().slice(0,10);
+      state.orders.push({id,client,adresse,qte, montant, statut, chauffeurId, source, date});
       $('#orderClient').value = '';
       $('#orderPhone').value = '';
       $('#orderAddress').value = '';
@@ -1333,6 +1413,8 @@
       $('#orderAmount').value = '';
       renderOrders();
       renderManager();
+      renderRecap();
+      applyYearFilter(false);
       alert('Commande ajoutée (en mémoire pour la démo).');
     }
 
@@ -1402,6 +1484,8 @@
       renderDrivers();
       renderDriverSelect();
       renderVehicleExpenses();
+      renderRecap();
+      applyYearFilter(false);
       alert('Chauffeur enregistré (en mémoire).');
     }
 
@@ -1561,6 +1645,8 @@
       $('#expenseLabel').value = '';
       $('#expenseNote').value = '';
       renderVehicleExpenses();
+      renderRecap();
+      applyYearFilter(false);
       alert('Dépense enregistrée (en mémoire).');
     }
 
@@ -1663,6 +1749,7 @@
       renderOrders();
       renderManager();
       renderRecap();
+      applyYearFilter(false);
 
       alert('Livraison signée et validée.');
     }
@@ -1749,6 +1836,7 @@
         `Plein validé : charges transmises pour le camion ${d.camion}.`;
       renderVehicleExpenses();
       renderRecap();
+      applyYearFilter(false);
       alert('Plein validé et ajouté aux dépenses véhicules.');
     }
 
@@ -1820,6 +1908,111 @@
       }).join('');
     }
 
+    function renderYearOptions(){
+      const years = new Set();
+      state.orders.forEach(o=>{
+        if(o.date) years.add(String(o.date).slice(0,4));
+      });
+      state.vehicleExpenses.forEach(e=>{
+        if(e.date) years.add(String(e.date).slice(0,4));
+      });
+      const list = Array.from(years).sort();
+      const nowYear = new Date().getFullYear().toString();
+      const select = $('#yearSelect');
+      if(!list.length){
+        select.innerHTML = `<option value="${nowYear}">${nowYear}</option>`;
+      } else {
+        select.innerHTML = list.map(y=>`<option value="${y}">${y}</option>`).join('');
+      }
+      if(list.includes(nowYear)) select.value = nowYear;
+    }
+
+    function applyYearFilter(showAlert = true){
+      const year = $('#yearSelect').value;
+      const yearSummary = $('#yearSummary');
+      const yearKpis = $('#yearKpis');
+      const caBody = $('#yearCaBody');
+      const depBody = $('#yearDepBody');
+
+      if(!year){
+        yearSummary.textContent = 'Choisissez une année pour afficher la synthèse.';
+        yearKpis.innerHTML = '';
+        caBody.innerHTML = '';
+        depBody.innerHTML = '';
+        if(showAlert) alert('Choisissez une année.');
+        return;
+      }
+
+      // CA par chantier (adresse chantier)
+      const caMap = {};
+      state.orders.forEach(o=>{
+        if(!o.date) return;
+        const d = String(o.date);
+        if(!d.startsWith(year)) return;
+        const month = parseInt(d.slice(5,7),10);
+        const key = o.adresse || 'Chantier inconnu';
+        if(!caMap[key]) caMap[key] = Array(13).fill(0); // 12 mois + total
+        caMap[key][month-1] += o.montant;
+        caMap[key][12] += o.montant;
+      });
+
+      // Dépenses par véhicule
+      const depMap = {};
+      state.vehicleExpenses.forEach(e=>{
+        if(!e.date) return;
+        const d = String(e.date);
+        if(!d.startsWith(year)) return;
+        const month = parseInt(d.slice(5,7),10);
+        const key = e.truck || 'Véhicule';
+        if(!depMap[key]) depMap[key] = Array(13).fill(0);
+        depMap[key][month-1] += e.amount;
+        depMap[key][12] += e.amount;
+      });
+
+      const totalCaYear = Object.values(caMap).reduce((s,arr)=>s+(arr[12]||0),0);
+      const totalDepYear = Object.values(depMap).reduce((s,arr)=>s+(arr[12]||0),0);
+      const margeYear = totalCaYear - totalDepYear;
+
+      yearKpis.innerHTML = [
+        ['CA annuel', euro(totalCaYear)],
+        ['Total dépenses', euro(totalDepYear)],
+        ['Marge estimée', euro(margeYear)],
+        ['Nbre chantiers', Object.keys(caMap).length]
+      ].map(k=>`
+        <div class="kpi">
+          <span>${k[0]}</span>
+          <strong>${k[1]}</strong>
+        </div>
+      `).join('');
+
+      yearSummary.textContent =
+        `Synthèse ${year} : CA ${euro(totalCaYear)} · Dépenses ${euro(totalDepYear)} · Marge ${euro(margeYear)}.`;
+
+      const months = m=>Array.from({length:12},(_,i)=>euro(m[i]||0)).join('</td><td>');
+
+      caBody.innerHTML = Object.entries(caMap).sort((a,b)=>b[1][12]-a[1][12])
+        .map(([chantier,vals])=>`
+          <tr>
+            <td>${chantier}</td>
+            <td>${months(vals)}</td>
+            <td>${euro(vals[12]||0)}</td>
+          </tr>
+        `).join('') || `
+          <tr><td colspan="14">Aucun CA sur ${year}.</td></tr>
+        `;
+
+      depBody.innerHTML = Object.entries(depMap).sort((a,b)=>b[1][12]-a[1][12])
+        .map(([truck,vals])=>`
+          <tr>
+            <td>${truck}</td>
+            <td>${months(vals)}</td>
+            <td>${euro(vals[12]||0)}</td>
+          </tr>
+        `).join('') || `
+          <tr><td colspan="14">Aucune dépense sur ${year}.</td></tr>
+        `;
+    }
+
     // BINDINGS
     $('#managerTab').onclick = ()=>setRole('manager');
     $('#driverTab').onclick = ()=>setRole('driver');
@@ -1868,6 +2061,7 @@
     window.addEventListener('touchend', endSign);
 
     $('#applyMonthlyFilter').onclick = ()=>applyMonthlyFilter(true);
+    $('#applyYearFilter').onclick = ()=>applyYearFilter(true);
 
     pins.forEach((p,i)=>{
       p.addEventListener('input',()=>{
@@ -1894,7 +2088,9 @@
     const monthStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
     const monthlyMonthInput = $('#monthlyMonth');
     if(monthlyMonthInput) monthlyMonthInput.value = monthStr;
-    clearSignaturePad();
+    renderYearOptions();
+    applyYearFilter(false);
+    if(signaturePad && sigCtx) clearSignaturePad();
   </script>
 </body>
 </html>
