@@ -1,215 +1,509 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TransportPro V3 Fullscreen Fix</title>
+  <meta charset="UTF-8">
+  <title>TransportPro · Login simple</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root{
-      --bg:#f6f8f8;--panel:#ffffff;--panel-2:#f8fbfb;--line:#d9e3e1;--line-soft:#ebf0ef;--text:#1a2625;--muted:#6a7b78;
-      --primary:#0d6f73;--primary-2:#16959a;--primary-soft:#dff1f1;--success:#256a48;--success-soft:#e0f1e7;--warn:#b56a1c;--warn-soft:#fff0de;
-      --nav:#102829;--nav-2:#173536;--nav-line:rgba(255,255,255,.08);--nav-text:#eef5f4;--nav-muted:rgba(255,255,255,.62);
-      --radius-xl:22px;--radius-lg:18px;--radius-md:14px;--shadow-sm:0 8px 22px rgba(17,35,34,.05);
-      --sidebar:230px;
+      --bg:#020617;
+      --panel:#020617;
+      --panel2:#0b1220;
+      --line:rgba(148,163,184,.4);
+      --accent:#22c55e;
+      --accent2:#0ea5e9;
+      --text:#e5e7eb;
+      --muted:rgba(148,163,184,.9);
+      --danger:#f97373;
+      --dangerbg:rgba(239,68,68,.12);
     }
-    *{box-sizing:border-box} html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.5}
-    button,input,select,textarea{font:inherit} button{cursor:pointer} .hidden{display:none!important}.page{min-height:100vh}
-    .btn{border:none;border-radius:14px;padding:12px 18px;font-weight:700}.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff}.btn-secondary{background:#fff;border:1px solid var(--line);color:var(--text)}.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.16);color:#fff}
-    .badge{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700}.ok{background:var(--success-soft);color:var(--success)}.wait{background:var(--warn-soft);color:var(--warn)}.info{background:var(--primary-soft);color:var(--primary)}
-
-    .landing{padding:24px;background:radial-gradient(circle at top left,#164a4c 0,#102829 42%,#0c1717 100%);display:grid;place-items:center}
-    .landing-wrap{width:min(1380px,100%);display:grid;grid-template-columns:1.15fr .85fr;gap:24px}.glass{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(14px);border-radius:32px;color:#fff;box-shadow:0 24px 70px rgba(0,0,0,.2)}
-    .hero{padding:38px}.hero h1{font-size:56px;line-height:1.02;margin:22px 0 12px;max-width:10ch}.hero p{max-width:62ch;color:rgba(255,255,255,.76)}.brand{display:flex;align-items:center;gap:14px}.logo{width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,#21aeb2,#0d6f73);display:grid;place-items:center;font-size:24px;font-weight:800}.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6)}
-    .hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:28px}.hero-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:15px}.hero-box strong{display:block;margin-bottom:6px}.hero-box span{font-size:14px;color:rgba(255,255,255,.72)}
-    .auth{padding:28px}.switch{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:rgba(255,255,255,.05);padding:6px;border-radius:999px}.switch button{border:none;border-radius:999px;padding:13px;background:transparent;color:rgba(255,255,255,.7);font-weight:700}.switch button.active{background:#fff;color:#143132}.auth h2{margin:20px 0 8px;font-size:34px}.auth p{color:rgba(255,255,255,.75);margin:0}.panel{display:none}.panel.active{display:block}.field-wrap{margin-top:18px}.field-wrap label{display:block;font-size:14px;font-weight:700;margin-bottom:8px}.field{width:100%;padding:14px 16px;border-radius:15px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff}
-    .pin-row{display:flex;gap:10px;margin:22px 0 14px}.pin{width:58px;height:68px;border-radius:18px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;text-align:center;font-size:30px;font-weight:800}.error{display:none;margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(255,80,80,.18);color:#ffdede}.error.show{display:block}.demo{margin-top:18px;padding:15px 16px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.75);font-size:14px}
-
-    .app{display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr);min-height:100vh;width:100vw;max-width:none}.sidebar{background:linear-gradient(180deg,var(--nav),var(--nav-2));color:var(--nav-text);padding:20px 18px;border-right:1px solid var(--nav-line);min-width:0}.sidebar .logo{width:46px;height:46px}.btitle{font-size:22px;font-weight:800}.bsub{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--nav-muted)}.group-title{margin:22px 10px 10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--nav-muted)}
-    .nav{display:grid;gap:6px}.nav button{display:flex;justify-content:space-between;align-items:center;border:none;background:transparent;color:var(--nav-text);padding:13px 14px;border-radius:14px;text-align:left;font-size:15px}.nav button.active,.nav button:hover{background:rgba(255,255,255,.08)}
-    .side-bottom{margin-top:24px;padding-top:18px;border-top:1px solid var(--nav-line);display:grid;gap:10px}.pill{display:inline-flex;justify-content:center;align-items:center;padding:10px 14px;border-radius:999px;background:#d9ecea;color:#184e4d;font-weight:800;font-size:13px}
-
-    .main{padding:20px 20px 28px;min-width:0;width:100%;max-width:none}.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:22px}.title h1{margin:0;font-size:38px;line-height:1.05}.title p{margin:8px 0 0;color:var(--muted);font-size:16px}.toolbar{display:flex;gap:10px;flex-wrap:wrap}
-    .view{display:none}.view.active{display:block}
-    .kpis{display:grid;grid-template-columns:repeat(4,minmax(260px,1fr));gap:18px;margin-bottom:20px}.kpi{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:var(--shadow-sm);min-width:0}.kpi span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}.kpi strong{display:block;font-size:32px;line-height:1.05;word-break:normal}
-    .grid-2{display:grid;grid-template-columns:minmax(560px,1fr) minmax(620px,1.15fr);gap:20px}.card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:var(--shadow-sm);min-width:0}.card h3{margin:0;font-size:28px;line-height:1.12}.card p{margin:8px 0 0;color:var(--muted)}
-    .list{display:grid;gap:12px;margin-top:16px}.item{background:var(--panel-2);border:1px solid var(--line-soft);border-radius:18px;padding:16px}.item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.item small{display:block;margin-top:7px;color:var(--muted);line-height:1.5}
-    .table-wrap{overflow:auto;margin-top:16px;border:1px solid var(--line-soft);border-radius:18px;background:#fff}.table{width:100%;border-collapse:collapse;table-layout:auto}.table th,.table td{padding:12px 14px;border-bottom:1px solid var(--line-soft);text-align:left;font-size:14px;white-space:normal;vertical-align:top}.table th{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);background:#f8fbfb}.table tr:last-child td{border-bottom:none}
-    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}.form-grid .full{grid-column:1/-1}.label{display:block;font-size:14px;font-weight:700;margin-bottom:8px}.input,.select,textarea{width:100%;padding:14px 16px;border-radius:15px;border:1px solid var(--line);background:var(--panel-2);color:var(--text)}textarea{min-height:110px;resize:vertical}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-    .summary{display:grid;grid-template-columns:repeat(3,minmax(300px,1fr));gap:16px;margin:18px 0 20px}.summary-box{background:var(--panel-2);border:1px solid var(--line-soft);border-radius:18px;padding:15px}.summary-box strong{display:block;font-size:14px;margin-bottom:8px}.summary-box span{font-size:24px;font-weight:800;line-height:1.1}
-
-    .driver-wrap{width:100%;padding:20px 20px 28px;max-width:none}.driver-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:20px}.driver-top h1{margin:0;font-size:38px}.driver-top p{margin:8px 0 0;color:var(--muted)}.driver-grid{display:grid;grid-template-columns:minmax(760px,1.35fr) minmax(420px,.85fr);gap:20px}.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}.mini{background:var(--panel-2);border:1px solid var(--line-soft);border-radius:18px;padding:14px}.mini strong{display:block;margin-bottom:6px}.fuel-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
-
-    
-    .modal{position:fixed;inset:0;background:rgba(8,20,20,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:30}.modal.open{display:flex}
-    .modal-card{width:min(760px,100%);background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow-sm);padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}.modal-head h3{margin:0;font-size:28px}.canvas-wrap{border:1px dashed var(--line);border-radius:18px;background:var(--panel-2);overflow:hidden}.canvas-wrap canvas{display:block;width:100%;height:220px;touch-action:none;cursor:crosshair}.sign-tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-
-    @media (max-width:1200px){.landing-wrap,.hero-grid,.kpis,.grid-2,.form-grid,.summary,.driver-grid,.mini-grid,.fuel-grid{grid-template-columns:1fr}.app{grid-template-columns:1fr;width:100%}.sidebar{position:relative}.main,.driver-wrap{padding:18px}.hero h1{font-size:44px}.title h1,.driver-top h1{font-size:32px}.kpi strong{font-size:28px}}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      min-height:100vh;
+      display:flex;
+      align-items:stretch;
+      justify-content:center;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Inter",sans-serif;
+      color:var(--text);
+      background:radial-gradient(circle at top,#0b1120 0,#020617 55%,#000 100%);
+    }
+    .shell{
+      width:min(1100px,100%);
+      margin:20px;
+      border-radius:32px;
+      border:1px solid rgba(148,163,184,.4);
+      background:radial-gradient(circle at top,#0b1120 0,#020617 70%);
+      box-shadow:0 30px 80px rgba(0,0,0,.7);
+      overflow:hidden;
+    }
+    header{
+      padding:14px 20px;
+      border-bottom:1px solid rgba(148,163,184,.4);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:linear-gradient(90deg,#020617,#020617,#0f766e);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .logo{
+      width:34px;
+      height:34px;
+      border-radius:14px;
+      background:radial-gradient(circle at 0 0,#38bdf8 0,#020617 70%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      letter-spacing:.08em;
+      font-size:15px;
+    }
+    .brand h1{
+      font-size:16px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .brand p{
+      font-size:11px;
+      color:var(--muted);
+    }
+    .tag{
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.5);
+      font-size:11px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+    .page{
+      display:none;
+      min-height:460px;
+      padding:22px 22px 24px;
+    }
+    .page.active{display:flex}
+    .login-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.2fr) minmax(0,.9fr);
+      gap:22px;
+      width:100%;
+    }
+    .hero{
+      border-radius:26px;
+      padding:22px 22px 18px;
+      background:radial-gradient(circle at 0 0,#0f766e 0,#020617 60%);
+      border:1px solid rgba(45,212,191,.5);
+    }
+    .hero h2{
+      font-size:30px;
+      letter-spacing:-.04em;
+      margin-top:14px;
+    }
+    .hero p{
+      font-size:13px;
+      color:var(--muted);
+      margin-top:6px;
+      max-width:40ch;
+    }
+    .hero-row{
+      display:flex;
+      gap:10px;
+      margin-top:18px;
+      flex-wrap:wrap;
+    }
+    .pillbox{
+      flex:1 1 120px;
+      border-radius:18px;
+      padding:10px 12px;
+      background:rgba(15,23,42,.9);
+      border:1px solid rgba(148,163,184,.4);
+      font-size:12px;
+    }
+    .pillbox strong{display:block;margin-bottom:2px}
+    .auth{
+      border-radius:26px;
+      padding:20px 18px 18px;
+      background:linear-gradient(135deg,#020617,#020617,#0b1120);
+      border:1px solid rgba(148,163,184,.5);
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    .switch{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      background:rgba(15,23,42,.9);
+      padding:4px;
+      border-radius:999px;
+    }
+    .switch button{
+      border:none;
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:13px;
+      color:var(--muted);
+      background:transparent;
+      cursor:pointer;
+    }
+    .switch button.active{
+      background:#f9fafb;
+      color:#020617;
+      font-weight:600;
+    }
+    .auth h3{font-size:20px;margin-top:6px}
+    .auth p{font-size:12px;color:var(--muted)}
+    .panel{display:none;margin-top:4px}
+    .panel.active{display:block}
+    .field-wrap{margin-top:10px}
+    .field-wrap label{
+      display:block;
+      font-size:11px;
+      color:var(--muted);
+      margin-bottom:3px;
+    }
+    .field{
+      width:100%;
+      border-radius:14px;
+      border:1px solid rgba(148,163,184,.6);
+      background:#020617;
+      padding:8px 10px;
+      color:var(--text);
+      font-size:13px;
+    }
+    .pin-row{
+      display:flex;
+      gap:8px;
+      margin-top:14px;
+    }
+    .pin{
+      width:42px;
+      height:46px;
+      border-radius:16px;
+      border:1px solid rgba(148,163,184,.7);
+      background:#020617;
+      color:var(--text);
+      font-size:22px;
+      text-align:center;
+    }
+    .actions{
+      display:flex;
+      gap:8px;
+      margin-top:14px;
+    }
+    .btn{
+      border-radius:999px;
+      border:none;
+      padding:8px 14px;
+      font-size:13px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      white-space:nowrap;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,#22c55e,#16a34a);
+      color:#020617;
+      font-weight:600;
+    }
+    .btn-ghost{
+      background:transparent;
+      border:1px solid rgba(148,163,184,.6);
+      color:var(--muted);
+    }
+    .error{
+      margin-top:10px;
+      padding:6px 8px;
+      border-radius:12px;
+      font-size:12px;
+      background:var(--dangerbg);
+      color:var(--danger);
+      display:none;
+    }
+    .error.show{display:block}
+    .hint{
+      font-size:11px;
+      color:var(--muted);
+      margin-top:10px;
+    }
+    .page-simple{
+      flex-direction:column;
+      gap:16px;
+    }
+    .bar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .bar h1{font-size:20px}
+    .bar p{font-size:12px;color:var(--muted)}
+    .chip{
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.5);
+      font-size:11px;
+      color:var(--muted);
+    }
+    .zone{
+      border-radius:22px;
+      padding:16px;
+      background:var(--panel2);
+      border:1px solid var(--line);
+      font-size:13px;
+    }
+    @media(max-width:900px){
+      .login-grid{grid-template-columns:1fr}
+      .shell{margin:0;border-radius:0}
+    }
   </style>
 </head>
 <body>
-  <section class="page landing" id="landingPage">
-    <div class="landing-wrap">
-      <div class="glass hero">
-        <div class="brand"><div class="logo">T</div><div><div style="font-size:22px;font-weight:800">TransportPro</div><div class="eyebrow">version plein écran corrigée</div></div></div>
-        <h1>Une base enfin pensée pour remplir le desktop.</h1>
-        <p>Cette version corrige le problème visible sur votre capture : colonnes trop étroites, typographie cassée verticalement et contenu qui ne profite pas de la largeur disponible.</p>
-        <div class="hero-grid">
-          <div class="hero-box"><strong>Dashboard gérant</strong><span>Largeur desktop exploitée sans cartes comprimées.</span></div>
-          <div class="hero-box"><strong>Page chauffeurs</strong><span>Structure prête pour un vrai CRUD connecté.</span></div>
-          <div class="hero-box"><strong>Suite logique</strong><span>Intégration Google Sheets après validation du rendu.</span></div>
-        </div>
-      </div>
-      <div class="glass auth">
-        <div class="switch"><button class="active" id="managerTab">Connexion gérant</button><button id="driverTab">Connexion chauffeur</button></div>
-        <h2 id="authTitle">Connexion gérant</h2>
-        <p id="authDesc">Accès à la base desktop corrigée.</p>
-        <div class="panel active" id="panelManager"></div>
-        <div class="panel" id="panelDriver"><div class="field-wrap"><label for="driverSelect">Choisir un chauffeur</label><select id="driverSelect" class="field"></select></div></div>
-        <div class="pin-row"><input class="pin" maxlength="1" inputmode="numeric"><input class="pin" maxlength="1" inputmode="numeric"><input class="pin" maxlength="1" inputmode="numeric"><input class="pin" maxlength="1" inputmode="numeric"></div>
-        <div class="actions"><button class="btn btn-primary" id="loginBtn">Entrer</button><button class="btn btn-ghost" id="resetBtn">Effacer</button></div>
-        <div class="error" id="errorBox">Code incorrect</div>
-        <div class="demo">Démo : gérant <strong>1234</strong> · Jean <strong>1111</strong> · Marie <strong>2222</strong> · Pierre <strong>3333</strong></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="page hidden" id="managerPage">
-    <div class="app">
-      <aside class="sidebar">
-        <div class="brand"><div class="logo">T</div><div><div class="btitle">TransportPro</div><div class="bsub">espace gérant</div></div></div>
-        <div class="group-title">Navigation</div>
-        <div class="nav">
-          <button class="active" data-view="dashboard"><span>Dashboard</span><span>›</span></button>
-          <button data-view="commandes"><span>Commandes</span><span>›</span></button>
-          <button data-view="chauffeurs"><span>Chauffeurs</span><span>›</span></button>
-          <button data-view="recap"><span>Récapitulatif</span><span>›</span></button>
-          <button data-view="integration"><span>Intégration</span><span>›</span></button>
-        </div>
-        <div class="side-bottom"><div class="pill">PIN gérant validé</div><button class="btn btn-ghost" id="logoutManager">Retour accueil</button></div>
-      </aside>
-      <main class="main">
-        <div class="topbar"><div class="title"><h1 id="mainTitle">Dashboard</h1><p id="mainDesc">Vue d’ensemble de l’activité journalière.</p></div><div class="toolbar"><button class="btn btn-secondary" id="toDrivers">Voir les chauffeurs</button><button class="btn btn-primary" id="toOrders">Nouvelle commande</button></div></div>
-
-        <section class="view active" id="view-dashboard">
-          <div class="kpis" id="managerKpis"></div>
-          <div class="grid-2">
-            <div class="card"><h3>Commandes récentes</h3><p>Les derniers dossiers et leur état d’avancement.</p><div class="list" id="recentOrders"></div></div>
-            <div class="card"><h3>Équipe du jour</h3><p>Vue plus lisible des chauffeurs actifs et des affectations.</p><div class="list" id="teamList"></div></div>
-          </div>
-        </section>
-
-        <section class="view" id="view-commandes">
-          <div class="grid-2">
-            <div class="card"><h3>Créer une commande</h3><p>Cette structure servira ensuite à écrire réellement dans Google Sheets.</p>
-              <div class="form-grid">
-                <div><label class="label">Client</label><input id="orderClient" class="input" placeholder="Entreprise BTP"></div>
-                <div><label class="label">Téléphone</label><input id="orderPhone" class="input" placeholder="0696 XX XX XX"></div>
-                <div class="full"><label class="label">Adresse chantier</label><input id="orderAddress" class="input" placeholder="Zone industrielle"></div>
-                <div><label class="label">Quantité</label><input id="orderQty" class="input" placeholder="12 tonnes"></div>
-                <div><label class="label">Montant TTC</label><input id="orderAmount" class="input" placeholder="1850"></div>
-                <div class="full"><label class="label">Chauffeur</label><select id="orderDriver" class="select"></select></div>
-              </div>
-              <div class="actions"><button class="btn btn-primary" id="saveOrderBtn">Créer la commande</button></div>
-            </div>
-            <div class="card"><h3>Registre des commandes</h3><p>Colonnes normales, sans écrasement vertical du texte.</p><div class="table-wrap"><table class="table"><thead><tr><th>Réf.</th><th>Client</th><th>Adresse</th><th>Quantité</th><th>Montant</th><th>Statut</th><th>Chauffeur</th></tr></thead><tbody id="ordersTable"></tbody></table></div></div>
-          </div>
-        </section>
-
-        <section class="view" id="view-chauffeurs">
-          <div class="grid-2">
-            <div class="card"><h3>Base chauffeurs</h3><p>Zone préparée pour le vrai CRUD chauffeurs avec persistance Google Sheets.</p><div class="actions" style="margin-top:12px"><select id="driverSelectEdit" class="select" style="min-width:280px"></select><button class="btn btn-secondary" id="loadDriverBtn">Charger</button><button class="btn btn-secondary" id="newDriverBtn">Nouveau</button><button class="btn btn-secondary" id="deleteDriverBtn">Supprimer</button></div><p id="driverEditorState" style="color:var(--muted);margin-top:12px">Mode création.</p>
-              <div class="form-grid">
-                <div><label class="label">Nom complet</label><input id="driverName" class="input" placeholder="Jean MARTINEAU"></div>
-                <div><label class="label">Prénom</label><input id="driverFirst" class="input" placeholder="Jean"></div>
-                <div><label class="label">Téléphone</label><input id="driverPhone" class="input" placeholder="0696 12 34 56"></div>
-                <div><label class="label">Camion</label><input id="driverTruck" class="input" placeholder="BEL-004"></div>
-                <div><label class="label">PIN</label><input id="driverPin" class="input" placeholder="4444"></div>
-                <div><label class="label">Statut</label><select id="driverStatus" class="select"><option>Actif</option><option>En attente</option></select></div>
-              </div>
-              <div class="actions"><button class="btn btn-primary" id="saveDriverBtn">Enregistrer le chauffeur</button></div>
-            </div>
-            <div class="card"><h3>Équipe actuelle</h3><p>Cartes plus équilibrées et lisibles sur desktop.</p><div class="list" id="driversList"></div></div>
-          </div>
-        </section>
-
-        <section class="view" id="view-recap">
-          <div class="card"><h3>Récapitulatif journalier</h3><p>Lecture synthétique des chiffres du jour.</p><div class="summary" id="summaryBoxes"></div><div class="table-wrap"><table class="table"><thead><tr><th>Chauffeur</th><th>Camion</th><th>Missions</th><th>Livrées</th><th>CA</th><th>Carburant</th></tr></thead><tbody id="recapTable"></tbody></table></div></div>
-        </section>
-
-        <section class="view" id="view-integration">
-          <div class="grid-2">
-            <div class="card"><h3>Scénarios Make</h3><div class="list"><div class="item"><strong>Commande entrante</strong><small>Webhook → feuille Commandes → notification gérant.</small></div><div class="item"><strong>Attribution chauffeur</strong><small>Mise à jour chauffeur → notification WhatsApp.</small></div><div class="item"><strong>Validation livraison</strong><small>Preuve → feuille Livraisons → alerte gérant.</small></div><div class="item"><strong>Validation carburant</strong><small>Formulaire → feuille Carburant → recalcul charges.</small></div></div></div>
-            <div class="card"><h3>Structure Google Sheets</h3><div class="list"><div class="item"><strong>Chauffeurs</strong><small>chauffeur_id, nom, prénom, téléphone, PIN, camion, statut.</small></div><div class="item"><strong>Commandes</strong><small>commande_id, client, adresse, quantité, montant, statut, chauffeur_id.</small></div><div class="item"><strong>Livraisons</strong><small>commande_id, chauffeur_id, signataire, heure, statut.</small></div><div class="item"><strong>Carburant</strong><small>chauffeur_id, date, station, km, litres, montant.</small></div></div></div>
-          </div>
-        </section>
-      </main>
-    </div>
-  </section>
-
-  <section class="page hidden" id="driverPage">
-    <div class="driver-wrap">
-      <div class="driver-top"><div><h1 id="driverTitle">Bonjour Jean</h1><p id="driverDesc">Dashboard chauffeur avec proportions desktop corrigées.</p></div><div class="toolbar"><span class="badge info" id="truckBadge">BEL-001</span><button class="btn btn-secondary" id="logoutDriver">Retour accueil</button></div></div>
-      <div class="kpis" id="driverKpis"></div>
-      <div class="driver-grid">
-        <div class="card"><h3>Mes missions</h3><p>Vue claire des tournées attribuées.</p><div class="list" id="missionsList"></div></div>
-        <div class="card"><h3>Informations chauffeur</h3><p>Zone prête à être connectée aux vraies données.</p><div class="mini-grid"><div class="mini"><strong>Camion</strong><span id="infoTruck"></span></div><div class="mini"><strong>Téléphone</strong><span id="infoPhone"></span></div><div class="mini"><strong>Statut</strong><span id="infoStatus"></span></div><div class="mini"><strong>PIN</strong><span id="infoPin"></span></div></div><h3 style="margin-top:22px">Validation carburant</h3><p style="color:var(--muted)">Prototype avant branchement Apps Script.</p><div class="fuel-grid"><input class="input" id="fuelStation" value="Total Lamentin"><input class="input" id="fuelKm" value="128450"><input class="input" id="fuelLiters" value="65"><input class="input" id="fuelAmount" value="111.80"></div><div class="actions"><button class="btn btn-primary" id="fuelBtn">Valider le plein</button></div><p style="color:var(--muted)" id="fuelFeedback">Aucune validation envoyée.</p></div>
-      </div>
-    </div>
-  </section>
-
-  
-  <div class="modal" id="signModal">
-    <div class="modal-card">
-      <div class="modal-head">
+  <div class="shell">
+    <header>
+      <div class="brand">
+        <div class="logo">T</div>
         <div>
-          <h3>Validation de livraison</h3>
-          <p id="signMissionText" style="margin:8px 0 0;color:var(--muted)">Mission sélectionnée.</p>
+          <h1>TransportPro</h1>
+          <p>Démo connexion PIN</p>
         </div>
-        <button class="btn btn-secondary" id="closeSignModal">Fermer</button>
       </div>
-      <div class="form-grid" style="margin-top:0">
-        <div><label class="label">Nom du chef de chantier</label><input id="signatoryName" class="input" placeholder="Nom et prénom"></div>
-        <div><label class="label">Fonction</label><input id="signatoryRole" class="input" placeholder="Chef de chantier"></div>
+      <div class="tag">OZIER · PIN 1234 / 1111 / 2222 / 3333</div>
+    </header>
+
+    <!-- PAGE LOGIN -->
+    <section class="page active" id="page-login">
+      <div class="login-grid">
+        <div class="hero">
+          <div class="brand">
+            <div class="logo">T</div>
+            <div>
+              <h1 style="font-size:18px;letter-spacing:.14em;text-transform:uppercase;">TransportPro</h1>
+              <p>Base desktop de démo</p>
+            </div>
+          </div>
+          <h2>Connexion OZIER par PIN.</h2>
+          <p>Simplement pour la démonstration : un PIN gérant et trois PIN chauffeurs, avec un écran différent après connexion.</p>
+          <div class="hero-row">
+            <div class="pillbox">
+              <strong>PIN gérant</strong>
+              1234 · ouvre le dashboard gérant.
+            </div>
+            <div class="pillbox">
+              <strong>PIN chauffeurs</strong>
+              Jean 1111 · Marie 2222 · Pierre 3333.
+            </div>
+          </div>
+        </div>
+
+        <div class="auth">
+          <div class="switch">
+            <button id="tab-manager" class="active">Connexion gérant</button>
+            <button id="tab-driver">Connexion chauffeur</button>
+          </div>
+          <h3 id="auth-title">Connexion gérant</h3>
+          <p id="auth-desc">Entrez le PIN 1234 pour accéder au dashboard.</p>
+
+          <div class="panel active" id="panel-manager"></div>
+
+          <div class="panel" id="panel-driver">
+            <div class="field-wrap">
+              <label for="driverSelect">Chauffeur</label>
+              <select id="driverSelect" class="field">
+                <option value="jean">Jean MARTINEAU · OZ-001</option>
+                <option value="marie">Marie CELESTE · OZ-002</option>
+                <option value="pierre">Pierre BEAUSEJOUR · OZ-003</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="pin-row">
+            <input class="pin" maxlength="1" inputmode="numeric">
+            <input class="pin" maxlength="1" inputmode="numeric">
+            <input class="pin" maxlength="1" inputmode="numeric">
+            <input class="pin" maxlength="1" inputmode="numeric">
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" id="btn-login">Entrer</button>
+            <button class="btn btn-ghost" id="btn-reset">Effacer</button>
+          </div>
+
+          <div class="error" id="error-box">Code incorrect.</div>
+          <div class="hint">
+            Démo rapide : gérant <strong>1234</strong> · Jean <strong>1111</strong> · Marie <strong>2222</strong> · Pierre <strong>3333</strong>.
+          </div>
+        </div>
       </div>
-      <div style="margin-top:14px"><label class="label">Signature</label><div class="canvas-wrap"><canvas id="signaturePad" width="700" height="220"></canvas></div></div>
-      <div class="sign-tools">
-        <button class="btn btn-secondary" id="clearSignatureBtn">Effacer la signature</button>
-        <button class="btn btn-primary" id="confirmSignatureBtn">Valider la livraison</button>
+    </section>
+
+    <!-- PAGE MANAGER -->
+    <section class="page page-simple" id="page-manager">
+      <div class="bar">
+        <div>
+          <h1>Dashboard gérant</h1>
+          <p>Vous êtes connecté en tant que gérant (PIN 1234).</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="chip">Profil : gérant</div>
+          <button class="btn btn-ghost" id="logout-manager">Retour à l’accueil</button>
+        </div>
       </div>
-      <p id="signatureFeedback" style="margin:14px 0 0;color:var(--muted)">Le chauffeur fait signer le chef de chantier puis valide la livraison.</p>
-    </div>
+      <div class="zone">
+        <p>Cette page est volontairement simplifiée pour prouver que la connexion fonctionne.</p>
+        <ul style="font-size:13px;color:var(--muted);margin-top:8px;padding-left:18px;line-height:1.5;">
+          <li>Si vous voyez cette page après avoir tapé 1234, la logique de login fonctionne.</li>
+          <li>Ensuite on pourra remettre le vrai dashboard complet OZIER.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- PAGE DRIVER -->
+    <section class="page page-simple" id="page-driver">
+      <div class="bar">
+        <div>
+          <h1 id="driver-title">Espace chauffeur</h1>
+          <p id="driver-sub">Vous êtes connecté en tant que chauffeur.</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="chip" id="driver-chip">Profil : chauffeur</div>
+          <button class="btn btn-ghost" id="logout-driver">Retour à l’accueil</button>
+        </div>
+      </div>
+      <div class="zone" id="driver-zone">
+        <p>Cette page confirme simplement la connexion chauffeur.</p>
+        <p style="font-size:13px;color:var(--muted);margin-top:6px;">
+          On pourra ensuite y remettre les missions du jour, la validation du plein, etc.
+        </p>
+      </div>
+    </section>
   </div>
 
-
   <script>
-    const state={role:'manager',currentDriver:null,editingDriverId:null,activeSignOrderId:null,drivers:[{id:'jean',prenom:'Jean',nom:'Jean MARTINEAU',telephone:'0696 12 34 56',pin:'1111',camion:'BEL-001',statut:'Actif'},{id:'marie',prenom:'Marie',nom:'Marie CELESTE',telephone:'0696 56 78 90',pin:'2222',camion:'BEL-002',statut:'Actif'},{id:'pierre',prenom:'Pierre',nom:'Pierre BEAUSEJOUR',telephone:'0696 11 22 33',pin:'3333',camion:'BEL-003',statut:'En attente'}],orders:[{id:'CMD-042',client:'SCI des Mangles',adresse:'Zone industrielle, Le Lamentin',qte:'12 tonnes béton B25',montant:1850,statut:'En attente',chauffeurId:'jean'},{id:'CMD-039',client:'Maçonnerie CARIB',adresse:'Route de la Pointe, Fort-de-France',qte:'8 tonnes granulat',montant:1400,statut:'Livrée',chauffeurId:'jean'},{id:'CMD-038',client:'Habitat Martinique',adresse:'Sainte-Marie, route nationale',qte:'10 tonnes sable',montant:1700,statut:'Livrée',chauffeurId:'jean'},{id:'CMD-051',client:'BTP Caraïbes',adresse:'Ducos, zone de Champigny',qte:'14 tonnes gravier',montant:2150,statut:'En cours',chauffeurId:'marie'},{id:'CMD-049',client:'SARL Océan',adresse:'Le Robert, Pointe Lynch',qte:'9 tonnes sable',montant:1500,statut:'Livrée',chauffeurId:'marie'},{id:'CMD-061',client:'Rénov Plus',adresse:'Trinité, quartier Galion',qte:'11 tonnes béton',montant:1980,statut:'En attente',chauffeurId:'pierre'}],fuelLogs:[{chauffeurId:'jean',montant:111.8},{chauffeurId:'marie',montant:99.76}]};
-    const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)]; const pins=$$('.pin'); const meta={dashboard:['Dashboard','Vue d’ensemble de l’activité journalière.'],commandes:['Commandes','Création et suivi des commandes.'],chauffeurs:['Chauffeurs','Préparation du futur vrai CRUD chauffeurs.'],recap:['Récapitulatif','Synthèse journalière par chauffeur.'],integration:['Intégration','Préparation Google Sheets / Make / Apps Script.']};
-    const euro=v=>new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(Number(v)||0); const dname=id=>(state.drivers.find(x=>x.id===id)||{}).nom||'—'; const bcls=s=>s==='Livrée'?'ok':s==='En cours'?'info':'wait';
-    function show(id){['landingPage','managerPage','driverPage'].forEach(x=>$('#'+x).classList.add('hidden')); $('#'+id).classList.remove('hidden')} function clearPins(){pins.forEach(p=>p.value='');pins[0].focus()} function pin(){return pins.map(p=>p.value).join('')}
-    function setRole(role){state.role=role; $('#managerTab').classList.toggle('active',role==='manager'); $('#driverTab').classList.toggle('active',role==='driver'); $('#panelManager').classList.toggle('active',role==='manager'); $('#panelDriver').classList.toggle('active',role==='driver'); $('#authTitle').textContent=role==='manager'?'Connexion gérant':'Connexion chauffeur'; $('#authDesc').textContent=role==='manager'?'Accès à la base desktop corrigée.':'Choisissez un chauffeur puis entrez son PIN.'; $('#errorBox').classList.remove('show'); renderDriverSelect(); clearPins()}
-    function renderDriverSelect(){ $('#driverSelect').innerHTML=state.drivers.map(d=>`<option value="${d.id}">${d.nom} · ${d.camion}</option>`).join(''); $('#orderDriver').innerHTML='<option value="">-- Non attribué --</option>'+state.drivers.map(d=>`<option value="${d.id}">${d.nom}</option>`).join('') }
-    function login(){ const p=pin(); $('#errorBox').classList.remove('show'); if(p.length!==4){$('#errorBox').textContent='Veuillez saisir les 4 chiffres.';$('#errorBox').classList.add('show');return} if(state.role==='manager'){ if(p==='1234'){renderManager(); show('managerPage'); switchView('dashboard'); return; } } else { const d=state.drivers.find(x=>x.id===$('#driverSelect').value); if(d&&d.pin===p){state.currentDriver=d.id; renderDriver(); show('driverPage'); return;} } $('#errorBox').textContent='Code incorrect.'; $('#errorBox').classList.add('show'); clearPins() }
-    function switchView(v){$$('.view').forEach(x=>x.classList.remove('active')); $('#view-'+v).classList.add('active'); $$('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===v)); $('#mainTitle').textContent=meta[v][0]; $('#mainDesc').textContent=meta[v][1]}
-    function renderManager(){ const ca=state.orders.reduce((s,o)=>s+o.montant,0), liv=state.orders.filter(o=>o.statut==='Livrée').length, ongoing=state.orders.filter(o=>o.statut!=='Livrée').length, fuel=state.fuelLogs.reduce((s,f)=>s+f.montant,0); $('#managerKpis').innerHTML=[[ 'CA du jour', euro(ca) ],[ 'Livraisons', liv ],[ 'Missions en cours', ongoing ],[ 'Carburant', euro(fuel) ]].map(k=>`<div class="kpi"><span>${k[0]}</span><strong>${k[1]}</strong></div>`).join(''); $('#recentOrders').innerHTML=state.orders.slice(0,4).map(o=>`<div class="item"><div class="item-top"><div><strong>${o.id} · ${o.client}</strong><small>${o.adresse}</small></div><span class="badge ${bcls(o.statut)}">${o.statut}</span></div><small>${o.qte} · ${dname(o.chauffeurId)} · ${euro(o.montant)}</small></div>`).join(''); $('#teamList').innerHTML=state.drivers.map(d=>`<div class="item"><div class="item-top"><div><strong>${d.nom}</strong><small>${d.telephone} · ${d.camion}</small></div><span class="badge ${d.statut==='Actif'?'ok':'wait'}">${d.statut}</span></div><small>${state.orders.filter(o=>o.chauffeurId===d.id).length} mission(s) affectée(s)</small></div>`).join(''); $('#ordersTable').innerHTML=state.orders.map(o=>`<tr><td><strong>${o.id}</strong></td><td>${o.client}</td><td>${o.adresse}</td><td>${o.qte}</td><td>${euro(o.montant)}</td><td><span class="badge ${bcls(o.statut)}">${o.statut}</span></td><td>${dname(o.chauffeurId)}</td></tr>`).join(''); $('#driversList').innerHTML=state.drivers.map(d=>`<div class="item"><div class="item-top"><div><strong>${d.nom}</strong><small>${d.telephone} · ${d.camion} · PIN ${d.pin}</small></div><span class="badge ${d.statut==='Actif'?'ok':'wait'}">${d.statut}</span></div><small>${state.orders.filter(o=>o.chauffeurId===d.id).length} mission(s) dans la base.</small></div>`).join(''); $('#summaryBoxes').innerHTML=[[ 'CA prévisionnel', euro(ca+1800) ],[ 'CA réalisé', euro(ca) ],[ 'Charges carburant', euro(fuel) ],[ 'Livraisons signées', liv ],[ 'Chauffeurs actifs', state.drivers.filter(d=>d.statut==='Actif').length ],[ 'Marge brute estimée', euro(ca-fuel) ]].map(x=>`<div class="summary-box"><strong>${x[0]}</strong><span>${x[1]}</span></div>`).join(''); $('#recapTable').innerHTML=state.drivers.map(d=>{const ord=state.orders.filter(o=>o.chauffeurId===d.id),done=ord.filter(o=>o.statut==='Livrée').length,rev=ord.reduce((s,o)=>s+o.montant,0),f=state.fuelLogs.find(x=>x.chauffeurId===d.id); return `<tr><td>${d.nom}</td><td>${d.camion}</td><td>${ord.length}</td><td>${done}</td><td>${euro(rev)}</td><td>${f?euro(f.montant):'—'}</td></tr>`}).join(''); renderDriverSelect() }
-    function openSignModal(orderId){ state.activeSignOrderId=orderId; const order=state.orders.find(o=>o.id===orderId); $('#signMissionText').textContent=order.id+' · '+order.client+' · '+order.adresse; $('#signatoryName').value=''; $('#signatoryRole').value='Chef de chantier'; $('#signatureFeedback').textContent='Le chauffeur fait signer le chef de chantier puis valide la livraison.'; clearPad(); $('#signModal').classList.add('open') }
-    function closeSignModal(){ $('#signModal').classList.remove('open'); state.activeSignOrderId=null }
-    function renderDriver(){ const d=state.drivers.find(x=>x.id===state.currentDriver), missions=state.orders.filter(o=>o.chauffeurId===d.id), done=missions.filter(m=>m.statut==='Livrée').length, rev=missions.reduce((s,m)=>s+m.montant,0), fuel=state.fuelLogs.find(f=>f.chauffeurId===d.id); $('#driverTitle').textContent='Bonjour '+d.prenom; $('#driverDesc').textContent=d.nom+' · dashboard chauffeur avec proportions desktop corrigées.'; $('#truckBadge').textContent=d.camion; $('#infoTruck').textContent=d.camion; $('#infoPhone').textContent=d.telephone; $('#infoStatus').textContent=d.statut; $('#infoPin').textContent=d.pin; $('#driverKpis').innerHTML=[[ 'Missions', missions.length ],[ 'Livrées', done ],[ 'CA', euro(rev) ],[ 'Carburant', fuel?'Validé':'À faire' ]].map(k=>`<div class="kpi"><span>${k[0]}</span><strong>${k[1]}</strong></div>`).join(''); $('#missionsList').innerHTML=missions.map(m=>`<div class="item"><div class="item-top"><div><strong>${m.id} · ${m.client}</strong><small>${m.adresse}</small></div><span class="badge ${bcls(m.statut)}">${m.statut}</span></div><small>${m.qte} · ${euro(m.montant)}</small>${m.statut!=='Livrée' ? `<div class="actions"><button class="btn btn-primary sign-btn" data-id="${m.id}">Faire signer et valider</button></div>` : `<small>Signée par ${m.signataire||'Chef de chantier'}${m.signatureTime ? ' · '+m.signatureTime : ''}</small>`}</div>`).join(''); $$('.sign-btn').forEach(btn=>btn.onclick=()=>openSignModal(btn.dataset.id)); $('#fuelFeedback').textContent='Aucune validation envoyée.' }
-    function addOrder(){ const client=$('#orderClient').value.trim(); if(!client){alert('Client obligatoire');return} const id='CMD-'+String(Math.max(...state.orders.map(o=>+o.id.split('-')[1]))+1).padStart(3,'0'); state.orders.unshift({id,client,adresse:$('#orderAddress').value.trim(),qte:$('#orderQty').value.trim(),montant:+($('#orderAmount').value||0),statut:$('#orderDriver').value?'En attente':'Nouveau',chauffeurId:$('#orderDriver').value||''}); ['#orderClient','#orderPhone','#orderAddress','#orderQty','#orderAmount'].forEach(s=>$(s).value=''); $('#orderDriver').value=''; renderManager(); switchView('commandes') }
-    function fillDriverEditor(){ const select=$('#driverSelectEdit'); if(!select) return; select.innerHTML='<option value="">-- Sélectionner un chauffeur --</option>'+state.drivers.map(d=>`<option value="${d.id}">${d.nom} · ${d.camion}</option>`).join('') }
-    function resetDriverForm(){ state.editingDriverId=null; ['#driverName','#driverFirst','#driverPhone','#driverTruck','#driverPin'].forEach(s=>$(s).value=''); $('#driverStatus').value='Actif'; $('#driverEditorState').textContent='Mode création.'; const sel=$('#driverSelectEdit'); if(sel) sel.value=''; }
-    function loadDriver(){ const id=$('#driverSelectEdit').value; const d=state.drivers.find(x=>x.id===id); if(!d){alert('Sélectionnez un chauffeur.'); return} state.editingDriverId=id; $('#driverName').value=d.nom; $('#driverFirst').value=d.prenom; $('#driverPhone').value=d.telephone; $('#driverTruck').value=d.camion; $('#driverPin').value=d.pin; $('#driverStatus').value=d.statut; $('#driverEditorState').textContent='Mode modification : '+d.nom; }
-    function saveDriver(){ const nom=$('#driverName').value.trim(), prenom=$('#driverFirst').value.trim(); if(!nom||!prenom){alert('Nom et prénom obligatoires');return} if(state.editingDriverId){ const d=state.drivers.find(x=>x.id===state.editingDriverId); d.nom=nom; d.prenom=prenom; d.telephone=$('#driverPhone').value.trim(); d.camion=$('#driverTruck').value.trim(); d.pin=$('#driverPin').value.trim(); d.statut=$('#driverStatus').value; } else { const id=prenom.toLowerCase()+'-'+(state.drivers.length+1); state.drivers.push({id,nom,prenom,telephone:$('#driverPhone').value.trim(),camion:$('#driverTruck').value.trim(),pin:$('#driverPin').value.trim(),statut:$('#driverStatus').value}); }
-      resetDriverForm(); renderManager(); switchView('chauffeurs'); setRole(state.role); fillDriverEditor(); }
-    function deleteDriver(){ const id=$('#driverSelectEdit').value || state.editingDriverId; if(!id){alert('Sélectionnez un chauffeur à supprimer.'); return} const d=state.drivers.find(x=>x.id===id); if(!confirm('Supprimer '+d.nom+' ?')) return; state.drivers = state.drivers.filter(x=>x.id!==id); state.orders = state.orders.map(o=>o.chauffeurId===id ? {...o, chauffeurId:''} : o); resetDriverForm(); renderManager(); switchView('chauffeurs'); setRole(state.role); fillDriverEditor(); }
-    const canvas = document.getElementById('signaturePad'); const ctx = canvas.getContext('2d'); let drawing=false; let hasSignature=false;
-    function pointerPos(e){ const r=canvas.getBoundingClientRect(); const p=e.touches?e.touches[0]:e; return {x:(p.clientX-r.left)*(canvas.width/r.width), y:(p.clientY-r.top)*(canvas.height/r.height)} }
-    function startDraw(e){ drawing=true; hasSignature=true; const p=pointerPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault&&e.preventDefault() }
-    function draw(e){ if(!drawing) return; const p=pointerPos(e); ctx.lineTo(p.x,p.y); ctx.strokeStyle='#173536'; ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.stroke(); e.preventDefault&&e.preventDefault() }
-    function endDraw(){ drawing=false }
-    function clearPad(){ ctx.clearRect(0,0,canvas.width,canvas.height); hasSignature=false }
-    function confirmSignature(){ const name=$('#signatoryName').value.trim(); if(!state.activeSignOrderId){ return } if(!name){ alert('Indiquez le nom du chef de chantier.'); return } if(!hasSignature){ alert('Veuillez faire signer dans la zone prévue.'); return } const order=state.orders.find(o=>o.id===state.activeSignOrderId); order.statut='Livrée'; order.signataire=name; order.signataireRole=$('#signatoryRole').value.trim(); order.signatureData=canvas.toDataURL('image/png'); const now=new Date(); order.signatureTime=now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); $('#signatureFeedback').textContent='Livraison validée par '+name+'.'; renderManager(); renderDriver(); setTimeout(()=>closeSignModal(),500) }
-    canvas.addEventListener('mousedown',startDraw); canvas.addEventListener('mousemove',draw); window.addEventListener('mouseup',endDraw); canvas.addEventListener('touchstart',startDraw,{passive:false}); canvas.addEventListener('touchmove',draw,{passive:false}); window.addEventListener('touchend',endDraw); $('#clearSignatureBtn').onclick=clearPad; $('#confirmSignatureBtn').onclick=confirmSignature; $('#closeSignModal').onclick=closeSignModal;
-    $('#managerTab').onclick=()=>setRole('manager'); $('#driverTab').onclick=()=>setRole('driver'); $('#loadDriverBtn').onclick=loadDriver; $('#newDriverBtn').onclick=resetDriverForm; $('#deleteDriverBtn').onclick=deleteDriver; $('#loginBtn').onclick=login; $('#resetBtn').onclick=()=>{$('#errorBox').classList.remove('show'); clearPins()}; $$('.nav button').forEach(b=>b.onclick=()=>switchView(b.dataset.view)); $('#logoutManager').onclick=()=>{show('landingPage'); setRole('manager')}; $('#logoutDriver').onclick=()=>{show('landingPage'); setRole('driver')}; $('#toDrivers').onclick=()=>switchView('chauffeurs'); $('#toOrders').onclick=()=>switchView('commandes'); $('#saveOrderBtn').onclick=addOrder; $('#saveDriverBtn').onclick=saveDriver; $('#fuelBtn').onclick=()=>$('#fuelFeedback').textContent='Validation carburant simulée : cette action alimentera ensuite Google Sheets et Make.'; pins.forEach((p,i)=>{p.addEventListener('input',()=>{p.value=p.value.replace(/\D/g,'').slice(0,1); if(p.value&&pins[i+1]) pins[i+1].focus()}); p.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!p.value&&pins[i-1]) pins[i-1].focus(); if(e.key==='Enter') login()})}); setRole('manager'); renderManager(); fillDriverEditor(); resetDriverForm(); show('landingPage');
+    const pins = Array.from(document.querySelectorAll('.pin'));
+    const $ = s => document.querySelector(s);
+
+    let role = 'manager';        // 'manager' ou 'driver'
+    let currentDriver = 'jean';  // id chauffeur
+
+    function setRole(newRole){
+      role = newRole;
+      $('#tab-manager').classList.toggle('active', role==='manager');
+      $('#tab-driver').classList.toggle('active', role==='driver');
+      $('#panel-manager').classList.toggle('active', role==='manager');
+      $('#panel-driver').classList.toggle('active', role==='driver');
+      $('#auth-title').textContent = role==='manager' ? 'Connexion gérant' : 'Connexion chauffeur';
+      $('#auth-desc').textContent = role==='manager'
+        ? 'Entrez le PIN 1234 pour accéder au dashboard.'
+        : 'Choisissez le chauffeur puis entrez son PIN (1111 / 2222 / 3333).';
+      hideError();
+      resetPins();
+    }
+
+    function showPage(id){
+      ['page-login','page-manager','page-driver'].forEach(pid=>{
+        const el = document.getElementById(pid);
+        if(!el) return;
+        el.classList.toggle('active', pid===id);
+      });
+    }
+
+    function resetPins(){
+      pins.forEach(p=>p.value='');
+      pins[0].focus();
+    }
+
+    function getPin(){
+      return pins.map(p=>p.value.replace(/D/g,'')).join('');
+    }
+
+    function showError(msg){
+      const box = $('#error-box');
+      box.textContent = msg;
+      box.classList.add('show');
+    }
+
+    function hideError(){
+      $('#error-box').classList.remove('show');
+    }
+
+    function login(){
+      const pin = getPin();
+      hideError();
+      if(pin.length !== 4){
+        showError('Code à 4 chiffres obligatoire.');
+        return;
+      }
+      if(role === 'manager'){
+        if(pin === '1234'){
+          showPage('page-manager');
+          return;
+        } else {
+          showError('PIN gérant incorrect (1234 en démo).');
+          resetPins();
+          return;
+        }
+      }
+      // chauffeur
+      const driverId = $('#driverSelect').value;
+      currentDriver = driverId;
+      const expected = driverId === 'jean' ? '1111'
+                     : driverId === 'marie' ? '2222'
+                     : '3333';
+      if(pin === expected){
+        renderDriver();
+        showPage('page-driver');
+      }else{
+        showError('PIN chauffeur incorrect pour ce profil.');
+        resetPins();
+      }
+    }
+
+    function renderDriver(){
+      const driverId = currentDriver;
+      let name = 'Chauffeur';
+      let truck = '';
+      if(driverId === 'jean'){ name = 'Jean MARTINEAU'; truck='OZ-001'; }
+      if(driverId === 'marie'){ name = 'Marie CELESTE'; truck='OZ-002'; }
+      if(driverId === 'pierre'){ name = 'Pierre BEAUSEJOUR'; truck='OZ-003'; }
+      $('#driver-title').textContent = 'Espace chauffeur · ' + name;
+      $('#driver-sub').textContent = 'Camion ' + truck + ' · démo OZIER';
+      $('#driver-chip').textContent = 'Profil : ' + name;
+      $('#driver-zone').innerHTML = `
+        <p>Connexion réussie pour <strong>${name}</strong> (camion ${truck}).</p>
+        <p style="font-size:13px;color:var(--muted);margin-top:6px;">
+          Cet écran prouve que le PIN chauffeur fonctionne. On pourra ensuite y remettre les missions,
+          la validation de plein, les signatures, etc.
+        </p>
+      `;
+    }
+
+    // événements
+    $('#tab-manager').onclick = () => setRole('manager');
+    $('#tab-driver').onclick = () => setRole('driver');
+    $('#btn-login').onclick = login;
+    $('#btn-reset').onclick = () => { hideError(); resetPins(); };
+    $('#logout-manager').onclick = () => { showPage('page-login'); setRole('manager'); };
+    $('#logout-driver').onclick = () => { showPage('page-login'); setRole('manager'); };
+
+    pins.forEach((p,i)=>{
+      p.addEventListener('input',()=>{
+        p.value = p.value.replace(/D/g,'').slice(0,1);
+        if(p.value && pins[i+1]) pins[i+1].focus();
+      });
+      p.addEventListener('keydown',e=>{
+        if(e.key === 'Backspace' && !p.value && pins[i-1]) pins[i-1].focus();
+        if(e.key === 'Enter') login();
+      });
+    });
+
+    // init
+    showPage('page-login');
+    setRole('manager');
   </script>
 </body>
 </html>
