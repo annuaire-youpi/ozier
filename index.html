@@ -536,6 +536,52 @@
       color: var(--muted);
     }
 
+    .signature-modal{
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 9999;
+    }
+    .signature-box{
+      width: min(760px, 100%);
+      border-radius: 24px;
+      padding: 18px;
+      background: linear-gradient(145deg,rgba(15,23,42,0.98),rgba(8,47,73,0.98));
+      border: 1px solid rgba(148,163,184,0.35);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+    }
+    .signature-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .driver-order-btn{
+      width:100%;
+      text-align:left;
+      background: transparent;
+      border:none;
+      padding:0;
+      cursor:pointer;
+    }
+    .driver-order-btn .item{
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .driver-order-btn:hover .item{
+      transform: translateY(-1px);
+      border-color: rgba(45,212,191,0.55);
+      background: rgba(15,23,42,1);
+    }
+    .signature-preview{
+      margin-top:6px;
+      font-size:11px;
+      color: #86efac;
+    }
+
     @media (max-width: 1100px) {
       .layout { border-radius: 0; margin: 0; }
       .landing-inner { grid-template-columns: 1fr; }
@@ -1000,6 +1046,14 @@
     const dname = id => (state.drivers.find(x=>x.id===id)||{}).nom || '—';
     const bcls = s => s==='Livrée'?'ok':s==='En cours'?'info':'wait';
 
+    state.selectedOrderId = null;
+
+    const signatureModal = $('#signatureModal');
+    const signaturePad = $('#signaturePad');
+    const sigCtx = signaturePad.getContext('2d');
+    let drawing = false;
+    let hasSignature = false;
+
     function showPage(id){
       ['landingPage','managerPage','driverPage'].forEach(x=>{
         const el = document.getElementById(x);
@@ -1404,35 +1458,142 @@
       `).join('');
     }
 
+    function openSignatureModal(orderId){
+      const order = state.orders.find(o => o.id === orderId);
+      if(!order) return;
+      state.selectedOrderId = orderId;
+      $('#signatureOrderTitle').textContent = `${order.id} · ${order.client}`;
+      $('#siteManagerName').value = order.siteManagerName || '';
+      $('#deliveryNote').value = order.deliveryNote || '';
+      clearSignaturePad();
+      signatureModal.style.display = 'flex';
+    }
+
+    function closeSignatureModal(){
+      signatureModal.style.display = 'none';
+      state.selectedOrderId = null;
+    }
+
+    function clearSignaturePad(){
+      sigCtx.fillStyle = '#ffffff';
+      sigCtx.fillRect(0, 0, signaturePad.width, signaturePad.height);
+      hasSignature = false;
+    }
+
+    function getCanvasPos(e){
+      const rect = signaturePad.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: (clientX - rect.left) * (signaturePad.width / rect.width),
+        y: (clientY - rect.top) * (signaturePad.height / rect.height)
+      };
+    }
+
+    function startSign(e){
+      drawing = true;
+      hasSignature = true;
+      const pos = getCanvasPos(e);
+      sigCtx.beginPath();
+      sigCtx.moveTo(pos.x, pos.y);
+    }
+
+    function moveSign(e){
+      if(!drawing) return;
+      e.preventDefault();
+      const pos = getCanvasPos(e);
+      sigCtx.lineTo(pos.x, pos.y);
+      sigCtx.strokeStyle = '#081820';
+      sigCtx.lineWidth = 2.2;
+      sigCtx.lineCap = 'round';
+      sigCtx.lineJoin = 'round';
+      sigCtx.stroke();
+    }
+
+    function endSign(){
+      drawing = false;
+    }
+
+    function confirmDelivery(){
+      const order = state.orders.find(o => o.id === state.selectedOrderId);
+      if(!order) return;
+
+      const siteManagerName = $('#siteManagerName').value.trim();
+      const deliveryNote = $('#deliveryNote').value.trim();
+
+      if(!siteManagerName){
+        alert('Veuillez renseigner le nom du chef de chantier.');
+        return;
+      }
+
+      if(!hasSignature){
+        alert('Veuillez faire signer le chef de chantier.');
+        return;
+      }
+
+      order.statut = 'Livrée';
+      order.siteManagerName = siteManagerName;
+      order.deliveryNote = deliveryNote;
+      order.deliverySignedAt = new Date().toLocaleString('fr-FR');
+      order.signatureDataUrl = signaturePad.toDataURL('image/png');
+
+      closeSignatureModal();
+      renderDriver();
+      renderOrders();
+      renderManager();
+      renderRecap();
+
+      alert('Livraison signée et validée.');
+    }
+
     function renderDriver(){
       const d = state.drivers.find(x=>x.id===state.currentDriver) || state.drivers[0];
       $('#driverTitle').textContent = `Bonjour ${d.prenom} !`;
-      $('#driverSub').textContent = 'Vos missions du jour et votre camion.';
+      $('#driverSub').textContent = 'Cliquez sur une mission pour faire signer le chef de chantier à la livraison.';
       $('#driverTruckCard').innerHTML = `
         <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Camion</div>
         <div style="font-size:16px;font-weight:600;">${d.camion}</div>
         <div style="font-size:11px;color:var(--muted);margin-top:4px;">Chauffeur : ${d.nom}</div>
       `;
-      const o = state.orders.filter(x=>x.chauffeurId===d.id);
-      const ca = o.reduce((s,x)=>s+x.montant,0);
+
+      const orders = state.orders.filter(x=>x.chauffeurId===d.id);
+      const ca = orders.reduce((s,x)=>s+x.montant,0);
+
       $('#driverStatsCard').innerHTML = `
         <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Résumé</div>
-        <div style="font-size:14px;font-weight:600;">${o.length} commande(s)</div>
+        <div style="font-size:14px;font-weight:600;">${orders.length} commande(s)</div>
         <div style="font-size:11px;color:var(--muted);margin-top:4px;">CA estimé : ${euro(ca)}</div>
       `;
 
-      $('#driverOrdersList').innerHTML = o.map(o=>`
-        <div class="item">
-          <div class="item-top">
-            <div>
-              <strong>${o.id} · ${o.client}</strong>
-              <small>${o.adresse}</small>
+      $('#driverOrdersList').innerHTML = orders.map(o=>{
+        const signedInfo = o.deliverySignedAt
+          ? `<div class="signature-preview">Signé par ${o.siteManagerName || '—'} · ${o.deliverySignedAt}</div>`
+          : '';
+
+        const content = `
+          <div class="item">
+            <div class="item-top">
+              <div>
+                <strong>${o.id} · ${o.client}</strong>
+                <small>${o.adresse}</small>
+              </div>
+              <span class="badge ${bcls(o.statut)}">${o.statut}</span>
             </div>
-            <span class="badge ${bcls(o.statut)}">${o.statut}</span>
+            <small>${o.qte} · ${euro(o.montant)}</small>
+            ${signedInfo}
           </div>
-          <small>${o.qte} · ${euro(o.montant)}</small>
-        </div>
-      `).join('') || '<div class="item"><strong>Aucune mission pour le moment.</strong></div>';
+        `;
+
+        if(o.statut === 'Livrée'){
+          return content;
+        }
+
+        return `
+          <button class="driver-order-btn" onclick="openSignatureModal('${o.id}')">
+            ${content}
+          </button>
+        `;
+      }).join('') || '<div class="item"><strong>Aucune mission pour le moment.</strong></div>';
     }
 
     function validateFuel(){
@@ -1503,6 +1664,20 @@
     $('#addExpenseBtn').onclick = ()=>switchView('vehicules');
     $('#saveExpenseBtn').onclick = addVehicleExpense;
     $('#fuelBtn').onclick = validateFuel;
+
+    window.openSignatureModal = openSignatureModal;
+
+    $('#closeSignatureModal').onclick = closeSignatureModal;
+    $('#clearSignatureBtn').onclick = clearSignaturePad;
+    $('#confirmDeliveryBtn').onclick = confirmDelivery;
+
+    signaturePad.addEventListener('mousedown', startSign);
+    signaturePad.addEventListener('mousemove', moveSign);
+    window.addEventListener('mouseup', endSign);
+
+    signaturePad.addEventListener('touchstart', startSign, { passive: false });
+    signaturePad.addEventListener('touchmove', moveSign, { passive: false });
+    window.addEventListener('touchend', endSign);
 
     pins.forEach((p,i)=>{
       p.addEventListener('input',()=>{
