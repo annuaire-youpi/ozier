@@ -249,9 +249,7 @@
       color:#b91c1c;
       border:1px solid rgba(239,68,68,0.5);
     }
-    .btn-danger:hover {
-      background:#fecaca;
-    }
+    .btn-danger:hover { background:#fecaca; }
     .error {
       margin-top:8px;
       font-size:12px;
@@ -736,6 +734,7 @@
               <button class="active" data-view="dashboard"><span>Dashboard</span><span>›</span></button>
               <button data-view="commandes"><span>Commandes</span><span>›</span></button>
               <button data-view="chauffeurs"><span>Chauffeurs</span><span>›</span></button>
+              <button data-view="vehicules-flotte"><span>Flotte véhicules</span><span>›</span></button>
               <button data-view="recap"><span>Récapitulatif</span><span>›</span></button>
               <button data-view="vehicules"><span>Dépenses véhicules</span><span>›</span></button>
               <button data-view="integration"><span>Intégration</span><span>›</span></button>
@@ -879,8 +878,8 @@
                     <input id="driverPin" class="input" placeholder="1111">
                   </div>
                   <div>
-                    <label class="label">Camion</label>
-                    <input id="driverTruck" class="input" placeholder="BEL-001">
+                    <label class="label">Camion (code)</label>
+                    <input id="driverTruck" class="input" placeholder="OZ-001">
                   </div>
                   <div>
                     <label class="label">Statut</label>
@@ -898,6 +897,74 @@
                   <button class="btn btn-ghost" id="newDriverBtn">Nouveau</button>
                   <button class="btn btn-danger" id="deleteDriverBtn">Supprimer</button>
                   <button class="btn btn-primary" id="saveDriverBtn">Enregistrer</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Flotte véhicules -->
+          <section class="view" id="view-vehicules-flotte">
+            <div class="grid-2">
+              <div class="card">
+                <h3>Véhicules de la flotte</h3>
+                <p>Liste des camions / bennes utilisés dans les commandes.</p>
+                <div class="list" id="fleetList"></div>
+              </div>
+              <div class="card">
+                <h3>Fiche véhicule</h3>
+                <p>Base pour le futur CRUD connecté (Sheets / Make).</p>
+                <div class="form-grid">
+                  <div>
+                    <label class="label">Code camion (clé)</label>
+                    <input id="vehCode" class="input" placeholder="OZ-001">
+                  </div>
+                  <div>
+                    <label class="label">Immatriculation</label>
+                    <input id="vehPlate" class="input" placeholder="AB-123-CD">
+                  </div>
+                  <div>
+                    <label class="label">Marque</label>
+                    <input id="vehBrand" class="input" placeholder="Renault, MAN...">
+                  </div>
+                  <div>
+                    <label class="label">Modèle</label>
+                    <input id="vehModel" class="input" placeholder="Premium Lander">
+                  </div>
+                  <div>
+                    <label class="label">Type</label>
+                    <select id="vehType" class="select">
+                      <option>Camion benne</option>
+                      <option>Camion toupie</option>
+                      <option>Tracteur + benne</option>
+                      <option>Utilitaire</option>
+                      <option>Autre</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="label">Année</label>
+                    <input id="vehYear" class="input" type="number" placeholder="2018">
+                  </div>
+                  <div>
+                    <label class="label">Kilométrage</label>
+                    <input id="vehKm" class="input" type="number" placeholder="180000">
+                  </div>
+                  <div>
+                    <label class="label">Statut</label>
+                    <select id="vehStatus" class="select">
+                      <option>En service</option>
+                      <option>Maintenance</option>
+                      <option>Hors service</option>
+                    </select>
+                  </div>
+                  <div class="full">
+                    <label class="label">Commentaires</label>
+                    <textarea id="vehNote" class="input" rows="2" placeholder="Infos atelier, pneus, révision..."></textarea>
+                  </div>
+                </div>
+                <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
+                  <button class="btn btn-ghost" id="newVehBtn">Nouveau</button>
+                  <button class="btn btn-danger" id="deleteVehBtn">Supprimer</button>
+                  <button class="btn btn-primary" id="saveVehBtn">Enregistrer</button>
                 </div>
               </div>
             </div>
@@ -997,7 +1064,7 @@
                 <p>Formulaire simplifié pour la démo OZIER.</p>
                 <div class="form-grid">
                   <div>
-                    <label class="label">Camion</label>
+                    <label class="label">Camion (code)</label>
                     <select id="expenseTruck" class="select">
                       <option value="">-- Sélectionner un camion --</option>
                     </select>
@@ -1206,10 +1273,16 @@
       role: 'manager',
       currentDriver: null,
       editingDriverId: null,
+      editingVehCode: null,
       drivers: [
         {id:'jean', prenom:'Jean', nom:'Jean MARTINEAU', telephone:'0696 12 34 56', email:'jean@example.com', pin:'1111', camion:'OZ-001', statut:'Actif'},
         {id:'marie', prenom:'Marie', nom:'Marie CELESTE', telephone:'0696 56 78 90', email:'marie@example.com', pin:'2222', camion:'OZ-002', statut:'Actif'},
         {id:'pierre', prenom:'Pierre', nom:'Pierre BEAUSEJOUR', telephone:'0696 11 22 33', email:'pierre@example.com', pin:'3333', camion:'OZ-003', statut:'En attente'}
+      ],
+      vehicles: [
+        {code:'OZ-001', plate:'AB-123-CD', brand:'Renault', model:'Premium Lander', type:'Camion benne', year:2018, km:182000, status:'En service', note:'Camion principal Jean'},
+        {code:'OZ-002', plate:'CD-456-EF', brand:'MAN', model:'TGS', type:'Camion benne', year:2019, km:165500, status:'En service', note:'Camion Marie'},
+        {code:'OZ-003', plate:'GH-789-IJ', brand:'Renault', model:'Kerax', type:'Camion benne', year:2015, km:210300, status:'Maintenance', note:'Prévoir révision frein'}
       ],
       orders: [
         {id:'CMD-042', client:'SCI des Mangles', adresse:'Zone industrielle, Le Lamentin', qte:'12 t béton B25', montant:1850, statut:'En attente', chauffeurId:'jean', date:'2026-04-15'},
@@ -1314,6 +1387,7 @@
         dashboard:['Dashboard','Vue d’ensemble de l’activité journalière.'],
         commandes:['Commandes','Création et suivi des commandes.'],
         chauffeurs:['Chauffeurs','Préparation du futur CRUD chauffeurs.'],
+        'vehicules-flotte':['Flotte véhicules','Gestion des camions OZIER.'],
         recap:['Récapitulatif','Synthèse journalière et annuelle.'],
         vehicules:['Dépenses véhicules','Toutes les charges par camion.'],
         integration:['Intégration','Préparation Google Sheets / Make.']
@@ -1325,6 +1399,7 @@
       if(view==='dashboard') renderManager();
       if(view==='commandes') renderOrders();
       if(view==='chauffeurs') renderDrivers();
+      if(view==='vehicules-flotte') renderFleet();
       if(view==='recap'){ renderRecap(); renderYearOptions(); applyYearFilter(false); }
       if(view==='vehicules') renderVehicleExpenses();
       if(view==='integration') renderIntegration();
@@ -1483,27 +1558,33 @@
         return;
       }
 
-      const existing = state.drivers.find(x=>x.id===id);
-      if(existing){
-        existing.prenom = prenom;
-        existing.nom = nom;
-        existing.telephone = telephone;
-        existing.email = email;
-        existing.pin = pin;
-        existing.camion = camion;
-        existing.statut = statut;
+      const existingIndex = state.drivers.findIndex(x=>x.id===id);
+      const isEditingSameId = state.editingDriverId && state.editingDriverId === id;
+
+      if(existingIndex !== -1 && !isEditingSameId){
+        alert('Cet identifiant interne existe déjà, merci d’en choisir un autre.');
+        return;
+      }
+
+      if(isEditingSameId || existingIndex !== -1){
+        const target = state.drivers[existingIndex];
+        target.prenom = prenom;
+        target.nom = nom;
+        target.telephone = telephone;
+        target.email = email;
+        target.pin = pin;
+        target.camion = camion;
+        target.statut = statut;
       } else {
-        if(state.drivers.some(x=>x.id===id)){
-          alert('Cet identifiant interne existe déjà, merci d’en choisir un autre.');
-          return;
-        }
         state.drivers.push({id,prenom,nom,telephone,email,pin,camion,statut});
       }
+
       state.editingDriverId = id;
       renderDrivers();
       renderDriverSelect();
       renderVehicleExpenses();
       renderRecap();
+      renderIntegration();
       applyYearFilter(false);
       alert('Chauffeur enregistré (en mémoire).');
     }
@@ -1531,6 +1612,7 @@
       renderVehicleExpenses();
       renderRecap();
       renderManager();
+      renderIntegration();
       applyYearFilter(false);
       alert('Chauffeur supprimé (en mémoire).');
     }
@@ -1578,13 +1660,16 @@
     }
 
     function truckOptions(){
-      const set = new Set(state.drivers.map(d=>d.camion).filter(Boolean));
+      const set = new Set();
+      state.vehicles.forEach(v=>set.add(v.code));
+      state.drivers.map(d=>d.camion).filter(Boolean).forEach(c=>set.add(c));
       state.vehicleExpenses.forEach(e=>set.add(e.truck));
       return Array.from(set);
     }
 
     function renderVehicleExpenses(){
       const trucks = truckOptions();
+
       const truckSelect = $('#expenseTruck');
       if(truckSelect){
         const current = truckSelect.value;
@@ -1626,8 +1711,11 @@
         const totalTruck = rows.reduce((s,x)=>s+x.amount,0);
         const fuelTruck = rows.filter(x=>x.type==='Carburant').reduce((s,x)=>s+x.amount,0);
         const last = rows.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)))[0];
+        const veh = state.vehicles.find(v=>v.code===truck);
+        const label = veh ? `${truck} · ${veh.model||''}` : truck;
         return {
           truck,
+          label,
           total: totalTruck,
           fuel: fuelTruck,
           count: rows.length,
@@ -1640,7 +1728,7 @@
         <div class="item">
           <div class="item-top">
             <div>
-              <strong>${g.truck}</strong>
+              <strong>${g.label}</strong>
               <small>${g.count} dépense(s) · dernier mouvement ${g.last}</small>
             </div>
             <span class="badge info">${euro(g.total)}</span>
@@ -1650,24 +1738,27 @@
       `).join('')) || `
         <div class="item">
           <strong>Aucun camion disponible.</strong>
-          <small>Ajoutez d'abord un chauffeur avec un véhicule.</small>
+          <small>Ajoutez d'abord un véhicule dans la flotte.</small>
         </div>
       `;
 
       $('#vehicleExpensesBody').innerHTML = state.vehicleExpenses.slice()
         .sort((a,b)=>String(b.date).localeCompare(String(a.date)))
-        .map(r=>
-          `
+        .map(r=>{
+          const veh = state.vehicles.find(v=>v.code===r.truck);
+          const label = veh ? `${r.truck} · ${veh.model||''}` : r.truck;
+          return `
           <tr>
             <td>${r.date}</td>
-            <td><strong>${r.truck}</strong></td>
+            <td><strong>${label}</strong></td>
             <td>${r.type}</td>
             <td>${euro(r.amount)}</td>
             <td>${r.source}</td>
             <td>${r.label}</td>
             <td>${r.note||''}</td>
           </tr>
-        `).join('');
+        `;
+        }).join('');
 
       applyMonthlyFilter(false);
     }
@@ -1697,8 +1788,10 @@
     }
 
     function renderIntegration(){
-      $('#integrationList').innerHTML = state.drivers.map(d=>
-        `
+      $('#integrationList').innerHTML = state.drivers.map(d=>{
+        const veh = state.vehicles.find(v=>v.code===d.camion);
+        const vehInfo = veh ? `${veh.plate || ''} · ${veh.model || ''}` : '';
+        return `
         <div class="item">
           <div class="item-top">
             <div>
@@ -1706,9 +1799,10 @@
               <small>id « ${d.id} » · camion ${d.camion}</small>
             </div>
           </div>
-          <small>Email : ${d.email || '—'} · Ces identifiants serviront de clés dans Google Sheets / Make.</small>
+          <small>Email : ${d.email || '—'} · Véhicule : ${vehInfo || 'non renseigné'}.</small>
         </div>
-      `).join('');
+      `;
+      }).join('');
     }
 
     function openSignatureModal(orderId){
@@ -1803,9 +1897,11 @@
       if(!d) return;
       $('#driverTitle').textContent = `Bonjour ${d.prenom} !`;
       $('#driverSub').textContent = 'Cliquez sur une mission pour faire signer le chef de chantier à la livraison.';
+      const veh = state.vehicles.find(v=>v.code===d.camion);
+      const vehLabel = veh ? `${veh.model || ''} · ${veh.plate || ''}` : d.camion;
       $('#driverTruckCard').innerHTML = `
         <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Camion</div>
-        <div style="font-size:16px;font-weight:600;">${d.camion}</div>
+        <div style="font-size:16px;font-weight:600;">${vehLabel}</div>
         <div style="font-size:11px;color:var(--muted);margin-top:4px;">Chauffeur : ${d.nom}</div>
       `;
       const orders = state.orders.filter(x=>x.chauffeurId===d.id);
@@ -2073,6 +2169,128 @@
       }
     }
 
+    function renderFleet(){
+      $('#fleetList').innerHTML = state.vehicles
+        .slice()
+        .sort((a,b)=>a.code.localeCompare(b.code))
+        .map(v=>`
+        <div class="item" onclick="editVehicle('${v.code}')">
+          <div class="item-top">
+            <div>
+              <strong>${v.code} · ${v.model || ''}</strong>
+              <small>${v.plate || ''} · ${v.brand || ''}</small>
+            </div>
+            <span class="badge ${v.status==='En service'?'ok':(v.status==='Maintenance'?'wait':'info')}">${v.status}</span>
+          </div>
+          <small>${v.type || ''} · ${v.year || ''} · ${v.km ? v.km+' km' : ''}</small>
+        </div>
+      `).join('') || `
+        <div class="item">
+          <strong>Aucun véhicule enregistré.</strong>
+          <small>Ajoutez votre premier véhicule via le formulaire à droite.</small>
+        </div>
+      `;
+    }
+
+    window.editVehicle = function(code){
+      const v = state.vehicles.find(x=>x.code===code);
+      if(!v) return;
+      state.editingVehCode = v.code;
+      $('#vehCode').value = v.code;
+      $('#vehPlate').value = v.plate || '';
+      $('#vehBrand').value = v.brand || '';
+      $('#vehModel').value = v.model || '';
+      $('#vehType').value = v.type || 'Camion benne';
+      $('#vehYear').value = v.year || '';
+      $('#vehKm').value = v.km || '';
+      $('#vehStatus').value = v.status || 'En service';
+      $('#vehNote').value = v.note || '';
+    };
+
+    function resetVehicleForm(){
+      state.editingVehCode = null;
+      $('#vehCode').value = '';
+      $('#vehPlate').value = '';
+      $('#vehBrand').value = '';
+      $('#vehModel').value = '';
+      $('#vehType').value = 'Camion benne';
+      $('#vehYear').value = '';
+      $('#vehKm').value = '';
+      $('#vehStatus').value = 'En service';
+      $('#vehNote').value = '';
+    }
+
+    function saveVehicle(){
+      const code = $('#vehCode').value.trim();
+      const plate = $('#vehPlate').value.trim();
+      const brand = $('#vehBrand').value.trim();
+      const model = $('#vehModel').value.trim();
+      const type = $('#vehType').value;
+      const year = parseInt($('#vehYear').value || 0,10) || null;
+      const km = parseInt($('#vehKm').value || 0,10) || null;
+      const status = $('#vehStatus').value;
+      const note = $('#vehNote').value.trim();
+
+      if(!code){
+        alert('Le code camion (clé) est obligatoire.');
+        return;
+      }
+
+      const existingIndex = state.vehicles.findIndex(v=>v.code===code);
+      const isEditingSame = state.editingVehCode && state.editingVehCode === code;
+
+      if(existingIndex !== -1 && !isEditingSame){
+        alert('Ce code camion existe déjà, merci d’en choisir un autre.');
+        return;
+      }
+
+      const payload = {code, plate, brand, model, type, year, km, status, note};
+
+      if(isEditingSame || existingIndex !== -1){
+        state.vehicles[existingIndex] = payload;
+      } else {
+        state.vehicles.push(payload);
+      }
+
+      state.editingVehCode = code;
+      renderFleet();
+      renderVehicleExpenses();
+      renderIntegration();
+      renderRecap();
+      applyYearFilter(false);
+      alert('Véhicule enregistré (en mémoire).');
+    }
+
+    function deleteVehicle(){
+      if(!state.editingVehCode){
+        alert('Sélectionnez d’abord un véhicule dans la liste.');
+        return;
+      }
+      const code = state.editingVehCode;
+      const v = state.vehicles.find(x=>x.code===code);
+      if(!v){
+        alert('Véhicule introuvable.');
+        return;
+      }
+      if(!confirm(`Supprimer le véhicule ${v.code} (${v.model || ''}) ?`)) return;
+
+      const usedByDriver = state.drivers.some(d=>d.camion===code);
+      const usedByExpenses = state.vehicleExpenses.some(e=>e.truck===code);
+      if(usedByDriver || usedByExpenses){
+        if(!confirm('Ce véhicule est lié à des chauffeurs ou des dépenses. Supprimer quand même ?')) return;
+      }
+
+      state.vehicles = state.vehicles.filter(x=>x.code!==code);
+      state.editingVehCode = null;
+      resetVehicleForm();
+      renderFleet();
+      renderVehicleExpenses();
+      renderIntegration();
+      renderRecap();
+      applyYearFilter(false);
+      alert('Véhicule supprimé (en mémoire).');
+    }
+
     $('#managerTab').onclick = ()=>setRole('manager');
     $('#driverTab').onclick = ()=>setRole('driver');
     $('#loginBtn').onclick = login;
@@ -2112,6 +2330,11 @@
     $('#clearSignatureBtn').onclick = clearSignaturePad;
     $('#confirmDeliveryBtn').onclick = confirmDelivery;
 
+    $('#newVehBtn').onclick = resetVehicleForm;
+    $('#saveVehBtn').onclick = saveVehicle;
+    $('#deleteVehBtn').onclick = deleteVehicle;
+    window.editVehicle = editVehicle;
+
     signaturePad.addEventListener('mousedown', startSign);
     signaturePad.addEventListener('mousemove', moveSign);
     window.addEventListener('mouseup', endSign);
@@ -2138,6 +2361,7 @@
     setRole('manager');
     renderManager();
     renderDrivers();
+    renderFleet();
     renderOrders();
     renderRecap();
     renderVehicleExpenses();
