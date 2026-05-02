@@ -595,6 +595,24 @@
       font-size:12px;
       color:var(--muted);
     }
+    .monthly-types{
+      margin-top:8px;
+      display:grid;
+      grid-template-columns: repeat(4,minmax(0,1fr));
+      gap:8px;
+    }
+    .monthly-type-card{
+      border-radius:14px;
+      padding:8px 10px;
+      background:rgba(15,23,42,0.9);
+      border:1px solid rgba(148,163,184,0.4);
+      font-size:11px;
+    }
+    .monthly-type-card strong{
+      display:block;
+      margin-bottom:3px;
+      font-size:12px;
+    }
 
     @media (max-width: 1100px) {
       .layout { border-radius: 0; margin: 0; }
@@ -604,6 +622,7 @@
       .driver-grid { grid-template-columns: 1fr; }
       .grid-2 { grid-template-columns: 1fr; }
       .kpis { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .monthly-types{grid-template-columns: repeat(2,minmax(0,1fr));}
     }
   </style>
 </head>
@@ -939,7 +958,7 @@
 
             <div class="card" style="margin-top:12px;">
               <h3>Fiche mensuelle par véhicule</h3>
-              <p>Filtre par camion et mois pour retrouver toutes les dépenses.</p>
+              <p>Filtre par camion et mois, avec synthèse par type de dépense.</p>
               <div class="monthly-filters">
                 <div>
                   <label class="label">Camion</label>
@@ -958,7 +977,9 @@
 
               <div class="monthly-summary" id="monthlySummary">Sélectionnez un camion et un mois.</div>
 
-              <div style="max-height:220px;overflow:auto;margin-top:8px;">
+              <div class="monthly-types" id="monthlyTypes"></div>
+
+              <div style="max-height:200px;overflow:auto;margin-top:8px;">
                 <table>
                   <thead>
                     <tr>
@@ -1442,7 +1463,6 @@
         if(current && trucks.includes(current)) truckSelect.value = current;
       }
 
-      // Alimente aussi le select de la fiche mensuelle
       const monthlyTruck = $('#monthlyTruck');
       if(monthlyTruck){
         const currentM = monthlyTruck.value;
@@ -1519,7 +1539,6 @@
           </tr>
         `).join('');
 
-      // Rafraîchit la fiche mensuelle si un mois est déjà sélectionné
       applyMonthlyFilter(false);
     }
 
@@ -1735,12 +1754,14 @@
 
     function applyMonthlyFilter(showAlert = true){
       const truck = $('#monthlyTruck').value;
-      const monthValue = $('#monthlyMonth').value; // format YYYY-MM
+      const monthValue = $('#monthlyMonth').value;
       const body = $('#monthlyExpensesBody');
       const summary = $('#monthlySummary');
+      const typesDiv = $('#monthlyTypes');
 
       if(!monthValue){
         body.innerHTML = '';
+        typesDiv.innerHTML = '';
         summary.textContent = 'Sélectionnez un camion et un mois.';
         if(showAlert) alert('Choisissez un mois.');
         return;
@@ -1756,13 +1777,19 @@
 
       if(!rows.length){
         body.innerHTML = '';
+        typesDiv.innerHTML = '';
         const camTxt = truck ? ` pour le camion ${truck}` : '';
         summary.textContent = `Aucune dépense sur ${monthValue}${camTxt}.`;
         return;
       }
 
       const total = rows.reduce((s,x)=>s+x.amount,0);
-      const fuel = rows.filter(x=>x.type==='Carburant').reduce((s,x)=>s+x.amount,0);
+      const byType = rows.reduce((acc,r)=>{
+        const t = r.type || 'Autre';
+        acc[t] = (acc[t]||0) + r.amount;
+        return acc;
+      },{});
+      const fuel = byType['Carburant'] || 0;
 
       body.innerHTML = rows
         .sort((a,b)=>String(a.date).localeCompare(String(b.date)))
@@ -1780,6 +1807,17 @@
       const camTxt = truck ? ` pour le camion ${truck}` : ' pour tous les camions';
       summary.textContent =
         `Total du mois ${monthValue}${camTxt} : ${euro(total)} · dont carburant ${euro(fuel)}.`;
+
+      const orderedTypes = ['Carburant','Entretien','Réparation','Autre'];
+      typesDiv.innerHTML = orderedTypes.map(t=>{
+        const val = byType[t] || 0;
+        return `
+          <div class="monthly-type-card">
+            <strong>${t}</strong>
+            <span>${euro(val)}</span>
+          </div>
+        `;
+      }).join('');
     }
 
     // BINDINGS
@@ -1816,7 +1854,6 @@
     $('#saveExpenseBtn').onclick = addVehicleExpense;
     $('#fuelBtn').onclick = validateFuel;
 
-    // Signature listeners
     window.openSignatureModal = openSignatureModal;
     $('#closeSignatureModal').onclick = closeSignatureModal;
     $('#clearSignatureBtn').onclick = clearSignaturePad;
