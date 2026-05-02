@@ -519,7 +519,6 @@
       border: 1px solid rgba(148,163,184,0.35);
       font-size: 12px;
     }
-
     .fuel-grid {
       display: grid;
       grid-template-columns: repeat(2,minmax(0,1fr));
@@ -536,6 +535,7 @@
       color: var(--muted);
     }
 
+    /* SIGNATURE MODAL (nouveau) */
     .signature-modal{
       position: fixed;
       inset: 0;
@@ -796,7 +796,7 @@
             </div>
           </section>
 
-          <!-- Chauffeurs (simple CRUD en mémoire) -->
+          <!-- Chauffeurs -->
           <section class="view" id="view-chauffeurs">
             <div class="grid-2">
               <div class="card">
@@ -1010,6 +1010,40 @@
         </div>
       </div>
     </section>
+
+    <!-- MODAL SIGNATURE LIVRAISON -->
+    <div class="signature-modal" id="signatureModal" style="display:none;">
+      <div class="signature-box">
+        <div class="signature-head">
+          <div>
+            <div style="font-size:12px;color:var(--muted);">Validation de livraison</div>
+            <h3 id="signatureOrderTitle" style="margin-top:4px;">Commande</h3>
+          </div>
+          <button class="btn btn-ghost" id="closeSignatureModal">Fermer</button>
+        </div>
+
+        <div class="form-grid" style="margin-top:12px;">
+          <div class="full">
+            <label class="label">Nom du chef de chantier</label>
+            <input id="siteManagerName" class="input" placeholder="Nom et prénom">
+          </div>
+          <div class="full">
+            <label class="label">Observation</label>
+            <input id="deliveryNote" class="input" placeholder="RAS, livré sur zone nord...">
+          </div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <label class="label">Signature</label>
+          <canvas id="signaturePad" width="700" height="220" style="width:100%;background:#fff;border-radius:14px;border:1px solid rgba(148,163,184,0.35);"></canvas>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-top:12px;flex-wrap:wrap;">
+          <button class="btn btn-ghost" id="clearSignatureBtn">Effacer la signature</button>
+          <button class="btn btn-primary" id="confirmDeliveryBtn">Confirmer la livraison</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -1036,7 +1070,8 @@
       fuelLogs: [
         {chauffeurId:'jean', montant:111.80},
         {chauffeurId:'marie', montant:99.76}
-      ]
+      ],
+      selectedOrderId: null
     };
 
     const $ = s => document.querySelector(s);
@@ -1045,8 +1080,6 @@
     const euro = v => new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(Number(v)||0);
     const dname = id => (state.drivers.find(x=>x.id===id)||{}).nom || '—';
     const bcls = s => s==='Livrée'?'ok':s==='En cours'?'info':'wait';
-
-    state.selectedOrderId = null;
 
     const signatureModal = $('#signatureModal');
     const signaturePad = $('#signaturePad');
@@ -1153,14 +1186,16 @@
         ['Livrées', livrees],
         ['En cours', enCours]
       ];
-      $('#managerKpis').innerHTML = kpis.map(k=>`
+      $('#managerKpis').innerHTML = kpis.map(k=>
+        `
         <div class="kpi">
           <span>${k[0]}</span>
           <strong>${k[1]}</strong>
         </div>
       `).join('');
 
-      $('#recentOrders').innerHTML = state.orders.slice().reverse().map(o=>`
+      $('#recentOrders').innerHTML = state.orders.slice().reverse().map(o=>
+        `
         <div class="item">
           <div class="item-top">
             <div>
@@ -1192,7 +1227,8 @@
     }
 
     function renderOrders(){
-      $('#ordersTableBody').innerHTML = state.orders.map(o=>`
+      $('#ordersTableBody').innerHTML = state.orders.map(o=>
+        `
         <tr>
           <td>${o.id}</td>
           <td>${o.client}</td>
@@ -1232,7 +1268,8 @@
     }
 
     function renderDrivers(){
-      $('#driversList').innerHTML = state.drivers.map(d=>`
+      $('#driversList').innerHTML = state.drivers.map(d=>
+        `
         <div class="item" onclick="editDriver('${d.id}')">
           <div class="item-top">
             <div>
@@ -1312,7 +1349,8 @@
         ['Autres charges', euro(autres)],
         ['Marge estimée', euro(marge)]
       ];
-      $('#recapKpis').innerHTML = k.map(x=>`
+      $('#recapKpis').innerHTML = k.map(x=>
+        `
         <div class="kpi">
           <span>${x[0]}</span>
           <strong>${x[1]}</strong>
@@ -1368,7 +1406,8 @@
         ['Carburant', euro(fuel)],
         ['Hors carburant', euro(repairs)],
         ['Moyenne / camion', euro(avg)]
-      ].map(k=>`
+      ].map(k=>
+        `
         <div class="kpi">
           <span>${k[0]}</span>
           <strong>${k[1]}</strong>
@@ -1389,7 +1428,8 @@
         };
       }).sort((a,b)=>b.total-a.total);
 
-      $('#vehicleTotalsList').innerHTML = (grouped.map(g=>`
+      $('#vehicleTotalsList').innerHTML = (grouped.map(g=>
+        `
         <div class="item">
           <div class="item-top">
             <div>
@@ -1409,7 +1449,8 @@
 
       $('#vehicleExpensesBody').innerHTML = state.vehicleExpenses.slice()
         .sort((a,b)=>String(b.date).localeCompare(String(a.date)))
-        .map(r=>`
+        .map(r=>
+          `
           <tr>
             <td>${r.date}</td>
             <td><strong>${r.truck}</strong></td>
@@ -1445,7 +1486,8 @@
     }
 
     function renderIntegration(){
-      $('#integrationList').innerHTML = state.drivers.map(d=>`
+      $('#integrationList').innerHTML = state.drivers.map(d=>
+        `
         <div class="item">
           <div class="item-top">
             <div>
@@ -1458,6 +1500,7 @@
       `).join('');
     }
 
+    // NOUVELLE RENDER DRIVER + SIGNATURE
     function openSignatureModal(orderId){
       const order = state.orders.find(o => o.id === orderId);
       if(!order) return;
@@ -1548,6 +1591,7 @@
 
     function renderDriver(){
       const d = state.drivers.find(x=>x.id===state.currentDriver) || state.drivers[0];
+      if(!d) return;
       $('#driverTitle').textContent = `Bonjour ${d.prenom} !`;
       $('#driverSub').textContent = 'Cliquez sur une mission pour faire signer le chef de chantier à la livraison.';
       $('#driverTruckCard').innerHTML = `
@@ -1555,10 +1599,8 @@
         <div style="font-size:16px;font-weight:600;">${d.camion}</div>
         <div style="font-size:11px;color:var(--muted);margin-top:4px;">Chauffeur : ${d.nom}</div>
       `;
-
       const orders = state.orders.filter(x=>x.chauffeurId===d.id);
       const ca = orders.reduce((s,x)=>s+x.montant,0);
-
       $('#driverStatsCard').innerHTML = `
         <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Résumé</div>
         <div style="font-size:14px;font-weight:600;">${orders.length} commande(s)</div>
@@ -1632,6 +1674,7 @@
       alert('Plein validé et ajouté aux dépenses véhicules.');
     }
 
+    // BINDINGS
     $('#managerTab').onclick = ()=>setRole('manager');
     $('#driverTab').onclick = ()=>setRole('driver');
     $('#loginBtn').onclick = login;
@@ -1665,8 +1708,8 @@
     $('#saveExpenseBtn').onclick = addVehicleExpense;
     $('#fuelBtn').onclick = validateFuel;
 
+    // Signature listeners
     window.openSignatureModal = openSignatureModal;
-
     $('#closeSignatureModal').onclick = closeSignatureModal;
     $('#clearSignatureBtn').onclick = clearSignaturePad;
     $('#confirmDeliveryBtn').onclick = confirmDelivery;
@@ -1700,6 +1743,7 @@
     renderVehicleExpenses();
     renderIntegration();
     $('#expenseDate').value = new Date().toISOString().slice(0,10);
+    clearSignaturePad();
   </script>
 </body>
 </html>
