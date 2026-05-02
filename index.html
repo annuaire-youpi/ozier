@@ -878,8 +878,10 @@
                     <input id="driverPin" class="input" placeholder="1111">
                   </div>
                   <div>
-                    <label class="label">Camion (code)</label>
-                    <input id="driverTruck" class="input" placeholder="OZ-001">
+                    <label class="label">Camion attribué</label>
+                    <select id="driverTruck" class="select">
+                      <option value="">Sans camion</option>
+                    </select>
                   </div>
                   <div>
                     <label class="label">Statut</label>
@@ -1315,6 +1317,14 @@
     let drawing = false;
     let hasSignature = false;
 
+    function vehicleLabelFromCode(code){
+      if(!code) return '';
+      const v = state.vehicles.find(x=>x.code===code);
+      if(!v) return code;
+      const bits = [v.code, v.model, v.plate].filter(Boolean);
+      return bits.join(' · ');
+    }
+
     function showPage(id){
       ['landingPage','managerPage','driverPage'].forEach(x=>{
         const el = document.getElementById(x);
@@ -1346,9 +1356,25 @@
     }
 
     function renderDriverSelect(){
-      $('#driverSelect').innerHTML = state.drivers.map(d=>
-        `<option value="${d.id}">${d.nom} · ${d.camion}</option>`
-      ).join('');
+      $('#driverSelect').innerHTML = state.drivers.map(d=>{
+        const label = `${d.nom} · ${vehicleLabelFromCode(d.camion)}`;
+        return `<option value="${d.id}">${label}</option>`;
+      }).join('');
+    }
+
+    function fillDriverVehicleSelect(){
+      const sel = $('#driverTruck');
+      if(!sel) return;
+      const current = sel.value;
+      sel.innerHTML = '<option value="">Sans camion</option>' +
+        state.vehicles
+          .slice()
+          .sort((a,b)=>a.code.localeCompare(b.code))
+          .map(v=>{
+            const label = vehicleLabelFromCode(v.code);
+            return `<option value="${v.code}">${label}</option>`;
+          }).join('');
+      if(current) sel.value = current;
     }
 
     function login(){
@@ -1398,7 +1424,7 @@
       $$('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
       if(view==='dashboard') renderManager();
       if(view==='commandes') renderOrders();
-      if(view==='chauffeurs') renderDrivers();
+      if(view==='chauffeurs'){ fillDriverVehicleSelect(); renderDrivers(); }
       if(view==='vehicules-flotte') renderFleet();
       if(view==='recap'){ renderRecap(); renderYearOptions(); applyYearFilter(false); }
       if(view==='vehicules') renderVehicleExpenses();
@@ -1424,8 +1450,11 @@
         </div>
       `).join('');
 
-      $('#recentOrders').innerHTML = state.orders.slice().reverse().map(o=>
-        `
+      $('#recentOrders').innerHTML = state.orders.slice().reverse().map(o=>{
+        const vehLabel = vehicleLabelFromCode(
+          (state.drivers.find(d=>d.id===o.chauffeurId)||{}).camion
+        );
+        return `
         <div class="item">
           <div class="item-top">
             <div>
@@ -1434,19 +1463,21 @@
             </div>
             <span class="badge ${bcls(o.statut)}">${o.statut}</span>
           </div>
-          <small>${o.qte} · ${euro(o.montant)} · ${dname(o.chauffeurId)}</small>
+          <small>${o.qte} · ${euro(o.montant)} · ${dname(o.chauffeurId)} · ${vehLabel || ''}</small>
         </div>
-      `).join('');
+      `;
+      }).join('');
 
       $('#teamList').innerHTML = state.drivers.map(d=>{
         const o = state.orders.filter(x=>x.chauffeurId===d.id);
         const total = o.reduce((s,x)=>s+x.montant,0);
+        const vehLabel = vehicleLabelFromCode(d.camion);
         return `
           <div class="item">
             <div class="item-top">
               <div>
                 <strong>${d.nom}</strong>
-                <small>${d.camion} · ${d.telephone}</small>
+                <small>${vehLabel || 'Sans camion'} · ${d.telephone}</small>
               </div>
               <span class="badge info">${euro(total)}</span>
             </div>
@@ -1457,8 +1488,10 @@
     }
 
     function renderOrders(){
-      $('#ordersTableBody').innerHTML = state.orders.map(o=>
-        `
+      $('#ordersTableBody').innerHTML = state.orders.map(o=>{
+        const driver = state.drivers.find(d=>d.id===o.chauffeurId);
+        const vehLabel = driver ? vehicleLabelFromCode(driver.camion) : '';
+        return `
         <tr>
           <td>${o.id}</td>
           <td>${o.client}</td>
@@ -1466,11 +1499,15 @@
           <td>${o.qte}</td>
           <td>${euro(o.montant)}</td>
           <td>${o.statut}</td>
-          <td>${dname(o.chauffeurId)}</td>
+          <td>${dname(o.chauffeurId)}${vehLabel ? ' · '+vehLabel : ''}</td>
         </tr>
-      `).join('');
+      `;
+      }).join('');
       $('#orderDriver').innerHTML = `<option value="">Non attribuée</option>`+
-        state.drivers.map(d=>`<option value="${d.id}">${d.nom} · ${d.camion}</option>`).join('');
+        state.drivers.map(d=>{
+          const vehLabel = vehicleLabelFromCode(d.camion);
+          return `<option value="${d.id}">${d.nom} · ${vehLabel || 'Sans camion'}</option>`;
+        }).join('');
     }
 
     function addOrder(){
@@ -1501,19 +1538,21 @@
     }
 
     function renderDrivers(){
-      $('#driversList').innerHTML = state.drivers.map(d=>
-        `
+      $('#driversList').innerHTML = state.drivers.map(d=>{
+        const vehLabel = vehicleLabelFromCode(d.camion) || 'Sans camion';
+        return `
         <div class="item" onclick="editDriver('${d.id}')">
           <div class="item-top">
             <div>
               <strong>${d.nom}</strong>
-              <small>${d.camion} · ${d.telephone}</small>
+              <small>${vehLabel} · ${d.telephone}</small>
             </div>
             <span class="badge ${d.statut==='Actif'?'ok':'wait'}">${d.statut}</span>
           </div>
           <small>Email : ${d.email || '—'} · PIN ${d.pin} · id interne ${d.id}</small>
         </div>
-      `).join('');
+      `;
+      }).join('');
     }
 
     window.editDriver = function(id){
@@ -1525,6 +1564,7 @@
       $('#driverPhone').value = d.telephone || '';
       $('#driverEmail').value = d.email || '';
       $('#driverPin').value = d.pin || '';
+      fillDriverVehicleSelect();
       $('#driverTruck').value = d.camion || '';
       $('#driverStatus').value = d.statut || 'Actif';
       $('#driverId').value = d.id || '';
@@ -1537,6 +1577,7 @@
       $('#driverPhone').value = '';
       $('#driverEmail').value = '';
       $('#driverPin').value = '';
+      fillDriverVehicleSelect();
       $('#driverTruck').value = '';
       $('#driverStatus').value = 'Actif';
       $('#driverId').value = '';
@@ -1553,8 +1594,8 @@
       const idInput = $('#driverId').value.trim();
       const id = idInput || prenom.toLowerCase();
 
-      if(!prenom || !nom || !pin || !camion){
-        alert('Prénom, nom, PIN et camion sont obligatoires.');
+      if(!prenom || !nom || !pin){
+        alert('Prénom, nom et PIN sont obligatoires.');
         return;
       }
 
@@ -1566,17 +1607,12 @@
         return;
       }
 
+      const payload = {id,prenom,nom,telephone,email,pin,camion,statut};
+
       if(isEditingSameId || existingIndex !== -1){
-        const target = state.drivers[existingIndex];
-        target.prenom = prenom;
-        target.nom = nom;
-        target.telephone = telephone;
-        target.email = email;
-        target.pin = pin;
-        target.camion = camion;
-        target.statut = statut;
+        state.drivers[existingIndex] = payload;
       } else {
-        state.drivers.push({id,prenom,nom,telephone,email,pin,camion,statut});
+        state.drivers.push(payload);
       }
 
       state.editingDriverId = id;
@@ -1641,15 +1677,16 @@
       $('#recapDrivers').innerHTML = state.drivers.map(d=>{
         const o = state.orders.filter(x=>x.chauffeurId===d.id);
         const ca = o.reduce((s,x)=>s+x.montant,0);
-        const veh = state.vehicleExpenses.filter(x=>x.truck===d.camion);
-        const charges = veh.reduce((s,x)=>s+x.amount,0);
+        const vehExp = state.vehicleExpenses.filter(x=>x.truck===d.camion);
+        const charges = vehExp.reduce((s,x)=>s+x.amount,0);
         const margeD = ca - charges;
+        const vehLabel = vehicleLabelFromCode(d.camion) || 'Sans camion';
         return `
           <div class="item">
             <div class="item-top">
               <div>
                 <strong>${d.nom}</strong>
-                <small>${d.camion}</small>
+                <small>${vehLabel}</small>
               </div>
               <span class="badge info">${euro(ca)}</span>
             </div>
@@ -1674,7 +1711,10 @@
       if(truckSelect){
         const current = truckSelect.value;
         truckSelect.innerHTML = '<option value="">-- Sélectionner un camion --</option>' +
-          trucks.map(t=>`<option value="${t}">${t}</option>`).join('');
+          trucks
+            .slice()
+            .sort()
+            .map(t=>`<option value="${t}">${vehicleLabelFromCode(t)}</option>`).join('');
         if(current && trucks.includes(current)) truckSelect.value = current;
       }
 
@@ -1682,7 +1722,10 @@
       if(monthlyTruck){
         const currentM = monthlyTruck.value;
         monthlyTruck.innerHTML = '<option value="">Tous les camions</option>' +
-          trucks.map(t=>`<option value="${t}">${t}</option>`).join('');
+          trucks
+            .slice()
+            .sort()
+            .map(t=>`<option value="${t}">${vehicleLabelFromCode(t)}</option>`).join('');
         if(currentM && trucks.includes(currentM)) monthlyTruck.value = currentM;
       }
 
@@ -1711,8 +1754,7 @@
         const totalTruck = rows.reduce((s,x)=>s+x.amount,0);
         const fuelTruck = rows.filter(x=>x.type==='Carburant').reduce((s,x)=>s+x.amount,0);
         const last = rows.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)))[0];
-        const veh = state.vehicles.find(v=>v.code===truck);
-        const label = veh ? `${truck} · ${veh.model||''}` : truck;
+        const label = vehicleLabelFromCode(truck);
         return {
           truck,
           label,
@@ -1745,8 +1787,7 @@
       $('#vehicleExpensesBody').innerHTML = state.vehicleExpenses.slice()
         .sort((a,b)=>String(b.date).localeCompare(String(a.date)))
         .map(r=>{
-          const veh = state.vehicles.find(v=>v.code===r.truck);
-          const label = veh ? `${r.truck} · ${veh.model||''}` : r.truck;
+          const label = vehicleLabelFromCode(r.truck);
           return `
           <tr>
             <td>${r.date}</td>
@@ -1790,16 +1831,16 @@
     function renderIntegration(){
       $('#integrationList').innerHTML = state.drivers.map(d=>{
         const veh = state.vehicles.find(v=>v.code===d.camion);
-        const vehInfo = veh ? `${veh.plate || ''} · ${veh.model || ''}` : '';
+        const vehInfo = veh ? `${veh.code} · ${veh.model || ''} · ${veh.plate || ''}` : 'Sans camion';
         return `
         <div class="item">
           <div class="item-top">
             <div>
               <strong>${d.nom}</strong>
-              <small>id « ${d.id} » · camion ${d.camion}</small>
+              <small>id « ${d.id} » · camion ${vehInfo}</small>
             </div>
           </div>
-          <small>Email : ${d.email || '—'} · Véhicule : ${vehInfo || 'non renseigné'}.</small>
+          <small>Email : ${d.email || '—'} · Ces clés serviront dans Google Sheets / Make.</small>
         </div>
       `;
       }).join('');
@@ -1897,8 +1938,7 @@
       if(!d) return;
       $('#driverTitle').textContent = `Bonjour ${d.prenom} !`;
       $('#driverSub').textContent = 'Cliquez sur une mission pour faire signer le chef de chantier à la livraison.';
-      const veh = state.vehicles.find(v=>v.code===d.camion);
-      const vehLabel = veh ? `${veh.model || ''} · ${veh.plate || ''}` : d.camion;
+      const vehLabel = vehicleLabelFromCode(d.camion) || 'Sans camion';
       $('#driverTruckCard').innerHTML = `
         <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Camion</div>
         <div style="font-size:16px;font-weight:600;">${vehLabel}</div>
@@ -1973,7 +2013,7 @@
         note:`${d.prenom} · ${liters} L · KM ${km}`
       });
       $('#fuelFeedback').textContent =
-        `Plein validé : charges transmises pour le camion ${d.camion}.`;
+        `Plein validé : charges transmises pour le camion ${vehicleLabelFromCode(d.camion)}.`;
       renderVehicleExpenses();
       renderRecap();
       applyYearFilter(false);
@@ -2006,7 +2046,7 @@
       if(!rows.length){
         body.innerHTML = '';
         typesDiv.innerHTML = '';
-        const camTxt = truck ? ` pour le camion ${truck}` : '';
+        const camTxt = truck ? ` pour le camion ${vehicleLabelFromCode(truck)}` : '';
         summary.textContent = `Aucune dépense sur ${monthValue}${camTxt}.`;
         return;
       }
@@ -2024,7 +2064,7 @@
         .map(r=>`
           <tr>
             <td>${r.date}</td>
-            <td>${r.truck}</td>
+            <td>${vehicleLabelFromCode(r.truck)}</td>
             <td>${r.type}</td>
             <td>${euro(r.amount)}</td>
             <td>${r.source}</td>
@@ -2032,7 +2072,7 @@
           </tr>
         `).join('');
 
-      const camTxt = truck ? ` pour le camion ${truck}` : ' pour tous les camions';
+      const camTxt = truck ? ` pour le camion ${vehicleLabelFromCode(truck)}` : ' pour tous les camions';
       summary.textContent =
         `Total du mois ${monthValue}${camTxt} : ${euro(total)} · dont carburant ${euro(fuel)}.`;
 
@@ -2147,7 +2187,7 @@
       depBody.innerHTML = Object.entries(depMap).sort((a,b)=>b[1][12]-a[1][12])
         .map(([truck,vals])=>`
           <tr>
-            <td>${truck}</td>
+            <td>${vehicleLabelFromCode(truck)}</td>
             <td>${monthsRow(vals)}</td>
             <td>${euro(vals[12]||0)}</td>
           </tr>
@@ -2173,23 +2213,31 @@
       $('#fleetList').innerHTML = state.vehicles
         .slice()
         .sort((a,b)=>a.code.localeCompare(b.code))
-        .map(v=>`
+        .map(v=>{
+          const assignedDrivers = state.drivers.filter(d=>d.camion===v.code);
+          const assignedText = assignedDrivers.length
+            ? assignedDrivers.map(d=>d.prenom).join(', ')
+            : 'Aucun chauffeur attribué';
+          return `
         <div class="item" onclick="editVehicle('${v.code}')">
           <div class="item-top">
             <div>
-              <strong>${v.code} · ${v.model || ''}</strong>
-              <small>${v.plate || ''} · ${v.brand || ''}</small>
+              <strong>${vehicleLabelFromCode(v.code)}</strong>
+              <small>${v.brand || ''}</small>
             </div>
             <span class="badge ${v.status==='En service'?'ok':(v.status==='Maintenance'?'wait':'info')}">${v.status}</span>
           </div>
           <small>${v.type || ''} · ${v.year || ''} · ${v.km ? v.km+' km' : ''}</small>
+          <small>Chauffeur(s) : ${assignedText}</small>
         </div>
-      `).join('') || `
+      `;
+        }).join('') || `
         <div class="item">
           <strong>Aucun véhicule enregistré.</strong>
           <small>Ajoutez votre premier véhicule via le formulaire à droite.</small>
         </div>
       `;
+      fillDriverVehicleSelect();
     }
 
     window.editVehicle = function(code){
@@ -2257,6 +2305,8 @@
       renderVehicleExpenses();
       renderIntegration();
       renderRecap();
+      renderDriverSelect();
+      fillDriverVehicleSelect();
       applyYearFilter(false);
       alert('Véhicule enregistré (en mémoire).');
     }
@@ -2272,7 +2322,7 @@
         alert('Véhicule introuvable.');
         return;
       }
-      if(!confirm(`Supprimer le véhicule ${v.code} (${v.model || ''}) ?`)) return;
+      if(!confirm(`Supprimer le véhicule ${vehicleLabelFromCode(v.code)} ?`)) return;
 
       const usedByDriver = state.drivers.some(d=>d.camion===code);
       const usedByExpenses = state.vehicleExpenses.some(e=>e.truck===code);
@@ -2287,6 +2337,8 @@
       renderVehicleExpenses();
       renderIntegration();
       renderRecap();
+      renderDriverSelect();
+      fillDriverVehicleSelect();
       applyYearFilter(false);
       alert('Véhicule supprimé (en mémoire).');
     }
@@ -2359,6 +2411,7 @@
 
     showPage('landingPage');
     setRole('manager');
+    fillDriverVehicleSelect();
     renderManager();
     renderDrivers();
     renderFleet();
