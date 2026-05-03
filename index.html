@@ -837,6 +837,70 @@
       margin-top:6px;
     }
 
+    .recap-annual-card,
+    #view-recap .card {
+      min-width: 0;
+    }
+
+    .recap-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,0.22);
+      background: #fff;
+      margin-top: 10px;
+    }
+
+    .recap-year-table {
+      width: 100%;
+      min-width: 980px;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .recap-year-table th,
+    .recap-year-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(148,163,184,0.22);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .recap-year-table th:first-child,
+    .recap-year-table td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background: #f8fafc;
+      min-width: 180px;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .recap-year-table thead th:first-child {
+      z-index: 3;
+    }
+
+    .recap-year-table td:not(:first-child),
+    .recap-year-table th:not(:first-child) {
+      text-align: right;
+    }
+
+    .recap-year-table tbody tr:last-child td {
+      font-weight: 700;
+      background: rgba(59,130,246,0.06);
+    }
+
+    .recap-year-table .negative {
+      color: #b91c1c;
+    }
+
+    .recap-year-table .positive {
+      color: #166534;
+    }
+
     @media (max-width: 1100px) {
       .layout { border-radius:0; margin:0; }
       .landing-inner { grid-template-columns:1fr; }
@@ -847,6 +911,14 @@
       .orders-layout { grid-template-columns:1fr; }
       .kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .monthly-types { grid-template-columns:repeat(2,minmax(0,1fr)); }
+
+      #view-recap .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      #view-recap .kpis {
+        grid-template-columns: repeat(2, minmax(0,1fr));
+      }
     }
 
     @media (max-width: 768px) {
@@ -859,6 +931,47 @@
       .orders-table-wrap { max-height:none; }
       .orders-table { min-width:900px; }
       th, td { padding:8px 10px; }
+
+      #view-recap {
+        padding-bottom: 4px;
+      }
+
+      #view-recap .card {
+        padding: 12px;
+      }
+
+      #view-recap .kpis {
+        grid-template-columns: 1fr;
+      }
+
+      .year-filters {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .year-filters > div {
+        width: 100%;
+      }
+
+      .year-filters .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .recap-year-table {
+        min-width: 900px;
+      }
+
+      .recap-year-table th,
+      .recap-year-table td {
+        padding: 9px 10px;
+        font-size: 11px;
+      }
+
+      .recap-year-table th:first-child,
+      .recap-year-table td:first-child {
+        min-width: 150px;
+      }
     }
   </style>
 </head>
@@ -1354,6 +1467,8 @@
                       <option>Carburant</option>
                       <option>Entretien</option>
                       <option>Réparation</option>
+                      <option>Assurance</option>
+                      <option>Électricité</option>
                       <option>Autre</option>
                     </select>
                   </div>
@@ -2754,49 +2869,112 @@
         if (!year) {
           yearSummary.textContent = 'Choisissez une année pour afficher la synthèse.';
           yearKpis.innerHTML = '';
-          yearCaBody.innerHTML = '';
-          yearDepBody.innerHTML = '';
-          yearMarginBody.innerHTML = '';
+          yearSummaryBody.innerHTML = '';
           if (showAlert) alert('Choisissez une année.');
           return;
         }
 
-        const caMonths = Array(13).fill(0);
+        const initMonths = () => Array(13).fill(0);
+
+        const caMonths = initMonths();
+        const fuelMonths = initMonths();
+        const repairMonths = initMonths();
+        const insuranceMonths = initMonths();
+        const electricityMonths = initMonths();
 
         state.orders.forEach(o => {
           if (!o.date) return;
           const d = String(o.date);
           if (!d.startsWith(year)) return;
-          const m = parseInt(d.slice(5,7), 10);
-          caMonths[m - 1] += Number(o.montant || 0);
-          caMonths[12] += Number(o.montant || 0);
-        });
 
-        const depMap = {};
-        const depMonthsTotal = Array(13).fill(0);
+          const m = parseInt(d.slice(5, 7), 10) - 1;
+          const amount = Number(o.montant || 0);
+
+          caMonths[m] += amount;
+          caMonths[12] += amount;
+        });
 
         state.vehicleExpenses.forEach(e => {
           if (!e.date) return;
           const d = String(e.date);
           if (!d.startsWith(year)) return;
-          const m = parseInt(d.slice(5,7), 10);
-          const key = e.truck || 'Véhicule';
-          if (!depMap[key]) depMap[key] = Array(13).fill(0);
-          depMap[key][m - 1] += Number(e.amount || 0);
-          depMap[key][12] += Number(e.amount || 0);
-          depMonthsTotal[m - 1] += Number(e.amount || 0);
-          depMonthsTotal[12] += Number(e.amount || 0);
+
+          const m = parseInt(d.slice(5, 7), 10) - 1;
+          const amount = Number(e.amount || 0);
+          const type = String(e.type || '').trim().toLowerCase();
+          const label = String(e.label || '').trim().toLowerCase();
+          const note = String(e.note || '').trim().toLowerCase();
+          const fullText = `${type} ${label} ${note}`;
+
+          if (type === 'carburant') {
+            fuelMonths[m] += amount;
+            fuelMonths[12] += amount;
+            return;
+          }
+
+          if (
+            type === 'réparation' ||
+            type === 'reparation' ||
+            type === 'entretien' ||
+            fullText.includes('réparation') ||
+            fullText.includes('reparation') ||
+            fullText.includes('garage') ||
+            fullText.includes('vidange') ||
+            fullText.includes('pneu') ||
+            fullText.includes('frein') ||
+            fullText.includes('atelier') ||
+            fullText.includes('hydraulique')
+          ) {
+            repairMonths[m] += amount;
+            repairMonths[12] += amount;
+            return;
+          }
+
+          if (type === 'assurance' || fullText.includes('assurance')) {
+            insuranceMonths[m] += amount;
+            insuranceMonths[12] += amount;
+            return;
+          }
+
+          if (
+            type === 'électricité' ||
+            type === 'electricite' ||
+            fullText.includes('électricité') ||
+            fullText.includes('electricite') ||
+            fullText.includes('edf') ||
+            fullText.includes('courant')
+          ) {
+            electricityMonths[m] += amount;
+            electricityMonths[12] += amount;
+            return;
+          }
+
+          repairMonths[m] += amount;
+          repairMonths[12] += amount;
         });
 
+        const totalExpensesMonths = initMonths();
+        const marginMonths = initMonths();
+
+        for (let i = 0; i < 13; i++) {
+          totalExpensesMonths[i] =
+            (fuelMonths[i] || 0) +
+            (repairMonths[i] || 0) +
+            (insuranceMonths[i] || 0) +
+            (electricityMonths[i] || 0);
+
+          marginMonths[i] = (caMonths[i] || 0) - totalExpensesMonths[i];
+        }
+
         const totalCaYear = caMonths[12] || 0;
-        const totalDepYear = depMonthsTotal[12] || 0;
-        const margeYear = totalCaYear - totalDepYear;
+        const totalDepYear = totalExpensesMonths[12] || 0;
+        const margeYear = marginMonths[12] || 0;
 
         yearKpis.innerHTML = [
           ['CA annuel', euro(totalCaYear)],
           ['Total dépenses', euro(totalDepYear)],
-          ['Marge estimée', euro(margeYear)],
-          ['Nb véhicules', Object.keys(depMap).length]
+          ['Marge', euro(margeYear)],
+          ['Année affichée', year]
         ].map(k => `
           <div class="kpi">
             <span>${k[0]}</span>
@@ -2804,45 +2982,37 @@
           </div>
         `).join('');
 
-        yearSummary.textContent = `Synthèse ${year} · CA ${euro(totalCaYear)} · Dépenses ${euro(totalDepYear)} · Marge ${euro(margeYear)}.`;
+        yearSummary.textContent =
+          `Synthèse ${year} · CA ${euro(totalCaYear)} · Dépenses ${euro(totalDepYear)} · Marge ${euro(margeYear)}.`;
 
-        const monthsRow = arr => Array.from({ length: 12 }, (_, i) => `<td>${euro(arr[i] || 0)}</td>`).join('');
+        const monthsRow = (label, arr, className = '') => `
+          <tr>
+            <td>${label}</td>
+            ${Array.from({ length: 12 }, (_, i) => `<td class="${className}">${euro(arr[i] || 0)}</td>`).join('')}
+            <td class="${className}">${euro(arr[12] || 0)}</td>
+          </tr>
+        `;
 
-        if (totalCaYear === 0) {
-          yearCaBody.innerHTML = `<tr><td colspan="14">Aucun chiffre d’affaires sur ${year}.</td></tr>`;
-        } else {
-          yearCaBody.innerHTML = `
-            <tr>
-              <td>CA global</td>
-              ${monthsRow(caMonths)}
-              <td>${euro(caMonths[12] || 0)}</td>
-            </tr>
-          `;
+        const noData =
+          totalCaYear === 0 &&
+          fuelMonths[12] === 0 &&
+          repairMonths[12] === 0 &&
+          insuranceMonths[12] === 0 &&
+          electricityMonths[12] === 0;
+
+        if (noData) {
+          yearSummaryBody.innerHTML = `<tr><td colspan="14">Aucune donnée sur ${year}.</td></tr>`;
+          return;
         }
 
-        yearDepBody.innerHTML = Object.entries(depMap)
-          .sort((a,b) => (b[1][12] || 0) - (a[1][12] || 0))
-          .map(([truck, vals]) => `
-            <tr>
-              <td>${vehicleLabelFromCode(truck)}</td>
-              ${monthsRow(vals)}
-              <td>${euro(vals[12] || 0)}</td>
-            </tr>
-          `).join('') || `<tr><td colspan="14">Aucune dépense sur ${year}.</td></tr>`;
-
-        const marginMonths = caMonths.map((v, i) => v - (depMonthsTotal[i] || 0));
-
-        if (totalCaYear === 0 && totalDepYear === 0) {
-          yearMarginBody.innerHTML = `<tr><td colspan="14">Aucune donnée sur ${year}.</td></tr>`;
-        } else {
-          yearMarginBody.innerHTML = `
-            <tr>
-              <td>Marge CA - dépenses</td>
-              ${monthsRow(marginMonths)}
-              <td>${euro(marginMonths[12] || 0)}</td>
-            </tr>
-          `;
-        }
+        yearSummaryBody.innerHTML = `
+          ${monthsRow('Chiffre d’affaires', caMonths, 'positive')}
+          ${monthsRow('Frais essence globaux', fuelMonths)}
+          ${monthsRow('Réparations globales', repairMonths)}
+          ${monthsRow('Assurance', insuranceMonths)}
+          ${monthsRow('Électricité', electricityMonths)}
+          ${monthsRow('Marge (CA - Dépenses)', marginMonths, marginMonths[12] < 0 ? 'negative' : 'positive')}
+        `;
       }
 
       function openSignatureModal(orderId) {
