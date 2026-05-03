@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -836,7 +837,6 @@
       overflow:auto;
       margin-top:6px;
     }
-
     .recap-annual-card,
     #view-recap .card {
       min-width: 0;
@@ -900,6 +900,7 @@
     .recap-year-table .positive {
       color: #166534;
     }
+
 
     @media (max-width: 1100px) {
       .layout { border-radius:0; margin:0; }
@@ -1374,9 +1375,9 @@
               </div>
             </div>
 
-            <div class="card" style="margin-top:12px;">
+            <div class="card recap-annual-card" style="margin-top:12px;">
               <h3>Synthèse annuelle CA / dépenses</h3>
-              <p>Vue annuelle CA global par mois, dépenses par véhicule et marge.</p>
+              <p>Vue annuelle consolidée du chiffre d'affaires, des charges globales et de la marge.</p>
 
               <div class="year-filters">
                 <div>
@@ -1385,55 +1386,34 @@
                 </div>
 
                 <div>
-                  <button class="btn btn-primary" id="applyYearFilter">Afficher l’année</button>
+                  <button class="btn btn-primary" id="applyYearFilter">Afficher l'année</button>
                 </div>
               </div>
 
               <div class="year-summary" id="yearSummary">Choisissez une année pour afficher la synthèse.</div>
               <div class="kpis" id="yearKpis" style="margin-top:10px;"></div>
 
-              <h4 style="font-size:13px;margin-top:12px;margin-bottom:4px;">Chiffre d’affaires annuel tous chantiers</h4>
-              <div class="year-table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>CA global</th>
-                      <th>M01</th><th>M02</th><th>M03</th><th>M04</th><th>M05</th><th>M06</th>
-                      <th>M07</th><th>M08</th><th>M09</th><th>M10</th><th>M11</th><th>M12</th>
-                      <th>Total</th>
-                    </tr>
-                  </thead>
-                  <tbody id="yearCaBody"></tbody>
-                </table>
-              </div>
-
-              <h4 style="font-size:13px;margin-top:14px;margin-bottom:4px;">Dépenses annuelles par véhicule</h4>
-              <div class="year-table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Véhicule</th>
-                      <th>M01</th><th>M02</th><th>M03</th><th>M04</th><th>M05</th><th>M06</th>
-                      <th>M07</th><th>M08</th><th>M09</th><th>M10</th><th>M11</th><th>M12</th>
-                      <th>Total</th>
-                    </tr>
-                  </thead>
-                  <tbody id="yearDepBody"></tbody>
-                </table>
-              </div>
-
-              <h4 style="font-size:13px;margin-top:14px;margin-bottom:4px;">Synthèse annuelle globale</h4>
-              <div class="year-table-wrap">
-                <table>
+              <div class="recap-table-wrap">
+                <table class="recap-year-table">
                   <thead>
                     <tr>
                       <th>Indicateur</th>
-                      <th>M01</th><th>M02</th><th>M03</th><th>M04</th><th>M05</th><th>M06</th>
-                      <th>M07</th><th>M08</th><th>M09</th><th>M10</th><th>M11</th><th>M12</th>
+                      <th>Janv.</th>
+                      <th>Fév.</th>
+                      <th>Mars</th>
+                      <th>Avr.</th>
+                      <th>Mai</th>
+                      <th>Juin</th>
+                      <th>Juil.</th>
+                      <th>Août</th>
+                      <th>Sept.</th>
+                      <th>Oct.</th>
+                      <th>Nov.</th>
+                      <th>Déc.</th>
                       <th>Total</th>
                     </tr>
                   </thead>
-                  <tbody id="yearMarginBody"></tbody>
+                  <tbody id="yearSummaryBody"></tbody>
                 </table>
               </div>
             </div>
@@ -3006,7 +2986,7 @@
         }
 
         yearSummaryBody.innerHTML = `
-          ${monthsRow('Chiffre d’affaires', caMonths, 'positive')}
+          ${monthsRow('Chiffre d\'affaires', caMonths, 'positive')}
           ${monthsRow('Frais essence globaux', fuelMonths)}
           ${monthsRow('Réparations globales', repairMonths)}
           ${monthsRow('Assurance', insuranceMonths)}
