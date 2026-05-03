@@ -1187,6 +1187,7 @@
               <button data-view="recap"><span>Récapitulatif</span><span>›</span></button>
               <button data-view="vehicules"><span>Dépenses véhicules</span><span>›</span></button>
               <button data-view="integration"><span>Intégration</span><span>›</span></button>
+              <button data-view="parametrages"><span>Paramétrages</span><span>›</span></button>
             </div>
           </div>
 
@@ -1263,6 +1264,11 @@
                   </div>
 
                   <div>
+                    <label class="label">Nature du produit</label>
+                    <select id="orderProduct" class="select"></select>
+                  </div>
+
+                  <div>
                     <label class="label">Montant TTC</label>
                     <input id="orderAmount" class="input" placeholder="1850">
                   </div>
@@ -1318,6 +1324,7 @@
                         <th>Client</th>
                         <th>Chantier</th>
                         <th>Qté</th>
+                        <th>Produit</th>
                         <th>Montant</th>
                         <th>Statut</th>
                         <th>Chauffeur</th>
@@ -1536,7 +1543,7 @@
                         <th>Total</th>
                       </tr>
                     </thead>
-                    <tbody id="yearSummaryBody"></tbody>
+                    <tbody id="recapYearBody"></tbody>
                   </table>
                 </div>
               </div>
@@ -1547,61 +1554,46 @@
           <section class="view" id="view-vehicules">
             <div class="grid-2">
               <div class="card">
-                <h3>Vue par camion</h3>
-                <p>Les pleins chauffeurs remontent automatiquement ici.</p>
-                <div class="kpis" id="vehicleExpenseKpis"></div>
-                <div class="list" id="vehicleTotalsList" style="margin-top:10px;max-height:230px;overflow:auto;"></div>
-              </div>
-
-              <div class="card">
-                <h3>Ajouter une dépense</h3>
-                <p>Formulaire simplifié pour la démo OZIER.</p>
+                <h3>Dépenses carburant & entretien</h3>
+                <p>Vue journalière des dépenses par véhicule.</p>
 
                 <div class="form-grid">
                   <div>
-                    <label class="label">Camion code</label>
-                    <select id="expenseTruck" class="select">
-                      <option value="">-- Sélectionner un camion --</option>
-                    </select>
+                    <label class="label">Camion</label>
+                    <select id="expenseTruck" class="select"></select>
                   </div>
-
                   <div>
-                    <label class="label">Type</label>
+                    <label class="label">Type de dépense</label>
                     <select id="expenseType" class="select">
                       <option>Carburant</option>
                       <option>Entretien</option>
-                      <option>Réparation</option>
-                      <option>Assurance</option>
-                      <option>Électricité</option>
+                      <option>Péage</option>
                       <option>Autre</option>
                     </select>
                   </div>
-
+                  <div>
+                    <label class="label">Montant</label>
+                    <input id="expenseAmount" class="input" placeholder="120">
+                  </div>
                   <div>
                     <label class="label">Date</label>
                     <input id="expenseDate" type="date" class="input">
                   </div>
-
-                  <div>
-                    <label class="label">Montant</label>
-                    <input id="expenseAmount" class="input" type="number" step="0.01" placeholder="100">
-                  </div>
-
                   <div class="full">
-                    <label class="label">Libellé</label>
-                    <input id="expenseLabel" class="input" placeholder="Pneu avant, vidange...">
-                  </div>
-
-                  <div class="full">
-                    <label class="label">Source interne</label>
-                    <input id="expenseSource" class="input" placeholder="Facture GARAGE, note, etc.">
+                    <label class="label">Note</label>
+                    <textarea id="expenseNote" class="input" rows="2" placeholder="Détail du plein ou de la dépense."></textarea>
                   </div>
                 </div>
 
                 <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
-                  <button class="btn btn-ghost" id="resetExpense">Annuler</button>
                   <button class="btn btn-primary" id="saveExpenseBtn">Enregistrer la dépense</button>
                 </div>
+              </div>
+
+              <div class="card">
+                <h3>Historique des dépenses</h3>
+                <p>Vue simplifiée des dernières lignes de dépenses.</p>
+                <div class="list" id="expensesList"></div>
               </div>
             </div>
           </section>
@@ -1610,330 +1602,441 @@
           <section class="view" id="view-integration">
             <div class="card">
               <h3>Intégration Google Sheets / Make</h3>
-              <p>Zone de notes pour décrire les futurs scénarios d’automatisation.</p>
-              <p style="font-size:12px; color:var(--muted);">
-                Exemple : envoi automatique des commandes vers Sheets, synchronisation des chauffeurs, flux
-                des dépenses véhicules vers un reporting financier, etc.
-              </p>
+              <p>Cette section est une base pour raccorder l'application à vos scénarios Make.</p>
+              <ul style="font-size:13px;color:var(--muted);margin-left:16px;list-style:disc;">
+                <li>Les commandes sont stockées en mémoire côté navigateur pour la démo.</li>
+                <li>Les boutons pourraient déclencher des webhooks Make pour écrire dans Google Sheets.</li>
+                <li>Prévoir un ID interne pour relier les lignes Sheets et l'application.</li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- Paramétrages -->
+          <section class="view" id="view-parametrages">
+            <div class="card">
+              <h3>Paramétrages produits</h3>
+              <p>Gérer la liste des natures de produit (0/25, remblais, sable 0/4, déchets...).</p>
+
+              <div class="form-grid">
+                <div class="full">
+                  <label class="label">Libellé produit</label>
+                  <input id="productLabel" class="input" placeholder="Ex : 0/25, remblais, sable 0/4">
+                </div>
+              </div>
+
+              <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-ghost" id="productNewBtn">Nouveau</button>
+                <button class="btn btn-danger" id="productDeleteBtn">Supprimer</button>
+                <button class="btn btn-primary" id="productSaveBtn">Enregistrer</button>
+              </div>
+
+              <div style="margin-top:14px;">
+                <h3 style="font-size:14px;margin-bottom:4px;">Liste des produits</h3>
+                <div class="list" id="productsList"></div>
+              </div>
             </div>
           </section>
         </main>
       </div>
     </section>
+
+    <!-- PAGE CHAUFFEUR -->
+    <section class="page" id="driverPage">
+      <div class="driver-wrap">
+        <div class="driver-top">
+          <div>
+            <h1 id="driverTitle">Espace chauffeur</h1>
+            <p id="driverSubtitle">Missions du jour et validation carburant.</p>
+          </div>
+          <button class="btn btn-ghost" id="logoutDriver">Changer de chauffeur</button>
+        </div>
+
+        <div class="driver-grid">
+          <div>
+            <div class="card">
+              <h3>Commandes du jour</h3>
+              <p>Liste des missions prévues pour ce chauffeur.</p>
+              <div class="list" id="driverOrders"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card">
+              <h3>Validation carburant</h3>
+              <p>Valider rapidement un plein lié à une commande du jour.</p>
+
+              <div class="fuel-grid">
+                <div>
+                  <label class="label">Commande liée</label>
+                  <select id="fuelOrder" class="select"></select>
+                </div>
+                <div>
+                  <label class="label">Montant carburant</label>
+                  <input id="fuelAmount" class="input" placeholder="120">
+                </div>
+                <div>
+                  <label class="label">Date</label>
+                  <input id="fuelDate" type="date" class="input">
+                </div>
+                <div>
+                  <label class="label">Kilométrage</label>
+                  <input id="fuelKm" class="input" placeholder="150234">
+                </div>
+              </div>
+
+              <div style="margin-top:10px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-primary" id="fuelValidateBtn">Valider le plein</button>
+              </div>
+
+              <div class="fuel-feedback" id="fuelFeedback"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODAL SIGNATURE (placeholder) -->
+    <div class="signature-modal" id="signatureModal">
+      <div class="signature-box">
+        <div class="signature-head">
+          <div>
+            <h3 style="font-size:16px;">Signature client</h3>
+            <p style="font-size:12px;color:var(--muted);">Placeholder pour futur module de signature.</p>
+          </div>
+          <button class="btn btn-ghost" id="closeSignature">Fermer</button>
+        </div>
+        <div style="margin-top:12px;height:220px;border-radius:14px;border:1px dashed rgba(148,163,184,0.8);background:#f9fafb;"></div>
+        <div class="signature-preview" id="signaturePreview"></div>
+      </div>
+    </div>
   </div>
 
   <script>
-    const euro = v => (v || 0).toLocaleString('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0});
-
+    // --- ÉTAT GLOBAL ---
     const state = {
       orders: [],
       drivers: [],
       fleet: [],
       vehicleExpenses: [],
       currentDriver: null,
-      editingOrderId: null
+      editingOrderId: null,
+      products: []
     };
 
+    // --- ELEMENTS LOGIN ---
+    const landingPage = document.getElementById('landingPage');
+    const managerPage = document.getElementById('managerPage');
+    const driverPage = document.getElementById('driverPage');
+
     const managerTab = document.getElementById('managerTab');
-    const driverTab  = document.getElementById('driverTab');
-    const panelManager = document.getElementById('panelManager');
-    const panelDriver  = document.getElementById('panelDriver');
+    const driverTab = document.getElementById('driverTab');
     const authTitle = document.getElementById('authTitle');
-    const authDesc  = document.getElementById('authDesc');
+    const authDesc = document.getElementById('authDesc');
+    const panelManager = document.getElementById('panelManager');
+    const panelDriver = document.getElementById('panelDriver');
     const driverSelect = document.getElementById('driverSelect');
 
     const pinInputs = Array.from(document.querySelectorAll('.pin'));
-    const loginBtn  = document.getElementById('loginBtn');
-    const resetBtn  = document.getElementById('resetBtn');
-    const errorBox  = document.getElementById('errorBox');
+    const loginBtn = document.getElementById('loginBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const errorBox = document.getElementById('errorBox');
 
-    const landingPage  = document.getElementById('landingPage');
-    const managerPage  = document.getElementById('managerPage');
-
+    // --- ELEMENTS MANAGER NAV ---
     const mainTitle = document.getElementById('mainTitle');
-    const mainDesc  = document.getElementById('mainDesc');
-
+    const mainDesc = document.getElementById('mainDesc');
+    const managerKpis = document.getElementById('managerKpis');
+    const recentOrders = document.getElementById('recentOrders');
+    const teamList = document.getElementById('teamList');
     const navButtons = Array.from(document.querySelectorAll('.nav button'));
-    const views      = Array.from(document.querySelectorAll('.view'));
+    const views = {
+      dashboard: document.getElementById('view-dashboard'),
+      commandes: document.getElementById('view-commandes'),
+      chauffeurs: document.getElementById('view-chauffeurs'),
+      'vehicules-flotte': document.getElementById('view-vehicules-flotte'),
+      recap: document.getElementById('view-recap'),
+      vehicules: document.getElementById('view-vehicules'),
+      integration: document.getElementById('view-integration'),
+      parametrages: document.getElementById('view-parametrages')
+    };
 
     const logoutManager = document.getElementById('logoutManager');
-    const toDrivers  = document.getElementById('toDrivers');
-    const toOrders   = document.getElementById('toOrders');
+    const toDrivers = document.getElementById('toDrivers');
+    const toOrders = document.getElementById('toOrders');
     const toVehicles = document.getElementById('toVehicles');
 
-    const managerKpis   = document.getElementById('managerKpis');
-    const recentOrders  = document.getElementById('recentOrders');
-    const teamList      = document.getElementById('teamList');
-
-    const orderClient  = document.getElementById('orderClient');
-    const orderPhone   = document.getElementById('orderPhone');
+    // --- ELEMENTS COMMANDES ---
+    const orderClient = document.getElementById('orderClient');
+    const orderPhone = document.getElementById('orderPhone');
     const orderAddress = document.getElementById('orderAddress');
-    const orderQty     = document.getElementById('orderQty');
-    const orderAmount  = document.getElementById('orderAmount');
-    const orderDate    = document.getElementById('orderDate');
-    const orderTruck   = document.getElementById('orderTruck');
-    const orderDriver  = document.getElementById('orderDriver');
-    const orderStatus  = document.getElementById('orderStatus');
-    const orderSource  = document.getElementById('orderSource');
-
-    const saveOrderBtn = document.getElementById('saveOrderBtn');
-    const resetOrder   = document.getElementById('resetOrder');
-    const ordersTableBody = document.getElementById('ordersTableBody');
+    const orderQty = document.getElementById('orderQty');
+    const orderProduct = document.getElementById('orderProduct');
+    const orderAmount = document.getElementById('orderAmount');
+    const orderDate = document.getElementById('orderDate');
+    const orderTruck = document.getElementById('orderTruck');
+    const orderDriver = document.getElementById('orderDriver');
+    const orderStatus = document.getElementById('orderStatus');
+    const orderSource = document.getElementById('orderSource');
     const orderFormTitle = document.getElementById('orderFormTitle');
-    const orderFormDesc  = document.getElementById('orderFormDesc');
+    const orderFormDesc = document.getElementById('orderFormDesc');
     const orderEditBadge = document.getElementById('orderEditBadge');
+    const ordersTableBody = document.getElementById('ordersTableBody');
+    const saveOrderBtn = document.getElementById('saveOrderBtn');
+    const resetOrderBtn = document.getElementById('resetOrder');
 
-    const driversList   = document.getElementById('driversList');
-    const driverFirst   = document.getElementById('driverFirst');
-    const driverName    = document.getElementById('driverName');
-    const driverPhone   = document.getElementById('driverPhone');
-    const driverEmail   = document.getElementById('driverEmail');
-    const driverPin     = document.getElementById('driverPin');
-    const driverTruck   = document.getElementById('driverTruck');
-    const driverStatus  = document.getElementById('driverStatus');
-    const driverId      = document.getElementById('driverId');
-    const newDriverBtn  = document.getElementById('newDriverBtn');
+    // --- ELEMENTS CHAUFFEURS ---
+    const driversList = document.getElementById('driversList');
+    const driverFirst = document.getElementById('driverFirst');
+    const driverName = document.getElementById('driverName');
+    const driverPhone = document.getElementById('driverPhone');
+    const driverEmail = document.getElementById('driverEmail');
+    const driverPin = document.getElementById('driverPin');
+    const driverTruck = document.getElementById('driverTruck');
+    const driverStatus = document.getElementById('driverStatus');
+    const driverId = document.getElementById('driverId');
+    const newDriverBtn = document.getElementById('newDriverBtn');
     const deleteDriverBtn = document.getElementById('deleteDriverBtn');
-    const saveDriverBtn   = document.getElementById('saveDriverBtn');
+    const saveDriverBtn = document.getElementById('saveDriverBtn');
 
-    const fleetList   = document.getElementById('fleetList');
-    const vehCode     = document.getElementById('vehCode');
-    const vehPlate    = document.getElementById('vehPlate');
-    const vehBrand    = document.getElementById('vehBrand');
-    const vehModel    = document.getElementById('vehModel');
-    const vehType     = document.getElementById('vehType');
-    const vehYear     = document.getElementById('vehYear');
-    const vehKm       = document.getElementById('vehKm');
-    const vehStatus   = document.getElementById('vehStatus');
-    const vehNote     = document.getElementById('vehNote');
-    const newVehBtn   = document.getElementById('newVehBtn');
-    const deleteVehBtn= document.getElementById('deleteVehBtn');
-    const saveVehBtn  = document.getElementById('saveVehBtn');
+    // --- ELEMENTS FLOTTE ---
+    const fleetList = document.getElementById('fleetList');
+    const vehCode = document.getElementById('vehCode');
+    const vehPlate = document.getElementById('vehPlate');
+    const vehBrand = document.getElementById('vehBrand');
+    const vehModel = document.getElementById('vehModel');
+    const vehType = document.getElementById('vehType');
+    const vehYear = document.getElementById('vehYear');
+    const vehKm = document.getElementById('vehKm');
+    const vehStatus = document.getElementById('vehStatus');
+    const vehNote = document.getElementById('vehNote');
+    const newVehBtn = document.getElementById('newVehBtn');
+    const deleteVehBtn = document.getElementById('deleteVehBtn');
+    const saveVehBtn = document.getElementById('saveVehBtn');
 
-    const recapKpis    = document.getElementById('recapKpis');
+    // --- ELEMENTS RECAP ---
+    const recapKpis = document.getElementById('recapKpis');
     const recapDrivers = document.getElementById('recapDrivers');
-
-    const yearSelect   = document.getElementById('yearSelect');
-    const yearSummary  = document.getElementById('yearSummary');
-    const yearKpis     = document.getElementById('yearKpis');
-    const yearSummaryBody = document.getElementById('yearSummaryBody');
+    const yearSelect = document.getElementById('yearSelect');
     const applyYearFilterBtn = document.getElementById('applyYearFilter');
+    const yearSummary = document.getElementById('yearSummary');
+    const yearKpis = document.getElementById('yearKpis');
+    const recapYearBody = document.getElementById('recapYearBody');
 
-    const vehicleExpenseKpis = document.getElementById('vehicleExpenseKpis');
-    const vehicleTotalsList  = document.getElementById('vehicleTotalsList');
-    const expenseTruck   = document.getElementById('expenseTruck');
-    const expenseType    = document.getElementById('expenseType');
-    const expenseDate    = document.getElementById('expenseDate');
-    const expenseAmount  = document.getElementById('expenseAmount');
-    const expenseLabel   = document.getElementById('expenseLabel');
-    const expenseSource  = document.getElementById('expenseSource');
+    // --- ELEMENTS DEPENSES VEHICULES ---
+    const expenseTruck = document.getElementById('expenseTruck');
+    const expenseType = document.getElementById('expenseType');
+    const expenseAmount = document.getElementById('expenseAmount');
+    const expenseDate = document.getElementById('expenseDate');
+    const expenseNote = document.getElementById('expenseNote');
     const saveExpenseBtn = document.getElementById('saveExpenseBtn');
-    const resetExpense   = document.getElementById('resetExpense');
+    const expensesList = document.getElementById('expensesList');
 
+    // --- ELEMENTS CHAUFFEUR PAGE ---
+    const driverTitle = document.getElementById('driverTitle');
+    const driverSubtitle = document.getElementById('driverSubtitle');
+    const driverOrders = document.getElementById('driverOrders');
+    const logoutDriver = document.getElementById('logoutDriver');
+    const fuelOrder = document.getElementById('fuelOrder');
+    const fuelAmount = document.getElementById('fuelAmount');
+    const fuelDate = document.getElementById('fuelDate');
+    const fuelKm = document.getElementById('fuelKm');
+    const fuelValidateBtn = document.getElementById('fuelValidateBtn');
+    const fuelFeedback = document.getElementById('fuelFeedback');
+
+    // --- ELEMENTS SIGNATURE MODAL ---
+    const signatureModal = document.getElementById('signatureModal');
+    const closeSignature = document.getElementById('closeSignature');
+    const signaturePreview = document.getElementById('signaturePreview');
+
+    // --- ELEMENTS PARAMETRAGES PRODUITS ---
+    const productsList = document.getElementById('productsList');
+    const productLabelInput = document.getElementById('productLabel');
+    const productNewBtn = document.getElementById('productNewBtn');
+    const productDeleteBtn = document.getElementById('productDeleteBtn');
+    const productSaveBtn = document.getElementById('productSaveBtn');
+
+    // --- DONNÉES INITIALES ---
     const initialDrivers = [
-      {id:'jean', first:'Jean', name:'Jean MARTINEAU', phone:'0696 11 11 11', email:'jean@example.com', pin:'1111', truck:'OZ-001', status:'Actif'},
-      {id:'marie', first:'Marie', name:'Marie DUPONT', phone:'0696 22 22 22', email:'marie@example.com', pin:'2222', truck:'OZ-002', status:'Actif'},
-      {id:'pierre', first:'Pierre', name:'Pierre LEBRUN', phone:'0696 33 33 33', email:'pierre@example.com', pin:'3333', truck:'OZ-003', status:'En attente'}
+      { first: 'Jean', name: 'Jean MARTINEAU', phone: '0696 00 00 01', email: 'jean@exemple.com', pin: '1111', truck: 'OZ-001', status: 'Actif', id: 'jean' },
+      { first: 'Marie', name: 'Marie DUPONT', phone: '0696 00 00 02', email: 'marie@exemple.com', pin: '2222', truck: 'OZ-002', status: 'Actif', id: 'marie' },
+      { first: 'Pierre', name: 'Pierre LOUIS', phone: '0696 00 00 03', email: 'pierre@exemple.com', pin: '3333', truck: 'OZ-003', status: 'En attente', id: 'pierre' }
     ];
 
     const initialFleet = [
-      {code:'OZ-001', plate:'AB-123-CD', brand:'Renault', model:'Premium Lander', type:'Camion benne', year:2018, km:180000, status:'En service', note:'Camion principal'},
-      {code:'OZ-002', plate:'EF-456-GH', brand:'MAN', model:'TGS', type:'Camion benne', year:2019, km:150000, status:'En service', note:'Benne 8x4'},
-      {code:'OZ-003', plate:'IJ-789-KL', brand:'Scania', model:'P-series', type:'Tracteur benne', year:2017, km:220000, status:'Maintenance', note:'Révision prévue'}
+      { code: 'OZ-001', plate: 'AA-123-AA', brand: 'Renault', model: 'Premium Lander', type: 'Camion benne', year: 2018, km: 180000, status: 'En service', note: 'Camion principal pour les livraisons vrac.' },
+      { code: 'OZ-002', plate: 'BB-456-BB', brand: 'MAN', model: 'TGS', type: 'Camion benne', year: 2020, km: 120000, status: 'En service', note: 'Benne renforcée, idéal remblais lourds.' },
+      { code: 'OZ-003', plate: 'CC-789-CC', brand: 'Scania', model: 'P-series', type: 'Camion benne', year: 2016, km: 220000, status: 'Maintenance', note: 'Prévoir changement pneus arrière.' }
     ];
 
     const initialOrders = [
-      {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1', qty:'12 tonnes', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean', status:'Livrée', source:'WhatsApp'},
-      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', source:'Téléphone'},
-      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', source:'WhatsApp'}
+      {
+        id: 1,
+        client: 'BTP Caraïbes',
+        phone: '0696 12 34 56',
+        address: 'Zone industrielle du Lamentin',
+        qty: '12 T',
+        productId: 1,
+        montant: 1850,
+        date: '2026-05-03',
+        truck: 'OZ-001',
+        driver: 'jean',
+        status: 'En cours',
+        source: 'WhatsApp'
+      },
+      {
+        id: 2,
+        client: 'Entreprise Remblais Plus',
+        phone: '0696 98 76 54',
+        address: 'Chantier Rocade Fort-de-France',
+        qty: '8 T',
+        productId: 2,
+        montant: 1250,
+        date: '2026-05-03',
+        truck: 'OZ-002',
+        driver: 'marie',
+        status: 'En attente',
+        source: 'Téléphone'
+      }
     ];
 
-    const initialExpenses = [
-      {id:1, truck:'OZ-001', type:'Carburant', date:'2026-01-05', amount:150, label:'Plein GO', note:''},
-      {id:2, truck:'OZ-001', type:'Entretien', date:'2026-01-20', amount:320, label:'Vidange + filtres', note:'garage'},
-      {id:3, truck:'OZ-002', type:'Carburant', date:'2026-01-18', amount:130, label:'Plein GO', note:''},
-      {id:4, truck:'OZ-003', type:'Réparation', date:'2026-02-02', amount:450, label:'Freins arrière', note:'atelier'},
-      {id:5, truck:'OZ-001', type:'Autre', date:'2026-02-10', amount:200, label:'Pneu avant', note:'garage'}
+    const initialProducts = [
+      { id: 1, label: '0/25' },
+      { id: 2, label: 'Remblais' },
+      { id: 3, label: 'Sable 0/4' },
+      { id: 4, label: 'Déchets inertes' }
     ];
 
-    function initState() {
-      state.drivers = JSON.parse(JSON.stringify(initialDrivers));
-      state.fleet   = JSON.parse(JSON.stringify(initialFleet));
-      state.orders  = JSON.parse(JSON.stringify(initialOrders));
-      state.vehicleExpenses = JSON.parse(JSON.stringify(initialExpenses));
+    const initialVehicleExpenses = [];
+
+    const demoYears = [2024, 2025, 2026];
+
+    // --- UTILITAIRES ---
+    function euroShort(val) {
+      if (!val) return '0 €';
+      return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val);
     }
 
-    function euroShort(v) {
-      return (v || 0).toLocaleString('fr-FR',{maximumFractionDigits:0})+' €';
+    function showPage(id) {
+      [landingPage, managerPage, driverPage].forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
     }
 
-    function showPage(pageId) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById(pageId).classList.add('active');
-    }
+    function showView(key) {
+      Object.keys(views).forEach(k => views[k].classList.remove('active'));
+      if (views[key]) views[key].classList.add('active');
 
-    function showView(viewKey) {
-      views.forEach(v => v.classList.remove('active'));
-      document.getElementById('view-'+viewKey).classList.add('active');
+      navButtons.forEach(btn => btn.classList.remove('active'));
+      const btn = navButtons.find(b => b.dataset.view === key);
+      if (btn) btn.classList.add('active');
 
-      navButtons.forEach(b => {
-        if (b.dataset.view === viewKey) b.classList.add('active');
-        else b.classList.remove('active');
-      });
-
-      if (viewKey === 'dashboard') {
-        mainTitle.textContent = 'Dashboard';
-        mainDesc.textContent  = 'Vue d’ensemble de l’activité journalière.';
-      } else if (viewKey === 'commandes') {
-        mainTitle.textContent = 'Commandes';
-        mainDesc.textContent  = 'Saisie et suivi des commandes clients.';
-      } else if (viewKey === 'chauffeurs') {
-        mainTitle.textContent = 'Chauffeurs';
-        mainDesc.textContent  = 'Gestion des chauffeurs et de leur PIN.';
-      } else if (viewKey === 'vehicules-flotte') {
-        mainTitle.textContent = 'Flotte véhicules';
-        mainDesc.textContent  = 'Fiches des camions OZIER.';
-      } else if (viewKey === 'recap') {
-        mainTitle.textContent = 'Récapitulatif';
-        mainDesc.textContent  = 'Vue journalière et annuelle CA / dépenses.';
-      } else if (viewKey === 'vehicules') {
-        mainTitle.textContent = 'Dépenses véhicules';
-        mainDesc.textContent  = 'Suivi des charges par camion.';
-      } else if (viewKey === 'integration') {
-        mainTitle.textContent = 'Intégration';
-        mainDesc.textContent  = 'Notes pour les flux Sheets / Make.';
+      switch (key) {
+        case 'dashboard':
+          mainTitle.textContent = 'Dashboard';
+          mainDesc.textContent = 'Vue d’ensemble de l’activité journalière.';
+          break;
+        case 'commandes':
+          mainTitle.textContent = 'Commandes';
+          mainDesc.textContent = 'Créer, modifier et suivre les commandes clients.';
+          break;
+        case 'chauffeurs':
+          mainTitle.textContent = 'Chauffeurs';
+          mainDesc.textContent = 'Gestion des chauffeurs et de leurs informations.';
+          break;
+        case 'vehicules-flotte':
+          mainTitle.textContent = 'Flotte véhicules';
+          mainDesc.textContent = 'Fiches des camions bennes de la flotte OZIER.';
+          break;
+        case 'recap':
+          mainTitle.textContent = 'Récapitulatif';
+          mainDesc.textContent = 'Synthèse journalière et annuelle.';
+          break;
+        case 'vehicules':
+          mainTitle.textContent = 'Dépenses véhicules';
+          mainDesc.textContent = 'Carburant et autres charges par camion.';
+          break;
+        case 'integration':
+          mainTitle.textContent = 'Intégration';
+          mainDesc.textContent = 'Préparation du raccordement Sheets / Make.';
+          break;
+        case 'parametrages':
+          mainTitle.textContent = 'Paramétrages';
+          mainDesc.textContent = 'Listes pré-remplies pour les natures de produit.';
+          break;
       }
     }
 
-    managerTab.addEventListener('click', () => {
-      managerTab.classList.add('active');
-      driverTab.classList.remove('active');
-      panelManager.classList.add('active');
-      panelDriver.classList.remove('active');
-      authTitle.textContent = 'Connexion gérant';
-      authDesc.textContent  = 'Accès au dashboard desktop.';
-    });
-
-    driverTab.addEventListener('click', () => {
-      managerTab.classList.remove('active');
-      driverTab.classList.add('active');
-      panelManager.classList.remove('active');
-      panelDriver.classList.add('active');
-      authTitle.textContent = 'Connexion chauffeur';
-      authDesc.textContent  = 'Accès à l’espace chauffeur.';
-    });
-
-    pinInputs.forEach((input, idx) => {
-      input.addEventListener('input', () => {
-        if (input.value.length === 1 && idx < pinInputs.length - 1) {
-          pinInputs[idx + 1].focus();
-        }
-      });
-
-      input.addEventListener('keydown', e => {
-        if (e.key === 'Backspace' && !input.value && idx > 0) {
-          pinInputs[idx - 1].focus();
-        }
-      });
-    });
-
-    resetBtn.addEventListener('click', () => {
-      pinInputs.forEach(i => i.value = '');
-      errorBox.classList.remove('show');
-      pinInputs[0].focus();
-    });
-
-    function getEnteredPin() {
-      return pinInputs.map(i => i.value || '').join('');
+    function driverLabelFromId(id) {
+      const d = state.drivers.find(x => x.id === id);
+      return d ? d.name : '';
     }
 
-    function findManagerByPin(pin) {
-      return pin === '1234';
+    function productLabelFromId(id) {
+      const p = state.products.find(x => String(x.id) === String(id));
+      return p ? p.label : '';
     }
 
-    function findDriverByPin(pin) {
-      return state.drivers.find(d => d.pin === pin) || null;
+    function refreshOrderDriverOptions() {
+      const options = ['<option value="">Sans chauffeur</option>']
+        .concat(state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`));
+      orderDriver.innerHTML = options.join('');
     }
 
-    loginBtn.addEventListener('click', () => {
-      const pin = getEnteredPin();
-      errorBox.classList.remove('show');
+    function refreshOrderProductOptions() {
+      const options = ['<option value="">-- Sélectionner un produit --</option>']
+        .concat(state.products.map(p => `<option value="${p.id}">${p.label}</option>`));
+      orderProduct.innerHTML = options.join('');
+    }
 
-      if (managerTab.classList.contains('active')) {
-        if (findManagerByPin(pin)) {
-          showPage('managerPage');
-          showView('dashboard');
-          renderAll();
-          resetBtn.click();
-        } else {
-          errorBox.textContent = 'Code gérant incorrect.';
-          errorBox.classList.add('show');
-        }
-      } else {
-        const driver = findDriverByPin(pin);
-        if (driver) {
-          state.currentDriver = driver;
-          alert('Connexion chauffeur non implémentée dans cette démo.');
-          resetBtn.click();
-        } else {
-          errorBox.textContent = 'Code chauffeur incorrect.';
-          errorBox.classList.add('show');
-        }
-      }
-    });
+    function refreshExpenseTruckOptions() {
+      const options = ['<option value="">Sélectionner un camion</option>']
+        .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} · ${v.brand}</option>`));
+      expenseTruck.innerHTML = options.join('');
+    }
 
-    logoutManager.addEventListener('click', () => {
-      showPage('landingPage');
-      resetBtn.click();
-    });
+    function refreshOrderTruckOptions() {
+      const options = ['<option value="">Sans camion</option>']
+        .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} · ${v.brand}</option>`));
+      orderTruck.innerHTML = options.join('');
+    }
 
-    navButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const view = btn.dataset.view;
-        showView(view);
-      });
-    });
-
-    toDrivers.addEventListener('click', () => showView('chauffeurs'));
-    toOrders.addEventListener('click', () => showView('commandes'));
-    toVehicles.addEventListener('click', () => showView('vehicules'));
-
+    // --- RENDU DASHBOARD MANAGER ---
     function renderManagerDashboard() {
       const totalOrders = state.orders.length;
-      const totalDrivers = state.drivers.length;
-      const totalFleet   = state.fleet.length;
-      const totalAmount  = state.orders.reduce((sum,o)=>sum+Number(o.montant||0),0);
+      const totalAmount = state.orders.reduce((sum,o) => sum + (o.montant || 0), 0);
+      const pending = state.orders.filter(o => o.status === 'En attente').length;
+      const inProgress = state.orders.filter(o => o.status === 'En cours').length;
 
       managerKpis.innerHTML = `
+        <div class="kpi">
+          <span>Commandes du jour</span>
+          <strong>${totalOrders}</strong>
+        </div>
         <div class="kpi">
           <span>CA estimé du jour</span>
           <strong>${euroShort(totalAmount)}</strong>
         </div>
         <div class="kpi">
-          <span>Commandes actives</span>
-          <strong>${totalOrders}</strong>
+          <span>En attente</span>
+          <strong>${pending}</strong>
         </div>
         <div class="kpi">
-          <span>Chauffeurs</span>
-          <strong>${totalDrivers}</strong>
-        </div>
-        <div class="kpi">
-          <span>Camions en flotte</span>
-          <strong>${totalFleet}</strong>
+          <span>En cours</span>
+          <strong>${inProgress}</strong>
         </div>
       `;
 
-      const recent = [...state.orders].sort((a,b)=> (b.date||'').localeCompare(a.date||'')).slice(0,5);
+      const recent = [...state.orders].slice(-5).reverse();
       recentOrders.innerHTML = recent.map(o => `
-        <div class="item">
-          <div class="item-top">
-            <strong>${o.client}</strong>
-            <span class="badge ${o.status==='Livrée'?'ok':(o.status==='En cours'?'info':'wait')}">${o.status}</span>
+        <button class="driver-order-btn" data-id="${o.id}">
+          <div class="item">
+            <div class="item-top">
+              <strong>${o.client}</strong>
+              <span class="badge ${o.status==='Livrée'?'ok':(o.status==='En cours'?'info':'wait')}">${o.status}</span>
+            </div>
+            <small>${o.address}</small>
+            <small>${o.date || ''} · ${driverLabelFromId(o.driver) || 'Sans chauffeur'}</small>
           </div>
-          <small>${o.address || ''}</small>
-          <small>${o.date || ''} · ${euroShort(o.montant)}</small>
-        </div>
-      `).join('') || '<div class="item"><small>Aucune commande pour le moment.</small></div>';
+        </button>
+      `).join('') || '<div class="item"><small>Aucune commande récente.</small></div>';
 
       teamList.innerHTML = state.drivers.map(d => `
         <div class="item">
@@ -1942,9 +2045,28 @@
             <span class="badge ${d.status==='Actif'?'ok':'wait'}">${d.status}</span>
           </div>
           <small>${d.phone || ''}</small>
-          <small>Camion : ${d.truck || 'Non attribué'}</small>
+          <small>Camion: ${d.truck || 'Non attribué'}</small>
         </div>
-      `).join('');
+      `).join('') || '<div class="item"><small>Aucun chauffeur configuré.</small></div>';
+    }
+
+    // --- RENDU COMMANDES ---
+    function resetOrderForm() {
+      state.editingOrderId = null;
+      orderClient.value  = '';
+      orderPhone.value   = '';
+      orderAddress.value = '';
+      orderQty.value     = '';
+      orderProduct.value = '';
+      orderAmount.value  = '';
+      orderDate.value    = '';
+      orderTruck.value   = '';
+      orderDriver.value  = '';
+      orderStatus.value  = 'En attente';
+      orderSource.value  = 'WhatsApp';
+      orderFormTitle.textContent = 'Créer une commande';
+      orderFormDesc.textContent  = 'Structure prête pour écrire ensuite dans Google Sheets.';
+      orderEditBadge.classList.remove('show');
     }
 
     function renderOrdersTable() {
@@ -1954,6 +2076,7 @@
           <td>${o.client}</td>
           <td class="col-address">${o.address}</td>
           <td>${o.qty}</td>
+          <td>${productLabelFromId(o.productId)}</td>
           <td>${euroShort(o.montant)}</td>
           <td>${o.status}</td>
           <td>${driverLabelFromId(o.driver)}</td>
@@ -1967,7 +2090,7 @@
           </td>
         </tr>
       `).join('') || `
-        <tr><td colspan="10">Aucune commande enregistrée.</td></tr>
+        <tr><td colspan="11">Aucune commande enregistrée.</td></tr>
       `;
 
       ordersTableBody.querySelectorAll('.btn-edit').forEach(btn => {
@@ -1982,39 +2105,10 @@
           const id = Number(btn.dataset.id);
           if (confirm('Supprimer cette commande ?')) {
             state.orders = state.orders.filter(o => o.id !== id);
-            renderOrdersTable();
-            renderManagerDashboard();
-            renderYearOptions();
+            renderAll();
           }
         });
       });
-    }
-
-    function driverLabelFromId(id) {
-      const d = state.drivers.find(x => x.id === id);
-      return d ? d.name : '';
-    }
-
-    function vehicleLabelFromCode(code) {
-      const v = state.fleet.find(x => x.code === code);
-      return v ? `${v.code} · ${v.brand}` : (code || '');
-    }
-
-    function resetOrderForm() {
-      state.editingOrderId = null;
-      orderClient.value  = '';
-      orderPhone.value   = '';
-      orderAddress.value = '';
-      orderQty.value     = '';
-      orderAmount.value  = '';
-      orderDate.value    = '';
-      orderTruck.value   = '';
-      orderDriver.value  = '';
-      orderStatus.value  = 'En attente';
-      orderSource.value  = 'WhatsApp';
-      orderFormTitle.textContent = 'Créer une commande';
-      orderFormDesc.textContent  = 'Structure prête pour écrire ensuite dans Google Sheets.';
-      orderEditBadge.classList.remove('show');
     }
 
     function startEditOrder(id) {
@@ -2025,58 +2119,19 @@
       orderPhone.value   = o.phone || '';
       orderAddress.value = o.address || '';
       orderQty.value     = o.qty || '';
+      orderProduct.value = o.productId || '';
       orderAmount.value  = o.montant || '';
       orderDate.value    = o.date || '';
       orderTruck.value   = o.truck || '';
       orderDriver.value  = o.driver || '';
       orderStatus.value  = o.status || 'En attente';
       orderSource.value  = o.source || 'WhatsApp';
-
       orderFormTitle.textContent = 'Modifier la commande';
-      orderFormDesc.textContent  = 'Vous pouvez ajuster les informations puis enregistrer.';
+      orderFormDesc.textContent  = 'Vous modifiez une commande existante.';
       orderEditBadge.classList.add('show');
-      showView('commandes');
     }
 
-    resetOrder.addEventListener('click', () => {
-      resetOrderForm();
-    });
-
-    saveOrderBtn.addEventListener('click', () => {
-      const data = {
-        client:  orderClient.value.trim(),
-        phone:   orderPhone.value.trim(),
-        address: orderAddress.value.trim(),
-        qty:     orderQty.value.trim(),
-        montant: Number(orderAmount.value || 0),
-        date:    orderDate.value || '',
-        truck:   orderTruck.value || '',
-        driver:  orderDriver.value || '',
-        status:  orderStatus.value || 'En attente',
-        source:  orderSource.value || 'WhatsApp'
-      };
-
-      if (!data.client || !data.montant) {
-        alert('Client et Montant sont obligatoires.');
-        return;
-      }
-
-      if (state.editingOrderId) {
-        const idx = state.orders.findIndex(o => o.id === state.editingOrderId);
-        if (idx >= 0) {
-          state.orders[idx] = { ...state.orders[idx], ...data };
-        }
-      } else {
-        const newId = (state.orders.reduce((max,o)=>Math.max(max,o.id||0),0) || 0) + 1;
-        state.orders.push({ id:newId, ...data });
-      }
-
-      resetOrderForm();
-      renderOrdersTable();
-      renderManagerDashboard();
-      renderYearOptions();
-    });
-
+    // --- RENDU CHAUFFEURS ---
     function renderDrivers() {
       driversList.innerHTML = state.drivers.map(d => `
         <button class="driver-order-btn" data-id="${d.id}">
@@ -2110,17 +2165,397 @@
       const fleetOptions = ['<option value="">Sans camion</option>']
         .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} · ${v.brand}</option>`));
       driverTruck.innerHTML = fleetOptions.join('');
+
+      refreshOrderDriverOptions();
     }
 
+    // --- RENDU FLOTTE ---
+    function renderFleet() {
+      fleetList.innerHTML = state.fleet.map(v => `
+        <button class="driver-order-btn" data-code="${v.code}">
+          <div class="item">
+            <div class="item-top">
+              <strong>${v.code}</strong>
+              <span class="badge ${v.status==='En service'?'ok':(v.status==='Maintenance'?'wait':'info')}">${v.status}</span>
+            </div>
+            <small>${v.brand} · ${v.model}</small>
+            <small>Immat: ${v.plate} · ${v.year || ''}</small>
+          </div>
+        </button>
+      `).join('') || '<div class="item"><small>Aucun véhicule défini.</small></div>';
+
+      fleetList.querySelectorAll('.driver-order-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const code = btn.dataset.code;
+          const v = state.fleet.find(x => x.code === code);
+          if (!v) return;
+          vehCode.value = v.code || '';
+          vehPlate.value = v.plate || '';
+          vehBrand.value = v.brand || '';
+          vehModel.value = v.model || '';
+          vehType.value = v.type || 'Camion benne';
+          vehYear.value = v.year || '';
+          vehKm.value = v.km || '';
+          vehStatus.value = v.status || 'En service';
+          vehNote.value = v.note || '';
+        });
+      });
+
+      refreshOrderTruckOptions();
+      refreshExpenseTruckOptions();
+    }
+
+    // --- RENDU RECAP JOUR & ANNUEL ---
+    function renderRecapDay() {
+      const totalOrders = state.orders.length;
+      const totalAmount = state.orders.reduce((sum,o) => sum + (o.montant || 0), 0);
+      const totalFuel = state.vehicleExpenses
+        .filter(e => e.type === 'Carburant')
+        .reduce((sum,e) => sum + (e.amount || 0), 0);
+      const net = totalAmount - totalFuel;
+
+      recapKpis.innerHTML = `
+        <div class="kpi">
+          <span>CA jour (démo)</span>
+          <strong>${euroShort(totalAmount)}</strong>
+        </div>
+        <div class="kpi">
+          <span>Dépenses carburant</span>
+          <strong>${euroShort(totalFuel)}</strong>
+        </div>
+        <div class="kpi">
+          <span>Marge brute approx.</span>
+          <strong>${euroShort(net)}</strong>
+        </div>
+        <div class="kpi">
+          <span>Commandes jour</span>
+          <strong>${totalOrders}</strong>
+        </div>
+      `;
+
+      const byDriver = {};
+      state.orders.forEach(o => {
+        const key = o.driver || 'Sans chauffeur';
+        if (!byDriver[key]) {
+          byDriver[key] = { driver: key, amount: 0, count: 0 };
+        }
+        byDriver[key].amount += (o.montant || 0);
+        byDriver[key].count += 1;
+      });
+
+      recapDrivers.innerHTML = Object.values(byDriver).map(d => `
+        <div class="item">
+          <div class="item-top">
+            <strong>${driverLabelFromId(d.driver) || d.driver}</strong>
+            <span class="badge">${d.count} cmd</span>
+          </div>
+          <small>CA estimé: ${euroShort(d.amount)}</small>
+        </div>
+      `).join('') || '<div class="item"><small>Aucune commande pour le jour.</small></div>';
+    }
+
+    function renderYearOptions() {
+      yearSelect.innerHTML = demoYears.map(y => `<option value="${y}">${y}</option>`).join('');
+      yearSelect.value = new Date().getFullYear();
+    }
+
+    function applyYearFilter(updateSummary = true) {
+      const year = Number(yearSelect.value || new Date().getFullYear());
+      const caMonth = new Array(12).fill(0);
+      const chargesMonth = new Array(12).fill(0);
+
+      state.orders.forEach(o => {
+        if (!o.date) return;
+        const d = new Date(o.date);
+        if (d.getFullYear() !== year) return;
+        const m = d.getMonth();
+        caMonth[m] += (o.montant || 0);
+      });
+
+      state.vehicleExpenses.forEach(e => {
+        if (!e.date) return;
+        const d = new Date(e.date);
+        if (d.getFullYear() !== year) return;
+        const m = d.getMonth();
+        chargesMonth[m] += (e.amount || 0);
+      });
+
+      const margeMonth = caMonth.map((v,i) => v - chargesMonth[i]);
+      const totalCA = caMonth.reduce((a,b)=>a+b,0);
+      const totalCharges = chargesMonth.reduce((a,b)=>a+b,0);
+      const totalMarge = margeMonth.reduce((a,b)=>a+b,0);
+
+      if (updateSummary) {
+        yearSummary.textContent = `Synthèse de l’année ${year} sur la base des données de la démo.`;
+      }
+
+      yearKpis.innerHTML = `
+        <div class="kpi">
+          <span>CA annuel (démo)</span>
+          <strong>${euroShort(totalCA)}</strong>
+        </div>
+        <div class="kpi">
+          <span>Charges globales</span>
+          <strong>${euroShort(totalCharges)}</strong>
+        </div>
+        <div class="kpi">
+          <span>Marge brute</span>
+          <strong>${euroShort(totalMarge)}</strong>
+        </div>
+        <div class="kpi">
+          <span>Mois actifs</span>
+          <strong>${caMonth.filter(v=>v>0).length}</strong>
+        </div>
+      `;
+
+      const labels = ['Janv.','Fév.','Mars','Avr.','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.'];
+
+      function row(label, arr, total, extraClass='') {
+        return `
+          <tr>
+            <td>${label}</td>
+            ${arr.map(v => `<td class="${extraClass}">${v ? euroShort(v) : '-'}</td>`).join('')}
+            <td class="${extraClass}">${euroShort(total)}</td>
+          </tr>
+        `;
+      }
+
+      recapYearBody.innerHTML = `
+        ${row('CA', caMonth, totalCA)}
+        ${row('Charges globales', chargesMonth, totalCharges, 'negative')}
+        ${row('Marge brute', margeMonth, totalMarge, totalMarge >= 0 ? 'positive' : 'negative')}
+      `;
+    }
+
+    // --- RENDU DEPENSES VEHICULES ---
+    function renderVehicleExpenses() {
+      expensesList.innerHTML = state.vehicleExpenses.slice().reverse().map(e => `
+        <div class="item">
+          <div class="item-top">
+            <strong>${e.truck || ''}</strong>
+            <span class="badge">${e.type}</span>
+          </div>
+          <small>${e.date || ''} · ${euroShort(e.amount)}</small>
+          <small>${e.note || ''}</small>
+        </div>
+      `).join('') || '<div class="item"><small>Aucune dépense enregistrée.</small></div>';
+    }
+
+    // --- RENDU PARAMETRAGES PRODUITS ---
+    function renderProducts() {
+      productsList.innerHTML = state.products.map(p => `
+        <button class="driver-order-btn" data-id="${p.id}">
+          <div class="item">
+            <div class="item-top">
+              <strong>${p.label}</strong>
+            </div>
+            <small>ID interne : ${p.id}</small>
+          </div>
+        </button>
+      `).join('') || '<div class="item"><small>Aucun produit défini.</small></div>';
+
+      productsList.querySelectorAll('.driver-order-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = Number(btn.dataset.id);
+          const p = state.products.find(x => x.id === id);
+          if (!p) return;
+          productLabelInput.dataset.editId = String(p.id);
+          productLabelInput.value = p.label;
+        });
+      });
+
+      refreshOrderProductOptions();
+    }
+
+    // --- RENDU ESPACE CHAUFFEUR ---
+    function renderDriverPage() {
+      if (!state.currentDriver) return;
+      driverTitle.textContent = `Espace chauffeur · ${state.currentDriver.name}`;
+      driverSubtitle.textContent = `Commandes du jour pour ${state.currentDriver.name}.`;
+
+      const orders = state.orders.filter(o => o.driver === state.currentDriver.id);
+      driverOrders.innerHTML = orders.map(o => `
+        <div class="item">
+          <div class="item-top">
+            <strong>${o.client}</strong>
+            <span class="badge ${o.status==='Livrée'?'ok':(o.status==='En cours'?'info':'wait')}">${o.status}</span>
+          </div>
+          <small>${o.address}</small>
+          <small>${o.date || ''} · ${o.qty || ''} · ${productLabelFromId(o.productId) || ''}</small>
+        </div>
+      `).join('') || '<div class="item"><small>Aucune commande attribuée.</small></div>';
+
+      fuelOrder.innerHTML = orders.map(o => `
+        <option value="${o.id}">${o.id} · ${o.client} · ${o.date || ''}</option>
+      `).join('') || '<option value="">Aucune commande</option>';
+    }
+
+    // --- LOGIN LOGIQUE ---
+    const managerPin = '1234';
+
+    function getEnteredPin() {
+      return pinInputs.map(i => i.value || '').join('');
+    }
+
+    function resetPin() {
+      pinInputs.forEach(i => i.value = '');
+      pinInputs[0].focus();
+      errorBox.classList.remove('show');
+    }
+
+    function handleLogin() {
+      const pin = getEnteredPin();
+      if (pin === managerPin) {
+        state.currentDriver = null;
+        showPage('managerPage');
+        renderAll();
+        return;
+      }
+      const driver = state.drivers.find(d => d.pin === pin);
+      if (driver) {
+        state.currentDriver = driver;
+        showPage('driverPage');
+        renderDriverPage();
+        return;
+      }
+      errorBox.textContent = 'Code incorrect.';
+      errorBox.classList.add('show');
+    }
+
+    // --- INIT LANDING DRIVERS SELECT ---
+    function initLandingDrivers() {
+      driverSelect.innerHTML = state.drivers.map(d => `
+        <option value="${d.id}">${d.name}</option>
+      `).join('');
+    }
+
+    // --- INIT STATE ---
+    function initState() {
+      state.drivers = JSON.parse(JSON.stringify(initialDrivers));
+      state.fleet = JSON.parse(JSON.stringify(initialFleet));
+      state.orders = JSON.parse(JSON.stringify(initialOrders));
+      state.vehicleExpenses = JSON.parse(JSON.stringify(initialVehicleExpenses));
+      state.products = JSON.parse(JSON.stringify(initialProducts));
+    }
+
+    function renderAll() {
+      renderManagerDashboard();
+      renderOrdersTable();
+      renderDrivers();
+      renderFleet();
+      renderRecapDay();
+      renderVehicleExpenses();
+      renderYearOptions();
+      renderProducts();
+      if (yearSelect.value) {
+        applyYearFilter(false);
+      }
+    }
+
+    // --- EVENTS ---
+    managerTab.addEventListener('click', () => {
+      managerTab.classList.add('active');
+      driverTab.classList.remove('active');
+      authTitle.textContent = 'Connexion gérant';
+      authDesc.textContent = 'Accès au dashboard desktop.';
+      panelManager.classList.add('active');
+      panelDriver.classList.remove('active');
+    });
+
+    driverTab.addEventListener('click', () => {
+      driverTab.classList.add('active');
+      managerTab.classList.remove('active');
+      authTitle.textContent = 'Connexion chauffeur';
+      authDesc.textContent = 'Accès aux missions du jour.';
+      panelDriver.classList.add('active');
+      panelManager.classList.remove('active');
+    });
+
+    pinInputs.forEach((input, idx) => {
+      input.addEventListener('input', () => {
+        if (input.value && idx < pinInputs.length - 1) {
+          pinInputs[idx + 1].focus();
+        }
+      });
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !input.value && idx > 0) {
+          pinInputs[idx - 1].focus();
+        }
+      });
+    });
+
+    loginBtn.addEventListener('click', handleLogin);
+    resetBtn.addEventListener('click', resetPin);
+
+    logoutManager.addEventListener('click', () => {
+      showPage('landingPage');
+      resetPin();
+    });
+
+    logoutDriver.addEventListener('click', () => {
+      state.currentDriver = null;
+      showPage('landingPage');
+      resetPin();
+    });
+
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const view = btn.dataset.view;
+        showView(view);
+      });
+    });
+
+    toDrivers.addEventListener('click', () => showView('chauffeurs'));
+    toOrders.addEventListener('click', () => showView('commandes'));
+    toVehicles.addEventListener('click', () => showView('vehicules'));
+
+    // Commandes events
+    saveOrderBtn.addEventListener('click', () => {
+      const data = {
+        client:  orderClient.value.trim(),
+        phone:   orderPhone.value.trim(),
+        address: orderAddress.value.trim(),
+        qty:     orderQty.value.trim(),
+        productId: orderProduct.value || '',
+        montant: Number(orderAmount.value || 0),
+        date:    orderDate.value || '',
+        truck:   orderTruck.value || '',
+        driver:  orderDriver.value || '',
+        status:  orderStatus.value || 'En attente',
+        source:  orderSource.value || 'WhatsApp'
+      };
+
+      if (!data.client || !data.address) {
+        alert('Client et adresse chantier sont obligatoires.');
+        return;
+      }
+
+      if (state.editingOrderId) {
+        const index = state.orders.findIndex(o => o.id === state.editingOrderId);
+        if (index >= 0) {
+          state.orders[index] = { ...state.orders[index], ...data };
+        }
+      } else {
+        const newId = (state.orders.reduce((max,o) => Math.max(max, o.id || 0), 0) || 0) + 1;
+        state.orders.push({ id: newId, ...data });
+      }
+
+      resetOrderForm();
+      renderAll();
+    });
+
+    resetOrderBtn.addEventListener('click', resetOrderForm);
+
+    // Chauffeurs events
     newDriverBtn.addEventListener('click', () => {
       driverFirst.value = '';
-      driverName.value  = '';
+      driverName.value = '';
       driverPhone.value = '';
       driverEmail.value = '';
-      driverPin.value   = '';
+      driverPin.value = '';
       driverTruck.value = '';
-      driverStatus.value= 'Actif';
-      driverId.value    = '';
+      driverStatus.value = 'Actif';
+      driverId.value = '';
     });
 
     saveDriverBtn.addEventListener('click', () => {
@@ -2148,6 +2583,7 @@
       }
 
       renderDrivers();
+      initLandingDrivers();
     });
 
     deleteDriverBtn.addEventListener('click', () => {
@@ -2160,83 +2596,46 @@
         state.drivers = state.drivers.filter(d => d.id !== id);
         newDriverBtn.click();
         renderDrivers();
+        initLandingDrivers();
       }
     });
 
-    function renderFleet() {
-      fleetList.innerHTML = state.fleet.map(v => `
-        <button class="driver-order-btn" data-code="${v.code}">
-          <div class="item">
-            <div class="item-top">
-              <strong>${v.code} · ${v.brand}</strong>
-              <span class="badge ${v.status==='En service'?'ok':(v.status==='Maintenance'?'wait':'info')}">${v.status}</span>
-            </div>
-            <small>${v.plate} · ${v.model}</small>
-            <small>${v.year || ''} · ${v.km ? v.km.toLocaleString('fr-FR')+' km' : ''}</small>
-          </div>
-        </button>
-      `).join('') || '<div class="item"><small>Aucun véhicule défini.</small></div>';
-
-      fleetList.querySelectorAll('.driver-order-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const code = btn.dataset.code;
-          const v = state.fleet.find(x => x.code === code);
-          if (!v) return;
-          vehCode.value  = v.code || '';
-          vehPlate.value = v.plate || '';
-          vehBrand.value = v.brand || '';
-          vehModel.value = v.model || '';
-          vehType.value  = v.type  || 'Camion benne';
-          vehYear.value  = v.year  || '';
-          vehKm.value    = v.km    || '';
-          vehStatus.value= v.status|| 'En service';
-          vehNote.value  = v.note  || '';
-        });
-      });
-
-      const truckOptions = ['<option value="">-- Sélectionner un camion --</option>']
-        .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} · ${v.brand}</option>`));
-      orderTruck.innerHTML  = ['<option value="">Sans camion</option>'].concat(state.fleet.map(v => `<option value="${v.code}">${v.code}</option>`)).join('');
-      expenseTruck.innerHTML= truckOptions.join('');
-    }
-
+    // Flotte events
     newVehBtn.addEventListener('click', () => {
-      vehCode.value  = '';
+      vehCode.value = '';
       vehPlate.value = '';
       vehBrand.value = '';
       vehModel.value = '';
-      vehType.value  = 'Camion benne';
-      vehYear.value  = '';
-      vehKm.value    = '';
-      vehStatus.value= 'En service';
-      vehNote.value  = '';
+      vehType.value = 'Camion benne';
+      vehYear.value = '';
+      vehKm.value = '';
+      vehStatus.value = 'En service';
+      vehNote.value = '';
     });
 
     saveVehBtn.addEventListener('click', () => {
+      const code = vehCode.value.trim();
+      if (!code) {
+        alert('Le code camion est obligatoire.');
+        return;
+      }
       const data = {
-        code:  vehCode.value.trim(),
+        code,
         plate: vehPlate.value.trim(),
         brand: vehBrand.value.trim(),
         model: vehModel.value.trim(),
-        type:  vehType.value,
+        type:  vehType.value || 'Camion benne',
         year:  Number(vehYear.value || 0),
         km:    Number(vehKm.value || 0),
         status:vehStatus.value || 'En service',
         note:  vehNote.value.trim()
       };
-
-      if (!data.code) {
-        alert('Code camion est obligatoire.');
-        return;
-      }
-
-      const idx = state.fleet.findIndex(v => v.code === data.code);
+      const idx = state.fleet.findIndex(v => v.code === code);
       if (idx >= 0) {
         state.fleet[idx] = data;
       } else {
         state.fleet.push(data);
       }
-
       renderFleet();
       renderDrivers();
     });
@@ -2255,311 +2654,98 @@
       }
     });
 
-    function renderRecapDay() {
-      const today = (new Date()).toISOString().slice(0,10);
-      const ordersToday = state.orders.filter(o => (o.date || '').startsWith(today.slice(0,7)));
-      const ca = ordersToday.reduce((sum,o)=>sum+Number(o.montant||0),0);
-      const nb = ordersToday.length;
-      const avg = nb ? ca/nb : 0;
-
-      recapKpis.innerHTML = `
-        <div class="kpi">
-          <span>CA mois en cours</span>
-          <strong>${euroShort(ca)}</strong>
-        </div>
-        <div class="kpi">
-          <span>Commandes mois</span>
-          <strong>${nb}</strong>
-        </div>
-        <div class="kpi">
-          <span>Panier moyen</span>
-          <strong>${euroShort(avg)}</strong>
-        </div>
-        <div class="kpi">
-          <span>Mois</span>
-          <strong>${today.slice(0,7)}</strong>
-        </div>
-      `;
-
-      const byDriver = {};
-      state.orders.forEach(o => {
-        const key = o.driver || 'inconnu';
-        if (!byDriver[key]) byDriver[key] = { ca:0, nb:0 };
-        byDriver[key].ca += Number(o.montant||0);
-        byDriver[key].nb += 1;
-      });
-
-      recapDrivers.innerHTML = Object.entries(byDriver).map(([driverId,vals]) => `
-        <div class="item">
-          <div class="item-top">
-            <strong>${driverLabelFromId(driverId) || 'Sans chauffeur'}</strong>
-            <span class="badge">${vals.nb} cmdes</span>
-          </div>
-          <small>CA cumulé : ${euroShort(vals.ca)}</small>
-        </div>
-      `).join('') || '<div class="item"><small>Aucune donnée disponible.</small></div>';
-    }
-
-    function renderYearOptions() {
-      const years = new Set();
-      state.orders.forEach(o => {
-        if (o.date) years.add(o.date.slice(0,4));
-      });
-      state.vehicleExpenses.forEach(e => {
-        if (e.date) years.add(e.date.slice(0,4));
-      });
-      const sorted = Array.from(years).sort();
-      yearSelect.innerHTML = sorted.map(y => `<option value="${y}">${y}</option>`).join('');
-      if (sorted.length) yearSelect.value = sorted[sorted.length-1];
-    }
-
-    function applyYearFilter(showAlert = true) {
-      const year = yearSelect.value;
-
-      if (!year) {
-        yearSummary.textContent = 'Choisissez une année pour afficher la synthèse.';
-        yearKpis.innerHTML = '';
-        yearSummaryBody.innerHTML = '';
-        if (showAlert) alert('Choisissez une année.');
-        return;
-      }
-
-      const initMonths = () => Array(13).fill(0);
-
-      const caMonths = initMonths();
-      const fuelMonths = initMonths();
-      const repairMonths = initMonths();
-      const insuranceMonths = initMonths();
-      const electricityMonths = initMonths();
-
-      state.orders.forEach(o => {
-        if (!o.date) return;
-        const d = String(o.date);
-        if (!d.startsWith(year)) return;
-
-        const m = parseInt(d.slice(5, 7), 10) - 1;
-        const amount = Number(o.montant || 0);
-
-        caMonths[m] += amount;
-        caMonths[12] += amount;
-      });
-
-      state.vehicleExpenses.forEach(e => {
-        if (!e.date) return;
-        const d = String(e.date);
-        if (!d.startsWith(year)) return;
-
-        const m = parseInt(d.slice(5, 7), 10) - 1;
-        const amount = Number(e.amount || 0);
-        const type = String(e.type || '').trim().toLowerCase();
-        const label = String(e.label || '').trim().toLowerCase();
-        const note = String(e.note || '').trim().toLowerCase();
-        const fullText = `${type} ${label} ${note}`;
-
-        if (type === 'carburant') {
-          fuelMonths[m] += amount;
-          fuelMonths[12] += amount;
-          return;
-        }
-
-        if (
-          type === 'réparation' ||
-          type === 'reparation' ||
-          type === 'entretien' ||
-          fullText.includes('réparation') ||
-          fullText.includes('reparation') ||
-          fullText.includes('garage') ||
-          fullText.includes('vidange') ||
-          fullText.includes('pneu') ||
-          fullText.includes('frein') ||
-          fullText.includes('atelier') ||
-          fullText.includes('hydraulique')
-        ) {
-          repairMonths[m] += amount;
-          repairMonths[12] += amount;
-          return;
-        }
-
-        if (type === 'assurance' || fullText.includes('assurance')) {
-          insuranceMonths[m] += amount;
-          insuranceMonths[12] += amount;
-          return;
-        }
-
-        if (
-          type === 'électricité' ||
-          type === 'electricite' ||
-          fullText.includes('électricité') ||
-          fullText.includes('electricite') ||
-          fullText.includes('edf') ||
-          fullText.includes('courant')
-        ) {
-          electricityMonths[m] += amount;
-          electricityMonths[12] += amount;
-          return;
-        }
-
-        repairMonths[m] += amount;
-        repairMonths[12] += amount;
-      });
-
-      const totalExpensesMonths = initMonths();
-      const marginMonths = initMonths();
-
-      for (let i = 0; i < 13; i++) {
-        totalExpensesMonths[i] =
-          (fuelMonths[i] || 0) +
-          (repairMonths[i] || 0) +
-          (insuranceMonths[i] || 0) +
-          (electricityMonths[i] || 0);
-
-        marginMonths[i] = (caMonths[i] || 0) - totalExpensesMonths[i];
-      }
-
-      const totalCaYear = caMonths[12] || 0;
-      const totalDepYear = totalExpensesMonths[12] || 0;
-      const margeYear = marginMonths[12] || 0;
-
-      yearKpis.innerHTML = [
-        ['CA annuel', euro(totalCaYear)],
-        ['Total dépenses', euro(totalDepYear)],
-        ['Marge', euro(margeYear)],
-        ['Année affichée', year]
-      ].map(k => `
-        <div class="kpi">
-          <span>${k[0]}</span>
-          <strong>${k[1]}</strong>
-        </div>
-      `).join('');
-
-      yearSummary.textContent =
-        `Synthèse ${year} · CA ${euro(totalCaYear)} · Dépenses ${euro(totalDepYear)} · Marge ${euro(margeYear)}.`;
-
-      const monthsRow = (label, arr, className = '') => `
-        <tr>
-          <td>${label}</td>
-          ${Array.from({ length: 12 }, (_, i) => `<td class="${className}">${euro(arr[i] || 0)}</td>`).join('')}
-          <td class="${className}">${euro(arr[12] || 0)}</td>
-        </tr>
-      `;
-
-      const noData =
-        totalCaYear === 0 &&
-        fuelMonths[12] === 0 &&
-        repairMonths[12] === 0 &&
-        insuranceMonths[12] === 0 &&
-        electricityMonths[12] === 0;
-
-      if (noData) {
-        yearSummaryBody.innerHTML = `<tr><td colspan="14">Aucune donnée sur ${year}.</td></tr>`;
-        return;
-      }
-
-      yearSummaryBody.innerHTML = `
-        ${monthsRow('Chiffre d\'affaires', caMonths, 'positive')}
-        ${monthsRow('Frais essence globaux', fuelMonths)}
-        ${monthsRow('Réparations globales', repairMonths)}
-        ${monthsRow('Assurance', insuranceMonths)}
-        ${monthsRow('Électricité', electricityMonths)}
-        ${monthsRow('Marge (CA - Dépenses)', marginMonths, marginMonths[12] < 0 ? 'negative' : 'positive')}
-      `;
-    }
-
-    applyYearFilterBtn.addEventListener('click', () => applyYearFilter(true));
-
-    function renderVehicleExpenses() {
-      const totals = {};
-      state.vehicleExpenses.forEach(e => {
-        const key = e.truck || 'Autre';
-        if (!totals[key]) totals[key] = 0;
-        totals[key] += Number(e.amount || 0);
-      });
-
-      const entries = Object.entries(totals).sort((a,b)=>b[1]-a[1]);
-
-      const totalAll = entries.reduce((sum, [,v])=>sum+v,0);
-
-      vehicleExpenseKpis.innerHTML = `
-        <div class="kpi">
-          <span>Dépenses totales</span>
-          <strong>${euroShort(totalAll)}</strong>
-        </div>
-        <div class="kpi">
-          <span>Nb camions concernés</span>
-          <strong>${entries.length}</strong>
-        </div>
-        <div class="kpi">
-          <span>Dépense moyenne / camion</span>
-          <strong>${euroShort(entries.length ? totalAll/entries.length : 0)}</strong>
-        </div>
-        <div class="kpi">
-          <span>Source</span>
-          <strong>Démo interne</strong>
-        </div>
-      `;
-
-      vehicleTotalsList.innerHTML = entries.map(([truck,amount]) => `
-        <div class="item">
-          <div class="item-top">
-            <strong>${vehicleLabelFromCode(truck)}</strong>
-            <span class="badge">${euroShort(amount)}</span>
-          </div>
-          <small>Dépenses cumulées pour ce véhicule.</small>
-        </div>
-      `).join('') || '<div class="item"><small>Aucune dépense enregistrée.</small></div>';
-    }
-
-    resetExpense.addEventListener('click', () => {
-      expenseTruck.value  = '';
-      expenseType.value   = 'Carburant';
-      expenseDate.value   = '';
-      expenseAmount.value = '';
-      expenseLabel.value  = '';
-      expenseSource.value = '';
-    });
-
+    // Dépenses véhicules events
     saveExpenseBtn.addEventListener('click', () => {
       const data = {
-        truck:  expenseTruck.value || '',
-        type:   expenseType.value || 'Carburant',
-        date:   expenseDate.value || '',
+        truck: expenseTruck.value || '',
+        type:  expenseType.value || 'Carburant',
         amount: Number(expenseAmount.value || 0),
-        label:  expenseLabel.value.trim(),
-        note:   expenseSource.value.trim()
+        date:  expenseDate.value || '',
+        note:  expenseNote.value.trim()
       };
-
       if (!data.truck || !data.amount) {
-        alert('Camion et Montant sont obligatoires.');
+        alert('Camion et montant sont obligatoires.');
+        return;
+      }
+      state.vehicleExpenses.push(data);
+      expenseAmount.value = '';
+      expenseDate.value = '';
+      expenseNote.value = '';
+      renderVehicleExpenses();
+      renderRecapDay();
+      if (yearSelect.value) applyYearFilter(false);
+    });
+
+    // Paramétrages produits events
+    productNewBtn.addEventListener('click', () => {
+      delete productLabelInput.dataset.editId;
+      productLabelInput.value = '';
+    });
+
+    productSaveBtn.addEventListener('click', () => {
+      const label = productLabelInput.value.trim();
+      if (!label) {
+        alert('Le libellé produit est obligatoire.');
         return;
       }
 
-      const newId = (state.vehicleExpenses.reduce((max,e)=>Math.max(max,e.id||0),0) || 0) + 1;
-      state.vehicleExpenses.push({ id:newId, ...data });
+      const editId = productLabelInput.dataset.editId ? Number(productLabelInput.dataset.editId) : null;
 
-      resetExpense.click();
-      renderVehicleExpenses();
-      renderYearOptions();
+      if (editId) {
+        const idx = state.products.findIndex(p => p.id === editId);
+        if (idx >= 0) {
+          state.products[idx].label = label;
+        }
+      } else {
+        const newId = (state.products.reduce((max,p) => Math.max(max, p.id || 0), 0) || 0) + 1;
+        state.products.push({ id: newId, label });
+        productLabelInput.dataset.editId = String(newId);
+      }
+
+      renderProducts();
     });
 
-    function initLandingDrivers() {
-      driverSelect.innerHTML = state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
-    }
-
-    function renderAll() {
-      renderManagerDashboard();
-      renderOrdersTable();
-      renderDrivers();
-      renderFleet();
-      renderRecapDay();
-      renderVehicleExpenses();
-      renderYearOptions();
-      if (yearSelect.value) {
-        applyYearFilter(false);
+    productDeleteBtn.addEventListener('click', () => {
+      const editId = productLabelInput.dataset.editId ? Number(productLabelInput.dataset.editId) : null;
+      if (!editId) {
+        alert('Sélectionnez un produit avant de supprimer.');
+        return;
       }
-    }
+      if (confirm('Supprimer ce produit ?')) {
+        state.products = state.products.filter(p => p.id !== editId);
+        productNewBtn.click();
+        renderProducts();
+      }
+    });
 
+    // Recap events
+    applyYearFilterBtn.addEventListener('click', () => applyYearFilter(true));
+
+    // Chauffeur page events
+    fuelValidateBtn.addEventListener('click', () => {
+      const orderId = Number(fuelOrder.value || 0);
+      const amount = Number(fuelAmount.value || 0);
+      const date = fuelDate.value || '';
+      const km = fuelKm.value.trim();
+      if (!orderId || !amount) {
+        alert('Commande et montant sont obligatoires pour valider le plein.');
+        return;
+      }
+      fuelFeedback.textContent = `Plein validé pour la commande ${orderId} (${amount} €). À raccorder à un webhook Make plus tard.`;
+      fuelAmount.value = '';
+      fuelDate.value = '';
+      fuelKm.value = '';
+    });
+
+    closeSignature.addEventListener('click', () => {
+      signatureModal.style.display = 'none';
+      signaturePreview.textContent = '';
+    });
+
+    // --- INIT GLOBAL ---
     initState();
     initLandingDrivers();
+    renderAll();
   </script>
 </body>
 </html>
