@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1250,6 +1251,11 @@
                   </div>
 
                   <div>
+                    <label class="label">Produit</label>
+                    <select id="orderProduct" class="select"></select>
+                  </div>
+
+                  <div>
                     <label class="label">Quantité</label>
                     <input id="orderQty" class="input" placeholder="12 tonnes">
                   </div>
@@ -1283,13 +1289,7 @@
                     </select>
                   </div>
 
-                  <div class="full">
-                    <label class="label">Source</label>
-                    <select id="orderSource" class="select">
-                      <option value="WhatsApp">WhatsApp</option>
-                      <option value="Téléphone">Téléphone</option>
-                    </select>
-                  </div>
+
                 </div>
 
                 <div class="order-form-actions">
@@ -1313,7 +1313,7 @@
                         <th>Montant</th>
                         <th>Statut</th>
                         <th>Chauffeur</th>
-                        <th>Source</th>
+                        <th>Produit</th>
                         <th>Date</th>
                         <th>Actions</th>
                       </tr>
@@ -1759,7 +1759,7 @@
     const orderTruck   = document.getElementById('orderTruck');
     const orderDriver  = document.getElementById('orderDriver');
     const orderStatus  = document.getElementById('orderStatus');
-    const orderSource  = document.getElementById('orderSource');
+    const orderProduct = document.getElementById('orderProduct');
 
     const saveOrderBtn = document.getElementById('saveOrderBtn');
     const resetOrder   = document.getElementById('resetOrder');
@@ -1848,9 +1848,9 @@
     ];
 
     const initialOrders = [
-      {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1', qty:'12 tonnes', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean', status:'Livrée', source:'WhatsApp'},
-      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', source:'Téléphone'},
-      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', source:'WhatsApp'}
+      {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1', qty:'12 tonnes', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean', status:'Livrée', product:'SABLE-10T'},
+      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', product:'GRAVIER-10T'},
+      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', product:'SABLE-10T'}
     ];
 
     const initialExpenses = [
@@ -2067,7 +2067,7 @@
           <td>${euroShort(o.montant)}</td>
           <td>${o.status}</td>
           <td>${driverLabelFromId(o.driver)}</td>
-          <td>${o.source}</td>
+          <td>${productLabelFromCode(o.product)}</td>
           <td>${o.date || ''}</td>
           <td>
             <div class="order-actions">
@@ -2110,6 +2110,16 @@
       return v ? `${v.code} · ${v.brand}` : (code || '');
     }
 
+    function productLabelFromCode(code) {
+      const p = state.products.find(x => x.code === code);
+      return p ? `${p.code} · ${p.name}` : (code || '');
+    }
+
+    function vehiclePlateLabelFromCode(code) {
+      const v = state.fleet.find(x => x.code === code);
+      return v ? v.plate : (code || '');
+    }
+
     function resetOrderForm() {
       state.editingOrderId = null;
       orderClient.value  = '';
@@ -2121,7 +2131,7 @@
       orderTruck.value   = '';
       orderDriver.value  = '';
       orderStatus.value  = 'En attente';
-      orderSource.value  = 'WhatsApp';
+      orderProduct.value = '';
       orderFormTitle.textContent = 'Créer une commande';
       orderFormDesc.textContent  = 'Structure prête pour écrire ensuite dans Google Sheets.';
       orderEditBadge.classList.remove('show');
@@ -2140,7 +2150,7 @@
       orderTruck.value   = o.truck || '';
       orderDriver.value  = o.driver || '';
       orderStatus.value  = o.status || 'En attente';
-      orderSource.value  = o.source || 'WhatsApp';
+      orderProduct.value = o.product || '';
 
       orderFormTitle.textContent = 'Modifier la commande';
       orderFormDesc.textContent  = 'Vous pouvez ajuster les informations puis enregistrer.';
@@ -2163,7 +2173,7 @@
         truck:   orderTruck.value || '',
         driver:  orderDriver.value || '',
         status:  orderStatus.value || 'En attente',
-        source:  orderSource.value || 'WhatsApp'
+        product: orderProduct.value || ''
       };
 
       if (!data.client || !data.montant) {
@@ -2220,6 +2230,14 @@
       const fleetOptions = ['<option value="">Sans camion</option>']
         .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} · ${v.brand}</option>`));
       driverTruck.innerHTML = fleetOptions.join('');
+
+      const driverOptions = ['<option value="">Sans chauffeur</option>']
+        .concat(state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`));
+      orderDriver.innerHTML = driverOptions.join('');
+
+      const productOptions = ['<option value="">Sans produit</option>']
+        .concat(state.products.map(p => `<option value="${p.code}">${p.name}</option>`));
+      orderProduct.innerHTML = productOptions.join('');
     }
 
     newDriverBtn.addEventListener('click', () => {
@@ -2307,8 +2325,8 @@
       });
 
       const truckOptions = ['<option value="">-- Sélectionner un camion --</option>']
-        .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} · ${v.brand}</option>`));
-      orderTruck.innerHTML  = ['<option value="">Sans camion</option>'].concat(state.fleet.map(v => `<option value="${v.code}">${v.code}</option>`)).join('');
+        .concat(state.fleet.map(v => `<option value="${v.code}">${v.plate} (${v.code})</option>`));
+      orderTruck.innerHTML  = ['<option value="">Sans camion</option>'].concat(state.fleet.map(v => `<option value="${v.code}">${v.plate}</option>`)).join('');
       expenseTruck.innerHTML= truckOptions.join('');
     }
 
