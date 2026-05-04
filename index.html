@@ -1830,7 +1830,7 @@
 
     const ordersTableBody = document.getElementById('ordersTableBody');
     const orderClient  = document.getElementById('orderClient');
-    the_orderPhone   = document.getElementById('orderPhone');
+    const orderPhone   = document.getElementById('orderPhone');
     const orderAddress = document.getElementById('orderAddress');
     const orderQty     = document.getElementById('orderQty');
     const orderAmount  = document.getElementById('orderAmount');
@@ -2031,6 +2031,7 @@
 
     pinInputs.forEach((input, idx) => {
       input.addEventListener('input', () => {
+        input.value = input.value.replace(/\D/g,'');
         if (input.value.length === 1 && idx < pinInputs.length - 1) {
           pinInputs[idx + 1].focus();
         }
@@ -2163,7 +2164,7 @@
     function resetOrderForm() {
       state.editingOrderId = null;
       orderClient.value  = '';
-      the_orderPhone.value   = '';
+      orderPhone.value   = '';
       orderAddress.value = '';
       orderQty.value     = '';
       orderAmount.value  = '';
@@ -2182,7 +2183,7 @@
       if (!o) return;
       state.editingOrderId = id;
       orderClient.value  = o.client || '';
-      the_orderPhone.value   = o.phone || '';
+      orderPhone.value   = o.phone || '';
       orderAddress.value = o.address || '';
       orderQty.value     = o.qty || '';
       orderAmount.value  = o.montant || '';
@@ -2206,7 +2207,7 @@
       const existingOrder = state.editingOrderId ? state.orders.find(o => o.id === state.editingOrderId) : null;
       const data = {
         client:  orderClient.value.trim(),
-        phone:   the_orderPhone.value.trim(),
+        phone:   orderPhone.value.trim(),
         address: orderAddress.value.trim(),
         qty:     orderQty.value.trim(),
         montant: Number(orderAmount.value || 0),
@@ -2635,8 +2636,6 @@
       `).join('') || '<div class="item"><small>Aucun site.</small></div>';
     }
 
-    function initLandingDrivers() {}
-
     function renderDriverPage() {
       const d = state.currentDriver;
       if (!d) return;
@@ -2840,7 +2839,6 @@
       renderRecapDay();
       renderYearOptions();
       renderVehicleExpenses();
-      initLandingDrivers();
     }
 
     initState();
