@@ -456,15 +456,15 @@
 
     .orders-layout{
       margin-top:14px;
-      display:grid;
-      grid-template-columns:minmax(320px,0.9fr) minmax(620px,1.45fr);
-      gap:12px;
-      align-items:start;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
     }
 
     .orders-form-card,
     .orders-table-card{
       min-width:0;
+      width:100%;
     }
 
     .orders-table-wrap{
@@ -690,7 +690,7 @@
       color:var(--muted);
     }
 
-    .driver-grid {
+        .driver-grid {
       display:grid;
       grid-template-columns:minmax(0,1.15fr) minmax(0,0.9fr);
       gap:12px;
@@ -929,7 +929,6 @@
       .hero-grid { grid-template-columns:1fr; }
       .driver-grid { grid-template-columns:1fr; }
       .grid-2 { grid-template-columns:1fr; }
-      .orders-layout { grid-template-columns:1fr; }
       .kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .monthly-types { grid-template-columns:repeat(2,minmax(0,1fr)); }
 
@@ -1113,6 +1112,65 @@
       gap: 6px;
       margin-top: 12px;
     }
+
+    /* === Finalize Modal === */
+    .finalize-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 9999;
+    }
+    .finalize-box {
+      width: min(460px, 100%);
+      border-radius: 20px;
+      padding: 28px 24px;
+      background: linear-gradient(145deg,#ffffff,#ecfdf5);
+      border: 1px solid rgba(22,163,74,0.3);
+      box-shadow: 0 20px 50px rgba(15,23,42,0.25);
+      text-align: center;
+    }
+    .finalize-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .btn-xs.btn-finalize {
+      color: #16a34a;
+      border-color: rgba(22,163,74,0.35);
+      background: rgba(22,163,74,0.08);
+    }
+    .btn-xs.btn-finalize:hover {
+      background: rgba(22,163,74,0.15);
+    }
+    .rotation-delivered {
+      color: #16a34a;
+      font-weight: 700;
+    }
+    .rotation-remaining {
+      color: #d97706;
+      font-weight: 700;
+    }
+    .montant-pending {
+      font-style: italic;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .status-finalisee {
+      background: #ecfdf5;
+      color: #16a34a;
+      border: 1px solid rgba(22,163,74,0.4);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .orders-table-card h3 {
+      margin-bottom: 4px;
+    }
   </style>
 </head>
 <body>
@@ -1231,7 +1289,6 @@
               <p id="mainDesc">Vue d’ensemble de l’activité journalière.</p>
             </div>
 
-            <!-- toolbar simplifiée (pas de boutons de raccourcis) -->
             <div class="toolbar"></div>
           </div>
 
@@ -1256,6 +1313,8 @@
           <!-- Commandes -->
           <section class="view" id="view-commandes">
             <div class="orders-layout">
+
+              <!-- BLOC 1 : CRÉER / MODIFIER UNE COMMANDE -->
               <div class="card orders-form-card">
                 <div class="order-form-head">
                   <div>
@@ -1312,7 +1371,7 @@
                   </div>
 
                   <div>
-                    <label class="label">Nombre de rotation</label>
+                    <label class="label">Nombre de rotations estimées</label>
                     <input id="orderRotations" class="input" type="number" min="1" step="1" placeholder="1">
                   </div>
                 </div>
@@ -1322,21 +1381,33 @@
                   <button class="btn btn-primary" id="saveOrderBtn">Enregistrer la commande</button>
                 </div>
               </div>
-                            <div class="card orders-table-card">
-                <h3>Tableau des commandes</h3>
-                <p>Vue complète avec actions de modification et suppression.</p>
 
-                <div class="orders-table-wrap">
-                  <table class="orders-table">
+              <!-- BLOC 2 : TABLEAU DES COMMANDES (pleine largeur sous le formulaire) -->
+              <div class="card orders-table-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
+                  <div>
+                    <h3>Tableau des commandes</h3>
+                    <p>Suivi des rotations, statut de livraison et finalisation des commandes.</p>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <span style="font-size:11px;padding:4px 10px;border-radius:999px;background:#ecfdf5;color:#16a34a;border:1px solid rgba(22,163,74,0.3);">● Finalisée = CA comptabilisé</span>
+                    <span style="font-size:11px;padding:4px 10px;border-radius:999px;background:#fffbeb;color:#d97706;border:1px solid rgba(234,179,8,0.4);">● En attente = montant masqué</span>
+                  </div>
+                </div>
+
+                <div class="orders-table-wrap" style="max-height:500px;">
+                  <table class="orders-table" style="min-width:1200px;">
                     <thead>
                       <tr>
                         <th>N°</th>
                         <th>Client</th>
                         <th>Chantier</th>
                         <th>Produit</th>
-                        <th>Rotation</th>
+                        <th title="Rotations estimées totales">🔄 Rot. Totales</th>
+                        <th title="Rotations réellement livrées (signées)">✅ Rot. Livrées</th>
+                        <th title="Rotations restantes à effectuer">⏳ Rot. Restantes</th>
                         <th>Qté</th>
-                        <th>Montant</th>
+                        <th>Montant TTC</th>
                         <th>Statut</th>
                         <th>Chauffeur</th>
                         <th>Date</th>
@@ -1347,10 +1418,10 @@
                   </table>
                 </div>
               </div>
+
             </div>
           </section>
-
-          <!-- Récap -->
+                    <!-- Récap -->
           <section class="view" id="view-recap">
             <div class="recap-layout">
               <div class="recap-top-grid">
@@ -1383,7 +1454,6 @@
                 </div>
                 <div class="year-summary" id="yearSummary">Choisissez une année pour afficher la synthèse.</div>
                 <div class="kpis" id="yearKpis" style="margin-top:10px;"></div>
-
                 <div class="recap-table-wrap">
                   <table class="recap-year-table">
                     <thead>
@@ -1485,6 +1555,15 @@
               </div>
 
               <div class="card">
+                <h3>Flotte OZIER</h3>
+                <p>Camions gérés uniquement côté front dans cette démo.</p>
+                <div class="list" id="fleetList"></div>
+              </div>
+            </div>
+
+            <!-- Ligne 2 : Fiche chauffeur / Fiche camion -->
+            <div class="grid-2" style="margin-top:14px;">
+              <div class="card">
                 <h3>Fiche chauffeur</h3>
                 <p>Les champs servent de base pour le futur CRUD connecté.</p>
                 <div class="form-grid">
@@ -1514,107 +1593,41 @@
                   </div>
 
                   <div>
-                    <label class="label">Camion attribué</label>
-                    <select id="driverTruck" class="select">
-                      <option value="">Sans camion</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label class="label">Statut</label>
-                    <select id="driverStatus" class="select">
-                      <option>Actif</option>
-                      <option>En attente</option>
-                    </select>
+                    <label class="label">Camion associé</label>
+                    <select id="driverTruck" class="select"></select>
                   </div>
 
                   <div class="full">
-                    <label class="label">Identifiant interne</label>
-                    <input id="driverId" class="input" placeholder="jean">
+                    <label class="label">Notes internes</label>
+                    <textarea id="driverNotes" rows="2" class="input" placeholder="Particularités, horaires..."></textarea>
                   </div>
                 </div>
-
-                <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
-                  <button class="btn btn-ghost" id="newDriverBtn">Nouveau</button>
-                  <button class="btn btn-danger" id="deleteDriverBtn">Supprimer</button>
-                  <button class="btn btn-primary" id="saveDriverBtn">Enregistrer</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Ligne 2 : Véhicules / Produits -->
-            <div class="grid-2" style="margin-top:14px;">
-              <div class="card">
-                <h3>Véhicules de la flotte</h3>
-                <p>Liste des camions bennes utilisés dans les commandes.</p>
-                <div class="list" id="fleetList"></div>
               </div>
 
               <div class="card">
-                <h3>Fiche véhicule</h3>
-                <p>Base pour le futur CRUD connecté Sheets / Make.</p>
-
+                <h3>Fiche camion</h3>
+                <p>Prévue pour un futur lien avec les dépenses véhicules.</p>
                 <div class="form-grid">
                   <div>
-                    <label class="label">Code camion clé</label>
-                    <input id="vehCode" class="input" placeholder="OZ-001">
+                    <label class="label">Code camion</label>
+                    <input id="truckCode" class="input" placeholder="OZ-001">
                   </div>
-
                   <div>
                     <label class="label">Immatriculation</label>
-                    <input id="vehPlate" class="input" placeholder="AB-123-CD">
+                    <input id="truckPlate" class="input" placeholder="AB-123-CD">
                   </div>
-
-                  <div>
-                    <label class="label">Marque</label>
-                    <input id="vehBrand" class="input" placeholder="Renault, MAN...">
-                  </div>
-
-                  <div>
-                    <label class="label">Modèle</label>
-                    <input id="vehModel" class="input" placeholder="Premium Lander">
-                  </div>
-
                   <div>
                     <label class="label">Type</label>
-                    <select id="vehType" class="select">
-                      <option>Camion benne</option>
-                      <option>Camion toupie</option>
-                      <option>Tracteur benne</option>
-                      <option>Utilitaire</option>
-                      <option>Autre</option>
-                    </select>
+                    <input id="truckType" class="input" placeholder="Benne 10T">
                   </div>
-
-                  <div>
-                    <label class="label">Année</label>
-                    <input id="vehYear" class="input" type="number" placeholder="2018">
-                  </div>
-
                   <div>
                     <label class="label">Kilométrage</label>
-                    <input id="vehKm" class="input" type="number" placeholder="180000">
+                    <input id="truckKm" class="input" placeholder="120 000">
                   </div>
-
-                  <div>
-                    <label class="label">Statut</label>
-                    <select id="vehStatus" class="select">
-                      <option>En service</option>
-                      <option>Maintenance</option>
-                      <option>Hors service</option>
-                    </select>
-                  </div>
-
                   <div class="full">
-                    <label class="label">Commentaires</label>
-                    <textarea id="vehNote" class="input" rows="2" placeholder="Infos atelier, pneus, révision..."></textarea>
+                    <label class="label">Notes</label>
+                    <textarea id="truckNotes" rows="2" class="input" placeholder="CT, entretien, remarques..."></textarea>
                   </div>
-                </div>
-
-                <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
-                  <button class="btn btn-ghost" id="newVehBtn">Nouveau</button>
-                  <button class="btn btn-danger" id="deleteVehBtn">Supprimer</button>
-                  <button class="btn btn-primary" id="saveVehBtn">Enregistrer</button>
                 </div>
               </div>
             </div>
@@ -1622,248 +1635,167 @@
             <!-- Ligne 3 : Produits / Chantiers -->
             <div class="grid-2" style="margin-top:14px;">
               <div class="card">
-                <h3>Produits</h3>
-                <p>Liste des produits ou matériaux utilisés dans les commandes.</p>
-                <div class="list" id="productsList"></div>
+                <h3>Produits livrés</h3>
+                <p>Liste utilisée dans les commandes (SABLE, GRAVIER, etc.).</p>
+                <div class="list" id="productsList" style="max-height:190px;"></div>
               </div>
-
               <div class="card">
-                <h3>Fiche produit</h3>
-                <p>Paramétrage simple (code, libellé, unité, prix).</p>
-
-                <div class="form-grid">
-                  <div>
-                    <label class="label">Code produit</label>
-                    <input id="productCode" class="input" placeholder="SABLE-10T">
-                  </div>
-
-                  <div>
-                    <label class="label">Libellé</label>
-                    <input id="productName" class="input" placeholder="Sable 0/4 big bag">
-                  </div>
-
-                  <div>
-                    <label class="label">Unité</label>
-                    <input id="productUnit" class="input" placeholder="Tonne, m3, course...">
-                  </div>
-
-                  <div>
-                    <label class="label">Prix unitaire TTC</label>
-                    <input id="productPrice" class="input" type="number" step="0.01" placeholder="150">
-                  </div>
-
-                  <div class="full">
-                    <label class="label">Commentaire interne</label>
-                    <textarea id="productNote" class="input" rows="2" placeholder="Infos tarif, variante, etc."></textarea>
-                  </div>
-                </div>
-
-                <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
-                  <button class="btn btn-ghost" id="newProductBtn">Nouveau</button>
-                  <button class="btn btn-danger" id="deleteProductBtn">Supprimer</button>
-                  <button class="btn btn-primary" id="saveProductBtn">Enregistrer</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Ligne 4 : Chantiers -->
-            <div class="grid-2" style="margin-top:14px;">
-              <div class="card">
-                <h3>Chantiers</h3>
-                <p>Liste des chantiers (entreprise + coordonnées) pour préparer les commandes.</p>
-                <div class="list" id="sitesList"></div>
-              </div>
-
-              <div class="card">
-                <h3>Fiche chantier</h3>
-                <p>Chaque chantier contient l'entreprise, le gérant, le téléphone et l'adresse de livraison.</p>
-                <div class="form-grid">
-                  <div>
-                    <label class="label">Nom de l’entreprise</label>
-                    <input id="siteCompany" class="input" placeholder="Entreprise BTP X">
-                  </div>
-
-                  <div>
-                    <label class="label">Nom du gérant</label>
-                    <input id="siteManager" class="input" placeholder="M. DUPONT">
-                  </div>
-
-                  <div>
-                    <label class="label">Téléphone</label>
-                    <input id="sitePhone" class="input" placeholder="0696 XX XX XX">
-                  </div>
-
-                  <div class="full">
-                    <label class="label">Adresse postale de livraison</label>
-                    <input id="siteAddress" class="input" placeholder="Adresse complète du chantier">
-                  </div>
-
-                  <div class="full">
-                    <label class="label">Identifiant interne</label>
-                    <input id="siteId" class="input" placeholder="chantier-morne-rouge">
-                  </div>
-                </div>
-
-                <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
-                  <button class="btn btn-ghost" id="newSiteBtn">Nouveau</button>
-                  <button class="btn btn-danger" id="deleteSiteBtn">Supprimer</button>
-                  <button class="btn btn-primary" id="saveSiteBtn">Enregistrer</button>
-                </div>
+                <h3>Chantiers / Sites</h3>
+                <p>Préparation pour sélection rapide des adresses récurrentes.</p>
+                <div class="list" id="sitesList" style="max-height:190px;"></div>
               </div>
             </div>
           </section>
-          <!-- FIN PARAMÉTRAGES -->
 
           <!-- Intégration -->
           <section class="view" id="view-integration">
             <div class="card">
-              <h3>Intégration Google Sheets / Make</h3>
-              <p>Zone de notes pour décrire les futurs scénarios d’automatisation.</p>
-              <p style="font-size:12px; color:var(--muted);">
-                Exemple : envoi automatique des commandes vers Sheets, synchronisation des chauffeurs, flux
-                des dépenses véhicules vers un reporting financier, etc.
-              </p>
+              <h3>Notes d'intégration</h3>
+              <p>Idées de raccordement avec Google Sheets et Make (Integromat).</p>
+              <ul style="font-size:13px;color:var(--muted);margin-left:16px;display:flex;flex-direction:column;gap:6px;">
+                <li>Écriture des commandes dans une feuille "Commandes_Jour".</li>
+                <li>Écriture des pleins carburant et dépenses dans "Dépenses_Véhicules".</li>
+                <li>Utilisation d'un scénario Make pour consolider le CA mensuel.</li>
+                <li>Exports chauffeur et camion au format CSV pour backup.</li>
+              </ul>
             </div>
           </section>
         </main>
       </div>
     </section>
 
+    <!-- MODALE FINALISATION COMMANDE -->
+    <div class="finalize-modal" id="finalizeModal">
+      <div class="finalize-box">
+        <span class="finalize-icon">✅</span>
+        <h3 style="font-size:20px;color:#111827;margin-bottom:10px;">Commande finalisée !</h3>
+        <p style="font-size:13px;color:var(--text-soft);margin-bottom:6px;">
+          La commande de <strong id="finalizeClientName"></strong> est maintenant marquée comme <strong style="color:#16a34a;">Finalisée</strong>.
+        </p>
+        <div style="margin:16px 0;padding:14px;background:#fffbeb;border-radius:14px;border:1px solid rgba(234,179,8,0.4);">
+          <p style="font-size:14px;color:#92400e;font-weight:600;">📄 Action requise</p>
+          <p style="font-size:13px;color:#78350f;margin-top:4px;">
+            Le montant de cette commande est désormais comptabilisé dans le récapitulatif et la synthèse annuelle CA.<br>
+            <strong>N'oubliez pas d'envoyer la facture au client !</strong>
+          </p>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">
+          Montant facturé : <strong id="finalizeAmount" style="color:#16a34a;font-size:14px;"></strong>
+        </div>
+        <button class="btn btn-primary" id="closeFinalizeModal" style="width:100%;padding:10px;">Compris — Fermer</button>
+      </div>
+    </div>
+
     <!-- PAGE DRIVER -->
     <section class="page" id="driverPage">
       <div class="driver-wrap">
         <div class="driver-top">
           <div>
-            <h1 id="driverWelcome">Espace chauffeur</h1>
-            <p id="driverInfo">Vos livraisons du jour</p>
+            <h1 id="driverTitle">Espace chauffeur</h1>
+            <p id="driverSubtitle">Missions du jour et validation carburant.</p>
           </div>
-          <button class="btn btn-ghost" id="logoutDriver">Déconnexion</button>
+          <button class="btn btn-ghost" id="logoutDriver">Changer de profil</button>
         </div>
 
         <div class="driver-grid">
           <div class="card">
-            <h3>Mes livraisons</h3>
-            <p>Chaque ligne correspond à une rotation/livraison à effectuer</p>
+            <h3>Missions du jour</h3>
+            <p>Commandes assignées avec suivi des rotations.</p>
             <div class="list" id="driverOrdersList"></div>
           </div>
 
           <div class="card">
-            <h3>Détails de la livraison</h3>
-            <p>Informations complètes sur la commande sélectionnée</p>
-            <div id="driverOrderDetail" style="font-size:12px;color:var(--muted);">
-              Sélectionnez une livraison pour voir les détails.
+            <h3>Validation carburant / signature</h3>
+            <p>Zone dédiée pour le client lors de la livraison.</p>
+            <div class="fuel-grid">
+              <div>
+                <label class="label">Montant du plein (€)</label>
+                <input id="fuelAmount" class="input" type="number" step="0.01" placeholder="100">
+              </div>
+              <div>
+                <label class="label">Station / Source</label>
+                <input id="fuelStation" class="input" placeholder="Station TOTAL, dépôt...">
+              </div>
+              <div class="full">
+                <button class="btn btn-primary" id="openSignature">Ouvrir la zone de signature</button>
+              </div>
             </div>
+            <div class="fuel-feedback" id="fuelFeedback">En attente de validation.</div>
           </div>
-        </div>
-      </div>
-
-      <!-- Modal signature -->
-      <div class="signature-modal" id="signatureModal" style="position:fixed;inset:0;background:rgba(15,23,42,0.5);display:none;align-items:center;justify-content:center;z-index:9999;">
-        <div class="signature-box" style="background:#fff;border-radius:20px;padding:20px;max-width:650px;width:90%;max-height:90vh;overflow-y:auto;">
-          <div class="signature-head" style="display:flex;justify-content:space-between;align-items:center;">
-            <h3>Signature de livraison</h3>
-            <button class="btn btn-ghost" id="closeSignature">Fermer</button>
-          </div>
-          <p style="margin-top:8px;font-size:12px;color:var(--muted);">
-            Rotation <strong id="signatureRotationNum"></strong> - <span id="signatureClient"></span>
-          </p>
-
-          <!-- Informations du signataire -->
-          <div class="signature-info">
-            <div>
-              <label class="label">Nom complet du signataire *</label>
-              <input id="signatoryName" class="input" placeholder="Ex: M. DUPONT Pierre" />
-            </div>
-            <div>
-              <label class="label">Qualité / Fonction *</label>
-              <input id="signatoryRole" class="input" placeholder="Ex: Chef de chantier" />
-            </div>
-          </div>
-
-          <!-- Zone de signature -->
-          <div style="margin-top:12px;">
-            <label class="label">Signature électronique *</label>
-            <p style="font-size:11px;color:var(--muted);margin-bottom:6px;">Signez avec votre doigt ou votre souris dans la zone ci-dessous</p>
-            <div class="signature-canvas-wrapper">
-              <canvas id="signatureCanvas" class="signature-canvas"></canvas>
-            </div>
-            <div class="signature-controls">
-              <small style="color:var(--muted);font-size:11px;">Signez dans la zone blanche</small>
-              <button class="btn btn-ghost" id="clearSignature" style="font-size:12px;padding:6px 12px;">Effacer</button>
-            </div>
-          </div>
-
-          <!-- Bouton de validation -->
-          <div style="margin-top:16px;">
-            <button class="btn btn-primary" id="validateSignature" style="width:100%;">✓ Valider la livraison signée</button>
-          </div>
-          <div class="signature-preview" id="signaturePreview" style="margin-top:8px;font-size:11px;color:#16a34a;"></div>
         </div>
       </div>
     </section>
+
+    <!-- MODALE SIGNATURE -->
+    <div class="signature-modal" id="signatureModal">
+      <div class="signature-box">
+        <div class="signature-head">
+          <div>
+            <h3 style="font-size:18px;color:#111827;">Signature client</h3>
+            <p style="font-size:12px;color:var(--muted);">Permet de valider la rotation et le plein carburant associé.</p>
+          </div>
+          <button class="btn btn-ghost" id="closeSignature">Fermer</button>
+        </div>
+
+        <div class="signature-info">
+          <div>
+            <span style="font-size:12px;color:var(--muted);">Commande / Rotation sélectionnée :</span>
+            <div id="signatureOrderInfo" style="font-size:13px;color:#111827;font-weight:500;margin-top:2px;">Aucune rotation sélectionnée.</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
+            <div>
+              <label class="label">Nom du signataire</label>
+              <input id="signatoryName" class="input" placeholder="NOM Prénom du responsable chantier">
+            </div>
+            <div>
+              <label class="label">Qualité / Fonction</label>
+              <input id="signatoryRole" class="input" placeholder="Chef de chantier, responsable BTP...">
+            </div>
+          </div>
+        </div>
+
+        <div class="signature-canvas-wrapper">
+          <canvas id="signatureCanvas" class="signature-canvas"></canvas>
+        </div>
+
+        <div class="signature-controls">
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost" id="clearSignature">Effacer</button>
+          </div>
+          <button class="btn btn-primary" id="validateSignature">Valider la signature et la rotation</button>
+        </div>
+        <div class="signature-preview" id="signaturePreview"></div>
+      </div>
+    </div>
   </div>
     <script>
-    const euro = v => (v || 0).toLocaleString('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0});
-
-    const state = {
-      orders: [],
-      drivers: [],
-      fleet: [],
-      vehicleExpenses: [],
-      products: [],
-      sites: [],
-      currentDriver: null,
-      editingOrderId: null
-    };
-
-    const managerTab = document.getElementById('managerTab');
-    const driverTab  = document.getElementById('driverTab');
+    const managerTab   = document.getElementById('managerTab');
+    const driverTab    = document.getElementById('driverTab');
+    const authTitle    = document.getElementById('authTitle');
+    const authDesc     = document.getElementById('authDesc');
     const panelManager = document.getElementById('panelManager');
     const panelDriver  = document.getElementById('panelDriver');
-    const authTitle = document.getElementById('authTitle');
-    const authDesc  = document.getElementById('authDesc');
-    const driverSelect = document.getElementById('driverSelect');
 
-    const pinInputs = Array.from(document.querySelectorAll('.pin'));
+    const pinInputs = document.querySelectorAll('.pin');
     const loginBtn  = document.getElementById('loginBtn');
     const resetBtn  = document.getElementById('resetBtn');
     const errorBox  = document.getElementById('errorBox');
+    const driverSelect = document.getElementById('driverSelect');
 
-    const landingPage  = document.getElementById('landingPage');
-    const managerPage  = document.getElementById('managerPage');
+    const landingPage = document.getElementById('landingPage');
+    const managerPage = document.getElementById('managerPage');
+    const driverPage  = document.getElementById('driverPage');
 
-    const mainTitle = document.getElementById('mainTitle');
-    const mainDesc  = document.getElementById('mainDesc');
+    const navButtons = document.querySelectorAll('.nav button');
+    const views      = document.querySelectorAll('.view');
+    const mainTitle  = document.getElementById('mainTitle');
+    const mainDesc   = document.getElementById('mainDesc');
 
-    const navButtons = Array.from(document.querySelectorAll('.nav button'));
-    const views      = Array.from(document.querySelectorAll('.view'));
+    const managerKpis = document.getElementById('managerKpis');
+    const recentOrders = document.getElementById('recentOrders');
+    const teamList = document.getElementById('teamList');
 
-    const logoutManager = document.getElementById('logoutManager');
-    const logoutDriver = document.getElementById('logoutDriver');
-    const driverPage = document.getElementById('driverPage');
-    const driverWelcome = document.getElementById('driverWelcome');
-    const driverInfo = document.getElementById('driverInfo');
-    const driverOrdersList = document.getElementById('driverOrdersList');
-    const driverOrderDetail = document.getElementById('driverOrderDetail');
-    const signatureModal = document.getElementById('signatureModal');
-    const closeSignature = document.getElementById('closeSignature');
-    const validateSignature = document.getElementById('validateSignature');
-    const signatureRotationNum = document.getElementById('signatureRotationNum');
-    const signatureClient = document.getElementById('signatureClient');
-    const signaturePreview = document.getElementById('signaturePreview');
-    const signatureCanvas = document.getElementById('signatureCanvas');
-    const clearSignature = document.getElementById('clearSignature');
-    const signatoryName = document.getElementById('signatoryName');
-    const signatoryRole = document.getElementById('signatoryRole');
-
-    let signatureCtx = null;
-    let isDrawing = false;
-    let hasSignature = false;
-
-    const managerKpis   = document.getElementById('managerKpis');
-    const recentOrders  = document.getElementById('recentOrders');
-    const teamList      = document.getElementById('teamList');
-
+    const ordersTableBody = document.getElementById('ordersTableBody');
     const orderClient  = document.getElementById('orderClient');
     const orderPhone   = document.getElementById('orderPhone');
     const orderAddress = document.getElementById('orderAddress');
@@ -1872,110 +1804,116 @@
     const orderDate    = document.getElementById('orderDate');
     const orderTruck   = document.getElementById('orderTruck');
     const orderDriver  = document.getElementById('orderDriver');
-    const orderStatus  = document.getElementById('orderStatus');
     const orderProduct = document.getElementById('orderProduct');
     const orderRotations = document.getElementById('orderRotations');
-
-    const saveOrderBtn = document.getElementById('saveOrderBtn');
-    const resetOrder   = document.getElementById('resetOrder');
-    const ordersTableBody = document.getElementById('ordersTableBody');
     const orderFormTitle = document.getElementById('orderFormTitle');
     const orderFormDesc  = document.getElementById('orderFormDesc');
     const orderEditBadge = document.getElementById('orderEditBadge');
-
-    const driversList   = document.getElementById('driversList');
-    const driverFirst   = document.getElementById('driverFirst');
-    const driverName    = document.getElementById('driverName');
-    const driverPhone   = document.getElementById('driverPhone');
-    const driverEmail   = document.getElementById('driverEmail');
-    const driverPin     = document.getElementById('driverPin');
-    const driverTruck   = document.getElementById('driverTruck');
-    const driverStatus  = document.getElementById('driverStatus');
-    const driverId      = document.getElementById('driverId');
-    const newDriverBtn  = document.getElementById('newDriverBtn');
-    const deleteDriverBtn = document.getElementById('deleteDriverBtn');
-    const saveDriverBtn   = document.getElementById('saveDriverBtn');
-
-    const fleetList   = document.getElementById('fleetList');
-    const vehCode     = document.getElementById('vehCode');
-    const vehPlate    = document.getElementById('vehPlate');
-    const vehBrand    = document.getElementById('vehBrand');
-    const vehModel    = document.getElementById('vehModel');
-    const vehType     = document.getElementById('vehType');
-    const vehYear     = document.getElementById('vehYear');
-    const vehKm       = document.getElementById('vehKm');
-    const vehStatus   = document.getElementById('vehStatus');
-    const vehNote     = document.getElementById('vehNote');
-    const newVehBtn   = document.getElementById('newVehBtn');
-    const deleteVehBtn= document.getElementById('deleteVehBtn');
-    const saveVehBtn  = document.getElementById('saveVehBtn');
-
-    const productsList    = document.getElementById('productsList');
-    const productCode     = document.getElementById('productCode');
-    const productName     = document.getElementById('productName');
-    const productUnit     = document.getElementById('productUnit');
-    const productPrice    = document.getElementById('productPrice');
-    const productNote     = document.getElementById('productNote');
-    const newProductBtn   = document.getElementById('newProductBtn');
-    const deleteProductBtn= document.getElementById('deleteProductBtn');
-    const saveProductBtn  = document.getElementById('saveProductBtn');
-
-    const sitesList   = document.getElementById('sitesList');
-    const siteCompany = document.getElementById('siteCompany');
-    const siteManager = document.getElementById('siteManager');
-    const sitePhone   = document.getElementById('sitePhone');
-    const siteAddress = document.getElementById('siteAddress');
-    const siteId      = document.getElementById('siteId');
-    const newSiteBtn  = document.getElementById('newSiteBtn');
-    const deleteSiteBtn= document.getElementById('deleteSiteBtn');
-    const saveSiteBtn = document.getElementById('saveSiteBtn');
+    const resetOrder   = document.getElementById('resetOrder');
+    const saveOrderBtn = document.getElementById('saveOrderBtn');
 
     const recapKpis    = document.getElementById('recapKpis');
     const recapDrivers = document.getElementById('recapDrivers');
 
     const yearSelect   = document.getElementById('yearSelect');
+    const applyYearFilterBtn = document.getElementById('applyYearFilter');
     const yearSummary  = document.getElementById('yearSummary');
     const yearKpis     = document.getElementById('yearKpis');
     const yearSummaryBody = document.getElementById('yearSummaryBody');
-    const applyYearFilterBtn = document.getElementById('applyYearFilter');
 
+    const expenseTruck  = document.getElementById('expenseTruck');
+    const expenseType   = document.getElementById('expenseType');
+    const expenseDate   = document.getElementById('expenseDate');
+    const expenseAmount = document.getElementById('expenseAmount');
+    const expenseLabel  = document.getElementById('expenseLabel');
+    const expenseSource = document.getElementById('expenseSource');
+    const resetExpense  = document.getElementById('resetExpense');
+    const saveExpenseBtn = document.getElementById('saveExpenseBtn');
     const vehicleExpenseKpis = document.getElementById('vehicleExpenseKpis');
     const vehicleTotalsList  = document.getElementById('vehicleTotalsList');
-    const expenseTruck   = document.getElementById('expenseTruck');
-    const expenseType    = document.getElementById('expenseType');
-    const expenseDate    = document.getElementById('expenseDate');
-    const expenseAmount  = document.getElementById('expenseAmount');
-    const expenseLabel   = document.getElementById('expenseLabel');
-    const expenseSource  = document.getElementById('expenseSource');
-    const saveExpenseBtn = document.getElementById('saveExpenseBtn');
-    const resetExpense   = document.getElementById('resetExpense');
+
+    const driversList = document.getElementById('driversList');
+    const fleetList   = document.getElementById('fleetList');
+    const driverFirst = document.getElementById('driverFirst');
+    const driverName  = document.getElementById('driverName');
+    const driverPhone = document.getElementById('driverPhone');
+    const driverEmail = document.getElementById('driverEmail');
+    const driverPin   = document.getElementById('driverPin');
+    const driverTruck = document.getElementById('driverTruck');
+    const driverNotes = document.getElementById('driverNotes');
+
+    const truckCode = document.getElementById('truckCode');
+    const truckPlate = document.getElementById('truckPlate');
+    const truckType  = document.getElementById('truckType');
+    const truckKm    = document.getElementById('truckKm');
+    const truckNotes = document.getElementById('truckNotes');
+
+    const productsList = document.getElementById('productsList');
+    const sitesList    = document.getElementById('sitesList');
+
+    const logoutManager = document.getElementById('logoutManager');
+    const logoutDriver  = document.getElementById('logoutDriver');
+
+    const driverTitle    = document.getElementById('driverTitle');
+    const driverSubtitle = document.getElementById('driverSubtitle');
+    const driverOrdersList = document.getElementById('driverOrdersList');
+    const fuelAmount   = document.getElementById('fuelAmount');
+    const fuelStation  = document.getElementById('fuelStation');
+    const fuelFeedback = document.getElementById('fuelFeedback');
+    const openSignature = document.getElementById('openSignature');
+
+    const signatureModal = document.getElementById('signatureModal');
+    const signatureCanvas = document.getElementById('signatureCanvas');
+    const closeSignature  = document.getElementById('closeSignature');
+    const clearSignature  = document.getElementById('clearSignature');
+    const validateSignature = document.getElementById('validateSignature');
+    const signatureOrderInfo = document.getElementById('signatureOrderInfo');
+    const signaturePreview   = document.getElementById('signaturePreview');
+    const signatoryName = document.getElementById('signatoryName');
+    const signatoryRole = document.getElementById('signatoryRole');
+
+    const state = {
+      managers: [
+        { pin:'1234', name:'Gérant OZIER' }
+      ],
+      drivers: [],
+      fleet: [],
+      products: [],
+      sites: [],
+      orders: [],
+      vehicleExpenses: [],
+      currentDriver: null,
+      editingOrderId: null
+    };
 
     const initialDrivers = [
-      {id:'jean', first:'Jean', name:'Jean MARTINEAU', phone:'0696 11 11 11', email:'jean@example.com', pin:'1111', truck:'OZ-001', status:'Actif'},
-      {id:'marie', first:'Marie', name:'Marie DUPONT', phone:'0696 22 22 22', email:'marie@example.com', pin:'2222', truck:'OZ-002', status:'Actif'},
-      {id:'pierre', first:'Pierre', name:'Pierre LEBRUN', phone:'0696 33 33 33', email:'pierre@example.com', pin:'3333', truck:'OZ-003', status:'En attente'}
+      {id:'jean',  first:'Jean',  name:'Jean MARTINEAU',  phone:'0696 11 11 11', email:'jean@ozier.fr',  pin:'1111', truck:'OZ-001'},
+      {id:'marie', first:'Marie', name:'Marie DUBOIS',   phone:'0696 22 22 22', email:'marie@ozier.fr', pin:'2222', truck:'OZ-002'},
+      {id:'pierre',first:'Pierre',name:'Pierre LOUIS',   phone:'0696 33 33 33', email:'pierre@ozier.fr',pin:'3333', truck:'OZ-003'}
     ];
 
     const initialFleet = [
-      {code:'OZ-001', plate:'AB-123-CD', brand:'Renault', model:'Premium Lander', type:'Camion benne', year:2018, km:180000, status:'En service', note:'Camion principal'},
-      {code:'OZ-002', plate:'EF-456-GH', brand:'MAN', model:'TGS', type:'Camion benne', year:2019, km:150000, status:'En service', note:'Benne 8x4'},
-      {code:'OZ-003', plate:'IJ-789-KL', brand:'Scania', model:'P-series', type:'Tracteur benne', year:2017, km:220000, status:'Maintenance', note:'Révision prévue'}
+      {code:'OZ-001', plate:'AB-001-OZ', type:'Benne 10T', km:120000, notes:'Camion principal Jean'},
+      {code:'OZ-002', plate:'AB-002-OZ', type:'Benne 10T', km:98000,  notes:'Camion Marie'},
+      {code:'OZ-003', plate:'AB-003-OZ', type:'Tracteur', km:150000, notes:'Camion Pierre'}
     ];
 
     const initialProducts = [
-      {code:'SABLE-10T', name:'Sable 0/4 benne 10T', unit:'Tonne', price:150, note:'Produit démo'},
-      {code:'GRAVIER-10T', name:'Gravier 10/20 benne 10T', unit:'Tonne', price:180, note:''}
+      {code:'SABLE-10T',   label:'Sable 10T',   unit:'tonne'},
+      {code:'GRAVIER-10T', label:'Gravier 10T',unit:'tonne'},
+      {code:'TERRE-10T',   label:'Terre 10T',  unit:'tonne'}
     ];
 
     const initialSites = [
-      {id:'chantier-morne-rouge', company:'Entreprise BTP B', manager:'M. DUPONT', phone:'0696 00 00 02', address:'Chantier Morne Rouge'},
-      {id:'chantier-fdf', company:'Entreprise BTP C', manager:'Mme MARTIN', phone:'0696 00 00 03', address:'Chantier Fort-de-France'}
+      {id:'site-1', label:'Zone Industrielle 1', address:'ZI 1 - FDF'},
+      {id:'site-2', label:'Chantier Morne Rouge', address:'Morne Rouge'},
+      {id:'site-3', label:'Chantier Fort-de-France', address:'Centre-ville FDF'}
     ];
 
     const initialOrders = [
-      {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1', qty:'12 tonnes', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean', status:'Livrée', product:'SABLE-10T', rotations:1},
-      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', product:'GRAVIER-10T', rotations:2},
-      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', product:'SABLE-10T', rotations:3}
+      {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1', qty:'12 tonnes', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean', status:'Finalisée', product:'SABLE-10T', rotations:1, deliveredRotations:1, finalized:true},
+      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', product:'GRAVIER-10T', rotations:2, deliveredRotations:1, finalized:false},
+      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', product:'SABLE-10T', rotations:3, deliveredRotations:0, finalized:false}
     ];
 
     const initialExpenses = [
@@ -1989,24 +1927,25 @@
     function initState() {
       state.drivers = JSON.parse(JSON.stringify(initialDrivers));
       state.fleet   = JSON.parse(JSON.stringify(initialFleet));
+      state.products= JSON.parse(JSON.stringify(initialProducts));
+      state.sites   = JSON.parse(JSON.stringify(initialSites));
       state.orders  = JSON.parse(JSON.stringify(initialOrders));
       state.vehicleExpenses = JSON.parse(JSON.stringify(initialExpenses));
-      state.products = JSON.parse(JSON.stringify(initialProducts));
-      state.sites    = JSON.parse(JSON.stringify(initialSites));
     }
 
     function euroShort(v) {
-      return (v || 0).toLocaleString('fr-FR',{maximumFractionDigits:0})+' €';
+      return (Number(v)||0).toLocaleString('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0});
     }
 
     function showPage(pageId) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      [landingPage, managerPage, driverPage].forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
     }
 
     function showView(viewKey) {
       views.forEach(v => v.classList.remove('active'));
-      document.getElementById('view-'+viewKey).classList.add('active');
+      const el = document.getElementById('view-' + viewKey);
+      if (el) el.classList.add('active');
 
       navButtons.forEach(b => {
         if (b.dataset.view === viewKey) b.classList.add('active');
@@ -2058,12 +1997,6 @@
           pinInputs[idx + 1].focus();
         }
       });
-
-      input.addEventListener('keydown', e => {
-        if (e.key === 'Backspace' && !input.value && idx > 0) {
-          pinInputs[idx - 1].focus();
-        }
-      });
     });
 
     resetBtn.addEventListener('click', () => {
@@ -2072,20 +2005,20 @@
       pinInputs[0].focus();
     });
 
-    function getEnteredPin() {
-      return pinInputs.map(i => i.value || '').join('');
+    function getPin() {
+      return Array.from(pinInputs).map(i=>i.value).join('');
     }
 
     function findManagerByPin(pin) {
-      return pin === '1234';
+      return state.managers.find(m => m.pin === pin);
     }
 
     function findDriverByPin(pin) {
-      return state.drivers.find(d => d.pin === pin) || null;
+      return state.drivers.find(d => d.pin === pin);
     }
 
     loginBtn.addEventListener('click', () => {
-      const pin = getEnteredPin();
+      const pin = getPin();
       errorBox.classList.remove('show');
 
       if (managerTab.classList.contains('active')) {
@@ -2131,18 +2064,21 @@
     });
 
     function renderManagerDashboard() {
-      const totalOrders = state.orders.length;
+      const totalOrders  = state.orders.length;
       const totalDrivers = state.drivers.length;
       const totalFleet   = state.fleet.length;
-      const totalAmount  = state.orders.reduce((sum,o)=>sum+Number(o.montant||0),0);
+      // CA facturé = uniquement commandes finalisées
+      const totalAmountFinalized = state.orders.filter(o => o.finalized).reduce((sum,o)=>sum+Number(o.montant||0),0);
+      // CA estimé = toutes commandes (pour info)
+      const totalAmount  = totalAmountFinalized;
 
       managerKpis.innerHTML = `
         <div class="kpi">
-          <span>CA estimé du jour</span>
+          <span>CA facturé (finalisé)</span>
           <strong>${euroShort(totalAmount)}</strong>
         </div>
         <div class="kpi">
-          <span>Commandes actives</span>
+          <span>Commandes</span>
           <strong>${totalOrders}</strong>
         </div>
         <div class="kpi">
@@ -2150,33 +2086,32 @@
           <strong>${totalDrivers}</strong>
         </div>
         <div class="kpi">
-          <span>Camions en flotte</span>
+          <span>Camions</span>
           <strong>${totalFleet}</strong>
         </div>
       `;
 
-      const recent = [...state.orders].sort((a,b)=> (b.date||'').localeCompare(a.date||'')).slice(0,5);
-      recentOrders.innerHTML = recent.map(o => `
+      const lastOrders = [...state.orders].slice(-5).reverse();
+      recentOrders.innerHTML = lastOrders.map(o => `
         <div class="item">
           <div class="item-top">
             <strong>${o.client}</strong>
-            <span class="badge ${o.status==='Livrée'?'ok':(o.status==='En cours'?'info':'wait')}">${o.status}</span>
+            <small>${o.date || ''}</small>
           </div>
-          <small>${o.address || ''}</small>
-          <small>${o.date || ''} · ${euroShort(o.montant)}</small>
+          <small>${o.address}</small>
+          <small>${productLabelFromCode(o.product)} · ${euroShort(o.montant)} · ${o.status}</small>
         </div>
-      `).join('') || '<div class="item"><small>Aucune commande pour le moment.</small></div>';
+      `).join('') || '<div class="item"><small>Aucune commande.</small></div>';
 
       teamList.innerHTML = state.drivers.map(d => `
         <div class="item">
           <div class="item-top">
             <strong>${d.name}</strong>
-            <span class="badge ${d.status==='Actif'?'ok':'wait'}">${d.status}</span>
+            <span class="badge">${d.truck || 'Aucun camion'}</span>
           </div>
-          <small>${d.phone || ''}</small>
-          <small>Camion : ${d.truck || 'Non attribué'}</small>
+          <small>${d.phone} · PIN ${d.pin}</small>
         </div>
-      `).join('');
+      `).join('') || '<div class="item"><small>Aucun chauffeur.</small></div>';
     }
 
     function driverLabelFromId(id) {
@@ -2184,14 +2119,9 @@
       return d ? d.name : '';
     }
 
-    function vehicleLabelFromCode(code) {
-      const v = state.fleet.find(x => x.code === code);
-      return v ? `${v.code} · ${v.brand}` : (code || '');
-    }
-
     function productLabelFromCode(code) {
       const p = state.products.find(x => x.code === code);
-      return p ? `${p.code} · ${p.name}` : (code || '');
+      return p ? p.label : '';
     }
 
     function resetOrderForm() {
@@ -2204,7 +2134,6 @@
       orderDate.value    = '';
       orderTruck.value   = '';
       orderDriver.value  = '';
-      orderStatus.value  = 'En attente';
       orderProduct.value = '';
       orderRotations.value = '';
       orderFormTitle.textContent = 'Créer une commande';
@@ -2224,7 +2153,6 @@
       orderDate.value    = o.date || '';
       orderTruck.value   = o.truck || '';
       orderDriver.value  = o.driver || '';
-      orderStatus.value  = o.status || 'En attente';
       orderProduct.value = o.product || '';
       orderRotations.value = o.rotations || '';
 
@@ -2239,6 +2167,7 @@
     });
 
     saveOrderBtn.addEventListener('click', () => {
+      const existingOrder = state.editingOrderId ? state.orders.find(o => o.id === state.editingOrderId) : null;
       const data = {
         client:  orderClient.value.trim(),
         phone:   orderPhone.value.trim(),
@@ -2248,9 +2177,12 @@
         date:    orderDate.value || '',
         truck:   orderTruck.value || '',
         driver:  orderDriver.value || '',
-        status:  orderStatus.value || 'En attente',
+        status:  (existingOrder && existingOrder.finalized) ? 'Finalisée' : (existingOrder ? (existingOrder.status || 'En attente') : 'En attente'),
         product: orderProduct.value || '',
-        rotations: Number(orderRotations.value || 1)
+        rotations: Number(orderRotations.value || 1),
+        // Préserver les champs de suivi des rotations et finalisation
+        deliveredRotations: existingOrder ? (existingOrder.deliveredRotations || 0) : 0,
+        finalized: existingOrder ? (existingOrder.finalized || false) : false
       };
 
       if (!data.client || !data.montant) {
@@ -2271,32 +2203,76 @@
       resetOrderForm();
       renderOrdersTable();
       renderManagerDashboard();
+      renderRecapDay();
       renderYearOptions();
     });
 
     function renderOrdersTable() {
-      ordersTableBody.innerHTML = state.orders.map(o => `
-        <tr>
-          <td>${o.id}</td>
-          <td>${o.client}</td>
-          <td class="col-address">${o.address}</td>
-          <td>${productLabelFromCode(o.product)}</td>
-          <td>${o.rotations || 1}</td>
-          <td>${o.qty}</td>
-          <td>${euroShort(o.montant)}</td>
-          <td>${o.status}</td>
-          <td>${driverLabelFromId(o.driver)}</td>
-          <td>${o.date || ''}</td>
-          <td>
-            <div class="order-actions">
-              <button class="btn-xs btn-edit" data-id="${o.id}">Modifier</button>
-              <button class="btn-xs btn-delete" data-id="${o.id}">Supprimer</button>
-            </div>
-          </td>
-        </tr>
-      `).join('') || `
-        <tr><td colspan="11">Aucune commande enregistrée.</td></tr>
+      ordersTableBody.innerHTML = state.orders.map(o => {
+        const totalRot     = Number(o.rotations || 1);
+        const deliveredRot = Number(o.deliveredRotations || 0);
+        const remainingRot = Math.max(0, totalRot - deliveredRot);
+
+        // Badge statut
+        let statusBadge;
+        if (o.finalized) {
+          statusBadge = `<span class="status-finalisee">✅ Finalisée</span>`;
+        } else if (o.status === 'Livrée') {
+          statusBadge = `<span class="badge ok">Livrée</span>`;
+        } else if (o.status === 'En cours') {
+          statusBadge = `<span class="badge info">En cours</span>`;
+        } else {
+          statusBadge = `<span class="badge wait">${o.status || 'En attente'}</span>`;
+        }
+
+        // Montant : visible seulement si finalisée
+        const montantCell = o.finalized
+          ? `<strong style="color:#16a34a;">${euroShort(o.montant)}</strong>`
+          : `<span class="montant-pending" title="Montant visible après finalisation">En attente...</span>`;
+
+        // Bouton finaliser
+        const finalizeBtn = !o.finalized
+          ? `<button class="btn-xs btn-finalize" data-id="${o.id}" title="Marquer la commande comme finalisée et envoyer la facture">✓ Finaliser</button>`
+          : ``;
+
+        // Couleur rotations
+        const deliveredClass = deliveredRot >= totalRot ? 'rotation-delivered' : '';
+        const remainingClass = remainingRot === 0 ? 'rotation-delivered' : 'rotation-remaining';
+
+        return `
+          <tr style="${o.finalized ? 'background:rgba(22,163,74,0.04);' : ''}">
+            <td><strong>#${o.id}</strong></td>
+            <td><strong>${o.client}</strong></td>
+            <td class="col-address">${o.address}</td>
+            <td>${productLabelFromCode(o.product)}</td>
+            <td style="text-align:center;font-weight:700;">${totalRot}</td>
+            <td style="text-align:center;" class="${deliveredClass}">${deliveredRot}</td>
+            <td style="text-align:center;" class="${remainingClass}">${remainingRot}</td>
+            <td>${o.qty}</td>
+            <td>${montantCell}</td>
+            <td>${statusBadge}</td>
+            <td>${driverLabelFromId(o.driver)}</td>
+            <td>${o.date || ''}</td>
+            <td>
+              <div class="order-actions">
+                ${finalizeBtn}
+                <button class="btn-xs btn-edit" data-id="${o.id}">✏ Modifier</button>
+                <button class="btn-xs btn-delete" data-id="${o.id}">🗑 Suppr.</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('') || `
+        <tr><td colspan="13" style="text-align:center;color:var(--muted);padding:16px;">Aucune commande enregistrée.</td></tr>
       `;
+
+      // Bouton Finaliser
+      ordersTableBody.querySelectorAll('.btn-finalize').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = Number(btn.dataset.id);
+          finalizeOrder(id);
+        });
+      });
 
       ordersTableBody.querySelectorAll('.btn-edit').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -2312,399 +2288,153 @@
             state.orders = state.orders.filter(o => o.id !== id);
             renderOrdersTable();
             renderManagerDashboard();
+            renderRecapDay();
             renderYearOptions();
           }
         });
       });
     }
 
+    // ===== FINALISER UNE COMMANDE =====
+    function finalizeOrder(id) {
+      const idx = state.orders.findIndex(o => o.id === id);
+      if (idx < 0) return;
+      const order = state.orders[idx];
+      order.finalized = true;
+      order.status = 'Finalisée';
+
+      // Afficher la modale de confirmation
+      document.getElementById('finalizeClientName').textContent = order.client;
+      document.getElementById('finalizeAmount').textContent = euroShort(order.montant);
+      document.getElementById('finalizeModal').style.display = 'flex';
+
+      // Mettre à jour tous les tableaux en temps réel
+      renderOrdersTable();
+      renderManagerDashboard();
+      renderRecapDay();
+      renderYearOptions();
+    }
+
     function renderDrivers() {
       driversList.innerHTML = state.drivers.map(d => `
-        <button class="driver-order-btn" data-id="${d.id}">
-          <div class="item">
-            <div class="item-top">
-              <strong>${d.name}</strong>
-              <span class="badge ${d.status==='Actif'?'ok':'wait'}">${d.status}</span>
-            </div>
-            <small>${d.phone || ''}</small>
-            <small>PIN: ${d.pin}</small>
+        <div class="item">
+          <div class="item-top">
+            <strong>${d.name}</strong>
+            <span class="badge">${d.truck || 'Sans camion'}</span>
           </div>
-        </button>
-      `).join('') || '<div class="item"><small>Aucun chauffeur défini.</small></div>';
+          <small>${d.phone} · PIN ${d.pin}</small>
+        </div>
+      `).join('') || '<div class="item"><small>Aucun chauffeur.</small></div>';
 
-      driversList.querySelectorAll('.driver-order-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = btn.dataset.id;
-          const d = state.drivers.find(x => x.id === id);
-          if (!d) return;
-          driverFirst.value = d.first || '';
-          driverName.value  = d.name || '';
-          driverPhone.value = d.phone || '';
-          driverEmail.value = d.email || '';
-          driverPin.value   = d.pin || '';
-          driverTruck.value = d.truck || '';
-          driverStatus.value= d.status || 'Actif';
-          driverId.value    = d.id || '';
-        });
-      });
+      driverTruck.innerHTML = '<option value="">-- Aucun --</option>' +
+        state.fleet.map(f => `<option value="${f.code}">${f.code}</option>`).join('');
 
-      // Chauffeur : alimenter "Camion attribué" de la fiche chauffeur
-      const fleetOptions = ['<option value="">Sans camion</option>']
-        .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} · ${v.brand}</option>`));
-      driverTruck.innerHTML = fleetOptions.join('');
+      orderDriver.innerHTML = '<option value="">-- Sélectionner --</option>' +
+        state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
 
-      // Login chauffeur : liste tous les chauffeurs paramétrés
-      driverSelect.innerHTML = state.drivers
-        .map(d => `<option value="${d.id}">${d.name}</option>`)
-        .join('');
-
-      // Formulaire "Créer une commande" : liste déroulante des chauffeurs
-      orderDriver.innerHTML = ['<option value="">Sans chauffeur</option>']
-        .concat(state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`))
-        .join('');
+      driverSelect.innerHTML = '<option value="">-- Sélectionner --</option>' +
+        state.drivers.map(d => `<option value="${d.id}">${d.name} (PIN ${d.pin})</option>`).join('');
     }
-
-    newDriverBtn.addEventListener('click', () => {
-      driverFirst.value = '';
-      driverName.value  = '';
-      driverPhone.value = '';
-      driverEmail.value = '';
-      driverPin.value   = '';
-      driverTruck.value = '';
-      driverStatus.value= 'Actif';
-      driverId.value    = '';
-    });
-
-    saveDriverBtn.addEventListener('click', () => {
-      const data = {
-        first: driverFirst.value.trim(),
-        name:  driverName.value.trim(),
-        phone: driverPhone.value.trim(),
-        email: driverEmail.value.trim(),
-        pin:   driverPin.value.trim(),
-        truck: driverTruck.value || '',
-        status:driverStatus.value || 'Actif',
-        id:    driverId.value.trim() || driverFirst.value.trim().toLowerCase()
-      };
-
-      if (!data.first || !data.pin) {
-        alert('Prénom et PIN sont obligatoires.');
-        return;
-      }
-
-      const existingIndex = state.drivers.findIndex(d => d.id === data.id);
-      if (existingIndex >= 0) {
-        state.drivers[existingIndex] = data;
-      } else {
-        state.drivers.push(data);
-      }
-
-      renderDrivers();
-      initLandingDrivers();
-    });
-
-    deleteDriverBtn.addEventListener('click', () => {
-      const id = driverId.value.trim();
-      if (!id) {
-        alert('Sélectionnez un chauffeur avant de supprimer.');
-        return;
-      }
-      if (confirm('Supprimer ce chauffeur ?')) {
-        state.drivers = state.drivers.filter(d => d.id !== id);
-        newDriverBtn.click();
-        renderDrivers();
-        initLandingDrivers();
-      }
-    });
 
     function renderFleet() {
-      fleetList.innerHTML = state.fleet.map(v => `
-        <button class="driver-order-btn" data-code="${v.code}">
-          <div class="item">
-            <div class="item-top">
-              <strong>${v.code} · ${v.brand}</strong>
-              <span class="badge ${v.status==='En service'?'ok':(v.status==='Maintenance'?'wait':'info')}">${v.status}</span>
-            </div>
-            <small>${v.plate} · ${v.model}</small>
-            <small>${v.year || ''} · ${v.km ? v.km.toLocaleString('fr-FR')+' km' : ''}</small>
+      fleetList.innerHTML = state.fleet.map(f => `
+        <div class="item">
+          <div class="item-top">
+            <strong>${f.code}</strong>
+            <span class="badge">${f.type}</span>
           </div>
-        </button>
-      `).join('') || '<div class="item"><small>Aucun véhicule défini.</small></div>';
+          <small>${f.plate} · ${f.km.toLocaleString('fr-FR')} km</small>
+          <small>${f.notes || ''}</small>
+        </div>
+      `).join('') || '<div class="item"><small>Aucun camion.</small></div>';
 
-      fleetList.querySelectorAll('.driver-order-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const code = btn.dataset.code;
-          const v = state.fleet.find(x => x.code === code);
-          if (!v) return;
-          vehCode.value  = v.code || '';
-          vehPlate.value = v.plate || '';
-          vehBrand.value = v.brand || '';
-          vehModel.value = v.model || '';
-          vehType.value  = v.type  || 'Camion benne';
-          vehYear.value  = v.year  || '';
-          vehKm.value    = v.km    || '';
-          vehStatus.value= v.status|| 'En service';
-          vehNote.value  = v.note  || '';
-        });
-      });
+      orderTruck.innerHTML = '<option value="">-- Sélectionner --</option>' +
+        state.fleet.map(f => `<option value="${f.code}">${f.code}</option>`).join('');
 
-      // Formulaire commande : Camion = uniquement immatriculations
-      orderTruck.innerHTML  = ['<option value="">Sans camion</option>']
-        .concat(state.fleet.map(v => `<option value="${v.plate}">${v.plate}</option>`))
-        .join('');
-
-      const truckOptions = ['<option value="">-- Sélectionner un camion --</option>']
-        .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} · ${v.brand}</option>`));
-      expenseTruck.innerHTML= truckOptions.join('');
+      expenseTruck.innerHTML = '<option value="">-- Sélectionner un camion --</option>' +
+        state.fleet.map(f => `<option value="${f.code}">${f.code}</option>`).join('');
     }
-
-    newVehBtn.addEventListener('click', () => {
-      vehCode.value  = '';
-      vehPlate.value = '';
-      vehBrand.value = '';
-      vehModel.value = '';
-      vehType.value  = 'Camion benne';
-      vehYear.value  = '';
-      vehKm.value    = '';
-      vehStatus.value= 'En service';
-      vehNote.value  = '';
-    });
-
-    saveVehBtn.addEventListener('click', () => {
-      const data = {
-        code:  vehCode.value.trim(),
-        plate: vehPlate.value.trim(),
-        brand: vehBrand.value.trim(),
-        model: vehModel.value.trim(),
-        type:  vehType.value,
-        year:  Number(vehYear.value || 0),
-        km:    Number(vehKm.value || 0),
-        status:vehStatus.value || 'En service',
-        note:  vehNote.value.trim()
-      };
-
-      if (!data.code) {
-        alert('Code camion est obligatoire.');
-        return;
-      }
-
-      const idx = state.fleet.findIndex(v => v.code === data.code);
-      if (idx >= 0) {
-        state.fleet[idx] = data;
-      } else {
-        state.fleet.push(data);
-      }
-
-      renderFleet();
-      renderDrivers();
-    });
-
-    deleteVehBtn.addEventListener('click', () => {
-      const code = vehCode.value.trim();
-      if (!code) {
-        alert('Sélectionnez un véhicule avant de supprimer.');
-        return;
-      }
-      if (confirm('Supprimer ce véhicule ?')) {
-        state.fleet = state.fleet.filter(v => v.code !== code);
-        newVehBtn.click();
-        renderFleet();
-        renderDrivers();
-      }
-    });
 
     function renderProducts() {
       productsList.innerHTML = state.products.map(p => `
-        <button class="driver-order-btn" data-code="${p.code}">
-          <div class="item">
-            <div class="item-top">
-              <strong>${p.code} · ${p.name}</strong>
-              <span class="badge">${p.unit || ''}</span>
-            </div>
-            <small>Prix unitaire : ${euroShort(p.price)}</small>
-            <small>${p.note || ''}</small>
+        <div class="item">
+          <div class="item-top">
+            <strong>${p.label}</strong>
+            <span class="badge">${p.unit}</span>
           </div>
-        </button>
-      `).join('') || '<div class="item"><small>Aucun produit défini.</small></div>';
+          <small>Code : ${p.code}</small>
+        </div>
+      `).join('') || '<div class="item"><small>Aucun produit.</small></div>';
 
-      productsList.querySelectorAll('.driver-order-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const code = btn.dataset.code;
-          const p = state.products.find(x => x.code === code);
-          if (!p) return;
-          productCode.value = p.code || '';
-          productName.value = p.name || '';
-          productUnit.value = p.unit || '';
-          productPrice.value = p.price || '';
-          productNote.value  = p.note || '';
-        });
-      });
-
-      orderProduct.innerHTML = ['<option value="">Sans produit</option>']
-        .concat(state.products.map(p => `<option value="${p.code}">${p.code} · ${p.name}</option>`))
-        .join('');
+      orderProduct.innerHTML = '<option value="">-- Sélectionner --</option>' +
+        state.products.map(p => `<option value="${p.code}">${p.label}</option>`).join('');
     }
-
-    newProductBtn.addEventListener('click', () => {
-      productCode.value = '';
-      productName.value = '';
-      productUnit.value = '';
-      productPrice.value = '';
-      productNote.value  = '';
-    });
-
-    saveProductBtn.addEventListener('click', () => {
-      const data = {
-        code: productCode.value.trim(),
-        name: productName.value.trim(),
-        unit: productUnit.value.trim(),
-        price: Number(productPrice.value || 0),
-        note: productNote.value.trim()
-      };
-
-      if (!data.code || !data.name) {
-        alert('Code produit et Libellé sont obligatoires.');
-        return;
-      }
-
-      const idx = state.products.findIndex(p => p.code === data.code);
-      if (idx >= 0) {
-        state.products[idx] = data;
-      } else {
-        state.products.push(data);
-      }
-
-      renderProducts();
-    });
-
-    deleteProductBtn.addEventListener('click', () => {
-      const code = productCode.value.trim();
-      if (!code) {
-        alert('Sélectionnez un produit avant de supprimer.');
-        return;
-      }
-      if (confirm('Supprimer ce produit ?')) {
-        state.products = state.products.filter(p => p.code !== code);
-        newProductBtn.click();
-        renderProducts();
-      }
-    });
 
     function renderSites() {
       sitesList.innerHTML = state.sites.map(s => `
-        <button class="driver-order-btn" data-id="${s.id}">
-          <div class="item">
-            <div class="item-top">
-              <strong>${s.company}</strong>
-              <span class="badge">${s.manager || ''}</span>
-            </div>
-            <small>${s.address || ''}</small>
-            <small>${s.phone || ''}</small>
+        <div class="item">
+          <div class="item-top">
+            <strong>${s.label}</strong>
           </div>
-        </button>
-      `).join('') || '<div class="item"><small>Aucun chantier défini.</small></div>';
-
-      sitesList.querySelectorAll('.driver-order-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = btn.dataset.id;
-          const s = state.sites.find(x => x.id === id);
-          if (!s) return;
-          siteCompany.value = s.company || '';
-          siteManager.value = s.manager || '';
-          sitePhone.value   = s.phone || '';
-          siteAddress.value = s.address || '';
-          siteId.value      = s.id || '';
-        });
-      });
+          <small>${s.address}</small>
+        </div>
+      `).join('') || '<div class="item"><small>Aucun site.</small></div>';
     }
 
-    newSiteBtn.addEventListener('click', () => {
-      siteCompany.value = '';
-      siteManager.value = '';
-      sitePhone.value   = '';
-      siteAddress.value = '';
-      siteId.value      = '';
-    });
-
-    saveSiteBtn.addEventListener('click', () => {
-      const data = {
-        company: siteCompany.value.trim(),
-        manager: siteManager.value.trim(),
-        phone:   sitePhone.value.trim(),
-        address: siteAddress.value.trim(),
-        id:      siteId.value.trim() || siteCompany.value.trim().toLowerCase().replace(/\s+/g,'-')
-      };
-
-      if (!data.company || !data.address) {
-        alert('Entreprise et Adresse de livraison sont obligatoires.');
-        return;
-      }
-
-      const idx = state.sites.findIndex(s => s.id === data.id);
-      if (idx >= 0) {
-        state.sites[idx] = data;
-      } else {
-        state.sites.push(data);
-      }
-
-      renderSites();
-    });
-
-    deleteSiteBtn.addEventListener('click', () => {
-      const id = siteId.value.trim();
-      if (!id) {
-        alert('Sélectionnez un chantier avant de supprimer.');
-        return;
-      }
-      if (confirm('Supprimer ce chantier ?')) {
-        state.sites = state.sites.filter(s => s.id !== id);
-        newSiteBtn.click();
-        renderSites();
-      }
-    });
           function renderRecapDay() {
       const today = (new Date()).toISOString().slice(0,10);
-      const ordersToday = state.orders.filter(o => (o.date || '').startsWith(today.slice(0,7)));
-      const ca = ordersToday.reduce((sum,o)=>sum+Number(o.montant||0),0);
-      const nb = ordersToday.length;
-      const avg = nb ? ca/nb : 0;
+      const currentMonth = today.slice(0,7);
+      const ordersThisMonth = state.orders.filter(o => (o.date || '').startsWith(currentMonth));
+      const ordersThisMonthFinalized = ordersThisMonth.filter(o => o.finalized);
+
+      // CA = uniquement commandes finalisées
+      const ca  = ordersThisMonthFinalized.reduce((sum,o)=>sum+Number(o.montant||0),0);
+      const nb  = ordersThisMonth.length;
+      const nbFin = ordersThisMonthFinalized.length;
+      const avg = nbFin ? ca/nbFin : 0;
+
+      // Rotations livrées ce mois
+      const totalRotLivrees = ordersThisMonth.reduce((sum,o)=>sum+Number(o.deliveredRotations||0),0);
 
       recapKpis.innerHTML = `
         <div class="kpi">
-          <span>CA mois en cours</span>
-          <strong>${euroShort(ca)}</strong>
+          <span>CA facturé (mois)</span>
+          <strong style="color:#16a34a;">${euroShort(ca)}</strong>
         </div>
         <div class="kpi">
-          <span>Commandes mois</span>
-          <strong>${nb}</strong>
+          <span>Commandes finalisées</span>
+          <strong>${nbFin} / ${nb}</strong>
         </div>
         <div class="kpi">
-          <span>Panier moyen</span>
+          <span>Panier moyen facturé</span>
           <strong>${euroShort(avg)}</strong>
         </div>
         <div class="kpi">
-          <span>Mois</span>
-          <strong>${today.slice(0,7)}</strong>
+          <span>Rotations livrées (mois)</span>
+          <strong>${totalRotLivrees}</strong>
         </div>
       `;
 
+      // CA par chauffeur (uniquement finalisées)
       const byDriver = {};
-      state.orders.forEach(o => {
+      state.orders.filter(o => o.finalized).forEach(o => {
         const key = o.driver || 'inconnu';
-        if (!byDriver[key]) byDriver[key] = { ca:0, nb:0 };
+        if (!byDriver[key]) byDriver[key] = { ca:0, nb:0, rotLivrees:0 };
         byDriver[key].ca += Number(o.montant||0);
         byDriver[key].nb += 1;
+        byDriver[key].rotLivrees += Number(o.deliveredRotations||0);
       });
 
-      recapDrivers.innerHTML = Object.entries(byDriver).map(([driverId,vals]) => `
+      recapDrivers.innerHTML = Object.entries(byDriver).map(([dId,vals]) => `
         <div class="item">
           <div class="item-top">
-            <strong>${driverLabelFromId(driverId) || 'Sans chauffeur'}</strong>
-            <span class="badge">${vals.nb} cmdes</span>
+            <strong>${driverLabelFromId(dId) || 'Sans chauffeur'}</strong>
+            <span class="badge ok">${vals.nb} finalisées</span>
           </div>
-          <small>CA cumulé : ${euroShort(vals.ca)}</small>
+          <small>CA facturé : ${euroShort(vals.ca)}</small>
+          <small>Rotations livrées : ${vals.rotLivrees}</small>
         </div>
-      `).join('') || '<div class="item"><small>Aucune donnée disponible.</small></div>';
+      `).join('') || '<div class="item"><small>Aucune commande finalisée.</small></div>';
     }
 
     function renderYearOptions() {
@@ -2742,9 +2472,14 @@
         depByMonth[m] = 0;
       });
 
-      ordersYear.forEach(o => {
+      // CA mensuel = uniquement commandes finalisées
+      ordersYear.filter(o => o.finalized).forEach(o => {
         const m = o.date.slice(5,7);
         caByMonth[m] += Number(o.montant||0);
+      });
+      // Nb commandes = toutes (pour info)
+      ordersYear.forEach(o => {
+        const m = o.date.slice(5,7);
         nbByMonth[m] += 1;
       });
 
@@ -2753,19 +2488,35 @@
         depByMonth[m] += Number(e.amount||0);
       });
 
-      const totalCA = Object.values(caByMonth).reduce((a,b)=>a+b,0);
-      const totalDep = Object.values(depByMonth).reduce((a,b)=>a+b,0);
+      function buildRow(label, obj, isCurrency=false) {
+        let total = 0;
+        const cells = months.map(m => {
+          const v = obj[m] || 0;
+          total += v;
+          return `<td>${isCurrency ? euroShort(v) : v}</td>`;
+        }).join('');
+        return `
+          <tr>
+            <td>${label}</td>
+            ${cells}
+            <td>${isCurrency ? euroShort(total) : total}</td>
+          </tr>
+        `;
+      }
+
+      const totalCA    = Object.values(caByMonth).reduce((s,v)=>s+v,0);
+      const totalDep   = Object.values(depByMonth).reduce((s,v)=>s+v,0);
       const totalMarge = totalCA - totalDep;
 
-      yearSummary.textContent = `Synthèse ${year} : CA ${euroShort(totalCA)}, dépenses ${euroShort(totalDep)}, marge ${euroShort(totalMarge)}.`;
+      yearSummary.textContent = `Synthèse ${year} : CA facturé (finalisé) ${euroShort(totalCA)}, dépenses véhicules ${euroShort(totalDep)}, marge estimée ${euroShort(totalMarge)}.`;
 
       yearKpis.innerHTML = `
         <div class="kpi">
-          <span>CA total</span>
-          <strong>${euroShort(totalCA)}</strong>
+          <span>CA facturé (finalisé)</span>
+          <strong style="color:#16a34a;">${euroShort(totalCA)}</strong>
         </div>
         <div class="kpi">
-          <span>Dépenses totales</span>
+          <span>Dépenses véhicules</span>
           <strong>${euroShort(totalDep)}</strong>
         </div>
         <div class="kpi">
@@ -2773,25 +2524,13 @@
           <strong>${euroShort(totalMarge)}</strong>
         </div>
         <div class="kpi">
-          <span>Commandes</span>
-          <strong>${ordersYear.length}</strong>
+          <span>Nb commandes</span>
+          <strong>${Object.values(nbByMonth).reduce((s,v)=>s+v,0)}</strong>
         </div>
       `;
 
-      function buildRow(label, obj, isEuro = true) {
-        const vals = months.map(m => obj[m] || 0);
-        const total = vals.reduce((a,b)=>a+b,0);
-        return `
-          <tr>
-            <td>${label}</td>
-            ${vals.map(v => `<td>${isEuro ? euroShort(v) : v}</td>`).join('')}
-            <td>${isEuro ? euroShort(total) : total}</td>
-          </tr>
-        `;
-      }
-
       yearSummaryBody.innerHTML = `
-        ${buildRow('CA mensuel', caByMonth, true)}
+        ${buildRow('CA facturé (finalisé)', caByMonth, true)}
         ${buildRow('Dépenses véhicules', depByMonth, true)}
         ${buildRow('Nb commandes', nbByMonth, false)}
       `;
@@ -2802,269 +2541,218 @@
     function renderVehicleExpenses() {
       const byTruck = {};
       state.vehicleExpenses.forEach(e => {
-        const key = e.truck || 'inconnu';
-        if (!byTruck[key]) byTruck[key] = 0;
-        byTruck[key] += Number(e.amount||0);
+        if (!byTruck[e.truck]) byTruck[e.truck] = 0;
+        byTruck[e.truck] += Number(e.amount||0);
       });
 
-      const entries = Object.entries(byTruck);
-      const total = entries.reduce((sum,[,v])=>sum+v,0);
-
-      vehicleExpenseKpis.innerHTML = `
+      vehicleExpenseKpis.innerHTML = Object.entries(byTruck).map(([truck,total]) => `
         <div class="kpi">
-          <span>Dépenses totales</span>
+          <span>${truck}</span>
           <strong>${euroShort(total)}</strong>
         </div>
-        <div class="kpi">
-          <span>Nb de camions concernés</span>
-          <strong>${entries.length}</strong>
-        </div>
-        <div class="kpi">
-          <span>Source</span>
-          <strong>Démo interne</strong>
-        </div>
-        <div class="kpi">
-          <span>Période</span>
-          <strong>Année courante</strong>
-        </div>
-      `;
+      `).join('') || '<div style="font-size:12px;color:var(--muted);">Aucune dépense.</div>';
 
-      vehicleTotalsList.innerHTML = entries.map(([truck,amount]) => `
+      vehicleTotalsList.innerHTML = state.vehicleExpenses.map(e => `
         <div class="item">
           <div class="item-top">
-            <strong>${vehicleLabelFromCode(truck) || truck}</strong>
-            <span class="badge">${euroShort(amount)}</span>
+            <strong>${e.truck}</strong>
+            <span class="badge">${e.type}</span>
           </div>
-          <small>Dépenses cumulées pour ce véhicule.</small>
+          <small>${e.date || ''} · ${euroShort(e.amount)}</small>
+          <small>${e.label || ''}</small>
         </div>
       `).join('') || '<div class="item"><small>Aucune dépense enregistrée.</small></div>';
     }
 
-    resetExpense.addEventListener('click', () => {
-      expenseTruck.value = '';
-      expenseType.value  = 'Carburant';
-      expenseDate.value  = '';
-      expenseAmount.value= '';
-      expenseLabel.value = '';
-      expenseSource.value= '';
-    });
-
     saveExpenseBtn.addEventListener('click', () => {
       const data = {
-        truck:  expenseTruck.value || '',
-        type:   expenseType.value,
-        date:   expenseDate.value || '',
-        amount: Number(expenseAmount.value || 0),
-        label:  expenseLabel.value.trim(),
-        note:   expenseSource.value.trim()
+        truck: expenseTruck.value || '',
+        type:  expenseType.value || '',
+        date:  expenseDate.value || '',
+        amount:Number(expenseAmount.value || 0),
+        label: expenseLabel.value.trim(),
+        note:  expenseSource.value.trim()
       };
 
       if (!data.truck || !data.amount) {
-        alert('Camion et Montant sont obligatoires pour une dépense.');
+        alert('Camion et montant sont obligatoires.');
         return;
       }
 
       const newId = (state.vehicleExpenses.reduce((max,e)=>Math.max(max,e.id||0),0) || 0) + 1;
       state.vehicleExpenses.push({ id:newId, ...data });
 
-      resetExpense.click();
+      expenseTruck.value  = '';
+      expenseType.value   = 'Carburant';
+      expenseDate.value   = '';
+      expenseAmount.value = '';
+      expenseLabel.value  = '';
+      expenseSource.value = '';
+
       renderVehicleExpenses();
       renderYearOptions();
+      applyYearFilter(false);
     });
 
-    let selectedRotation = null;
+    resetExpense.addEventListener('click', () => {
+      expenseTruck.value  = '';
+      expenseType.value   = 'Carburant';
+      expenseDate.value   = '';
+      expenseAmount.value = '';
+      expenseLabel.value  = '';
+      expenseSource.value = '';
+    });
 
-    function buildDriverRotations() {
-      if (!state.currentDriver) return [];
-      const driverId = state.currentDriver.id;
-      const orders = state.orders.filter(o => o.driver === driverId);
-      const res = [];
-      orders.forEach(o => {
-        const totalRot = o.rotations || 1;
-        for (let i=1;i<=totalRot;i++) {
-          res.push({
-            orderId: o.id,
-            rotationNum: i,
-            totalRotations: totalRot,
-            client: o.client,
-            phone: o.phone,
-            address: o.address,
-            product: o.product,
-            qty: o.qty,
-            montant: o.montant,
-            status: o.status,
-            date: o.date,
-            signed: false
-          });
-        }
+    const finalizeModal   = document.getElementById('finalizeModal');
+    const closeFinalizeModalBtn = document.getElementById('closeFinalizeModal');
+
+    if (closeFinalizeModalBtn) {
+      closeFinalizeModalBtn.addEventListener('click', () => {
+        finalizeModal.style.display = 'none';
       });
-      return res;
+    }
+    finalizeModal && finalizeModal.addEventListener('click', (e) => {
+      if (e.target === finalizeModal) finalizeModal.style.display = 'none';
+    });
+
+    function initLandingDrivers() {
+      // laissé vide pour la démo
     }
 
     function renderDriverPage() {
-      if (!state.currentDriver) return;
+      const d = state.currentDriver;
+      if (!d) return;
+      driverTitle.textContent = `Espace chauffeur · ${d.name}`;
+      driverSubtitle.textContent = `Camion associé : ${d.truck || 'Aucun'}`;
 
-      driverWelcome.textContent = `Bienvenue ${state.currentDriver.first}`;
-      driverInfo.textContent = `Vos livraisons du jour pour ${state.currentDriver.truck || 'flotte OZIER'}`;
+      const orders = state.orders.filter(o => o.driver === d.id);
+      driverOrdersList.innerHTML = orders.map(o => {
+        const totalRot     = Number(o.rotations || 1);
+        const deliveredRot = Number(o.deliveredRotations || 0);
+        const remainingRot = Math.max(0, totalRot - deliveredRot);
 
-      const rotations = buildDriverRotations();
-
-      if (!rotations.length) {
-        driverOrdersList.innerHTML = '<div class="item"><small>Aucune livraison pour le moment.</small></div>';
-        driverOrderDetail.innerHTML = '<div style="font-size:12px;color:var(--muted);">Sélectionnez une livraison pour voir les détails.</div>';
-        return;
-      }
-
-      driverOrdersList.innerHTML = rotations.map((r,idx) => `
-        <button class="driver-order-btn" data-idx="${idx}">
-          <div class="item">
-            <div class="item-top">
-              <strong>${r.client}</strong>
-              <span class="badge">${r.rotationNum}/${r.totalRotations}</span>
+        return `
+          <button class="driver-order-btn" data-order-id="${o.id}">
+            <div class="item">
+              <div class="item-top">
+                <strong>${o.client}</strong>
+                <span class="badge">${o.date || ''}</span>
+              </div>
+              <small>${o.address}</small>
+              <small>${productLabelFromCode(o.product)} · ${o.qty} · Rotations: ${deliveredRot}/${totalRot}</small>
+              <small>Restantes: ${remainingRot}</small>
             </div>
-            <small>${r.address}</small>
-            <small>${r.date || ''} · ${productLabelFromCode(r.product)}</small>
-          </div>
-        </button>
-      `).join('');
-
-      const showDetail = (r) => {
-        selectedRotation = r;
-        const signatureInfo = r.signed
-          ? `<div class="signature-preview">Livraison signée le ${r.signatureDate} par ${r.signatoryName} (${r.signatoryRole}).</div>`
-          : '<div style="margin-top:8px;font-size:11px;color:var(--muted);">Cette livraison n’est pas encore signée.</div>';
-
-        driverOrderDetail.innerHTML = `
-          <div style="display:flex;flex-direction:column;gap:8px;">
-            <div><strong>Client :</strong> ${r.client}</div>
-            <div><strong>Téléphone :</strong> ${r.phone || 'Non renseigné'}</div>
-            <div><strong>Adresse :</strong> ${r.address}</div>
-            <div><strong>Produit :</strong> ${productLabelFromCode(r.product)}</div>
-            <div><strong>Quantité :</strong> ${r.qty || 'Non renseignée'}</div>
-            <div><strong>Montant :</strong> ${r.montant ? euroShort(r.montant) : 'Non renseigné'}</div>
-            <div><strong>Rotation :</strong> ${r.rotationNum} sur ${r.totalRotations}</div>
-            <div><strong>Date :</strong> ${r.date || 'Non renseignée'}</div>
-            <div><strong>Statut :</strong> ${r.status}</div>
-          </div>
-          ${signatureInfo}
-          ${!r.signed ? `<button class="btn btn-primary" style="margin-top:12px;width:100%;" onclick="openSignatureModal()">
-            ✍ Signer cette livraison
-          </button>` : ''}
+          </button>
         `;
-      };
-
-      const rotationsData = rotations;
-      const first = rotationsData[0];
-      showDetail(first);
+      }).join('') || '<div class="item"><small>Aucune mission pour ce chauffeur.</small></div>';
 
       driverOrdersList.querySelectorAll('.driver-order-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          const idx = Number(btn.dataset.idx);
-          showDetail(rotationsData[idx]);
+          const orderId = Number(btn.dataset.orderId);
+          const order = state.orders.find(o => o.id === orderId);
+          if (!order) return;
+          selectedRotation = {
+            orderId: order.id,
+            client: order.client,
+            address: order.address,
+            product: productLabelFromCode(order.product),
+            date: order.date
+          };
+          signatureOrderInfo.textContent = `${order.client} · ${productLabelFromCode(order.product)} · ${order.address}`;
+          signaturePreview.textContent = '';
+          signatoryName.value = '';
+          signatoryRole.value = '';
+          clearCanvas();
+          signatureModal.style.display = 'flex';
         });
       });
     }
 
-    window.openSignatureModal = function() {
-      if (!selectedRotation) {
-        alert('Veuillez sélectionner une livraison d\'abord.');
-        return;
-      }
-      signatureRotationNum.textContent = `${selectedRotation.rotationNum}/${selectedRotation.totalRotations}`;
-      signatureClient.textContent = selectedRotation.client;
+    let signatureCtx;
+    let drawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    let hasSignature = false;
+    let selectedRotation = null;
 
-      signatoryName.value = '';
-      signatoryRole.value = '';
-      signaturePreview.textContent = '';
-
-      signatureModal.style.display = 'flex';
-
-      setTimeout(() => {
-        initSignatureCanvas();
-      }, 100);
-    };
-
-    function initSignatureCanvas() {
-      if (!signatureCanvas) return;
-
+    function resizeCanvas() {
       const rect = signatureCanvas.getBoundingClientRect();
-      signatureCanvas.width = rect.width * 2;
-      signatureCanvas.height = rect.height * 2;
-      signatureCanvas.style.width = rect.width + 'px';
-      signatureCanvas.style.height = rect.height + 'px';
-
+      signatureCanvas.width = rect.width;
+      signatureCanvas.height = rect.height;
       signatureCtx = signatureCanvas.getContext('2d');
-      signatureCtx.scale(2, 2);
-      signatureCtx.strokeStyle = '#111827';
       signatureCtx.lineWidth = 2;
       signatureCtx.lineCap = 'round';
-      signatureCtx.lineJoin = 'round';
-
-      clearCanvas();
-
-      signatureCanvas.addEventListener('mousedown', startDrawing);
-      signatureCanvas.addEventListener('mousemove', draw);
-      signatureCanvas.addEventListener('mouseup', stopDrawing);
-      signatureCanvas.addEventListener('mouseout', stopDrawing);
-
-      signatureCanvas.addEventListener('touchstart', handleTouch);
-      signatureCanvas.addEventListener('touchmove', handleTouch);
-      signatureCanvas.addEventListener('touchend', stopDrawing);
+      signatureCtx.strokeStyle = '#111827';
     }
 
     function clearCanvas() {
-      if (!signatureCtx) return;
-      const rect = signatureCanvas.getBoundingClientRect();
-      signatureCtx.clearRect(0, 0, rect.width, rect.height);
+      signatureCtx.clearRect(0,0,signatureCanvas.width,signatureCanvas.height);
       hasSignature = false;
     }
 
-    function startDrawing(e) {
-      isDrawing = true;
-      hasSignature = true;
-      const rect = signatureCanvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      signatureCtx.beginPath();
-      signatureCtx.moveTo(x, y);
-    }
-
-    function draw(e) {
-      if (!isDrawing) return;
-      const rect = signatureCanvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      signatureCtx.lineTo(x, y);
-      signatureCtx.stroke();
-    }
-
-    function stopDrawing() {
-      isDrawing = false;
-    }
-
-    function handleTouch(e) {
-      e.preventDefault();
-      const touch = e.touches[0];
-      if (!touch) return;
-
-      const rect = signatureCanvas.getBoundingClientRect();
-      const x = touch.clientX - rect.left;
-      const y = touch.clientY - rect.top;
-
-      if (e.type === 'touchstart') {
-        isDrawing = true;
-        hasSignature = true;
-        signatureCtx.beginPath();
-        signatureCtx.moveTo(x, y);
-      } else if (e.type === 'touchmove' && isDrawing) {
-        signatureCtx.lineTo(x, y);
-        signatureCtx.stroke();
+    openSignature.addEventListener('click', () => {
+      if (!state.currentDriver) {
+        alert('Connectez-vous en chauffeur d\'abord.');
+        return;
       }
-    }
+      selectedRotation = { orderId:null, client:'', address:'', product:'', date:'' };
+      signatureOrderInfo.textContent = 'Signature générique (aucune rotation précise sélectionnée).';
+      signaturePreview.textContent   = '';
+      signatoryName.value = '';
+      signatoryRole.value = '';
+      clearCanvas();
+      signatureModal.style.display = 'flex';
+    });
+
+    window.addEventListener('resize', () => {
+      if (signatureModal.style.display === 'flex') {
+        resizeCanvas();
+      }
+    });
+
+    signatureModal.addEventListener('transitionend', () => {
+      if (signatureModal.style.display === 'flex') {
+        resizeCanvas();
+      }
+    });
 
     closeSignature.addEventListener('click', () => {
       signatureModal.style.display = 'none';
     });
+
+    function handlePointerDown(e) {
+      drawing = true;
+      hasSignature = true;
+      const rect = signatureCanvas.getBoundingClientRect();
+      lastX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      lastY = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    }
+
+    function handlePointerMove(e) {
+      if (!drawing) return;
+      const rect = signatureCanvas.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+      signatureCtx.beginPath();
+      signatureCtx.moveTo(lastX,lastY);
+      signatureCtx.lineTo(x,y);
+      signatureCtx.stroke();
+      lastX = x;
+      lastY = y;
+    }
+
+    function handlePointerUp() {
+      drawing = false;
+    }
+
+    signatureCanvas.addEventListener('mousedown', handlePointerDown);
+    signatureCanvas.addEventListener('mousemove', handlePointerMove);
+    window.addEventListener('mouseup', handlePointerUp);
+
+    signatureCanvas.addEventListener('touchstart', handlePointerDown, {passive:false});
+    signatureCanvas.addEventListener('touchmove', handlePointerMove, {passive:false});
+    signatureCanvas.addEventListener('touchend', handlePointerUp, {passive:false});
 
     clearSignature.addEventListener('click', () => {
       clearCanvas();
@@ -3105,6 +2793,21 @@
       selectedRotation.signatureDate = now;
       selectedRotation.signatureData = dataUrl;
 
+      // ===== MISE À JOUR EN TEMPS RÉEL : incrémenter les rotations livrées =====
+      const orderIdx = state.orders.findIndex(o => o.id === selectedRotation.orderId);
+      if (orderIdx >= 0) {
+        const order = state.orders[orderIdx];
+        order.deliveredRotations = (order.deliveredRotations || 0) + 1;
+        // Si toutes les rotations sont livrées, passer en statut "Livrée" (si pas encore finalisée)
+        if (!order.finalized && order.deliveredRotations >= (order.rotations || 1)) {
+          order.status = 'Livrée';
+        }
+        // Mettre à jour le tableau des commandes gérant en temps réel
+        renderOrdersTable();
+        renderManagerDashboard();
+        renderRecapDay();
+      }
+
       signaturePreview.style.color = '#16a34a';
       signaturePreview.textContent = '✓ Signature enregistrée.';
 
@@ -3113,10 +2816,6 @@
         renderDriverPage();
       }, 800);
     });
-
-    function initLandingDrivers() {
-      // laissé vide pour la démo
-    }
 
     function renderAll() {
       renderManagerDashboard();
