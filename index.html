@@ -1199,7 +1199,7 @@
               <p id="mainDesc">Vue d’ensemble de l’activité journalière.</p>
             </div>
 
-            <!-- toolbar simplifiée : on supprime les 3 boutons -->
+            <!-- toolbar simplifiée (pas de boutons de raccourcis) -->
             <div class="toolbar"></div>
           </div>
 
@@ -1450,8 +1450,9 @@
             </div>
           </section>
 
-          <!-- PARAMÉTRAGES (chauffeurs + flotte + produits) -->
+          <!-- PARAMÉTRAGES (chauffeurs + flotte + produits + chantiers) -->
           <section class="view" id="view-parametrages">
+            <!-- Ligne 1 : Chauffeurs / Véhicules -->
             <div class="grid-2">
               <div class="card">
                 <h3>Chauffeurs OZIER</h3>
@@ -1518,6 +1519,7 @@
               </div>
             </div>
 
+            <!-- Ligne 2 : Véhicules / Produits -->
             <div class="grid-2" style="margin-top:14px;">
               <div class="card">
                 <h3>Véhicules de la flotte</h3>
@@ -1593,6 +1595,100 @@
                 </div>
               </div>
             </div>
+
+            <!-- Ligne 3 : Produits / Chantiers -->
+            <div class="grid-2" style="margin-top:14px;">
+              <div class="card">
+                <h3>Produits</h3>
+                <p>Liste des produits ou matériaux utilisés dans les commandes.</p>
+                <div class="list" id="productsList"></div>
+              </div>
+
+              <div class="card">
+                <h3>Fiche produit</h3>
+                <p>Paramétrage simple (code, libellé, unité, prix).</p>
+
+                <div class="form-grid">
+                  <div>
+                    <label class="label">Code produit</label>
+                    <input id="productCode" class="input" placeholder="SABLE-10T">
+                  </div>
+
+                  <div>
+                    <label class="label">Libellé</label>
+                    <input id="productName" class="input" placeholder="Sable 0/4 big bag">
+                  </div>
+
+                  <div>
+                    <label class="label">Unité</label>
+                    <input id="productUnit" class="input" placeholder="Tonne, m3, course...">
+                  </div>
+
+                  <div>
+                    <label class="label">Prix unitaire TTC</label>
+                    <input id="productPrice" class="input" type="number" step="0.01" placeholder="150">
+                  </div>
+
+                  <div class="full">
+                    <label class="label">Commentaire interne</label>
+                    <textarea id="productNote" class="input" rows="2" placeholder="Infos tarif, variante, etc."></textarea>
+                  </div>
+                </div>
+
+                <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
+                  <button class="btn btn-ghost" id="newProductBtn">Nouveau</button>
+                  <button class="btn btn-danger" id="deleteProductBtn">Supprimer</button>
+                  <button class="btn btn-primary" id="saveProductBtn">Enregistrer</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ligne 4 : Chantiers -->
+            <div class="grid-2" style="margin-top:14px;">
+              <div class="card">
+                <h3>Chantiers</h3>
+                <p>Liste des chantiers (entreprise + coordonnées) pour préparer les commandes.</p>
+                <div class="list" id="sitesList"></div>
+              </div>
+
+              <div class="card">
+                <h3>Fiche chantier</h3>
+                <p>Chaque chantier contient l'entreprise, le gérant, le téléphone et l'adresse de livraison.</p>
+
+                <div class="form-grid">
+                  <div>
+                    <label class="label">Nom de l’entreprise</label>
+                    <input id="siteCompany" class="input" placeholder="Entreprise BTP X">
+                  </div>
+
+                  <div>
+                    <label class="label">Nom du gérant</label>
+                    <input id="siteManager" class="input" placeholder="M. DUPONT">
+                  </div>
+
+                  <div>
+                    <label class="label">Téléphone</label>
+                    <input id="sitePhone" class="input" placeholder="0696 XX XX XX">
+                  </div>
+
+                  <div class="full">
+                    <label class="label">Adresse postale de livraison</label>
+                    <input id="siteAddress" class="input" placeholder="Adresse complète du chantier">
+                  </div>
+
+                  <div class="full">
+                    <label class="label">Identifiant interne</label>
+                    <input id="siteId" class="input" placeholder="chantier-morne-rouge">
+                  </div>
+                </div>
+
+                <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
+                  <button class="btn btn-ghost" id="newSiteBtn">Nouveau</button>
+                  <button class="btn btn-danger" id="deleteSiteBtn">Supprimer</button>
+                  <button class="btn btn-primary" id="saveSiteBtn">Enregistrer</button>
+                </div>
+              </div>
+            </div>
           </section>
           <!-- FIN PARAMÉTRAGES -->
 
@@ -1620,6 +1716,8 @@
       drivers: [],
       fleet: [],
       vehicleExpenses: [],
+      products: [],
+      sites: [],
       currentDriver: null,
       editingOrderId: null
     };
@@ -1697,6 +1795,26 @@
     const deleteVehBtn= document.getElementById('deleteVehBtn');
     const saveVehBtn  = document.getElementById('saveVehBtn');
 
+    const productsList    = document.getElementById('productsList');
+    const productCode     = document.getElementById('productCode');
+    const productName     = document.getElementById('productName');
+    const productUnit     = document.getElementById('productUnit');
+    const productPrice    = document.getElementById('productPrice');
+    const productNote     = document.getElementById('productNote');
+    const newProductBtn   = document.getElementById('newProductBtn');
+    const deleteProductBtn= document.getElementById('deleteProductBtn');
+    const saveProductBtn  = document.getElementById('saveProductBtn');
+
+    const sitesList   = document.getElementById('sitesList');
+    const siteCompany = document.getElementById('siteCompany');
+    const siteManager = document.getElementById('siteManager');
+    const sitePhone   = document.getElementById('sitePhone');
+    const siteAddress = document.getElementById('siteAddress');
+    const siteId      = document.getElementById('siteId');
+    const newSiteBtn  = document.getElementById('newSiteBtn');
+    const deleteSiteBtn= document.getElementById('deleteSiteBtn');
+    const saveSiteBtn = document.getElementById('saveSiteBtn');
+
     const recapKpis    = document.getElementById('recapKpis');
     const recapDrivers = document.getElementById('recapDrivers');
 
@@ -1743,11 +1861,23 @@
       {id:5, truck:'OZ-001', type:'Autre', date:'2026-02-10', amount:200, label:'Pneu avant', note:'garage'}
     ];
 
+    const initialProducts = [
+      {code:'SABLE-10T', name:'Sable 0/4 benne 10T', unit:'Tonne', price:150, note:'Produit démo'},
+      {code:'GRAVIER-10T', name:'Gravier 10/20 benne 10T', unit:'Tonne', price:180, note:''}
+    ];
+
+    const initialSites = [
+      {id:'chantier-morne-rouge', company:'Entreprise BTP B', manager:'M. DUPONT', phone:'0696 00 00 02', address:'Chantier Morne Rouge'},
+      {id:'chantier-fdf', company:'Entreprise BTP C', manager:'Mme MARTIN', phone:'0696 00 00 03', address:'Chantier Fort-de-France'}
+    ];
+
     function initState() {
       state.drivers = JSON.parse(JSON.stringify(initialDrivers));
       state.fleet   = JSON.parse(JSON.stringify(initialFleet));
       state.orders  = JSON.parse(JSON.stringify(initialOrders));
       state.vehicleExpenses = JSON.parse(JSON.stringify(initialExpenses));
+      state.products = JSON.parse(JSON.stringify(initialProducts));
+      state.sites    = JSON.parse(JSON.stringify(initialSites));
     }
 
     function euroShort(v) {
@@ -1782,7 +1912,7 @@
         mainDesc.textContent  = 'Suivi des charges par camion.';
       } else if (viewKey === 'parametrages') {
         mainTitle.textContent = 'Paramétrages';
-        mainDesc.textContent  = 'Gestion des chauffeurs et de la flotte.';
+        mainDesc.textContent  = 'Gestion des chauffeurs, flotte, produits et chantiers.';
       } else if (viewKey === 'integration') {
         mainTitle.textContent = 'Intégration';
         mainDesc.textContent  = 'Notes pour les flux Sheets / Make.';
@@ -2237,6 +2367,152 @@
       }
     });
 
+    function renderProducts() {
+      productsList.innerHTML = state.products.map(p => `
+        <button class="driver-order-btn" data-code="${p.code}">
+          <div class="item">
+            <div class="item-top">
+              <strong>${p.code} · ${p.name}</strong>
+              <span class="badge">${p.unit || ''}</span>
+            </div>
+            <small>Prix unitaire : ${euroShort(p.price)}</small>
+            <small>${p.note || ''}</small>
+          </div>
+        </button>
+      `).join('') || '<div class="item"><small>Aucun produit défini.</small></div>';
+
+      productsList.querySelectorAll('.driver-order-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const code = btn.dataset.code;
+          const p = state.products.find(x => x.code === code);
+          if (!p) return;
+          productCode.value = p.code || '';
+          productName.value = p.name || '';
+          productUnit.value = p.unit || '';
+          productPrice.value = p.price || '';
+          productNote.value  = p.note || '';
+        });
+      });
+    }
+
+    newProductBtn.addEventListener('click', () => {
+      productCode.value = '';
+      productName.value = '';
+      productUnit.value = '';
+      productPrice.value = '';
+      productNote.value  = '';
+    });
+
+    saveProductBtn.addEventListener('click', () => {
+      const data = {
+        code: productCode.value.trim(),
+        name: productName.value.trim(),
+        unit: productUnit.value.trim(),
+        price: Number(productPrice.value || 0),
+        note: productNote.value.trim()
+      };
+
+      if (!data.code || !data.name) {
+        alert('Code produit et Libellé sont obligatoires.');
+        return;
+      }
+
+      const idx = state.products.findIndex(p => p.code === data.code);
+      if (idx >= 0) {
+        state.products[idx] = data;
+      } else {
+        state.products.push(data);
+      }
+
+      renderProducts();
+    });
+
+    deleteProductBtn.addEventListener('click', () => {
+      const code = productCode.value.trim();
+      if (!code) {
+        alert('Sélectionnez un produit avant de supprimer.');
+        return;
+      }
+      if (confirm('Supprimer ce produit ?')) {
+        state.products = state.products.filter(p => p.code !== code);
+        newProductBtn.click();
+        renderProducts();
+      }
+    });
+
+    function renderSites() {
+      sitesList.innerHTML = state.sites.map(s => `
+        <button class="driver-order-btn" data-id="${s.id}">
+          <div class="item">
+            <div class="item-top">
+              <strong>${s.company}</strong>
+              <span class="badge">${s.manager || ''}</span>
+            </div>
+            <small>${s.address || ''}</small>
+            <small>${s.phone || ''}</small>
+          </div>
+        </button>
+      `).join('') || '<div class="item"><small>Aucun chantier défini.</small></div>';
+
+      sitesList.querySelectorAll('.driver-order-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const s = state.sites.find(x => x.id === id);
+          if (!s) return;
+          siteCompany.value = s.company || '';
+          siteManager.value = s.manager || '';
+          sitePhone.value   = s.phone || '';
+          siteAddress.value = s.address || '';
+          siteId.value      = s.id || '';
+        });
+      });
+    }
+
+    newSiteBtn.addEventListener('click', () => {
+      siteCompany.value = '';
+      siteManager.value = '';
+      sitePhone.value   = '';
+      siteAddress.value = '';
+      siteId.value      = '';
+    });
+
+    saveSiteBtn.addEventListener('click', () => {
+      const data = {
+        company: siteCompany.value.trim(),
+        manager: siteManager.value.trim(),
+        phone:   sitePhone.value.trim(),
+        address: siteAddress.value.trim(),
+        id:      siteId.value.trim() || siteCompany.value.trim().toLowerCase().replace(/\s+/g,'-')
+      };
+
+      if (!data.company || !data.address) {
+        alert('Entreprise et Adresse de livraison sont obligatoires.');
+        return;
+      }
+
+      const idx = state.sites.findIndex(s => s.id === data.id);
+      if (idx >= 0) {
+        state.sites[idx] = data;
+      } else {
+        state.sites.push(data);
+      }
+
+      renderSites();
+    });
+
+    deleteSiteBtn.addEventListener('click', () => {
+      const id = siteId.value.trim();
+      if (!id) {
+        alert('Sélectionnez un chantier avant de supprimer.');
+        return;
+      }
+      if (confirm('Supprimer ce chantier ?')) {
+        state.sites = state.sites.filter(s => s.id !== id);
+        newSiteBtn.click();
+        renderSites();
+      }
+    });
+
     function renderRecapDay() {
       const today = (new Date()).toISOString().slice(0,10);
       const ordersToday = state.orders.filter(o => (o.date || '').startsWith(today.slice(0,7)));
@@ -2531,6 +2807,8 @@
       renderOrdersTable();
       renderDrivers();
       renderFleet();
+      renderProducts();
+      renderSites();
       renderRecapDay();
       renderVehicleExpenses();
       renderYearOptions();
