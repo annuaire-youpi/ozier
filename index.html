@@ -956,7 +956,6 @@
       min-width: 0;
     }
 
-    /* Finalize modal */
     .finalize-modal {
       position: fixed;
       inset: 0;
@@ -1925,6 +1924,7 @@
     let canvasCtx = null;
     let drawing = false;
     let selectedRotation = null;
+    let hasSignature = false;
 
     function resizeCanvas() {
       const rect = signatureCanvas.getBoundingClientRect();
@@ -1936,30 +1936,39 @@
       canvasCtx.lineWidth = 2;
       canvasCtx.lineCap = 'round';
       canvasCtx.strokeStyle = '#0f172a';
+      canvasCtx.clearRect(0,0,rect.width,rect.height);
+      hasSignature = false;
     }
 
     function clearCanvas() {
       if (!canvasCtx) return;
-      canvasCtx.clearRect(0,0,signatureCanvas.width, signatureCanvas.height);
+      const rect = signatureCanvas.getBoundingClientRect();
+      canvasCtx.clearRect(0,0,rect.width,rect.height);
+      hasSignature = false;
     }
 
     function pointerPos(e) {
       const rect = signatureCanvas.getBoundingClientRect();
-      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-      return {x,y};
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
     }
 
     function startDraw(e) {
       e.preventDefault();
+      if (!canvasCtx) return;
       drawing = true;
+      hasSignature = true;
       const {x,y} = pointerPos(e);
       canvasCtx.beginPath();
       canvasCtx.moveTo(x,y);
     }
 
     function moveDraw(e) {
-      if (!drawing) return;
+      if (!drawing || !canvasCtx) return;
       e.preventDefault();
       const {x,y} = pointerPos(e);
       canvasCtx.lineTo(x,y);
@@ -1968,6 +1977,7 @@
 
     function endDraw(e) {
       if (!drawing) return;
+      e && e.preventDefault();
       drawing = false;
     }
 
@@ -1978,6 +1988,7 @@
     clearSignatureBtn.addEventListener('click', () => {
       clearCanvas();
       signaturePreview.textContent = '';
+      signaturePreview.style.color = '#16a34a';
     });
 
     saveSignatureBtn.addEventListener('click', () => {
@@ -1986,10 +1997,25 @@
         return;
       }
       const name = signatoryName.value.trim();
+      const role = signatoryRole.value.trim();
       if (!name) {
-        alert('Le nom du signataire est obligatoire.');
+        signaturePreview.style.color = '#ef4444';
+        signaturePreview.textContent = '⚠ Veuillez entrer le nom du signataire.';
+        signatoryName.focus();
         return;
       }
+      if (!role) {
+        signaturePreview.style.color = '#ef4444';
+        signaturePreview.textContent = '⚠ Veuillez entrer la fonction du signataire.';
+        signatoryRole.focus();
+        return;
+      }
+      if (!hasSignature) {
+        signaturePreview.style.color = '#ef4444';
+        signaturePreview.textContent = '⚠ Veuillez signer dans la zone prévue.';
+        return;
+      }
+
       const order = state.orders.find(o => o.id === selectedRotation.orderId);
       if (!order) {
         alert('Commande introuvable.');
@@ -1997,12 +2023,15 @@
       }
       order.deliveredRotations = Number(order.deliveredRotations||0) + 1;
 
-      signaturePreview.textContent =
-        `Signature enregistrée pour ${selectedRotation.client} (${name}).`;
+      signaturePreview.style.color = '#16a34a';
+      signaturePreview.textContent = `✓ Signature enregistrée pour ${selectedRotation.client} (${name}).`;
       renderOrdersTable();
       renderDashboard();
       renderDriverPage();
-      signatureModal.style.display = 'none';
+
+      setTimeout(() => {
+        signatureModal.style.display = 'none';
+      }, 800);
     });
 
     signatureCanvas.addEventListener('mousedown', startDraw);
@@ -2014,7 +2043,9 @@
     window.addEventListener('touchend', endDraw);
 
     window.addEventListener('resize', () => {
-      resizeCanvas();
+      if (signatureModal.style.display === 'flex') {
+        resizeCanvas();
+      }
     });
 
     const navButtons = managerPage.querySelectorAll('.nav button');
