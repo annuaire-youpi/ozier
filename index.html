@@ -1120,6 +1120,38 @@
     @media (max-width: 1100px) {
       .driver-grid { grid-template-columns:1fr; }
     }
+
+    .signature-canvas-wrapper {
+      margin-top: 12px;
+      border: 2px dashed rgba(148,163,184,0.5);
+      border-radius: 12px;
+      background: #f9fafb;
+      padding: 4px;
+    }
+
+    .signature-canvas {
+      width: 100%;
+      height: 200px;
+      background: #ffffff;
+      border-radius: 8px;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    .signature-controls {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .signature-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 12px;
+    }
   </style>
 </head>
 <body>
@@ -1776,7 +1808,7 @@
 
       <!-- Modal signature -->
       <div class="signature-modal" id="signatureModal" style="position:fixed;inset:0;background:rgba(15,23,42,0.5);display:none;align-items:center;justify-content:center;z-index:9999;">
-        <div class="signature-box" style="background:#fff;border-radius:20px;padding:20px;max-width:600px;width:90%;">
+        <div class="signature-box" style="background:#fff;border-radius:20px;padding:20px;max-width:650px;width:90%;max-height:90vh;overflow-y:auto;">
           <div class="signature-head" style="display:flex;justify-content:space-between;align-items:center;">
             <h3>Signature de livraison</h3>
             <button class="btn btn-ghost" id="closeSignature">Fermer</button>
@@ -1784,8 +1816,35 @@
           <p style="margin-top:8px;font-size:12px;color:var(--muted);">
             Rotation <strong id="signatureRotationNum"></strong> - <span id="signatureClient"></span>
           </p>
+
+          <!-- Informations du signataire -->
+          <div class="signature-info">
+            <div>
+              <label class="label">Nom complet du signataire *</label>
+              <input id="signatoryName" class="input" placeholder="Ex: M. DUPONT Pierre" />
+            </div>
+            <div>
+              <label class="label">Qualité / Fonction *</label>
+              <input id="signatoryRole" class="input" placeholder="Ex: Chef de chantier" />
+            </div>
+          </div>
+
+          <!-- Zone de signature -->
           <div style="margin-top:12px;">
-            <button class="btn btn-primary" id="validateSignature" style="width:100%;">✓ Valider la livraison</button>
+            <label class="label">Signature électronique *</label>
+            <p style="font-size:11px;color:var(--muted);margin-bottom:6px;">Signez avec votre doigt ou votre souris dans la zone ci-dessous</p>
+            <div class="signature-canvas-wrapper">
+              <canvas id="signatureCanvas" class="signature-canvas"></canvas>
+            </div>
+            <div class="signature-controls">
+              <small style="color:var(--muted);font-size:11px;">Signez dans la zone blanche</small>
+              <button class="btn btn-ghost" id="clearSignature" style="font-size:12px;padding:6px 12px;">Effacer</button>
+            </div>
+          </div>
+
+          <!-- Bouton de validation -->
+          <div style="margin-top:16px;">
+            <button class="btn btn-primary" id="validateSignature" style="width:100%;">✓ Valider la livraison signée</button>
           </div>
           <div class="signature-preview" id="signaturePreview" style="margin-top:8px;font-size:11px;color:#16a34a;"></div>
         </div>
@@ -1842,6 +1901,14 @@
     const signatureRotationNum = document.getElementById('signatureRotationNum');
     const signatureClient = document.getElementById('signatureClient');
     const signaturePreview = document.getElementById('signaturePreview');
+    const signatureCanvas = document.getElementById('signatureCanvas');
+    const clearSignature = document.getElementById('clearSignature');
+    const signatoryName = document.getElementById('signatoryName');
+    const signatoryRole = document.getElementById('signatoryRole');
+
+    let signatureCtx = null;
+    let isDrawing = false;
+    let hasSignature = false;
 
     const managerKpis   = document.getElementById('managerKpis');
     const recentOrders  = document.getElementById('recentOrders');
@@ -2993,6 +3060,19 @@
       console.log('Livraison sélectionnée:', delivery);
       selectedRotation = delivery;
 
+      let signatureInfo = '';
+      if (delivery.signed && delivery.signatoryName) {
+        signatureInfo = `
+          <div style="margin-top:12px;padding:10px;background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.3);border-radius:10px;">
+            <div style="font-size:12px;color:#16a34a;font-weight:600;margin-bottom:6px;">✓ Livraison signée</div>
+            <div style="font-size:11px;color:var(--text-soft);"><strong>Signataire :</strong> ${delivery.signatoryName}</div>
+            <div style="font-size:11px;color:var(--text-soft);"><strong>Qualité :</strong> ${delivery.signatoryRole}</div>
+            <div style="font-size:11px;color:var(--text-soft);"><strong>Date :</strong> ${delivery.signatureDate}</div>
+            ${delivery.signatureData ? `<img src="${delivery.signatureData}" style="max-width:100%;height:80px;margin-top:6px;border:1px solid rgba(148,163,184,0.3);border-radius:6px;background:#fff;padding:4px;" />` : ''}
+          </div>
+        `;
+      }
+
       driverOrderDetail.innerHTML = `
         <div style="display:flex;flex-direction:column;gap:8px;">
           <div><strong>Client :</strong> ${delivery.client}</div>
@@ -3005,9 +3085,8 @@
           <div><strong>Date :</strong> ${delivery.date || 'Non renseignée'}</div>
           <div><strong>Statut :</strong> ${delivery.status}</div>
         </div>
-        <button class="btn btn-primary" style="margin-top:12px;width:100%;" onclick="openSignatureModal()">
-          Signer cette livraison
-        </button>
+        ${signatureInfo}
+        ${!delivery.signed ? `<button class="btn btn-primary" style="margin-top:12px;width:100%;" onclick="openSignatureModal()">✍ Signer cette livraison</button>` : ''}
       `;
     }
 
@@ -3018,18 +3097,147 @@
       }
       signatureRotationNum.textContent = `${selectedRotation.rotationNum}/${selectedRotation.totalRotations}`;
       signatureClient.textContent = selectedRotation.client;
-      signatureModal.style.display = 'flex';
+
+      // Réinitialiser les champs
+      signatoryName.value = '';
+      signatoryRole.value = '';
       signaturePreview.textContent = '';
+
+      signatureModal.style.display = 'flex';
+
+      // Initialiser le canvas après affichage pour avoir les bonnes dimensions
+      setTimeout(() => {
+        initSignatureCanvas();
+      }, 100);
+    }
+
+    function initSignatureCanvas() {
+      if (!signatureCanvas) return;
+
+      // Ajuster la taille du canvas
+      const rect = signatureCanvas.getBoundingClientRect();
+      signatureCanvas.width = rect.width * 2; // Haute résolution
+      signatureCanvas.height = rect.height * 2;
+      signatureCanvas.style.width = rect.width + 'px';
+      signatureCanvas.style.height = rect.height + 'px';
+
+      signatureCtx = signatureCanvas.getContext('2d');
+      signatureCtx.scale(2, 2);
+      signatureCtx.strokeStyle = '#111827';
+      signatureCtx.lineWidth = 2;
+      signatureCtx.lineCap = 'round';
+      signatureCtx.lineJoin = 'round';
+
+      // Effacer le canvas
+      clearCanvas();
+
+      // Événements souris
+      signatureCanvas.addEventListener('mousedown', startDrawing);
+      signatureCanvas.addEventListener('mousemove', draw);
+      signatureCanvas.addEventListener('mouseup', stopDrawing);
+      signatureCanvas.addEventListener('mouseout', stopDrawing);
+
+      // Événements tactiles
+      signatureCanvas.addEventListener('touchstart', handleTouch);
+      signatureCanvas.addEventListener('touchmove', handleTouch);
+      signatureCanvas.addEventListener('touchend', stopDrawing);
+    }
+
+    function clearCanvas() {
+      if (!signatureCtx) return;
+      const rect = signatureCanvas.getBoundingClientRect();
+      signatureCtx.clearRect(0, 0, rect.width, rect.height);
+      hasSignature = false;
+    }
+
+    function startDrawing(e) {
+      isDrawing = true;
+      hasSignature = true;
+      const rect = signatureCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      signatureCtx.beginPath();
+      signatureCtx.moveTo(x, y);
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+      const rect = signatureCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      signatureCtx.lineTo(x, y);
+      signatureCtx.stroke();
+    }
+
+    function stopDrawing() {
+      isDrawing = false;
+    }
+
+    function handleTouch(e) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      if (!touch) return;
+
+      const rect = signatureCanvas.getBoundingClientRect();
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+
+      if (e.type === 'touchstart') {
+        isDrawing = true;
+        hasSignature = true;
+        signatureCtx.beginPath();
+        signatureCtx.moveTo(x, y);
+      } else if (e.type === 'touchmove' && isDrawing) {
+        signatureCtx.lineTo(x, y);
+        signatureCtx.stroke();
+      }
     }
 
     closeSignature.addEventListener('click', () => {
       signatureModal.style.display = 'none';
     });
 
+    clearSignature.addEventListener('click', () => {
+      clearCanvas();
+    });
+
     validateSignature.addEventListener('click', () => {
       if (!selectedRotation) return;
-      signaturePreview.textContent = `✓ Livraison rotation ${selectedRotation.rotationNum} signée avec succès !`;
+
+      // Vérifier que tous les champs sont remplis
+      const name = signatoryName.value.trim();
+      const role = signatoryRole.value.trim();
+
+      if (!name) {
+        signaturePreview.style.color = '#ef4444';
+        signaturePreview.textContent = '⚠ Veuillez entrer le nom du signataire.';
+        signatoryName.focus();
+        return;
+      }
+
+      if (!role) {
+        signaturePreview.style.color = '#ef4444';
+        signaturePreview.textContent = '⚠ Veuillez entrer la qualité/fonction du signataire.';
+        signatoryRole.focus();
+        return;
+      }
+
+      if (!hasSignature) {
+        signaturePreview.style.color = '#ef4444';
+        signaturePreview.textContent = '⚠ Veuillez signer dans la zone blanche.';
+        return;
+      }
+
+      // Enregistrer la signature
+      const signatureData = signatureCanvas.toDataURL('image/png');
       selectedRotation.signed = true;
+      selectedRotation.signatoryName = name;
+      selectedRotation.signatoryRole = role;
+      selectedRotation.signatureData = signatureData;
+      selectedRotation.signatureDate = new Date().toLocaleString('fr-FR');
+
+      signaturePreview.style.color = '#16a34a';
+      signaturePreview.textContent = `✓ Livraison rotation ${selectedRotation.rotationNum} signée par ${name} (${role}) !`;
 
       setTimeout(() => {
         signatureModal.style.display = 'none';
