@@ -932,6 +932,7 @@
       }
     }
 
+    /* --- MOBILE & TABLET --- */
     @media (max-width: 1100px) {
       .layout { border-radius:0; margin:0; }
       .landing-inner { grid-template-columns:1fr; }
@@ -956,46 +957,87 @@
       }
     }
 
+    /* PAGE MANAGER + COMMANDES – SMARTPHONE */
     @media (max-width: 768px) {
-      .main { padding:12px; }
-      .topbar { flex-direction:column; align-items:stretch; }
-      .toolbar { justify-content:stretch; }
-      .toolbar .btn { width:100%; justify-content:center; }
-      .card { padding:12px; }
-      .form-grid { grid-template-columns:1fr; }
+      body {
+        align-items: stretch;
+      }
+
+      .layout {
+        margin: 0;
+        border-radius: 0;
+        min-height: 100vh;
+      }
+
+      header {
+        padding: 10px 12px;
+      }
+
+      .main {
+        padding:10px;
+      }
+
+      .topbar {
+        flex-direction:column;
+        align-items:stretch;
+        gap:6px;
+      }
+
+      .toolbar {
+        justify-content:stretch;
+      }
+
+      .toolbar .btn {
+        width:100%;
+        justify-content:center;
+      }
+
+      .card {
+        padding:10px;
+      }
+
+      .form-grid {
+        grid-template-columns:1fr;
+      }
 
       .app {
         grid-template-columns: 1fr;
-      }
-
-      .sidebar {
-        order: 2;
+        gap:10px;
       }
 
       .main {
         order: 1;
       }
 
+      .sidebar {
+        order: 2;
+        border-radius: 0 0 18px 18px;
+      }
+
+      /* COMMANDES : FORM + TABLE */
       .orders-layout {
         gap: 10px;
       }
 
       .orders-form-card,
       .orders-table-card {
-        padding: 12px;
+        padding: 10px;
       }
 
       .orders-table-wrap {
         max-height:none;
+        overflow-x:auto;
+        overflow-y:visible;
+        -webkit-overflow-scrolling: touch;
       }
 
       .orders-table {
-        min-width: 720px;
+        min-width: 700px;
       }
 
       .orders-table th,
       .orders-table td {
-        padding:6px 6px;
+        padding:5px 6px;
         font-size:11px;
       }
 
@@ -1003,25 +1045,35 @@
         min-width:180px;
       }
 
+      .order-actions{
+        gap:4px;
+      }
+
+      .btn-xs{
+        padding:4px 8px;
+        font-size:11px;
+      }
+
+      /* RÉCAP */
       #view-recap {
-        padding-bottom: 12px;
+        padding-bottom: 10px;
       }
 
       #view-recap .card {
-        padding: 14px;
+        padding: 10px;
       }
 
       #view-recap .kpis {
         grid-template-columns: 1fr;
-        gap: 8px;
+        gap: 6px;
       }
 
       .recap-layout {
-        gap: 14px;
+        gap: 10px;
       }
 
       .recap-top-grid {
-        gap: 14px;
+        gap: 10px;
       }
 
       .list {
@@ -1050,12 +1102,12 @@
       }
 
       .recap-table-wrap {
-        margin-top: 12px;
-        border-radius: 12px;
+        margin-top: 10px;
+        border-radius: 10px;
       }
 
       .recap-year-table {
-        min-width: 920px;
+        min-width: 900px;
       }
 
       .recap-year-table th,
@@ -1079,14 +1131,40 @@
       }
     }
 
+    /* FOCUS TRÈS PETITS ÉCRANS (<= 480px) */
     @media (max-width: 480px) {
+
+      header {
+        padding: 8px 10px;
+      }
+
+      .brand-text h1 {
+        font-size: 14px;
+      }
+
+      .brand-text p {
+        font-size: 11px;
+      }
+
+      .tag {
+        display:none;
+      }
+
+      .main {
+        padding:8px;
+      }
+
+      .card {
+        padding:8px;
+      }
+
       .orders-table {
-        min-width: 650px;
+        min-width: 620px;
       }
 
       .orders-table th,
       .orders-table td {
-        padding: 5px 6px;
+        padding:4px 5px;
         font-size:10px;
       }
 
@@ -1094,13 +1172,22 @@
         min-width:150px;
       }
 
+      .order-actions {
+        gap:3px;
+      }
+
+      .btn-xs {
+        padding:3px 7px;
+        font-size:10px;
+      }
+
       .recap-year-table {
-        min-width: 850px;
+        min-width: 820px;
       }
 
       .recap-year-table th,
       .recap-year-table td {
-        padding: 7px 8px;
+        padding: 6px 7px;
         font-size: 10px;
       }
 
@@ -1111,7 +1198,7 @@
       }
 
       #view-recap .kpis .kpi {
-        padding: 10px;
+        padding: 8px;
       }
 
       #view-recap .kpis .kpi span {
@@ -1119,8 +1206,8 @@
       }
 
       #view-recap .kpis .kpi strong {
-        font-size: 16px;
-        margin-top: 3px;
+        font-size: 15px;
+        margin-top: 2px;
       }
 
       .year-filters .label {
