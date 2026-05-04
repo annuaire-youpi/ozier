@@ -932,7 +932,6 @@
       }
     }
 
-    /* --- MOBILE & TABLET --- */
     @media (max-width: 1100px) {
       .layout { border-radius:0; margin:0; }
       .landing-inner { grid-template-columns:1fr; }
@@ -957,275 +956,145 @@
       }
     }
 
-    /* PAGE MANAGER + COMMANDES – SMARTPHONE */
     @media (max-width: 768px) {
-      body {
-        align-items: stretch;
-      }
+      body { align-items:stretch; }
 
       .layout {
-        margin: 0;
-        border-radius: 0;
-        min-height: 100vh;
+        margin:0;
+        border-radius:0;
+        min-height:100vh;
       }
 
       header {
-        padding: 10px 12px;
+        padding:10px 12px;
       }
 
-      .main {
-        padding:10px;
-      }
+      .main { padding:12px; }
+      .topbar { flex-direction:column; align-items:stretch; }
+      .toolbar { justify-content:stretch; }
+      .toolbar .btn { width:100%; justify-content:center; }
+      .card { padding:12px; }
+      .form-grid { grid-template-columns:1fr; }
 
-      .topbar {
-        flex-direction:column;
-        align-items:stretch;
-        gap:6px;
-      }
+      .app { grid-template-columns:1fr; gap:10px; }
+      .main { order:1; }
+      .sidebar { order:2; border-radius:0 0 18px 18px; }
 
-      .toolbar {
-        justify-content:stretch;
-      }
-
-      .toolbar .btn {
-        width:100%;
-        justify-content:center;
-      }
-
-      .card {
-        padding:10px;
-      }
-
-      .form-grid {
-        grid-template-columns:1fr;
-      }
-
-      .app {
-        grid-template-columns: 1fr;
-        gap:10px;
-      }
-
-      .main {
-        order: 1;
-      }
-
-      .sidebar {
-        order: 2;
-        border-radius: 0 0 18px 18px;
-      }
-
-      /* COMMANDES : FORM + TABLE */
-      .orders-layout {
-        gap: 10px;
-      }
+      .orders-layout { gap:10px; }
 
       .orders-form-card,
-      .orders-table-card {
-        padding: 10px;
+      .orders-table-card { padding:12px; }
+
+      .orders-table-wrap { max-height:none; }
+
+      .orders-table { min-width:720px; }
+
+      .orders-table th,
+      .orders-table td {
+        padding:6px 6px;
+        font-size:11px;
       }
 
-      .orders-table-wrap {
-        max-height:none;
-        overflow-x:auto;
-        overflow-y:visible;
-        -webkit-overflow-scrolling: touch;
+      .orders-table td.col-address { min-width:180px; }
+
+      #view-recap { padding-bottom:12px; }
+
+      #view-recap .card { padding:14px; }
+
+      #view-recap .kpis {
+        grid-template-columns:1fr;
+        gap:8px;
       }
 
-      .orders-table {
-        min-width: 700px;
+      .recap-layout { gap:14px; }
+      .recap-top-grid { gap:14px; }
+
+      .list { max-height:200px; }
+
+      .year-filters {
+        flex-direction:column;
+        align-items:stretch;
+        gap:8px;
       }
+
+      .year-filters > div { width:100%; }
+
+      .year-filters .btn {
+        width:100%;
+        justify-content:center;
+        padding:10px 16px;
+      }
+
+      .year-summary {
+        font-size:12px;
+        line-height:1.5;
+      }
+
+      .recap-table-wrap {
+        margin-top:12px;
+        border-radius:12px;
+      }
+
+      .recap-year-table { min-width:920px; }
+
+      .recap-year-table th,
+      .recap-year-table td {
+        padding:8px 9px;
+        font-size:11px;
+      }
+
+      .recap-year-table th:first-child,
+      .recap-year-table td:first-child {
+        min-width:140px;
+        padding:8px 10px;
+      }
+
+      .recap-annual-card h3 { font-size:14px; }
+      .recap-annual-card p  { font-size:12px; }
+    }
+
+    @media (max-width: 480px) {
+      header { padding:8px 10px; }
+      .brand-text h1 { font-size:14px; }
+      .brand-text p  { font-size:11px; }
+      .tag { display:none; }
+      .main { padding:8px; }
+      .card { padding:8px; }
+
+      .orders-table { min-width:650px; }
 
       .orders-table th,
       .orders-table td {
         padding:5px 6px;
-        font-size:11px;
+        font-size:10px;
       }
 
-      .orders-table td.col-address {
-        min-width:180px;
-      }
+      .orders-table td.col-address { min-width:150px; }
 
-      .order-actions{
-        gap:4px;
-      }
-
-      .btn-xs{
-        padding:4px 8px;
-        font-size:11px;
-      }
-
-      /* RÉCAP */
-      #view-recap {
-        padding-bottom: 10px;
-      }
-
-      #view-recap .card {
-        padding: 10px;
-      }
-
-      #view-recap .kpis {
-        grid-template-columns: 1fr;
-        gap: 6px;
-      }
-
-      .recap-layout {
-        gap: 10px;
-      }
-
-      .recap-top-grid {
-        gap: 10px;
-      }
-
-      .list {
-        max-height: 200px;
-      }
-
-      .year-filters {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-      }
-
-      .year-filters > div {
-        width: 100%;
-      }
-
-      .year-filters .btn {
-        width: 100%;
-        justify-content: center;
-        padding: 10px 16px;
-      }
-
-      .year-summary {
-        font-size: 12px;
-        line-height: 1.5;
-      }
-
-      .recap-table-wrap {
-        margin-top: 10px;
-        border-radius: 10px;
-      }
-
-      .recap-year-table {
-        min-width: 900px;
-      }
+      .recap-year-table { min-width:850px; }
 
       .recap-year-table th,
       .recap-year-table td {
-        padding: 8px 9px;
-        font-size: 11px;
+        padding:7px 8px;
+        font-size:10px;
       }
 
       .recap-year-table th:first-child,
       .recap-year-table td:first-child {
-        min-width: 140px;
-        padding: 8px 10px;
+        min-width:120px;
+        font-size:11px;
       }
 
-      .recap-annual-card h3 {
-        font-size: 14px;
-      }
+      #view-recap .kpis .kpi { padding:10px; }
+      #view-recap .kpis .kpi span { font-size:11px; }
+      #view-recap .kpis .kpi strong { font-size:16px; margin-top:3px; }
 
-      .recap-annual-card p {
-        font-size: 12px;
-      }
-    }
-
-    /* FOCUS TRÈS PETITS ÉCRANS (<= 480px) */
-    @media (max-width: 480px) {
-
-      header {
-        padding: 8px 10px;
-      }
-
-      .brand-text h1 {
-        font-size: 14px;
-      }
-
-      .brand-text p {
-        font-size: 11px;
-      }
-
-      .tag {
-        display:none;
-      }
-
-      .main {
-        padding:8px;
-      }
-
-      .card {
-        padding:8px;
-      }
-
-      .orders-table {
-        min-width: 620px;
-      }
-
-      .orders-table th,
-      .orders-table td {
-        padding:4px 5px;
-        font-size:10px;
-      }
-
-      .orders-table td.col-address {
-        min-width:150px;
-      }
-
-      .order-actions {
-        gap:3px;
-      }
-
-      .btn-xs {
-        padding:3px 7px;
-        font-size:10px;
-      }
-
-      .recap-year-table {
-        min-width: 820px;
-      }
-
-      .recap-year-table th,
-      .recap-year-table td {
-        padding: 6px 7px;
-        font-size: 10px;
-      }
-
-      .recap-year-table th:first-child,
-      .recap-year-table td:first-child {
-        min-width: 120px;
-        font-size: 11px;
-      }
-
-      #view-recap .kpis .kpi {
-        padding: 8px;
-      }
-
-      #view-recap .kpis .kpi span {
-        font-size: 11px;
-      }
-
-      #view-recap .kpis .kpi strong {
-        font-size: 15px;
-        margin-top: 2px;
-      }
-
-      .year-filters .label {
-        font-size: 11px;
-      }
-
+      .year-filters .label { font-size:11px; }
       .year-filters .select,
-      .year-filters .btn {
-        font-size: 13px;
-      }
+      .year-filters .btn { font-size:13px; }
 
-      .recap-annual-card h3 {
-        font-size: 13px;
-      }
-
-      .recap-annual-card p {
-        font-size: 11px;
-      }
+      .recap-annual-card h3 { font-size:13px; }
+      .recap-annual-card p  { font-size:11px; }
     }
 
     .signature-canvas-wrapper {
@@ -1881,7 +1750,7 @@
       <div class="finalize-box">
         <span class="finalize-icon">✅</span>
         <h3 style="font-size:20px;color:#111827;margin-bottom:10px;">Commande finalisée !</h3>
-        <p style="font-size:13px;color:#text-soft;margin-bottom:6px;">
+        <p style="font-size:13px;color:#4b5563;margin-bottom:6px;">
           La commande de <strong id="finalizeClientName"></strong> est maintenant marquée comme <strong style="color:#16a34a;">Finalisée</strong>.
         </p>
         <div style="margin:16px 0;padding:14px;background:#fffbeb;border-radius:14px;border:1px solid rgba(234,179,8,0.4);">
@@ -1919,7 +1788,7 @@
 
     const navButtons = document.querySelectorAll('.nav button');
     const views      = document.querySelectorAll('.view');
-    const mainTitle  = document.getElementById('mainTitle');
+       const mainTitle  = document.getElementById('mainTitle');
     const mainDesc   = document.getElementById('mainDesc');
 
     const managerKpis = document.getElementById('managerKpis');
