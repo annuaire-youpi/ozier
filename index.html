@@ -662,7 +662,429 @@
       background:#f9fafb;
     }
 
-    /* (le reste de ton CSS recap, driver-wrap, media queries suit, inchangé) */
+    .driver-wrap {
+      border-radius:var(--radius-lg);
+      padding:18px;
+      background:linear-gradient(145deg,#ffffff,#e0f2fe);
+      border:1px solid rgba(148,163,184,0.4);
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      width:100%;
+    }
+
+    .driver-top {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+    }
+
+    .driver-top h1 {
+      font-size:20px;
+      color:#111827;
+    }
+
+    .driver-top p {
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .driver-grid {
+      display:grid;
+      grid-template-columns:minmax(0,1.15fr) minmax(0,0.9fr);
+      gap:12px;
+    }
+
+    .mini-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:8px;
+      margin-top:6px;
+    }
+
+    .mini {
+      border-radius:14px;
+      padding:8px 10px;
+      background:#f9fafb;
+      border:1px solid rgba(148,163,184,0.4);
+      font-size:12px;
+    }
+
+    .fuel-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      margin-top:8px;
+    }
+
+    .fuel-grid .btn {
+      width:100%;
+      justify-content:center;
+    }
+
+    .fuel-feedback {
+      margin-top:8px;
+      font-size:11px;
+      color:var(--muted);
+    }
+
+    .signature-modal{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,0.24);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      z-index:9999;
+    }
+
+    .signature-box{
+      width:min(760px, 100%);
+      border-radius:20px;
+      padding:18px;
+      background:linear-gradient(145deg,#ffffff,#e0f2fe);
+      border:1px solid rgba(148,163,184,0.45);
+      box-shadow:0 20px 50px rgba(15,23,42,0.25);
+    }
+
+    .signature-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .driver-order-btn{
+      width:100%;
+      text-align:left;
+      background:transparent;
+      border:none;
+      padding:0;
+      cursor:pointer;
+    }
+
+    .driver-order-btn .item{
+      transition:transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .driver-order-btn:hover .item{
+      transform:translateY(-1px);
+      border-color:rgba(59,130,246,0.6);
+      background:#ffffff;
+    }
+
+    .signature-preview{
+      margin-top:6px;
+      font-size:11px;
+      color:#16a34a;
+    }
+
+    .monthly-filters{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:8px;
+      align-items:flex-end;
+    }
+
+    .monthly-summary{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .monthly-types{
+      margin-top:8px;
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:8px;
+    }
+
+    .monthly-type-card{
+      border-radius:14px;
+      padding:8px 10px;
+      background:#f9fafb;
+      border:1px solid rgba(148,163,184,0.45);
+      font-size:11px;
+    }
+
+    .monthly-type-card strong{
+      display:block;
+      margin-bottom:3px;
+      font-size:12px;
+      color:#111827;
+    }
+
+    .year-filters{
+      display:flex;
+      gap:10px;
+      align-items:flex-end;
+      margin-top:8px;
+      flex-wrap:wrap;
+    }
+
+    .year-summary{
+      margin-top:8px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .year-table-wrap{
+      max-height:220px;
+      overflow:auto;
+      margin-top:6px;
+    }
+
+    /* --- NOUVEAU TABLEAU ANNUEL --- */
+
+    .recap-annual-card,
+    #view-recap .card {
+      min-width: 0;
+    }
+
+    .recap-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,0.22);
+      background: #fff;
+      margin-top: 10px;
+    }
+
+    .recap-year-table {
+      width: 100%;
+      min-width: 980px;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .recap-year-table th,
+    .recap-year-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(148,163,184,0.22);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .recap-year-table th:first-child,
+    .recap-year-table td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background: #f8fafc;
+      min-width: 180px;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .recap-year-table thead th:first-child {
+      z-index: 3;
+    }
+
+    .recap-year-table td:not(:first-child),
+    .recap-year-table th:not(:first-child) {
+      text-align: right;
+    }
+
+    .recap-year-table tbody tr:last-child td {
+      font-weight: 700;
+      background: rgba(59,130,246,0.06);
+    }
+
+    .recap-year-table .negative {
+      color: #b91c1c;
+    }
+
+    .recap-year-table .positive {
+      color: #166534;
+    }
+
+    /* Layout spÃ©cifique recap */
+
+    .recap-layout {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .recap-day-card,
+    .recap-drivers-card,
+    .recap-annual-card {
+      min-width: 0;
+    }
+
+    @media (min-width: 769px) {
+      .recap-top-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .layout { border-radius:0; margin:0; }
+      .landing-inner { grid-template-columns:1fr; }
+      .app { grid-template-columns:1fr; }
+      .hero-grid { grid-template-columns:1fr; }
+      .driver-grid { grid-template-columns:1fr; }
+      .grid-2 { grid-template-columns:1fr; }
+      .orders-layout { grid-template-columns:1fr; }
+      .kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .monthly-types { grid-template-columns:repeat(2,minmax(0,1fr)); }
+
+      .recap-top-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      #view-recap .kpis {
+        grid-template-columns: repeat(2, minmax(0,1fr));
+      }
+
+      .recap-layout {
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main { padding:12px; }
+      .topbar { flex-direction:column; align-items:stretch; }
+      .toolbar { justify-content:stretch; }
+      .toolbar .btn { width:100%; justify-content:center; }
+      .card { padding:12px; }
+      .form-grid { grid-template-columns:1fr; }
+      .orders-table-wrap { max-height:none; }
+      .orders-table { min-width:900px; }
+      th, td { padding:8px 10px; }
+
+      #view-recap {
+        padding-bottom: 12px;
+      }
+
+      #view-recap .card {
+        padding: 14px;
+      }
+
+      #view-recap .kpis {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .recap-layout {
+        gap: 14px;
+      }
+
+      .recap-top-grid {
+        gap: 14px;
+      }
+
+      .list {
+        max-height: 200px;
+      }
+
+      .year-filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
+
+      .year-filters > div {
+        width: 100%;
+      }
+
+      .year-filters .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 16px;
+      }
+
+      .year-summary {
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .recap-table-wrap {
+        margin-top: 12px;
+        border-radius: 12px;
+      }
+
+      .recap-year-table {
+        min-width: 920px;
+      }
+
+      .recap-year-table th,
+      .recap-year-table td {
+        padding: 8px 9px;
+        font-size: 11px;
+      }
+
+      .recap-year-table th:first-child,
+      .recap-year-table td:first-child {
+        min-width: 140px;
+        padding: 8px 10px;
+      }
+
+      .recap-annual-card h3 {
+        font-size: 14px;
+      }
+
+      .recap-annual-card p {
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .recap-year-table {
+        min-width: 850px;
+      }
+
+      .recap-year-table th,
+      .recap-year-table td {
+        padding: 7px 8px;
+        font-size: 10px;
+      }
+
+      .recap-year-table th:first-child,
+      .recap-year-table td:first-child {
+        min-width: 120px;
+        font-size: 11px;
+      }
+
+      #view-recap .kpis .kpi {
+        padding: 10px;
+      }
+
+      #view-recap .kpis .kpi span {
+        font-size: 11px;
+      }
+
+      #view-recap .kpis .kpi strong {
+        font-size: 16px;
+        margin-top: 3px;
+      }
+
+      .year-filters .label {
+        font-size: 11px;
+      }
+
+      .year-filters .select,
+      .year-filters .btn {
+        font-size: 13px;
+      }
+
+      .recap-annual-card h3 {
+        font-size: 13px;
+      }
+
+      .recap-annual-card p {
+        font-size: 11px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -672,10 +1094,10 @@
         <div class="brand-logo">T</div>
         <div class="brand-text">
           <h1>TransportPro</h1>
-          <p>Base desktop de démonstration</p>
+          <p>Base desktop de dÃ©monstration</p>
         </div>
       </div>
-      <div class="tag">Scénario OZIER · PIN démo intégré</div>
+      <div class="tag">ScÃ©nario OZIER Â· PIN dÃ©mo intÃ©grÃ©</div>
     </header>
 
     <!-- PAGE LOGIN -->
@@ -685,43 +1107,43 @@
           <div class="brand">
             <div class="brand-logo">T</div>
             <div class="brand-text">
-              <h1 style="font-size:18px;">TransportPro · flotte OZIER</h1>
-              <p>Version plein écran corrigée</p>
+              <h1 style="font-size:18px;">TransportPro Â· flotte OZIER</h1>
+              <p>Version plein Ã©cran corrigÃ©e</p>
             </div>
           </div>
 
           <div style="margin-top:16px;">
-            <div class="hero-title">Une base enfin pensée pour remplir le desktop.</div>
+            <div class="hero-title">Une base enfin pensÃ©e pour remplir le desktop.</div>
             <div class="hero-sub">
-              Cette version est prête pour la démo : connexion par PIN, dashboard gérant, espace chauffeur
-              et suivi des dépenses véhicules pour les camions OZIER.
+              Cette version est prÃªte pour la dÃ©mo : connexion par PIN, dashboard gÃ©rant, espace chauffeur
+              et suivi des dÃ©penses vÃ©hicules pour les camions OZIER.
             </div>
           </div>
 
           <div class="hero-grid">
             <div class="hero-card">
-              <strong>Dashboard gérant</strong>
-              <span>Vue globale des commandes, chauffeurs et charges journalières.</span>
+              <strong>Dashboard gÃ©rant</strong>
+              <span>Vue globale des commandes, chauffeurs et charges journaliÃ¨res.</span>
             </div>
             <div class="hero-card">
               <strong>Espace chauffeurs</strong>
-              <span>Missions du jour et validation carburant intégrée.</span>
+              <span>Missions du jour et validation carburant intÃ©grÃ©e.</span>
             </div>
             <div class="hero-card">
-              <strong>Dépenses véhicules</strong>
-              <span>Camions OZIER, charges et recap par véhicule.</span>
+              <strong>DÃ©penses vÃ©hicules</strong>
+              <span>Camions OZIER, charges et recap par vÃ©hicule.</span>
             </div>
           </div>
         </div>
 
         <div class="auth">
           <div class="switch">
-            <button class="active" id="managerTab">Connexion gérant</button>
+            <button class="active" id="managerTab">Connexion gÃ©rant</button>
             <button id="driverTab">Connexion chauffeur</button>
           </div>
 
-          <h2 id="authTitle">Connexion gérant</h2>
-          <p id="authDesc">Accès au dashboard desktop.</p>
+          <h2 id="authTitle">Connexion gÃ©rant</h2>
+          <p id="authDesc">AccÃ¨s au dashboard desktop.</p>
 
           <div class="panel active" id="panelManager"></div>
           <div class="panel" id="panelDriver">
@@ -745,7 +1167,7 @@
 
           <div class="error" id="errorBox">Code incorrect.</div>
           <div class="demo-pins">
-            Démo PIN : gérant <strong>1234</strong> · Jean <strong>1111</strong> · Marie <strong>2222</strong> · Pierre <strong>3333</strong>
+            DÃ©mo PIN : gÃ©rant <strong>1234</strong> Â· Jean <strong>1111</strong> Â· Marie <strong>2222</strong> Â· Pierre <strong>3333</strong>
           </div>
         </div>
       </div>
@@ -758,20 +1180,18 @@
           <div>
             <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Navigation</div>
             <div class="nav">
-              <button class="active" data-view="dashboard"><span>Dashboard</span><span>›</span></button>
-              <button data-view="commandes"><span>Commandes</span><span>›</span></button>
-              <button data-view="chauffeurs"><span>Chauffeurs</span><span>›</span></button>
-              <button data-view="vehicules-flotte"><span>Flotte véhicules</span><span>›</span></button>
-              <button data-view="recap"><span>Récapitulatif</span><span>›</span></button>
-              <button data-view="vehicules"><span>Dépenses véhicules</span><span>›</span></button>
-              <button data-view="integration"><span>Intégration</span><span>›</span></button>
-              <!-- AJOUT -->
-              <button data-view="parametrages"><span>Paramétrages</span><span>›</span></button>
+              <button class="active" data-view="dashboard"><span>Dashboard</span><span>â€º</span></button>
+              <button data-view="commandes"><span>Commandes</span><span>â€º</span></button>
+              <button data-view="chauffeurs"><span>Chauffeurs</span><span>â€º</span></button>
+              <button data-view="vehicules-flotte"><span>Flotte vÃ©hicules</span><span>â€º</span></button>
+              <button data-view="recap"><span>RÃ©capitulatif</span><span>â€º</span></button>
+              <button data-view="vehicules"><span>DÃ©penses vÃ©hicules</span><span>â€º</span></button>
+              <button data-view="integration"><span>IntÃ©gration</span><span>â€º</span></button>
             </div>
           </div>
 
           <div class="side-bottom">
-            <div class="pill">PIN gérant validé</div>
+            <div class="pill">PIN gÃ©rant validÃ©</div>
             <button class="btn btn-ghost" id="logoutManager">Retour accueil</button>
           </div>
         </aside>
@@ -780,13 +1200,13 @@
           <div class="topbar">
             <div class="title">
               <h1 id="mainTitle">Dashboard</h1>
-              <p id="mainDesc">Vue d’ensemble de l’activité journalière.</p>
+              <p id="mainDesc">Vue dâ€™ensemble de lâ€™activitÃ© journaliÃ¨re.</p>
             </div>
 
             <div class="toolbar">
               <button class="btn btn-ghost" id="toDrivers">Voir les chauffeurs</button>
               <button class="btn btn-primary" id="toOrders">Nouvelle commande</button>
-              <button class="btn btn-ghost" id="toVehicles">Dépenses véhicules</button>
+              <button class="btn btn-ghost" id="toVehicles">DÃ©penses vÃ©hicules</button>
             </div>
           </div>
 
@@ -796,13 +1216,13 @@
 
             <div class="grid-2">
               <div class="card">
-                <h3>Commandes récentes</h3>
-                <p>Les derniers dossiers et leur état d’avancement.</p>
+                <h3>Commandes rÃ©centes</h3>
+                <p>Les derniers dossiers et leur Ã©tat dâ€™avancement.</p>
                 <div class="list" id="recentOrders"></div>
               </div>
 
               <div class="card">
-                <h3>Équipe du jour</h3>
+                <h3>Ã‰quipe du jour</h3>
                 <p>Chauffeurs actifs et affectations de base.</p>
                 <div class="list" id="teamList"></div>
               </div>
@@ -815,8 +1235,8 @@
               <div class="card orders-form-card">
                 <div class="order-form-head">
                   <div>
-                    <h3 id="orderFormTitle">Créer une commande</h3>
-                    <p id="orderFormDesc">Structure prête pour écrire ensuite dans Google Sheets.</p>
+                    <h3 id="orderFormTitle">CrÃ©er une commande</h3>
+                    <p id="orderFormDesc">Structure prÃªte pour Ã©crire ensuite dans Google Sheets.</p>
                   </div>
                   <span class="order-edit-badge" id="orderEditBadge">Mode modification</span>
                 </div>
@@ -828,7 +1248,7 @@
                   </div>
 
                   <div>
-                    <label class="label">Téléphone</label>
+                    <label class="label">TÃ©lÃ©phone</label>
                     <input id="orderPhone" class="input" placeholder="0696 XX XX XX">
                   </div>
 
@@ -838,16 +1258,11 @@
                   </div>
 
                   <div>
-                    <label class="label">Quantité</label>
+                    <label class="label">QuantitÃ©</label>
                     <input id="orderQty" class="input" placeholder="12 tonnes">
                   </div>
 
-                  <!-- AJOUT : nature du produit -->
                   <div>
-                    <label class="label">Nature du produit</label>
-                    <select id="orderProduct" class="select"></select>
-                  </div>
-                                    <div>
                     <label class="label">Montant TTC</label>
                     <input id="orderAmount" class="input" placeholder="1850">
                   </div>
@@ -872,7 +1287,7 @@
                     <select id="orderStatus" class="select">
                       <option value="En attente">En attente</option>
                       <option value="En cours">En cours</option>
-                      <option value="Livrée">Livrée</option>
+                      <option value="LivrÃ©e">LivrÃ©e</option>
                     </select>
                   </div>
 
@@ -880,7 +1295,7 @@
                     <label class="label">Source</label>
                     <select id="orderSource" class="select">
                       <option value="WhatsApp">WhatsApp</option>
-                      <option value="Téléphone">Téléphone</option>
+                      <option value="TÃ©lÃ©phone">TÃ©lÃ©phone</option>
                     </select>
                   </div>
                 </div>
@@ -893,18 +1308,16 @@
 
               <div class="card orders-table-card">
                 <h3>Tableau des commandes</h3>
-                <p>Vue complète avec actions de modification et suppression.</p>
+                <p>Vue complÃ¨te avec actions de modification et suppression.</p>
 
                 <div class="orders-table-wrap">
                   <table class="orders-table">
                     <thead>
                       <tr>
-                        <th>N°</th>
+                        <th>NÂ°</th>
                         <th>Client</th>
                         <th>Chantier</th>
-                        <th>Qté</th>
-                        <!-- AJOUT : colonne Produit -->
-                        <th>Produit</th>
+                        <th>QtÃ©</th>
                         <th>Montant</th>
                         <th>Statut</th>
                         <th>Chauffeur</th>
@@ -925,17 +1338,17 @@
             <div class="grid-2">
               <div class="card">
                 <h3>Chauffeurs OZIER</h3>
-                <p>Liste gérée uniquement en mémoire pour la démo.</p>
+                <p>Liste gÃ©rÃ©e uniquement en mÃ©moire pour la dÃ©mo.</p>
                 <div class="list" id="driversList"></div>
               </div>
 
               <div class="card">
                 <h3>Fiche chauffeur</h3>
-                <p>Les champs servent de base pour le futur CRUD connecté.</p>
+                <p>Les champs servent de base pour le futur CRUD connectÃ©.</p>
 
                 <div class="form-grid">
                   <div>
-                    <label class="label">Prénom</label>
+                    <label class="label">PrÃ©nom</label>
                     <input id="driverFirst" class="input" placeholder="Jean">
                   </div>
 
@@ -945,7 +1358,7 @@
                   </div>
 
                   <div>
-                    <label class="label">Téléphone</label>
+                    <label class="label">TÃ©lÃ©phone</label>
                     <input id="driverPhone" class="input" placeholder="0696 XX XX XX">
                   </div>
 
@@ -960,7 +1373,7 @@
                   </div>
 
                   <div>
-                    <label class="label">Camion attribué</label>
+                    <label class="label">Camion attribuÃ©</label>
                     <select id="driverTruck" class="select">
                       <option value="">Sans camion</option>
                     </select>
@@ -989,22 +1402,22 @@
             </div>
           </section>
 
-          <!-- Flotte véhicules -->
+          <!-- Flotte vÃ©hicules -->
           <section class="view" id="view-vehicules-flotte">
             <div class="grid-2">
               <div class="card">
-                <h3>Véhicules de la flotte</h3>
-                <p>Liste des camions bennes utilisés dans les commandes.</p>
+                <h3>VÃ©hicules de la flotte</h3>
+                <p>Liste des camions bennes utilisÃ©s dans les commandes.</p>
                 <div class="list" id="fleetList"></div>
               </div>
 
               <div class="card">
-                <h3>Fiche véhicule</h3>
-                <p>Base pour le futur CRUD connecté Sheets / Make.</p>
+                <h3>Fiche vÃ©hicule</h3>
+                <p>Base pour le futur CRUD connectÃ© Sheets / Make.</p>
 
                 <div class="form-grid">
                   <div>
-                    <label class="label">Code camion clé</label>
+                    <label class="label">Code camion clÃ©</label>
                     <input id="vehCode" class="input" placeholder="OZ-001">
                   </div>
 
@@ -1019,7 +1432,7 @@
                   </div>
 
                   <div>
-                    <label class="label">Modèle</label>
+                    <label class="label">ModÃ¨le</label>
                     <input id="vehModel" class="input" placeholder="Premium Lander">
                   </div>
 
@@ -1035,12 +1448,12 @@
                   </div>
 
                   <div>
-                    <label class="label">Année</label>
+                    <label class="label">AnnÃ©e</label>
                     <input id="vehYear" class="input" type="number" placeholder="2018">
                   </div>
 
                   <div>
-                    <label class="label">Kilométrage</label>
+                    <label class="label">KilomÃ©trage</label>
                     <input id="vehKm" class="input" type="number" placeholder="180000">
                   </div>
 
@@ -1055,7 +1468,7 @@
 
                   <div class="full">
                     <label class="label">Commentaires</label>
-                    <textarea id="vehNote" class="input" rows="2" placeholder="Infos atelier, pneus, révision..."></textarea>
+                    <textarea id="vehNote" class="input" rows="2" placeholder="Infos atelier, pneus, rÃ©vision..."></textarea>
                   </div>
                 </div>
 
@@ -1068,39 +1481,39 @@
             </div>
           </section>
 
-          <!-- Récap -->
+          <!-- RÃ©cap -->
           <section class="view" id="view-recap">
             <div class="recap-layout">
               <div class="recap-top-grid">
                 <div class="card recap-day-card">
-                  <h3>Récapitulatif du jour</h3>
-                  <p>Chiffres issus des données statiques de la démo.</p>
+                  <h3>RÃ©capitulatif du jour</h3>
+                  <p>Chiffres issus des donnÃ©es statiques de la dÃ©mo.</p>
                   <div class="kpis" id="recapKpis"></div>
                 </div>
 
                 <div class="card recap-drivers-card">
-                  <h3>Détail par chauffeur</h3>
-                  <p>Présentation préparée pour un futur export CSV / Sheets.</p>
+                  <h3>DÃ©tail par chauffeur</h3>
+                  <p>PrÃ©sentation prÃ©parÃ©e pour un futur export CSV / Sheets.</p>
                   <div class="list" id="recapDrivers"></div>
                 </div>
               </div>
 
               <div class="card recap-annual-card">
-                <h3>Synthèse annuelle CA / dépenses</h3>
-                <p>Vue annuelle consolidée du chiffre d'affaires, des charges globales et de la marge.</p>
+                <h3>SynthÃ¨se annuelle CA / dÃ©penses</h3>
+                <p>Vue annuelle consolidÃ©e du chiffre d'affaires, des charges globales et de la marge.</p>
 
                 <div class="year-filters">
                   <div>
-                    <label class="label">Année</label>
+                    <label class="label">AnnÃ©e</label>
                     <select id="yearSelect" class="select"></select>
                   </div>
 
                   <div>
-                    <button class="btn btn-primary" id="applyYearFilter">Afficher l'année</button>
+                    <button class="btn btn-primary" id="applyYearFilter">Afficher l'annÃ©e</button>
                   </div>
                 </div>
 
-                <div class="year-summary" id="yearSummary">Choisissez une année pour afficher la synthèse.</div>
+                <div class="year-summary" id="yearSummary">Choisissez une annÃ©e pour afficher la synthÃ¨se.</div>
                 <div class="kpis" id="yearKpis" style="margin-top:10px;"></div>
 
                 <div class="recap-table-wrap">
@@ -1109,18 +1522,18 @@
                       <tr>
                         <th>Indicateur</th>
                         <th>Janv.</th>
-                        <th>Fév.</th>
+                        <th>FÃ©v.</th>
                         <th>Mars</th>
                         <th>Avr.</th>
                         <th>Mai</th>
                         <th>Juin</th>
                         <th>Juil.</th>
-                        <th>Août</th>
+                        <th>AoÃ»t</th>
                         <th>Sept.</th>
                         <th>Oct.</th>
                         <th>Nov.</th>
-                        <th>Déc.</th>
-                        <th>Total annuel</th>
+                        <th>DÃ©c.</th>
+                        <th>Total</th>
                       </tr>
                     </thead>
                     <tbody id="yearSummaryBody"></tbody>
@@ -1130,28 +1543,26 @@
             </div>
           </section>
 
-          <!-- Dépenses véhicules -->
+          <!-- DÃ©penses vÃ©hicules -->
           <section class="view" id="view-vehicules">
             <div class="grid-2">
               <div class="card">
-                <h3>Dépenses véhicules</h3>
-                <p>Suivi des charges de base sur les camions OZIER.</p>
+                <h3>Vue par camion</h3>
+                <p>Les pleins chauffeurs remontent automatiquement ici.</p>
                 <div class="kpis" id="vehicleExpenseKpis"></div>
-
-                <div style="margin-top:10px;">
-                  <h3 style="font-size:14px;margin-bottom:4px;">Dépenses par véhicule</h3>
-                  <div class="list" id="vehicleTotalsList"></div>
-                </div>
+                <div class="list" id="vehicleTotalsList" style="margin-top:10px;max-height:230px;overflow:auto;"></div>
               </div>
 
               <div class="card">
-                <h3>Ajouter une dépense</h3>
-                <p>Formulaire de base pour écrire plus tard dans Sheets.</p>
+                <h3>Ajouter une dÃ©pense</h3>
+                <p>Formulaire simplifiÃ© pour la dÃ©mo OZIER.</p>
 
                 <div class="form-grid">
                   <div>
-                    <label class="label">Camion</label>
-                    <select id="expenseTruck" class="select"></select>
+                    <label class="label">Camion code</label>
+                    <select id="expenseTruck" class="select">
+                      <option value="">-- SÃ©lectionner un camion --</option>
+                    </select>
                   </div>
 
                   <div>
@@ -1159,8 +1570,9 @@
                     <select id="expenseType" class="select">
                       <option>Carburant</option>
                       <option>Entretien</option>
-                      <option>Réparation</option>
+                      <option>RÃ©paration</option>
                       <option>Assurance</option>
+                      <option>Ã‰lectricitÃ©</option>
                       <option>Autre</option>
                     </select>
                   </div>
@@ -1172,76 +1584,45 @@
 
                   <div>
                     <label class="label">Montant</label>
-                    <input id="expenseAmount" type="number" class="input" placeholder="150">
+                    <input id="expenseAmount" class="input" type="number" step="0.01" placeholder="100">
                   </div>
 
                   <div class="full">
-                    <label class="label">Libellé</label>
-                    <input id="expenseLabel" class="input" placeholder="Plein GO, vidange, pneus...">
+                    <label class="label">LibellÃ©</label>
+                    <input id="expenseLabel" class="input" placeholder="Pneu avant, vidange...">
                   </div>
 
                   <div class="full">
-                    <label class="label">Note / Source</label>
-                    <input id="expenseSource" class="input" placeholder="Station, garage, facture...">
+                    <label class="label">Source interne</label>
+                    <input id="expenseSource" class="input" placeholder="Facture GARAGE, note, etc.">
                   </div>
                 </div>
 
                 <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
                   <button class="btn btn-ghost" id="resetExpense">Annuler</button>
-                  <button class="btn btn-primary" id="saveExpenseBtn">Enregistrer</button>
+                  <button class="btn btn-primary" id="saveExpenseBtn">Enregistrer la dÃ©pense</button>
                 </div>
               </div>
             </div>
           </section>
 
-          <!-- Intégration -->
+          <!-- IntÃ©gration -->
           <section class="view" id="view-integration">
             <div class="card">
-              <h3>Intégration Sheets / Make</h3>
-              <p>Bloc de notes pour décrire les flux à venir.</p>
-              <p style="font-size:12px;">
-                Ici on pourra indiquer :
-                - le nom du fichier Sheets cible
-                - le nom des onglets (Commandes, Chauffeurs, Flotte, Dépenses)
-                - les scénarios Make (webhook, parsing, écriture, notifications WhatsApp...).
+              <h3>IntÃ©gration Google Sheets / Make</h3>
+              <p>Zone de notes pour dÃ©crire les futurs scÃ©narios dâ€™automatisation.</p>
+              <p style="font-size:12px; color:var(--muted);">
+                Exemple : envoi automatique des commandes vers Sheets, synchronisation des chauffeurs, flux
+                des dÃ©penses vÃ©hicules vers un reporting financier, etc.
               </p>
-            </div>
-          </section>
-
-          <!-- Paramétrages -->
-          <section class="view" id="view-parametrages">
-            <div class="card">
-              <h3>Paramétrages produits</h3>
-              <p>Gérer la liste des natures de produit (0/25, remblais, sable 0/4, déchets...).</p>
-
-              <div class="form-grid">
-                <div class="full">
-                  <label class="label">Libellé produit</label>
-                  <input id="productLabel" class="input" placeholder="Ex : 0/25, remblais, sable 0/4">
-                </div>
-              </div>
-
-              <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
-                <button class="btn btn-ghost" id="productNewBtn">Nouveau</button>
-                <button class="btn btn-danger" id="productDeleteBtn">Supprimer</button>
-                <button class="btn btn-primary" id="productSaveBtn">Enregistrer</button>
-              </div>
-
-              <div style="margin-top:14px;">
-                <h3 style="font-size:14px;margin-bottom:4px;">Liste des produits</h3>
-                <div class="list" id="productsList"></div>
-              </div>
             </div>
           </section>
         </main>
       </div>
     </section>
-
-    <!-- PAGE CHAUFFEUR (inchangée, affichages chauffeur) -->
-    <!-- ... (garde ici tout ton HTML chauffeur + modal signature existants) ... -->
-
   </div>
-    <script>
+
+  <script>
     const euro = v => (v || 0).toLocaleString('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0});
 
     const state = {
@@ -1250,8 +1631,7 @@
       fleet: [],
       vehicleExpenses: [],
       currentDriver: null,
-      editingOrderId: null,
-      products: [] // AJOUT
+      editingOrderId: null
     };
 
     const managerTab = document.getElementById('managerTab');
@@ -1285,7 +1665,6 @@
     const recentOrders  = document.getElementById('recentOrders');
     const teamList      = document.getElementById('teamList');
 
-    // Commandes
     const orderClient  = document.getElementById('orderClient');
     const orderPhone   = document.getElementById('orderPhone');
     const orderAddress = document.getElementById('orderAddress');
@@ -1296,7 +1675,6 @@
     const orderDriver  = document.getElementById('orderDriver');
     const orderStatus  = document.getElementById('orderStatus');
     const orderSource  = document.getElementById('orderSource');
-    const orderProduct = document.getElementById('orderProduct'); // AJOUT
 
     const saveOrderBtn = document.getElementById('saveOrderBtn');
     const resetOrder   = document.getElementById('resetOrder');
@@ -1305,7 +1683,6 @@
     const orderFormDesc  = document.getElementById('orderFormDesc');
     const orderEditBadge = document.getElementById('orderEditBadge');
 
-    // Chauffeurs
     const driversList   = document.getElementById('driversList');
     const driverFirst   = document.getElementById('driverFirst');
     const driverName    = document.getElementById('driverName');
@@ -1319,7 +1696,6 @@
     const deleteDriverBtn = document.getElementById('deleteDriverBtn');
     const saveDriverBtn   = document.getElementById('saveDriverBtn');
 
-    // Flotte
     const fleetList   = document.getElementById('fleetList');
     const vehCode     = document.getElementById('vehCode');
     const vehPlate    = document.getElementById('vehPlate');
@@ -1334,7 +1710,6 @@
     const deleteVehBtn= document.getElementById('deleteVehBtn');
     const saveVehBtn  = document.getElementById('saveVehBtn');
 
-    // Récap
     const recapKpis    = document.getElementById('recapKpis');
     const recapDrivers = document.getElementById('recapDrivers');
 
@@ -1344,7 +1719,6 @@
     const yearSummaryBody = document.getElementById('yearSummaryBody');
     const applyYearFilterBtn = document.getElementById('applyYearFilter');
 
-    // Dépenses véhicules
     const vehicleExpenseKpis = document.getElementById('vehicleExpenseKpis');
     const vehicleTotalsList  = document.getElementById('vehicleTotalsList');
     const expenseTruck   = document.getElementById('expenseTruck');
@@ -1356,13 +1730,6 @@
     const saveExpenseBtn = document.getElementById('saveExpenseBtn');
     const resetExpense   = document.getElementById('resetExpense');
 
-    // Paramétrages produits
-    const productsList       = document.getElementById('productsList');
-    const productLabelInput  = document.getElementById('productLabel');
-    const productNewBtn      = document.getElementById('productNewBtn');
-    const productDeleteBtn   = document.getElementById('productDeleteBtn');
-    const productSaveBtn     = document.getElementById('productSaveBtn');
-
     const initialDrivers = [
       {id:'jean', first:'Jean', name:'Jean MARTINEAU', phone:'0696 11 11 11', email:'jean@example.com', pin:'1111', truck:'OZ-001', status:'Actif'},
       {id:'marie', first:'Marie', name:'Marie DUPONT', phone:'0696 22 22 22', email:'marie@example.com', pin:'2222', truck:'OZ-002', status:'Actif'},
@@ -1372,28 +1739,21 @@
     const initialFleet = [
       {code:'OZ-001', plate:'AB-123-CD', brand:'Renault', model:'Premium Lander', type:'Camion benne', year:2018, km:180000, status:'En service', note:'Camion principal'},
       {code:'OZ-002', plate:'EF-456-GH', brand:'MAN', model:'TGS', type:'Camion benne', year:2019, km:150000, status:'En service', note:'Benne 8x4'},
-      {code:'OZ-003', plate:'IJ-789-KL', brand:'Scania', model:'P-series', type:'Tracteur benne', year:2017, km:220000, status:'Maintenance', note:'Révision prévue'}
+      {code:'OZ-003', plate:'IJ-789-KL', brand:'Scania', model:'P-series', type:'Tracteur benne', year:2017, km:220000, status:'Maintenance', note:'RÃ©vision prÃ©vue'}
     ];
 
     const initialOrders = [
-      {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1',  qty:'12 tonnes', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean',   status:'Livrée',  source:'WhatsApp', productId:1},
-      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes',  montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie',  status:'En cours', source:'Téléphone', productId:2},
-      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', source:'WhatsApp', productId:3}
+      {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1', qty:'12 tonnes', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean', status:'LivrÃ©e', source:'WhatsApp'},
+      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', source:'TÃ©lÃ©phone'},
+      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', source:'WhatsApp'}
     ];
 
     const initialExpenses = [
       {id:1, truck:'OZ-001', type:'Carburant', date:'2026-01-05', amount:150, label:'Plein GO', note:''},
       {id:2, truck:'OZ-001', type:'Entretien', date:'2026-01-20', amount:320, label:'Vidange + filtres', note:'garage'},
       {id:3, truck:'OZ-002', type:'Carburant', date:'2026-01-18', amount:130, label:'Plein GO', note:''},
-      {id:4, truck:'OZ-003', type:'Réparation', date:'2026-02-02', amount:450, label:'Freins arrière', note:'atelier'},
+      {id:4, truck:'OZ-003', type:'RÃ©paration', date:'2026-02-02', amount:450, label:'Freins arriÃ¨re', note:'atelier'},
       {id:5, truck:'OZ-001', type:'Autre', date:'2026-02-10', amount:200, label:'Pneu avant', note:'garage'}
-    ];
-
-    const initialProducts = [
-      { id: 1, label: '0/25' },
-      { id: 2, label: 'Remblais' },
-      { id: 3, label: 'Sable 0/4' },
-      { id: 4, label: 'Déchets inertes' }
     ];
 
     function initState() {
@@ -1401,11 +1761,10 @@
       state.fleet   = JSON.parse(JSON.stringify(initialFleet));
       state.orders  = JSON.parse(JSON.stringify(initialOrders));
       state.vehicleExpenses = JSON.parse(JSON.stringify(initialExpenses));
-      state.products = JSON.parse(JSON.stringify(initialProducts));
     }
 
     function euroShort(v) {
-      return (v || 0).toLocaleString('fr-FR',{maximumFractionDigits:0})+' €';
+      return (v || 0).toLocaleString('fr-FR',{maximumFractionDigits:0})+' â‚¬';
     }
 
     function showPage(pageId) {
@@ -1424,7 +1783,7 @@
 
       if (viewKey === 'dashboard') {
         mainTitle.textContent = 'Dashboard';
-        mainDesc.textContent  = 'Vue d’ensemble de l’activité journalière.';
+        mainDesc.textContent  = 'Vue dâ€™ensemble de lâ€™activitÃ© journaliÃ¨re.';
       } else if (viewKey === 'commandes') {
         mainTitle.textContent = 'Commandes';
         mainDesc.textContent  = 'Saisie et suivi des commandes clients.';
@@ -1432,20 +1791,17 @@
         mainTitle.textContent = 'Chauffeurs';
         mainDesc.textContent  = 'Gestion des chauffeurs et de leur PIN.';
       } else if (viewKey === 'vehicules-flotte') {
-        mainTitle.textContent = 'Flotte véhicules';
+        mainTitle.textContent = 'Flotte vÃ©hicules';
         mainDesc.textContent  = 'Fiches des camions OZIER.';
       } else if (viewKey === 'recap') {
-        mainTitle.textContent = 'Récapitulatif';
-        mainDesc.textContent  = 'Vue journalière et annuelle CA / dépenses.';
+        mainTitle.textContent = 'RÃ©capitulatif';
+        mainDesc.textContent  = 'Vue journaliÃ¨re et annuelle CA / dÃ©penses.';
       } else if (viewKey === 'vehicules') {
-        mainTitle.textContent = 'Dépenses véhicules';
+        mainTitle.textContent = 'DÃ©penses vÃ©hicules';
         mainDesc.textContent  = 'Suivi des charges par camion.';
       } else if (viewKey === 'integration') {
-        mainTitle.textContent = 'Intégration';
+        mainTitle.textContent = 'IntÃ©gration';
         mainDesc.textContent  = 'Notes pour les flux Sheets / Make.';
-      } else if (viewKey === 'parametrages') {
-        mainTitle.textContent = 'Paramétrages';
-        mainDesc.textContent  = 'Gestion des listes de produits.';
       }
     }
 
@@ -1454,8 +1810,8 @@
       driverTab.classList.remove('active');
       panelManager.classList.add('active');
       panelDriver.classList.remove('active');
-      authTitle.textContent = 'Connexion gérant';
-      authDesc.textContent  = 'Accès au dashboard desktop.';
+      authTitle.textContent = 'Connexion gÃ©rant';
+      authDesc.textContent  = 'AccÃ¨s au dashboard desktop.';
     });
 
     driverTab.addEventListener('click', () => {
@@ -1464,7 +1820,7 @@
       panelManager.classList.remove('active');
       panelDriver.classList.add('active');
       authTitle.textContent = 'Connexion chauffeur';
-      authDesc.textContent  = 'Accès à l’espace chauffeur.';
+      authDesc.textContent  = 'AccÃ¨s Ã  lâ€™espace chauffeur.';
     });
 
     pinInputs.forEach((input, idx) => {
@@ -1510,14 +1866,14 @@
           renderAll();
           resetBtn.click();
         } else {
-          errorBox.textContent = 'Code gérant incorrect.';
+          errorBox.textContent = 'Code gÃ©rant incorrect.';
           errorBox.classList.add('show');
         }
       } else {
         const driver = findDriverByPin(pin);
         if (driver) {
           state.currentDriver = driver;
-          alert('Connexion chauffeur non implémentée dans cette démo.');
+          alert('Connexion chauffeur non implÃ©mentÃ©e dans cette dÃ©mo.');
           resetBtn.click();
         } else {
           errorBox.textContent = 'Code chauffeur incorrect.';
@@ -1550,7 +1906,7 @@
 
       managerKpis.innerHTML = `
         <div class="kpi">
-          <span>CA estimé du jour</span>
+          <span>CA estimÃ© du jour</span>
           <strong>${euroShort(totalAmount)}</strong>
         </div>
         <div class="kpi">
@@ -1572,10 +1928,10 @@
         <div class="item">
           <div class="item-top">
             <strong>${o.client}</strong>
-            <span class="badge ${o.status==='Livrée'?'ok':(o.status==='En cours'?'info':'wait')}">${o.status}</span>
+            <span class="badge ${o.status==='LivrÃ©e'?'ok':(o.status==='En cours'?'info':'wait')}">${o.status}</span>
           </div>
           <small>${o.address || ''}</small>
-          <small>${o.date || ''} · ${euroShort(o.montant)}</small>
+          <small>${o.date || ''} Â· ${euroShort(o.montant)}</small>
         </div>
       `).join('') || '<div class="item"><small>Aucune commande pour le moment.</small></div>';
 
@@ -1586,32 +1942,9 @@
             <span class="badge ${d.status==='Actif'?'ok':'wait'}">${d.status}</span>
           </div>
           <small>${d.phone || ''}</small>
-          <small>Camion : ${d.truck || 'Non attribué'}</small>
+          <small>Camion : ${d.truck || 'Non attribuÃ©'}</small>
         </div>
       `).join('');
-    }
-
-    function productLabelFromId(id) {
-      const p = state.products.find(x => String(x.id) === String(id));
-      return p ? p.label : '';
-    }
-
-    function refreshOrderProductOptions() {
-      const options = ['<option value="">-- Sélectionner un produit --</option>']
-        .concat(state.products.map(p => `<option value="${p.id}">${p.label}</option>`));
-      if (orderProduct) {
-        orderProduct.innerHTML = options.join('');
-      }
-    }
-
-    function driverLabelFromId(id) {
-      const d = state.drivers.find(x => x.id === id);
-      return d ? d.name : '';
-    }
-
-    function vehicleLabelFromCode(code) {
-      const v = state.fleet.find(x => x.code === code);
-      return v ? `${v.code} · ${v.brand}` : (code || '');
     }
 
     function renderOrdersTable() {
@@ -1621,7 +1954,6 @@
           <td>${o.client}</td>
           <td class="col-address">${o.address}</td>
           <td>${o.qty}</td>
-          <td>${productLabelFromId(o.productId)}</td>
           <td>${euroShort(o.montant)}</td>
           <td>${o.status}</td>
           <td>${driverLabelFromId(o.driver)}</td>
@@ -1635,7 +1967,7 @@
           </td>
         </tr>
       `).join('') || `
-        <tr><td colspan="11">Aucune commande enregistrée.</td></tr>
+        <tr><td colspan="10">Aucune commande enregistrÃ©e.</td></tr>
       `;
 
       ordersTableBody.querySelectorAll('.btn-edit').forEach(btn => {
@@ -1645,7 +1977,7 @@
         });
       });
 
-      ordersTableBody.querySelectorAll('.btn-delete').forEach	btn => {
+      ordersTableBody.querySelectorAll('.btn-delete').forEach(btn => {
         btn.addEventListener('click', () => {
           const id = Number(btn.dataset.id);
           if (confirm('Supprimer cette commande ?')) {
@@ -1656,6 +1988,16 @@
           }
         });
       });
+    }
+
+    function driverLabelFromId(id) {
+      const d = state.drivers.find(x => x.id === id);
+      return d ? d.name : '';
+    }
+
+    function vehicleLabelFromCode(code) {
+      const v = state.fleet.find(x => x.code === code);
+      return v ? `${v.code} Â· ${v.brand}` : (code || '');
     }
 
     function resetOrderForm() {
@@ -1670,9 +2012,8 @@
       orderDriver.value  = '';
       orderStatus.value  = 'En attente';
       orderSource.value  = 'WhatsApp';
-      if (orderProduct) orderProduct.value = '';
-      orderFormTitle.textContent = 'Créer une commande';
-      orderFormDesc.textContent  = 'Structure prête pour écrire ensuite dans Google Sheets.';
+      orderFormTitle.textContent = 'CrÃ©er une commande';
+      orderFormDesc.textContent  = 'Structure prÃªte pour Ã©crire ensuite dans Google Sheets.';
       orderEditBadge.classList.remove('show');
     }
 
@@ -1690,7 +2031,6 @@
       orderDriver.value  = o.driver || '';
       orderStatus.value  = o.status || 'En attente';
       orderSource.value  = o.source || 'WhatsApp';
-      if (orderProduct) orderProduct.value = o.productId || '';
 
       orderFormTitle.textContent = 'Modifier la commande';
       orderFormDesc.textContent  = 'Vous pouvez ajuster les informations puis enregistrer.';
@@ -1708,7 +2048,6 @@
         phone:   orderPhone.value.trim(),
         address: orderAddress.value.trim(),
         qty:     orderQty.value.trim(),
-        productId: orderProduct ? (orderProduct.value || '') : '',
         montant: Number(orderAmount.value || 0),
         date:    orderDate.value || '',
         truck:   orderTruck.value || '',
@@ -1750,7 +2089,7 @@
             <small>PIN: ${d.pin}</small>
           </div>
         </button>
-      `).join('') || '<div class="item"><small>Aucun chauffeur défini.</small></div>';
+      `).join('') || '<div class="item"><small>Aucun chauffeur dÃ©fini.</small></div>';
 
       driversList.querySelectorAll('.driver-order-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1769,13 +2108,8 @@
       });
 
       const fleetOptions = ['<option value="">Sans camion</option>']
-        .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} · ${v.brand}</option>`));
+        .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} Â· ${v.brand}</option>`));
       driverTruck.innerHTML = fleetOptions.join('');
-
-      // AJOUT : options chauffeur pour le formulaire commande
-      const orderDriverOptions = ['<option value="">Sans chauffeur</option>']
-        .concat(state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`));
-      orderDriver.innerHTML = orderDriverOptions.join('');
     }
 
     newDriverBtn.addEventListener('click', () => {
@@ -1802,7 +2136,7 @@
       };
 
       if (!data.first || !data.pin) {
-        alert('Prénom et PIN sont obligatoires.');
+        alert('PrÃ©nom et PIN sont obligatoires.');
         return;
       }
 
@@ -1814,20 +2148,18 @@
       }
 
       renderDrivers();
-      initLandingDrivers();
     });
 
     deleteDriverBtn.addEventListener('click', () => {
       const id = driverId.value.trim();
       if (!id) {
-        alert('Sélectionnez un chauffeur avant de supprimer.');
+        alert('SÃ©lectionnez un chauffeur avant de supprimer.');
         return;
       }
       if (confirm('Supprimer ce chauffeur ?')) {
         state.drivers = state.drivers.filter(d => d.id !== id);
         newDriverBtn.click();
         renderDrivers();
-        initLandingDrivers();
       }
     });
 
@@ -1836,14 +2168,14 @@
         <button class="driver-order-btn" data-code="${v.code}">
           <div class="item">
             <div class="item-top">
-              <strong>${v.code} · ${v.brand}</strong>
+              <strong>${v.code} Â· ${v.brand}</strong>
               <span class="badge ${v.status==='En service'?'ok':(v.status==='Maintenance'?'wait':'info')}">${v.status}</span>
             </div>
-            <small>${v.plate} · ${v.model}</small>
-            <small>${v.year || ''} · ${v.km ? v.km.toLocaleString('fr-FR')+' km' : ''}</small>
+            <small>${v.plate} Â· ${v.model}</small>
+            <small>${v.year || ''} Â· ${v.km ? v.km.toLocaleString('fr-FR')+' km' : ''}</small>
           </div>
         </button>
-      `).join('') || '<div class="item"><small>Aucun véhicule défini.</small></div>';
+      `).join('') || '<div class="item"><small>Aucun vÃ©hicule dÃ©fini.</small></div>';
 
       fleetList.querySelectorAll('.driver-order-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1862,8 +2194,8 @@
         });
       });
 
-      const truckOptions = ['<option value="">-- Sélectionner un camion --</option>']
-        .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} · ${v.brand}</option>`));
+      const truckOptions = ['<option value="">-- SÃ©lectionner un camion --</option>']
+        .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} Â· ${v.brand}</option>`));
       orderTruck.innerHTML  = ['<option value="">Sans camion</option>'].concat(state.fleet.map(v => `<option value="${v.code}">${v.code}</option>`)).join('');
       expenseTruck.innerHTML= truckOptions.join('');
     }
@@ -1907,21 +2239,19 @@
 
       renderFleet();
       renderDrivers();
-      initLandingDrivers();
     });
 
     deleteVehBtn.addEventListener('click', () => {
       const code = vehCode.value.trim();
       if (!code) {
-        alert('Sélectionnez un véhicule avant de supprimer.');
+        alert('SÃ©lectionnez un vÃ©hicule avant de supprimer.');
         return;
       }
-      if (confirm('Supprimer ce véhicule ?')) {
+      if (confirm('Supprimer ce vÃ©hicule ?')) {
         state.fleet = state.fleet.filter(v => v.code !== code);
         newVehBtn.click();
         renderFleet();
         renderDrivers();
-        initLandingDrivers();
       }
     });
 
@@ -1965,11 +2295,12 @@
             <strong>${driverLabelFromId(driverId) || 'Sans chauffeur'}</strong>
             <span class="badge">${vals.nb} cmdes</span>
           </div>
-          <small>CA cumulé : ${euroShort(vals.ca)}</small>
+          <small>CA cumulÃ© : ${euroShort(vals.ca)}</small>
         </div>
-      `).join('') || '<div class="item"><small>Aucune donnée disponible.</small></div>';
+      `).join('') || '<div class="item"><small>Aucune donnÃ©e disponible.</small></div>';
     }
-          function renderYearOptions() {
+
+    function renderYearOptions() {
       const years = new Set();
       state.orders.forEach(o => {
         if (o.date) years.add(o.date.slice(0,4));
@@ -1986,10 +2317,10 @@
       const year = yearSelect.value;
 
       if (!year) {
-        yearSummary.textContent = 'Choisissez une année pour afficher la synthèse.';
+        yearSummary.textContent = 'Choisissez une annÃ©e pour afficher la synthÃ¨se.';
         yearKpis.innerHTML = '';
         yearSummaryBody.innerHTML = '';
-        if (showAlert) alert('Choisissez une année.');
+        if (showAlert) alert('Choisissez une annÃ©e.');
         return;
       }
 
@@ -2032,10 +2363,10 @@
         }
 
         if (
-          type === 'réparation' ||
+          type === 'rÃ©paration' ||
           type === 'reparation' ||
           type === 'entretien' ||
-          fullText.includes('réparation') ||
+          fullText.includes('rÃ©paration') ||
           fullText.includes('reparation') ||
           fullText.includes('garage') ||
           fullText.includes('vidange') ||
@@ -2056,9 +2387,9 @@
         }
 
         if (
-          type === 'électricité' ||
+          type === 'Ã©lectricitÃ©' ||
           type === 'electricite' ||
-          fullText.includes('électricité') ||
+          fullText.includes('Ã©lectricitÃ©') ||
           fullText.includes('electricite') ||
           fullText.includes('edf') ||
           fullText.includes('courant')
@@ -2091,9 +2422,9 @@
 
       yearKpis.innerHTML = [
         ['CA annuel', euro(totalCaYear)],
-        ['Total dépenses', euro(totalDepYear)],
+        ['Total dÃ©penses', euro(totalDepYear)],
         ['Marge', euro(margeYear)],
-        ['Année affichée', year]
+        ['AnnÃ©e affichÃ©e', year]
       ].map(k => `
         <div class="kpi">
           <span>${k[0]}</span>
@@ -2102,7 +2433,7 @@
       `).join('');
 
       yearSummary.textContent =
-        `Synthèse ${year} · CA ${euro(totalCaYear)} · Dépenses ${euro(totalDepYear)} · Marge ${euro(margeYear)}.`;
+        `SynthÃ¨se ${year} Â· CA ${euro(totalCaYear)} Â· DÃ©penses ${euro(totalDepYear)} Â· Marge ${euro(margeYear)}.`;
 
       const monthsRow = (label, arr, className = '') => `
         <tr>
@@ -2120,17 +2451,17 @@
         electricityMonths[12] === 0;
 
       if (noData) {
-        yearSummaryBody.innerHTML = `<tr><td colspan="14">Aucune donnée sur ${year}.</td></tr>`;
+        yearSummaryBody.innerHTML = `<tr><td colspan="14">Aucune donnÃ©e sur ${year}.</td></tr>`;
         return;
       }
 
       yearSummaryBody.innerHTML = `
         ${monthsRow('Chiffre d\'affaires', caMonths, 'positive')}
         ${monthsRow('Frais essence globaux', fuelMonths)}
-        ${monthsRow('Réparations globales', repairMonths)}
+        ${monthsRow('RÃ©parations globales', repairMonths)}
         ${monthsRow('Assurance', insuranceMonths)}
-        ${monthsRow('Électricité', electricityMonths)}
-        ${monthsRow('Marge (CA - Dépenses)', marginMonths, marginMonths[12] < 0 ? 'negative' : 'positive')}
+        ${monthsRow('Ã‰lectricitÃ©', electricityMonths)}
+        ${monthsRow('Marge (CA - DÃ©penses)', marginMonths, marginMonths[12] < 0 ? 'negative' : 'positive')}
       `;
     }
 
@@ -2150,20 +2481,20 @@
 
       vehicleExpenseKpis.innerHTML = `
         <div class="kpi">
-          <span>Dépenses totales</span>
+          <span>DÃ©penses totales</span>
           <strong>${euroShort(totalAll)}</strong>
         </div>
         <div class="kpi">
-          <span>Nb camions concernés</span>
+          <span>Nb camions concernÃ©s</span>
           <strong>${entries.length}</strong>
         </div>
         <div class="kpi">
-          <span>Dépense moyenne / camion</span>
+          <span>DÃ©pense moyenne / camion</span>
           <strong>${euroShort(entries.length ? totalAll/entries.length : 0)}</strong>
         </div>
         <div class="kpi">
           <span>Source</span>
-          <strong>Démo interne</strong>
+          <strong>DÃ©mo interne</strong>
         </div>
       `;
 
@@ -2173,9 +2504,9 @@
             <strong>${vehicleLabelFromCode(truck)}</strong>
             <span class="badge">${euroShort(amount)}</span>
           </div>
-          <small>Dépenses cumulées pour ce véhicule.</small>
+          <small>DÃ©penses cumulÃ©es pour ce vÃ©hicule.</small>
         </div>
-      `).join('') || '<div class="item"><small>Aucune dépense enregistrée.</small></div>';
+      `).join('') || '<div class="item"><small>Aucune dÃ©pense enregistrÃ©e.</small></div>';
     }
 
     resetExpense.addEventListener('click', () => {
@@ -2214,72 +2545,6 @@
       driverSelect.innerHTML = state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
     }
 
-    function renderProducts() {
-      productsList.innerHTML = state.products.map(p => `
-        <button class="driver-order-btn" data-id="${p.id}">
-          <div class="item">
-            <div class="item-top">
-              <strong>${p.label}</strong>
-            </div>
-            <small>ID interne : ${p.id}</small>
-          </div>
-        </button>
-      `).join('') || '<div class="item"><small>Aucun produit défini.</small></div>';
-
-      productsList.querySelectorAll('.driver-order-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = Number(btn.dataset.id);
-          const p = state.products.find(x => x.id === id);
-          if (!p) return;
-          productLabelInput.dataset.editId = String(p.id);
-          productLabelInput.value = p.label;
-        });
-      });
-
-      refreshOrderProductOptions();
-    }
-
-    productNewBtn.addEventListener('click', () => {
-      delete productLabelInput.dataset.editId;
-      productLabelInput.value = '';
-    });
-
-    productSaveBtn.addEventListener('click', () => {
-      const label = productLabelInput.value.trim();
-      if (!label) {
-        alert('Le libellé produit est obligatoire.');
-        return;
-      }
-
-      const editId = productLabelInput.dataset.editId ? Number(productLabelInput.dataset.editId) : null;
-
-      if (editId) {
-        const idx = state.products.findIndex(p => p.id === editId);
-        if (idx >= 0) {
-          state.products[idx].label = label;
-        }
-      } else {
-        const newId = (state.products.reduce((max,p) => Math.max(max, p.id || 0), 0) || 0) + 1;
-        state.products.push({ id: newId, label });
-        productLabelInput.dataset.editId = String(newId);
-      }
-
-      renderProducts();
-    });
-
-    productDeleteBtn.addEventListener('click', () => {
-      const editId = productLabelInput.dataset.editId ? Number(productLabelInput.dataset.editId) : null;
-      if (!editId) {
-        alert('Sélectionnez un produit avant de supprimer.');
-        return;
-      }
-      if (confirm('Supprimer ce produit ?')) {
-        state.products = state.products.filter(p => p.id !== editId);
-        productNewBtn.click();
-        renderProducts();
-      }
-    });
-
     function renderAll() {
       renderManagerDashboard();
       renderOrdersTable();
@@ -2288,7 +2553,6 @@
       renderRecapDay();
       renderVehicleExpenses();
       renderYearOptions();
-      renderProducts();
       if (yearSelect.value) {
         applyYearFilter(false);
       }
