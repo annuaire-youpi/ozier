@@ -456,15 +456,15 @@
 
     .orders-layout{
       margin-top:14px;
-      display:grid;
-      grid-template-columns:minmax(320px,0.9fr) minmax(620px,1.45fr);
-      gap:12px;
-      align-items:start;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
     }
 
     .orders-form-card,
     .orders-table-card{
       min-width:0;
+      width:100%;
     }
 
     .orders-table-wrap{
@@ -478,7 +478,7 @@
     }
 
     .orders-table{
-      min-width:1200px;
+      min-width:980px;
     }
 
     .orders-table th,
@@ -524,13 +524,13 @@
     }
 
     .btn-xs.btn-finalize {
-      color:#16a34a;
-      border-color:rgba(22,163,74,0.35);
-      background:rgba(22,163,74,0.08);
+      color: #16a34a;
+      border-color: rgba(22,163,74,0.35);
+      background: rgba(22,163,74,0.08);
     }
 
     .btn-xs.btn-finalize:hover {
-      background:rgba(22,163,74,0.15);
+      background: rgba(22,163,74,0.15);
     }
 
     .order-form-actions{
@@ -706,11 +706,31 @@
       gap:12px;
     }
 
+    .mini-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:8px;
+      margin-top:6px;
+    }
+
+    .mini {
+      border-radius:14px;
+      padding:8px 10px;
+      background:#f9fafb;
+      border:1px solid rgba(148,163,184,0.4);
+      font-size:12px;
+    }
+
     .fuel-grid {
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
       gap:10px;
       margin-top:8px;
+    }
+
+    .fuel-grid .btn {
+      width:100%;
+      justify-content:center;
     }
 
     .fuel-feedback {
@@ -769,6 +789,38 @@
       margin-top:6px;
       font-size:11px;
       color:#16a34a;
+    }
+
+    .signature-canvas-wrapper {
+      margin-top: 12px;
+      border: 2px dashed rgba(148,163,184,0.5);
+      border-radius: 12px;
+      background: #f9fafb;
+      padding: 4px;
+    }
+
+    .signature-canvas {
+      width: 100%;
+      height: 200px;
+      background: #ffffff;
+      border-radius: 8px;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    .signature-controls {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .signature-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 12px;
     }
 
     .monthly-filters{
@@ -904,12 +956,52 @@
       min-width: 0;
     }
 
-    @media (min-width: 769px) {
-      .recap-top-grid {
-        display: grid;
-        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-        gap: 12px;
-      }
+    /* Finalize modal */
+    .finalize-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 9999;
+    }
+    .finalize-box {
+      width: min(460px, 100%);
+      border-radius: 20px;
+      padding: 28px 24px;
+      background: linear-gradient(145deg,#ffffff,#ecfdf5);
+      border: 1px solid rgba(22,163,74,0.3);
+      box-shadow: 0 20px 50px rgba(15,23,42,0.25);
+      text-align: center;
+    }
+    .finalize-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .rotation-delivered {
+      color: #16a34a;
+      font-weight: 700;
+    }
+    .rotation-remaining {
+      color: #d97706;
+      font-weight: 700;
+    }
+    .montant-pending {
+      font-style: italic;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .status-finalisee {
+      background: #ecfdf5;
+      color: #16a34a;
+      border: 1px solid rgba(22,163,74,0.4);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 600;
     }
 
     @media (max-width: 1100px) {
@@ -919,22 +1011,9 @@
       .hero-grid { grid-template-columns:1fr; }
       .driver-grid { grid-template-columns:1fr; }
       .grid-2 { grid-template-columns:1fr; }
-      .orders-layout { grid-template-columns:1fr; }
       .kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .monthly-types { grid-template-columns:repeat(2,minmax(0,1fr)); }
-
-      .recap-top-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-
-      #view-recap .kpis {
-        grid-template-columns: repeat(2, minmax(0,1fr));
-      }
-
-      .recap-layout {
-        gap: 12px;
-      }
+      .recap-layout { gap: 12px; }
     }
 
     @media (max-width: 768px) {
@@ -947,187 +1026,16 @@
       .orders-table-wrap { max-height:none; }
       .orders-table { min-width:900px; }
       th, td { padding:8px 10px; }
-
-      #view-recap {
-        padding-bottom: 12px;
-      }
-
-      #view-recap .card {
-        padding: 14px;
-      }
-
-      #view-recap .kpis {
-        grid-template-columns: 1fr;
-        gap: 8px;
-      }
-
-      .recap-layout {
-        gap: 14px;
-      }
-
-      .recap-top-grid {
-        gap: 14px;
-      }
-
-      .list {
-        max-height: 200px;
-      }
-
-      .year-filters {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-      }
-
-      .year-filters > div {
-        width: 100%;
-      }
-
-      .year-filters .btn {
-        width: 100%;
-        justify-content: center;
-        padding: 10px 16px;
-      }
-
-      .year-summary {
-        font-size: 12px;
-        line-height: 1.5;
-      }
-
-      .recap-table-wrap {
-        margin-top: 12px;
-        border-radius: 12px;
-      }
-
-      .recap-year-table {
-        min-width: 920px;
-      }
-
-      .recap-year-table th,
-      .recap-year-table td {
-        padding: 8px 9px;
-        font-size: 11px;
-      }
-
-      .recap-year-table th:first-child,
-      .recap-year-table td:first-child {
-        min-width: 140px;
-        padding: 8px 10px;
-      }
-
-      .recap-annual-card h3 {
-        font-size: 14px;
-      }
-
-      .recap-annual-card p {
-        font-size: 12px;
-      }
+      .list { max-height: 200px; }
     }
 
     @media (max-width: 480px) {
-      .recap-year-table {
-        min-width: 850px;
-      }
-
+      .recap-year-table { min-width:850px; }
       .recap-year-table th,
       .recap-year-table td {
-        padding: 7px 8px;
-        font-size: 10px;
+        padding:7px 8px;
+        font-size:10px;
       }
-
-      .recap-year-table th:first-child,
-      .recap-year-table td:first-child {
-        min-width: 120px;
-        font-size: 11px;
-      }
-
-      #view-recap .kpis .kpi {
-        padding: 10px;
-      }
-
-      #view-recap .kpis .kpi span {
-        font-size: 11px;
-      }
-
-      #view-recap .kpis .kpi strong {
-        font-size: 16px;
-        margin-top: 3px;
-      }
-
-      .year-filters .label {
-        font-size: 11px;
-      }
-
-      .year-filters .select,
-      .year-filters .btn {
-        font-size: 13px;
-      }
-
-      .recap-annual-card h3 {
-        font-size: 13px;
-      }
-
-      .recap-annual-card p {
-        font-size: 11px;
-      }
-    }
-
-    .signature-canvas-wrapper {
-      margin-top: 12px;
-      border: 2px dashed rgba(148,163,184,0.5);
-      border-radius: 12px;
-      background: #f9fafb;
-      padding: 4px;
-    }
-
-    .signature-canvas {
-      width: 100%;
-      height: 200px;
-      background: #ffffff;
-      border-radius: 8px;
-      cursor: crosshair;
-      touch-action: none;
-    }
-
-    .signature-controls {
-      margin-top: 8px;
-      display: flex;
-      gap: 8px;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .signature-info {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-top: 12px;
-    }
-
-    .rotation-delivered {
-      color:#16a34a;
-      font-weight:700;
-    }
-
-    .rotation-remaining {
-      color:#d97706;
-      font-weight:700;
-    }
-
-    .montant-pending {
-      font-style:italic;
-      color:var(--muted);
-      font-size:11px;
-    }
-
-    .status-finalisee {
-      background:#ecfdf5;
-      color:#16a34a;
-      border:1px solid rgba(22,163,74,0.4);
-      border-radius:999px;
-      padding:2px 8px;
-      font-size:11px;
-      font-weight:600;
     }
   </style>
 </head>
@@ -1159,8 +1067,8 @@
           <div style="margin-top:16px;">
             <div class="hero-title">Une base enfin pensée pour remplir le desktop.</div>
             <div class="hero-sub">
-              Cette version est prête pour la démo : connexion par PIN, dashboard gérant, espace chauffeur
-              et suivi des dépenses véhicules pour les camions OZIER.
+              Connexion par PIN, dashboard gérant, espace chauffeur
+              et suivi des dépenses véhicules.
             </div>
           </div>
 
@@ -1171,11 +1079,11 @@
             </div>
             <div class="hero-card">
               <strong>Espace chauffeurs</strong>
-              <span>Missions du jour et validation carburant intégrée.</span>
+              <span>Missions du jour et signature chantier intégrée.</span>
             </div>
             <div class="hero-card">
               <strong>Dépenses véhicules</strong>
-              <span>Camions OZIER, charges et recap par véhicule.</span>
+              <span>Camions, charges et récap par véhicule.</span>
             </div>
           </div>
         </div>
@@ -1228,8 +1136,6 @@
               <button data-view="commandes"><span>Commandes</span><span>›</span></button>
               <button data-view="recap"><span>Récapitulatif</span><span>›</span></button>
               <button data-view="vehicules"><span>Dépenses véhicules</span><span>›</span></button>
-              <button data-view="parametrages"><span>Paramétrages</span><span>›</span></button>
-              <button data-view="integration"><span>Intégration</span><span>›</span></button>
             </div>
           </div>
 
@@ -1251,7 +1157,6 @@
           <!-- Dashboard -->
           <section class="view active" id="view-dashboard">
             <div class="kpis" id="managerKpis"></div>
-
             <div class="grid-2">
               <div class="card">
                 <h3>Commandes récentes</h3>
@@ -1273,7 +1178,7 @@
                 <div class="order-form-head">
                   <div>
                     <h3 id="orderFormTitle">Créer une commande</h3>
-                    <p id="orderFormDesc">Structure prête pour écrire ensuite dans Google Sheets.</p>
+                    <p id="orderFormDesc">Structure prête pour un futur export Sheets.</p>
                   </div>
                   <span class="order-edit-badge" id="orderEditBadge">Mode modification</span>
                 </div>
@@ -1283,49 +1188,40 @@
                     <label class="label">Client</label>
                     <input id="orderClient" class="input" placeholder="Entreprise BTP">
                   </div>
-
                   <div>
                     <label class="label">Téléphone</label>
                     <input id="orderPhone" class="input" placeholder="0696 XX XX XX">
                   </div>
-
                   <div class="full">
                     <label class="label">Adresse chantier</label>
                     <input id="orderAddress" class="input" placeholder="Zone industrielle">
                   </div>
-
                   <div>
                     <label class="label">Quantité</label>
                     <input id="orderQty" class="input" placeholder="12 tonnes">
                   </div>
-
                   <div>
                     <label class="label">Montant TTC</label>
                     <input id="orderAmount" class="input" placeholder="1850">
                   </div>
-
                   <div>
                     <label class="label">Date</label>
                     <input id="orderDate" type="date" class="input">
                   </div>
-
                   <div>
                     <label class="label">Camion</label>
                     <select id="orderTruck" class="select"></select>
                   </div>
-
                   <div>
                     <label class="label">Chauffeur</label>
                     <select id="orderDriver" class="select"></select>
                   </div>
-
                   <div>
                     <label class="label">Produit</label>
                     <select id="orderProduct" class="select"></select>
                   </div>
-
                   <div>
-                    <label class="label">Nombre de rotation</label>
+                    <label class="label">Nombre de rotations estimées</label>
                     <input id="orderRotations" class="input" type="number" min="1" step="1" placeholder="1">
                   </div>
                 </div>
@@ -1337,29 +1233,30 @@
               </div>
 
               <div class="card orders-table-card">
-                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
                   <div>
                     <h3>Tableau des commandes</h3>
-                    <p>Rotations livrées, restantes, finalisation et montant comptabilisé.</p>
+                    <p>Suivi des rotations, statut de livraison et finalisation.</p>
                   </div>
-                  <span style="font-size:11px;padding:4px 10px;border-radius:999px;background:#ecfdf5;color:#16a34a;border:1px solid rgba(22,163,74,0.4);">
-                    Le CA n’est pris en compte que pour les commandes finalisées.
-                  </span>
+                  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <span style="font-size:11px;padding:4px 10px;border-radius:999px;background:#ecfdf5;color:#16a34a;border:1px solid rgba(22,163,74,0.3);">● Finalisée = CA comptabilisé</span>
+                    <span style="font-size:11px;padding:4px 10px;border-radius:999px;background:#fffbeb;color:#d97706;border:1px solid rgba(234,179,8,0.4);">● En attente = montant masqué</span>
+                  </div>
                 </div>
 
-                <div class="orders-table-wrap">
-                  <table class="orders-table">
+                <div class="orders-table-wrap" style="max-height:500px;">
+                  <table class="orders-table" style="min-width:1200px;">
                     <thead>
                       <tr>
                         <th>N°</th>
                         <th>Client</th>
                         <th>Chantier</th>
                         <th>Produit</th>
-                        <th>Rot. totales</th>
-                        <th>Rot. livrées</th>
-                        <th>Rot. restantes</th>
+                        <th title="Rotations estimées totales">🔄 Rot. Totales</th>
+                        <th title="Rotations réellement livrées (signées)">✅ Rot. Livrées</th>
+                        <th title="Rotations restantes à effectuer">⏳ Rot. Restantes</th>
                         <th>Qté</th>
-                        <th>Montant</th>
+                        <th>Montant TTC</th>
                         <th>Statut</th>
                         <th>Chauffeur</th>
                         <th>Date</th>
@@ -1376,59 +1273,10 @@
           <!-- Récap -->
           <section class="view" id="view-recap">
             <div class="recap-layout">
-              <div class="recap-top-grid">
-                <div class="card recap-day-card">
-                  <h3>Récapitulatif du jour</h3>
-                  <p>Chiffres issus des données statiques de la démo.</p>
-                  <div class="kpis" id="recapKpis"></div>
-                </div>
-
-                <div class="card recap-drivers-card">
-                  <h3>Détail par chauffeur</h3>
-                  <p>Présentation préparée pour un futur export CSV / Sheets.</p>
-                  <div class="list" id="recapDrivers"></div>
-                </div>
-              </div>
-
-              <div class="card recap-annual-card">
-                <h3>Synthèse annuelle CA / dépenses</h3>
-                <p>Vue annuelle consolidée du chiffre d'affaires, des charges globales et de la marge.</p>
-
-                <div class="year-filters">
-                  <div>
-                    <label class="label">Année</label>
-                    <select id="yearSelect" class="select"></select>
-                  </div>
-
-                  <div>
-                    <button class="btn btn-primary" id="applyYearFilter">Afficher l'année</button>
-                  </div>
-                </div>
-                <div class="year-summary" id="yearSummary">Choisissez une année pour afficher la synthèse.</div>
-                <div class="kpis" id="yearKpis" style="margin-top:10px;"></div>
-                <div class="recap-table-wrap">
-                  <table class="recap-year-table">
-                    <thead>
-                      <tr>
-                        <th>Indicateur</th>
-                        <th>Janv.</th>
-                        <th>Fév.</th>
-                        <th>Mars</th>
-                        <th>Avr.</th>
-                        <th>Mai</th>
-                        <th>Juin</th>
-                        <th>Juil.</th>
-                        <th>Août</th>
-                        <th>Sept.</th>
-                        <th>Oct.</th>
-                        <th>Nov.</th>
-                        <th>Déc.</th>
-                        <th>Total</th>
-                      </tr>
-                    </thead>
-                    <tbody id="yearSummaryBody"></tbody>
-                  </table>
-                </div>
+              <div class="card recap-day-card">
+                <h3>Récapitulatif du jour</h3>
+                <p>Chiffres issus des données statiques de la démo.</p>
+                <div class="kpis" id="recapKpis"></div>
               </div>
             </div>
           </section>
@@ -1442,11 +1290,9 @@
                 <div class="kpis" id="vehicleExpenseKpis"></div>
                 <div class="list" id="vehicleTotalsList" style="margin-top:10px;max-height:230px;overflow:auto;"></div>
               </div>
-
               <div class="card">
                 <h3>Ajouter une dépense</h3>
-                <p>Formulaire simplifié pour la démo OZIER.</p>
-
+                <p>Formulaire simplifié pour la démo.</p>
                 <div class="form-grid">
                   <div>
                     <label class="label">Camion code</label>
@@ -1454,7 +1300,6 @@
                       <option value="">-- Sélectionner un camion --</option>
                     </select>
                   </div>
-
                   <div>
                     <label class="label">Type</label>
                     <select id="expenseType" class="select">
@@ -1466,280 +1311,23 @@
                       <option>Autre</option>
                     </select>
                   </div>
-
                   <div>
                     <label class="label">Date</label>
                     <input id="expenseDate" type="date" class="input">
                   </div>
-
                   <div>
                     <label class="label">Montant</label>
-                    <input id="expenseAmount" class="input" type="number" step="0.01" placeholder="100">
+                    <input id="expenseAmount" class="input" placeholder="150">
                   </div>
-
                   <div class="full">
-                    <label class="label">Libellé</label>
-                    <input id="expenseLabel" class="input" placeholder="Pneu avant, vidange...">
-                  </div>
-
-                  <div class="full">
-                    <label class="label">Source interne</label>
-                    <input id="expenseSource" class="input" placeholder="Facture GARAGE, note, etc.">
+                    <label class="label">Commentaire</label>
+                    <textarea id="expenseNotes" class="input" rows="2" placeholder="Facture n°..."></textarea>
                   </div>
                 </div>
-
-                <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
-                  <button class="btn btn-ghost" id="resetExpense">Annuler</button>
+                <div class="order-form-actions">
                   <button class="btn btn-primary" id="saveExpenseBtn">Enregistrer la dépense</button>
                 </div>
               </div>
-            </div>
-          </section>
-
-          <!-- PARAMÉTRAGES -->
-          <section class="view" id="view-parametrages">
-            <div class="grid-2">
-              <div class="card">
-                <h3>Chauffeurs OZIER</h3>
-                <p>Liste gérée uniquement en mémoire pour la démo.</p>
-                <div class="list" id="driversList"></div>
-              </div>
-
-              <div class="card">
-                <h3>Véhicules de la flotte</h3>
-                <p>Liste des camions bennes utilisés dans les commandes.</p>
-                <div class="list" id="fleetList"></div>
-              </div>
-            </div>
-
-            <div class="grid-2" style="margin-top:14px;">
-              <div class="card">
-                <h3>Fiche chauffeur</h3>
-                <p>Les champs servent de base pour le futur CRUD connecté.</p>
-                <div class="form-grid">
-                  <div>
-                    <label class="label">Prénom</label>
-                    <input id="driverFirst" class="input" placeholder="Jean">
-                  </div>
-
-                  <div>
-                    <label class="label">Nom complet</label>
-                    <input id="driverName" class="input" placeholder="Jean MARTINEAU">
-                  </div>
-
-                  <div>
-                    <label class="label">Téléphone</label>
-                    <input id="driverPhone" class="input" placeholder="0696 XX XX XX">
-                  </div>
-
-                  <div>
-                    <label class="label">Email</label>
-                    <input id="driverEmail" class="input" placeholder="jean@exemple.com">
-                  </div>
-
-                  <div>
-                    <label class="label">PIN</label>
-                    <input id="driverPin" class="input" placeholder="1111">
-                  </div>
-
-                  <div>
-                    <label class="label">Camion attribué</label>
-                    <select id="driverTruck" class="select">
-                      <option value="">Sans camion</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label class="label">Statut</label>
-                    <select id="driverStatus" class="select">
-                      <option>Actif</option>
-                      <option>En attente</option>
-                    </select>
-                  </div>
-
-                  <div class="full">
-                    <label class="label">Identifiant interne</label>
-                    <input id="driverId" class="input" placeholder="jean">
-                  </div>
-                </div>
-
-                <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
-                  <button class="btn btn-ghost" id="newDriverBtn">Nouveau</button>
-                  <button class="btn btn-danger" id="deleteDriverBtn">Supprimer</button>
-                  <button class="btn btn-primary" id="saveDriverBtn">Enregistrer</button>
-                </div>
-              </div>
-
-              <div class="card">
-                <h3>Fiche véhicule</h3>
-                <p>Base pour le futur CRUD connecté Sheets / Make.</p>
-
-                <div class="form-grid">
-                  <div>
-                    <label class="label">Code camion clé</label>
-                    <input id="vehCode" class="input" placeholder="OZ-001">
-                  </div>
-
-                  <div>
-                    <label class="label">Immatriculation</label>
-                    <input id="vehPlate" class="input" placeholder="AB-123-CD">
-                  </div>
-
-                  <div>
-                    <label class="label">Marque</label>
-                    <input id="vehBrand" class="input" placeholder="Renault, MAN...">
-                  </div>
-
-                  <div>
-                    <label class="label">Modèle</label>
-                    <input id="vehModel" class="input" placeholder="Premium Lander">
-                  </div>
-
-                  <div>
-                    <label class="label">Type</label>
-                    <select id="vehType" class="select">
-                      <option>Camion benne</option>
-                      <option>Camion toupie</option>
-                      <option>Tracteur benne</option>
-                      <option>Utilitaire</option>
-                      <option>Autre</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label class="label">Année</label>
-                    <input id="vehYear" class="input" type="number" placeholder="2018">
-                  </div>
-
-                  <div>
-                    <label class="label">Kilométrage</label>
-                    <input id="vehKm" class="input" type="number" placeholder="180000">
-                  </div>
-
-                  <div>
-                    <label class="label">Statut</label>
-                    <select id="vehStatus" class="select">
-                      <option>En service</option>
-                      <option>Maintenance</option>
-                      <option>Hors service</option>
-                    </select>
-                  </div>
-
-                  <div class="full">
-                    <label class="label">Commentaires</label>
-                    <textarea id="vehNote" class="input" rows="2" placeholder="Infos atelier, pneus, révision..."></textarea>
-                  </div>
-                </div>
-
-                <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
-                  <button class="btn btn-ghost" id="newVehBtn">Nouveau</button>
-                  <button class="btn btn-danger" id="deleteVehBtn">Supprimer</button>
-                  <button class="btn btn-primary" id="saveVehBtn">Enregistrer</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="grid-2" style="margin-top:14px;">
-              <div class="card">
-                <h3>Produits</h3>
-                <p>Liste des produits ou matériaux utilisés dans les commandes.</p>
-                <div class="list" id="productsList"></div>
-              </div>
-
-              <div class="card">
-                <h3>Fiche produit</h3>
-                <p>Paramétrage simple (code, libellé, unité, prix).</p>
-
-                <div class="form-grid">
-                  <div>
-                    <label class="label">Code produit</label>
-                    <input id="productCode" class="input" placeholder="SABLE-10T">
-                  </div>
-
-                  <div>
-                    <label class="label">Libellé</label>
-                    <input id="productName" class="input" placeholder="Sable 0/4 big bag">
-                  </div>
-
-                  <div>
-                    <label class="label">Unité</label>
-                    <input id="productUnit" class="input" placeholder="Tonne, m3, course...">
-                  </div>
-
-                  <div>
-                    <label class="label">Prix unitaire TTC</label>
-                    <input id="productPrice" class="input" type="number" step="0.01" placeholder="150">
-                  </div>
-
-                  <div class="full">
-                    <label class="label">Commentaire interne</label>
-                    <textarea id="productNote" class="input" rows="2" placeholder="Infos tarif, variante, etc."></textarea>
-                  </div>
-                </div>
-
-                <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
-                  <button class="btn btn-ghost" id="newProductBtn">Nouveau</button>
-                  <button class="btn btn-danger" id="deleteProductBtn">Supprimer</button>
-                  <button class="btn btn-primary" id="saveProductBtn">Enregistrer</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="grid-2" style="margin-top:14px;">
-              <div class="card">
-                <h3>Chantiers</h3>
-                <p>Liste des chantiers (entreprise + coordonnées) pour préparer les commandes.</p>
-                <div class="list" id="sitesList"></div>
-              </div>
-
-              <div class="card">
-                <h3>Fiche chantier</h3>
-                <p>Chaque chantier contient l'entreprise, le gérant, le téléphone et l'adresse de livraison.</p>
-                <div class="form-grid">
-                  <div>
-                    <label class="label">Nom de l’entreprise</label>
-                    <input id="siteCompany" class="input" placeholder="Entreprise BTP X">
-                  </div>
-
-                  <div>
-                    <label class="label">Nom du gérant</label>
-                    <input id="siteManager" class="input" placeholder="M. DUPONT">
-                  </div>
-
-                  <div>
-                    <label class="label">Téléphone</label>
-                    <input id="sitePhone" class="input" placeholder="0696 XX XX XX">
-                  </div>
-
-                  <div class="full">
-                    <label class="label">Adresse postale de livraison</label>
-                    <input id="siteAddress" class="input" placeholder="Adresse complète du chantier">
-                  </div>
-
-                  <div class="full">
-                    <label class="label">Identifiant interne</label>
-                    <input id="siteId" class="input" placeholder="chantier-morne-rouge">
-                  </div>
-                </div>
-
-                <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
-                  <button class="btn btn-ghost" id="newSiteBtn">Nouveau</button>
-                  <button class="btn btn-danger" id="deleteSiteBtn">Supprimer</button>
-                  <button class="btn btn-primary" id="saveSiteBtn">Enregistrer</button>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Intégration -->
-          <section class="view" id="view-integration">
-            <div class="card">
-              <h3>Intégration Google Sheets / Make</h3>
-              <p>Zone de notes pour décrire les futurs scénarios d’automatisation.</p>
-              <p style="font-size:12px; color:var(--muted);">
-                Exemple : envoi automatique des commandes vers Sheets, synchronisation des chauffeurs, flux
-                des dépenses véhicules vers un reporting financier, etc.
-              </p>
             </div>
           </section>
         </main>
@@ -1752,7 +1340,7 @@
         <div class="driver-top">
           <div>
             <h1 id="driverTitle">Espace chauffeur</h1>
-            <p id="driverSubtitle">Camion associé : -</p>
+            <p id="driverSubtitle">Missions du jour et signature chantier.</p>
           </div>
           <button class="btn btn-ghost" id="logoutDriver">Changer de profil</button>
         </div>
@@ -1760,61 +1348,45 @@
         <div class="driver-grid">
           <div class="card">
             <h3>Missions du jour</h3>
-            <p>Cliquer sur une mission pour ouvrir la signature carburant.</p>
+            <p>Cliquez sur une mission pour ouvrir la signature chantier.</p>
             <div class="list" id="driverOrdersList"></div>
           </div>
 
           <div class="card">
-            <h3>Plein carburant du jour</h3>
-            <p>Le plein est validé quand une mission du jour est signée.</p>
+            <h3>Carburant & infos</h3>
+            <p>Zone simplifiée pour le suivi carburant du camion.</p>
+            <div class="mini-grid">
+              <div class="mini">
+                <strong>Dernier plein</strong>
+                <small id="lastFuelInfo">Aucun plein enregistré.</small>
+              </div>
+              <div class="mini">
+                <strong>Camion</strong>
+                <small id="driverTruckInfo">Non défini.</small>
+              </div>
+            </div>
+
             <div class="fuel-grid">
-              <div>
-                <label class="label">Montant du plein (€)</label>
-                <input id="fuelAmount" class="input" type="number" step="0.01" placeholder="0">
-              </div>
-              <div>
-                <label class="label">Station / Source</label>
-                <input id="fuelStation" class="input" placeholder="Station, dépôt...">
-              </div>
+              <button class="btn btn-primary" id="btnDeclareFuel">Déclarer un plein</button>
+              <button class="btn btn-ghost" id="btnViewFuel">Historique carburant</button>
             </div>
-            <div class="fuel-feedback" id="fuelFeedback">
-              En attente : cliquer sur une mission pour ouvrir la signature.
-            </div>
+            <div class="fuel-feedback" id="fuelFeedback"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- MODALE SIGNATURE (MISSIONS + CARBURANT) -->
+    <!-- MODALE SIGNATURE -->
     <div class="signature-modal" id="signatureModal">
       <div class="signature-box">
         <div class="signature-head">
           <div>
-            <h3 style="font-size:18px;color:#111827;">Signature mission + carburant</h3>
-            <p style="font-size:12px;color:var(--muted);">
-              Cette signature valide la rotation livrée et le plein de carburant saisi.
+            <h3>Signature chantier</h3>
+            <p id="signatureOrderInfo" style="font-size:12px;color:var(--muted);">
+              Aucune mission sélectionnée.
             </p>
           </div>
-          <button class="btn btn-ghost" id="closeSignature">Fermer</button>
-        </div>
-
-        <div class="signature-info">
-          <div>
-            <span style="font-size:12px;color:var(--muted);">Mission sélectionnée :</span>
-            <div id="signatureOrderInfo" style="font-size:13px;color:#111827;font-weight:500;margin-top:2px;">
-              Aucune mission sélectionnée.
-            </div>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
-            <div>
-              <label class="label">Nom du signataire</label>
-              <input id="signatoryName" class="input" placeholder="Nom Prénom du responsable chantier">
-            </div>
-            <div>
-              <label class="label">Qualité / Fonction</label>
-              <input id="signatoryRole" class="input" placeholder="Chef de chantier, responsable BTP...">
-            </div>
-          </div>
+          <button class="btn btn-ghost" id="closeSignatureModal">Fermer</button>
         </div>
 
         <div class="signature-canvas-wrapper">
@@ -1822,1247 +1394,483 @@
         </div>
 
         <div class="signature-controls">
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn-ghost" id="clearSignature">Effacer</button>
-          </div>
-          <button class="btn btn-primary" id="validateSignature">
-            Valider la signature (mission + plein)
-          </button>
+          <button class="btn btn-danger" id="clearSignature">Effacer</button>
+          <button class="btn btn-primary" id="saveSignature">Valider la signature</button>
         </div>
-        <div class="signature-preview" id="signaturePreview"></div>
+
+        <div class="signature-info">
+          <div>
+            <label class="label">Nom du signataire</label>
+            <input id="signatoryName" class="input" placeholder="Nom du chef de chantier">
+          </div>
+          <div>
+            <label class="label">Fonction</label>
+            <input id="signatoryRole" class="input" placeholder="Chef de chantier / Responsable">
+          </div>
+          <div id="signaturePreview" class="signature-preview"></div>
+        </div>
       </div>
     </div>
+
+    <!-- MODALE FINALISATION COMMANDE -->
+    <div class="finalize-modal" id="finalizeModal">
+      <div class="finalize-box">
+        <span class="finalize-icon">✅</span>
+        <h3>Finaliser la commande</h3>
+        <p id="finalizeText" style="font-size:13px;color:var(--muted);margin:10px 0;">
+          Cette commande va être marquée comme finalisée.
+        </p>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:12px;">
+          <button class="btn btn-ghost" id="cancelFinalize">Annuler</button>
+          <button class="btn btn-primary" id="confirmFinalize">Valider</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
-    const euroShort = v => (Number(v)||0).toLocaleString('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0});
-
-    const state = {
-      orders: [],
-      drivers: [],
-      fleet: [],
-      vehicleExpenses: [],
-      products: [],
-      sites: [],
-      currentDriver: null,
-      editingOrderId: null
+    const pages = {
+      landing: document.getElementById('landingPage'),
+      manager: document.getElementById('managerPage'),
+      driver: document.getElementById('driverPage')
     };
-
     const managerTab = document.getElementById('managerTab');
-    const driverTab  = document.getElementById('driverTab');
+    const driverTab = document.getElementById('driverTab');
     const panelManager = document.getElementById('panelManager');
-    const panelDriver  = document.getElementById('panelDriver');
+    const panelDriver = document.getElementById('panelDriver');
     const authTitle = document.getElementById('authTitle');
-    const authDesc  = document.getElementById('authDesc');
+    const authDesc = document.getElementById('authDesc');
     const driverSelect = document.getElementById('driverSelect');
-
     const pinInputs = Array.from(document.querySelectorAll('.pin'));
-    const loginBtn  = document.getElementById('loginBtn');
-    const resetBtn  = document.getElementById('resetBtn');
-    const errorBox  = document.getElementById('errorBox');
+    const loginBtn = document.getElementById('loginBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const errorBox = document.getElementById('errorBox');
 
-    const landingPage  = document.getElementById('landingPage');
-    const managerPage  = document.getElementById('managerPage');
-    const driverPage   = document.getElementById('driverPage');
-
-    const mainTitle = document.getElementById('mainTitle');
-    const mainDesc  = document.getElementById('mainDesc');
-
-    const navButtons = Array.from(document.querySelectorAll('.nav button'));
-    const views      = Array.from(document.querySelectorAll('.view'));
-
+    const managerPage = document.getElementById('managerPage');
+    const driverPage = document.getElementById('driverPage');
     const logoutManager = document.getElementById('logoutManager');
-    const logoutDriver  = document.getElementById('logoutDriver');
+    const logoutDriver = document.getElementById('logoutDriver');
+    const mainTitle = document.getElementById('mainTitle');
+    const mainDesc = document.getElementById('mainDesc');
 
-    const managerKpis   = document.getElementById('managerKpis');
-    const recentOrders  = document.getElementById('recentOrders');
-    const teamList      = document.getElementById('teamList');
+    const managerKpis = document.getElementById('managerKpis');
+    const recentOrders = document.getElementById('recentOrders');
+    const teamList = document.getElementById('teamList');
+    const ordersTableBody = document.getElementById('ordersTableBody');
 
-    const orderClient  = document.getElementById('orderClient');
-    const orderPhone   = document.getElementById('orderPhone');
+    const orderClient = document.getElementById('orderClient');
+    const orderPhone = document.getElementById('orderPhone');
     const orderAddress = document.getElementById('orderAddress');
-    const orderQty     = document.getElementById('orderQty');
-    const orderAmount  = document.getElementById('orderAmount');
-    const orderDate    = document.getElementById('orderDate');
-    const orderTruck   = document.getElementById('orderTruck');
-    const orderDriver  = document.getElementById('orderDriver');
+    const orderQty = document.getElementById('orderQty');
+    const orderAmount = document.getElementById('orderAmount');
+    const orderDate = document.getElementById('orderDate');
+    const orderTruck = document.getElementById('orderTruck');
+    const orderDriver = document.getElementById('orderDriver');
     const orderProduct = document.getElementById('orderProduct');
     const orderRotations = document.getElementById('orderRotations');
-    const saveOrderBtn = document.getElementById('saveOrderBtn');
-    const resetOrder   = document.getElementById('resetOrder');
-    const ordersTableBody = document.getElementById('ordersTableBody');
     const orderFormTitle = document.getElementById('orderFormTitle');
-    const orderFormDesc  = document.getElementById('orderFormDesc');
+    const orderFormDesc = document.getElementById('orderFormDesc');
     const orderEditBadge = document.getElementById('orderEditBadge');
+    const resetOrder = document.getElementById('resetOrder');
+    const saveOrderBtn = document.getElementById('saveOrderBtn');
 
-    const recapKpis    = document.getElementById('recapKpis');
-    const recapDrivers = document.getElementById('recapDrivers');
-    const yearSelect   = document.getElementById('yearSelect');
-    const yearSummary  = document.getElementById('yearSummary');
-    const yearKpis     = document.getElementById('yearKpis');
-    const yearSummaryBody = document.getElementById('yearSummaryBody');
-    const applyYearFilterBtn = document.getElementById('applyYearFilter');
-
-    const vehicleExpenseKpis = document.getElementById('vehicleExpenseKpis');
-    const vehicleTotalsList  = document.getElementById('vehicleTotalsList');
-    const expenseTruck   = document.getElementById('expenseTruck');
-    const expenseType    = document.getElementById('expenseType');
-    const expenseDate    = document.getElementById('expenseDate');
-    const expenseAmount  = document.getElementById('expenseAmount');
-    const expenseLabel   = document.getElementById('expenseLabel');
-    const expenseSource  = document.getElementById('expenseSource');
-    const saveExpenseBtn = document.getElementById('saveExpenseBtn');
-    const resetExpense   = document.getElementById('resetExpense');
-
-    const driversList   = document.getElementById('driversList');
-    const driverFirst   = document.getElementById('driverFirst');
-    const driverName    = document.getElementById('driverName');
-    const driverPhone   = document.getElementById('driverPhone');
-    const driverEmail   = document.getElementById('driverEmail');
-    const driverPin     = document.getElementById('driverPin');
-    const driverTruck   = document.getElementById('driverTruck');
-    const driverStatus  = document.getElementById('driverStatus');
-    const driverId      = document.getElementById('driverId');
-    const newDriverBtn  = document.getElementById('newDriverBtn');
-    const deleteDriverBtn = document.getElementById('deleteDriverBtn');
-    const saveDriverBtn   = document.getElementById('saveDriverBtn');
-
-    const fleetList   = document.getElementById('fleetList');
-    const vehCode     = document.getElementById('vehCode');
-    const vehPlate    = document.getElementById('vehPlate');
-    const vehBrand    = document.getElementById('vehBrand');
-    const vehModel    = document.getElementById('vehModel');
-    const vehType     = document.getElementById('vehType');
-    const vehYear     = document.getElementById('vehYear');
-    const vehKm       = document.getElementById('vehKm');
-    const vehStatus   = document.getElementById('vehStatus');
-    const vehNote     = document.getElementById('vehNote');
-    const newVehBtn   = document.getElementById('newVehBtn');
-    const deleteVehBtn= document.getElementById('deleteVehBtn');
-    const saveVehBtn  = document.getElementById('saveVehBtn');
-
-    const productsList    = document.getElementById('productsList');
-    const productCode     = document.getElementById('productCode');
-    const productName     = document.getElementById('productName');
-    const productUnit     = document.getElementById('productUnit');
-    const productPrice    = document.getElementById('productPrice');
-    const productNote     = document.getElementById('productNote');
-    const newProductBtn   = document.getElementById('newProductBtn');
-    const deleteProductBtn= document.getElementById('deleteProductBtn');
-    const saveProductBtn  = document.getElementById('saveProductBtn');
-
-    const sitesList   = document.getElementById('sitesList');
-    const siteCompany = document.getElementById('siteCompany');
-    const siteManager = document.getElementById('siteManager');
-    const sitePhone   = document.getElementById('sitePhone');
-    const siteAddress = document.getElementById('siteAddress');
-    const siteId      = document.getElementById('siteId');
-    const newSiteBtn  = document.getElementById('newSiteBtn');
-    const deleteSiteBtn= document.getElementById('deleteSiteBtn');
-    const saveSiteBtn = document.getElementById('saveSiteBtn');
-
-    const driverTitle      = document.getElementById('driverTitle');
-    const driverSubtitle   = document.getElementById('driverSubtitle');
+    const driverTitle = document.getElementById('driverTitle');
+    const driverSubtitle = document.getElementById('driverSubtitle');
     const driverOrdersList = document.getElementById('driverOrdersList');
-    const fuelAmount       = document.getElementById('fuelAmount');
-    const fuelStation      = document.getElementById('fuelStation');
-    const fuelFeedback     = document.getElementById('fuelFeedback');
+    const lastFuelInfo = document.getElementById('lastFuelInfo');
+    const driverTruckInfo = document.getElementById('driverTruckInfo');
+    const btnDeclareFuel = document.getElementById('btnDeclareFuel');
+    const btnViewFuel = document.getElementById('btnViewFuel');
+    const fuelFeedback = document.getElementById('fuelFeedback');
 
-    const signatureModal      = document.getElementById('signatureModal');
-    const signatureCanvas     = document.getElementById('signatureCanvas');
-    const closeSignature      = document.getElementById('closeSignature');
-    const clearSignature      = document.getElementById('clearSignature');
-    const validateSignature   = document.getElementById('validateSignature');
-    const signatureOrderInfo  = document.getElementById('signatureOrderInfo');
-    const signaturePreview    = document.getElementById('signaturePreview');
-    const signatoryName       = document.getElementById('signatoryName');
-    const signatoryRole       = document.getElementById('signatoryRole');
+    const signatureModal = document.getElementById('signatureModal');
+    const signatureCanvas = document.getElementById('signatureCanvas');
+    const signatureOrderInfo = document.getElementById('signatureOrderInfo');
+    const closeSignatureModal = document.getElementById('closeSignatureModal');
+    const clearSignatureBtn = document.getElementById('clearSignature');
+    const saveSignatureBtn = document.getElementById('saveSignature');
+    const signatoryName = document.getElementById('signatoryName');
+    const signatoryRole = document.getElementById('signatoryRole');
+    const signaturePreview = document.getElementById('signaturePreview');
 
-    const recapKpisEl    = recapKpis;
-    const recapDriversEl = recapDrivers;
+    const finalizeModal = document.getElementById('finalizeModal');
+    const finalizeText = document.getElementById('finalizeText');
+    const cancelFinalize = document.getElementById('cancelFinalize');
+    const confirmFinalize = document.getElementById('confirmFinalize');
 
-    const initialDrivers = [
-      {id:'jean', first:'Jean', name:'Jean MARTINEAU', phone:'0696 11 11 11', email:'jean@example.com', pin:'1111', truck:'OZ-001', status:'Actif'},
-      {id:'marie', first:'Marie', name:'Marie DUPONT', phone:'0696 22 22 22', email:'marie@example.com', pin:'2222', truck:'OZ-002', status:'Actif'},
-      {id:'pierre', first:'Pierre', name:'Pierre LEBRUN', phone:'0696 33 33 33', email:'pierre@example.com', pin:'3333', truck:'OZ-003', status:'En attente'}
-    ];
+    let finalizeTargetOrderId = null;
 
-    const initialFleet = [
-      {code:'OZ-001', plate:'AB-123-CD', brand:'Renault', model:'Premium Lander', type:'Camion benne', year:2018, km:180000, status:'En service', note:'Camion principal'},
-      {code:'OZ-002', plate:'EF-456-GH', brand:'MAN', model:'TGS', type:'Camion benne', year:2019, km:150000, status:'En service', note:'Benne 8x4'},
-      {code:'OZ-003', plate:'IJ-789-KL', brand:'Scania', model:'P-series', type:'Tracteur benne', year:2017, km:220000, status:'Maintenance', note:'Révision prévue'}
-    ];
+    const state = {
+      role: 'manager',
+      currentDriver: null,
+      orders: [],
+      drivers: [
+        { id: 'd1', name: 'Jean', pin: '1111', truck: 'TRK-1' },
+        { id: 'd2', name: 'Marie', pin: '2222', truck: 'TRK-2' },
+        { id: 'd3', name: 'Pierre', pin: '3333', truck: 'TRK-3' }
+      ],
+      fleet: [
+        { code: 'TRK-1', plate: 'AA-123-AA', type: 'Benne', km: 120000 },
+        { code: 'TRK-2', plate: 'BB-456-BB', type: 'Benne', km: 90000 },
+        { code: 'TRK-3', plate: 'CC-789-CC', type: 'Plateau', km: 75000 }
+      ],
+      products: [
+        { code: 'SABLE', label: 'Sable', unit: 'T' },
+        { code: 'GRAVIER', label: 'Gravier', unit: 'T' },
+        { code: 'TERRE', label: 'Terre végétale', unit: 'T' }
+      ],
+      expenses: [],
+      fuel: [],
+      nextOrderId: 1
+    };
 
-    const initialProducts = [
-      {code:'SABLE-10T', name:'Sable 0/4 benne 10T', unit:'Tonne', price:150, note:'Produit démo'},
-      {code:'GRAVIER-10T', name:'Gravier 10/20 benne 10T', unit:'Tonne', price:180, note:''}
-    ];
-
-    const initialSites = [
-      {id:'chantier-morne-rouge', company:'Entreprise BTP B', manager:'M. DUPONT', phone:'0696 00 00 02', address:'Chantier Morne Rouge'},
-      {id:'chantier-fdf', company:'Entreprise BTP C', manager:'Mme MARTIN', phone:'0696 00 00 03', address:'Chantier Fort-de-France'}
-    ];
-
-    const initialOrders = [
-      {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1', qty:'12 tonnes', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean', status:'Finalisée', product:'SABLE-10T', rotations:1, deliveredRotations:1, finalized:true},
-      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', product:'GRAVIER-10T', rotations:2, deliveredRotations:1, finalized:false},
-      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', product:'SABLE-10T', rotations:3, deliveredRotations:0, finalized:false}
-    ];
-
-    const initialExpenses = [
-      {id:1, truck:'OZ-001', type:'Carburant', date:'2026-01-05', amount:150, label:'Plein GO', note:''},
-      {id:2, truck:'OZ-001', type:'Entretien', date:'2026-01-20', amount:320, label:'Vidange + filtres', note:'garage'},
-      {id:3, truck:'OZ-002', type:'Carburant', date:'2026-01-18', amount:130, label:'Plein GO', note:''},
-      {id:4, truck:'OZ-003', type:'Réparation', date:'2026-02-02', amount:450, label:'Freins arrière', note:'atelier'},
-      {id:5, truck:'OZ-001', type:'Autre', date:'2026-02-10', amount:200, label:'Pneu avant', note:'garage'}
-    ];
-
-    function initState() {
-      state.drivers = JSON.parse(JSON.stringify(initialDrivers));
-      state.fleet   = JSON.parse(JSON.stringify(initialFleet));
-      state.orders  = JSON.parse(JSON.stringify(initialOrders));
-      state.vehicleExpenses = JSON.parse(JSON.stringify(initialExpenses));
-      state.products = JSON.parse(JSON.stringify(initialProducts));
-      state.sites    = JSON.parse(JSON.stringify(initialSites));
+    function productLabelFromCode(code) {
+      const p = state.products.find(p => p.code === code);
+      return p ? p.label : code || '';
     }
 
-    function showPage(pageId) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById(pageId).classList.add('active');
+    function euroShort(n) {
+      const v = Number(n||0);
+      if (!v) return '0 €';
+      if (v >= 1000000) return (v/1000000).toFixed(1).replace('.',',')+' M€';
+      if (v >= 1000) return (v/1000).toFixed(1).replace('.',',')+' k€';
+      return v.toLocaleString('fr-FR') + ' €';
     }
 
-    function showView(viewKey) {
-      views.forEach(v => v.classList.remove('active'));
-      document.getElementById('view-'+viewKey).classList.add('active');
+    function formatDate(s) {
+      if (!s) return '';
+      const d = new Date(s);
+      if (isNaN(d)) return s;
+      return d.toLocaleDateString('fr-FR');
+    }
 
-      navButtons.forEach(b => {
-        if (b.dataset.view === viewKey) b.classList.add('active');
-        else b.classList.remove('active');
-      });
+    function switchPage(page) {
+      Object.values(pages).forEach(p => p.classList.remove('active'));
+      page.classList.add('active');
+    }
 
-      if (viewKey === 'dashboard') {
-        mainTitle.textContent = 'Dashboard';
-        mainDesc.textContent  = 'Vue d’ensemble de l’activité journalière.';
-      } else if (viewKey === 'commandes') {
-        mainTitle.textContent = 'Commandes';
-        mainDesc.textContent  = 'Saisie et suivi des commandes clients.';
-      } else if (viewKey === 'recap') {
-        mainTitle.textContent = 'Récapitulatif';
-        mainDesc.textContent  = 'Vue journalière et annuelle CA / dépenses.';
-      } else if (viewKey === 'vehicules') {
-        mainTitle.textContent = 'Dépenses véhicules';
-        mainDesc.textContent  = 'Suivi des charges par camion.';
-      } else if (viewKey === 'parametrages') {
-        mainTitle.textContent = 'Paramétrages';
-        mainDesc.textContent  = 'Gestion des chauffeurs, flotte, produits et chantiers.';
-      } else if (viewKey === 'integration') {
-        mainTitle.textContent = 'Intégration';
-        mainDesc.textContent  = 'Notes pour les flux Sheets / Make.';
-      }
+    function resetPins() {
+      pinInputs.forEach(i => i.value = '');
+      pinInputs[0].focus();
+    }
+
+    function readPin() {
+      return pinInputs.map(i => i.value || '').join('');
     }
 
     managerTab.addEventListener('click', () => {
+      state.role = 'manager';
       managerTab.classList.add('active');
       driverTab.classList.remove('active');
       panelManager.classList.add('active');
       panelDriver.classList.remove('active');
       authTitle.textContent = 'Connexion gérant';
-      authDesc.textContent  = 'Accès au dashboard desktop.';
+      authDesc.textContent = 'Accès au dashboard desktop.';
+      errorBox.classList.remove('show');
+      resetPins();
     });
 
     driverTab.addEventListener('click', () => {
-      managerTab.classList.remove('active');
+      state.role = 'driver';
       driverTab.classList.add('active');
-      panelManager.classList.remove('active');
+      managerTab.classList.remove('active');
       panelDriver.classList.add('active');
+      panelManager.classList.remove('active');
       authTitle.textContent = 'Connexion chauffeur';
-      authDesc.textContent  = 'Accès à l’espace chauffeur.';
+      authDesc.textContent = 'Sélectionnez votre nom puis entrez votre PIN.';
+      errorBox.classList.remove('show');
+      resetPins();
     });
 
     pinInputs.forEach((input, idx) => {
       input.addEventListener('input', () => {
-        if (input.value.length === 1 && idx < pinInputs.length - 1) {
-          pinInputs[idx + 1].focus();
+        const v = input.value.replace(/\D/g,'');
+        input.value = v;
+        if (v && idx < pinInputs.length-1) {
+          pinInputs[idx+1].focus();
         }
       });
-      input.addEventListener('keydown', e => {
-        if (e.key === 'Backspace' && !input.value && idx > 0) {
-          pinInputs[idx - 1].focus();
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !input.value && idx>0) {
+          pinInputs[idx-1].focus();
         }
-      });
-    });
-
-    resetBtn.addEventListener('click', () => {
-      pinInputs.forEach(i => i.value = '');
-      errorBox.classList.remove('show');
-      pinInputs[0].focus();
-    });
-
-    function getEnteredPin() {
-      return pinInputs.map(i => i.value || '').join('');
-    }
-
-    function findManagerByPin(pin) {
-      return pin === '1234';
-    }
-
-    function findDriverByPin(pin) {
-      return state.drivers.find(d => d.pin === pin) || null;
-    }
-
-    loginBtn.addEventListener('click', () => {
-      const pin = getEnteredPin();
-      errorBox.classList.remove('show');
-
-      if (managerTab.classList.contains('active')) {
-        if (findManagerByPin(pin)) {
-          showPage('managerPage');
-          showView('dashboard');
-          renderAll();
-          resetBtn.click();
-        } else {
-          errorBox.textContent = 'Code gérant incorrect.';
-          errorBox.classList.add('show');
-        }
-      } else {
-        const driver = findDriverByPin(pin);
-        if (driver) {
-          state.currentDriver = driver;
-          showPage('driverPage');
-          renderDriverPage();
-          resetBtn.click();
-        } else {
-          errorBox.textContent = 'Code chauffeur incorrect.';
-          errorBox.classList.add('show');
-        }
-      }
-    });
-
-    logoutManager.addEventListener('click', () => {
-      showPage('landingPage');
-      resetBtn.click();
-    });
-
-    logoutDriver.addEventListener('click', () => {
-      state.currentDriver = null;
-      showPage('landingPage');
-      resetBtn.click();
-    });
-
-    navButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const view = btn.dataset.view;
-        showView(view);
       });
     });
 
-    function driverLabelFromId(id) {
-      const d = state.drivers.find(x => x.id === id);
-      return d ? d.name : '';
+    function renderDriversSelect() {
+      driverSelect.innerHTML = '<option value="">-- Sélectionner --</option>' +
+        state.drivers.map(d => `<option value="${d.id}">${d.name} (PIN ${d.pin})</option>`).join('');
     }
 
-    function vehicleLabelFromCode(code) {
-      const v = state.fleet.find(x => x.code === code);
-      return v ? `${v.code} · ${v.brand}` : (code || '');
+    function renderFleet() {
+      orderTruck.innerHTML = '<option value="">-- Sélectionner --</option>' +
+        state.fleet.map(f => `<option value="${f.code}">${f.code}</option>`).join('');
+      expenseTruck.innerHTML = '<option value="">-- Sélectionner un camion --</option>' +
+        state.fleet.map(f => `<option value="${f.code}">${f.code}</option>`).join('');
     }
 
-    function productLabelFromCode(code) {
-      const p = state.products.find(x => x.code === code);
-      return p ? `${p.code} · ${p.name}` : (code || '');
+    function renderProducts() {
+      orderProduct.innerHTML = '<option value="">-- Sélectionner --</option>' +
+        state.products.map(p => `<option value="${p.code}">${p.label}</option>`).join('');
     }
 
-    function renderManagerDashboard() {
-      const totalOrders  = state.orders.length;
-      const totalDrivers = state.drivers.length;
-      const totalFleet   = state.fleet.length;
-      const totalAmountFinalized = state.orders.filter(o => o.finalized).reduce((sum,o)=>sum+Number(o.montant||0),0);
+    function renderDashboard() {
+      const today = (new Date()).toISOString().slice(0,10);
+      const ordersToday = state.orders.filter(o => o.date === today);
+      const ca = ordersToday.filter(o => o.finalized)
+        .reduce((sum,o)=>sum+Number(o.montant||0),0);
+      const nb = ordersToday.length;
+      const nbFin = ordersToday.filter(o=>o.finalized).length;
+      const rotLivrees = ordersToday.reduce((sum,o)=>sum+Number(o.deliveredRotations||0),0);
 
       managerKpis.innerHTML = `
         <div class="kpi">
-          <span>CA facturé (finalisé)</span>
-          <strong style="color:#16a34a;">${euroShort(totalAmountFinalized)}</strong>
+          <span>CA facturé (jour)</span>
+          <strong style="color:#16a34a;">${euroShort(ca)}</strong>
         </div>
         <div class="kpi">
-          <span>Commandes</span>
-          <strong>${totalOrders}</strong>
+          <span>Commandes du jour</span>
+          <strong>${nb}</strong>
         </div>
         <div class="kpi">
-          <span>Chauffeurs</span>
-          <strong>${totalDrivers}</strong>
+          <span>Finalisées</span>
+          <strong>${nbFin}</strong>
         </div>
         <div class="kpi">
-          <span>Camions en flotte</span>
-          <strong>${totalFleet}</strong>
+          <span>Rotations livrées</span>
+          <strong>${rotLivrees}</strong>
         </div>
       `;
 
-      const recent = [...state.orders].sort((a,b)=> (b.date||'').localeCompare(a.date||'')).slice(0,5);
-      recentOrders.innerHTML = recent.map(o => `
+      recentOrders.innerHTML = state.orders.slice(-5).reverse().map(o => `
         <div class="item">
           <div class="item-top">
             <strong>${o.client}</strong>
-            <span class="${o.finalized?'status-finalisee':'badge ' + (o.status==='Livrée'?'ok':(o.status==='En cours'?'info':'wait'))}">
-              ${o.finalized ? 'Finalisée' : (o.status || 'En attente')}
+            <span class="badge ${o.finalized ? 'ok':'wait'}">
+              ${o.finalized ? 'Finalisée':'En attente'}
             </span>
           </div>
-          <small>${o.address || ''}</small>
-          <small>${o.date || ''} · ${euroShort(o.montant)}</small>
+          <small>${o.address}</small>
+          <small>${productLabelFromCode(o.product)} · ${o.qty} · ${formatDate(o.date)}</small>
         </div>
-      `).join('') || '<div class="item"><small>Aucune commande pour le moment.</small></div>';
+      `).join('') || '<div class="item"><small>Aucune commande enregistrée.</small></div>';
 
       teamList.innerHTML = state.drivers.map(d => `
         <div class="item">
           <div class="item-top">
             <strong>${d.name}</strong>
-            <span class="badge ${d.status==='Actif'?'ok':'wait'}">${d.status}</span>
+            <span class="badge">${d.truck || 'Sans camion'}</span>
           </div>
-          <small>${d.phone || ''}</small>
-          <small>Camion : ${d.truck || 'Non attribué'}</small>
+          <small>PIN ${d.pin}</small>
         </div>
       `).join('');
     }
 
+    let orderEditId = null;
+
     function resetOrderForm() {
-      state.editingOrderId = null;
-      orderClient.value  = '';
-      orderPhone.value   = '';
+      orderClient.value = '';
+      orderPhone.value = '';
       orderAddress.value = '';
-      orderQty.value     = '';
-      orderAmount.value  = '';
-      orderDate.value    = '';
-      orderTruck.value   = '';
-      orderDriver.value  = '';
+      orderQty.value = '';
+      orderAmount.value = '';
+      orderDate.value = '';
+      orderTruck.value = '';
+      orderDriver.value = '';
       orderProduct.value = '';
-      orderRotations.value = '';
+      orderRotations.value = '1';
+      orderEditId = null;
       orderFormTitle.textContent = 'Créer une commande';
-      orderFormDesc.textContent  = 'Structure prête pour écrire ensuite dans Google Sheets.';
+      orderFormDesc.textContent = 'Structure prête pour un futur export Sheets.';
       orderEditBadge.classList.remove('show');
     }
 
-    function startEditOrder(id) {
-      const o = state.orders.find(x => x.id === id);
-      if (!o) return;
-      state.editingOrderId = id;
-      orderClient.value  = o.client || '';
-      orderPhone.value   = o.phone || '';
-      orderAddress.value = o.address || '';
-      orderQty.value     = o.qty || '';
-      orderAmount.value  = o.montant || '';
-      orderDate.value    = o.date || '';
-      orderTruck.value   = o.truck || '';
-      orderDriver.value  = o.driver || '';
-      orderProduct.value = o.product || '';
-      orderRotations.value = o.rotations || '';
-
-      orderFormTitle.textContent = 'Modifier la commande';
-      orderFormDesc.textContent  = 'Vous pouvez ajuster les informations puis enregistrer.';
-      orderEditBadge.classList.add('show');
-      showView('commandes');
-    }
-
-    resetOrder.addEventListener('click', () => {
-      resetOrderForm();
-    });
-
-    saveOrderBtn.addEventListener('click', () => {
-      const existingOrder = state.editingOrderId ? state.orders.find(o => o.id === state.editingOrderId) : null;
-      const data = {
-        client:  orderClient.value.trim(),
-        phone:   orderPhone.value.trim(),
-        address: orderAddress.value.trim(),
-        qty:     orderQty.value.trim(),
-        montant: Number(orderAmount.value || 0),
-        date:    orderDate.value || '',
-        truck:   orderTruck.value || '',
-        driver:  orderDriver.value || '',
-        status:  existingOrder ? (existingOrder.status || 'En attente') : 'En attente',
-        product: orderProduct.value || '',
-        rotations: Number(orderRotations.value || 1),
-        deliveredRotations: existingOrder ? (existingOrder.deliveredRotations || 0) : 0,
-        finalized: existingOrder ? !!existingOrder.finalized : false
-      };
-
-      if (!data.client || !data.montant) {
-        alert('Client et Montant sont obligatoires.');
+    function renderOrdersTable() {
+      if (!state.orders.length) {
+        ordersTableBody.innerHTML = '<tr><td colspan="13">Aucune commande.</td></tr>';
         return;
       }
-
-      if (state.editingOrderId) {
-        const idx = state.orders.findIndex(o => o.id === state.editingOrderId);
-        if (idx >= 0) {
-          state.orders[idx] = { ...state.orders[idx], ...data };
-        }
-      } else {
-        const newId = (state.orders.reduce((max,o)=>Math.max(max,o.id||0),0) || 0) + 1;
-        state.orders.push({ id:newId, ...data });
-      }
-
-      resetOrderForm();
-      renderOrdersTable();
-      renderManagerDashboard();
-      renderRecapDay();
-      renderYearOptions();
-    });
-
-    function renderOrdersTable() {
       ordersTableBody.innerHTML = state.orders.map(o => {
-        const totalRot     = Number(o.rotations || 1);
-        const deliveredRot = Number(o.deliveredRotations || 0);
-        const remainingRot = Math.max(0, totalRot - deliveredRot);
-
-        let statusBadge;
-        if (o.finalized) {
-          statusBadge = `<span class="status-finalisee">✅ Finalisée</span>`;
-        } else if (o.status === 'Livrée') {
-          statusBadge = `<span class="badge ok">Livrée</span>`;
-        } else if (o.status === 'En cours') {
-          statusBadge = `<span class="badge info">En cours</span>`;
-        } else {
-          statusBadge = `<span class="badge wait">${o.status || 'En attente'}</span>`;
-        }
-
-        const montantCell = o.finalized
-          ? `<strong style="color:#16a34a;">${euroShort(o.montant)}</strong>`
-          : `<span class="montant-pending">En attente...</span>`;
-
-        const finalizeBtn = !o.finalized
-          ? `<button class="btn-xs btn-finalize" data-id="${o.id}">✓ Finaliser</button>`
-          : '';
-
-        const deliveredClass = deliveredRot >= totalRot ? 'rotation-delivered' : '';
-        const remainingClass = remainingRot === 0 ? 'rotation-delivered' : 'rotation-remaining';
-
+        const totalRot = Number(o.rotations || 1);
+        const delivered = Number(o.deliveredRotations || 0);
+        const remaining = Math.max(0, totalRot - delivered);
         return `
-          <tr style="${o.finalized ? 'background:rgba(22,163,74,0.04);' : ''}">
+          <tr>
             <td>${o.id}</td>
             <td>${o.client}</td>
             <td class="col-address">${o.address}</td>
             <td>${productLabelFromCode(o.product)}</td>
-            <td style="text-align:center;font-weight:700;">${totalRot}</td>
-            <td style="text-align:center;" class="${deliveredClass}">${deliveredRot}</td>
-            <td style="text-align:center;" class="${remainingClass}">${remainingRot}</td>
-            <td>${o.qty}</td>
-            <td>${montantCell}</td>
-            <td>${statusBadge}</td>
-            <td>${driverLabelFromId(o.driver)}</td>
-            <td>${o.date || ''}</td>
+            <td>${totalRot}</td>
+            <td class="rotation-delivered">${delivered}</td>
+            <td class="rotation-remaining">${remaining}</td>
+            <td>${o.qty || ''}</td>
+            <td>${o.finalized ? euroShort(o.montant) : '<span class="montant-pending">Masqué</span>'}</td>
+            <td>${o.finalized ? '<span class="status-finalisee">Finalisée</span>' : 'En attente'}</td>
+            <td>${(state.drivers.find(d=>d.id===o.driver)||{}).name || ''}</td>
+            <td>${formatDate(o.date)}</td>
             <td>
               <div class="order-actions">
-                ${finalizeBtn}
                 <button class="btn-xs btn-edit" data-id="${o.id}">Modifier</button>
                 <button class="btn-xs btn-delete" data-id="${o.id}">Supprimer</button>
+                <button class="btn-xs btn-finalize" data-id="${o.id}">Finaliser</button>
               </div>
             </td>
           </tr>
         `;
-      }).join('') || `
-        <tr><td colspan="13">Aucune commande enregistrée.</td></tr>
-      `;
-
-      ordersTableBody.querySelectorAll('.btn-finalize').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = Number(btn.dataset.id);
-          finalizeOrder(id);
-        });
-      });
+      }).join('');
 
       ordersTableBody.querySelectorAll('.btn-edit').forEach(btn => {
         btn.addEventListener('click', () => {
           const id = Number(btn.dataset.id);
-          startEditOrder(id);
+          const o = state.orders.find(x=>x.id===id);
+          if (!o) return;
+          orderEditId = id;
+          orderClient.value = o.client;
+          orderPhone.value = o.phone || '';
+          orderAddress.value = o.address;
+          orderQty.value = o.qty || '';
+          orderAmount.value = o.montant || '';
+          orderDate.value = o.date || '';
+          orderTruck.value = o.truck || '';
+          orderDriver.value = o.driver || '';
+          orderProduct.value = o.product || '';
+          orderRotations.value = o.rotations || '1';
+          orderFormTitle.textContent = 'Modifier la commande';
+          orderFormDesc.textContent = 'Vous modifiez une commande existante.';
+          orderEditBadge.classList.add('show');
         });
       });
 
       ordersTableBody.querySelectorAll('.btn-delete').forEach(btn => {
         btn.addEventListener('click', () => {
           const id = Number(btn.dataset.id);
-          if (confirm('Supprimer cette commande ?')) {
-            state.orders = state.orders.filter(o => o.id !== id);
-            renderOrdersTable();
-            renderManagerDashboard();
-            renderRecapDay();
-            renderYearOptions();
-          }
+          state.orders = state.orders.filter(o => o.id !== id);
+          renderDashboard();
+          renderOrdersTable();
+          renderDriverPage();
+        });
+      });
+
+      ordersTableBody.querySelectorAll('.btn-finalize').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = Number(btn.dataset.id);
+          const o = state.orders.find(x=>x.id===id);
+          if (!o) return;
+          finalizeTargetOrderId = id;
+          const totalRot = Number(o.rotations || 1);
+          const delivered = Number(o.deliveredRotations || 0);
+          const remaining = Math.max(0, totalRot - delivered);
+          finalizeText.innerHTML = `
+            La commande <strong>${o.client}</strong> sera marquée comme <strong>finalisée</strong>.<br>
+            Rotations livrées : <span class="rotation-delivered">${delivered}/${totalRot}</span><br>
+            Rotations restantes : <span class="rotation-remaining">${remaining}</span>
+          `;
+          finalizeModal.style.display = 'flex';
         });
       });
     }
 
-    function finalizeOrder(id) {
-      const idx = state.orders.findIndex(o => o.id === id);
-      if (idx < 0) return;
-      const order = state.orders[idx];
-      order.finalized = true;
-      order.status = 'Finalisée';
+    cancelFinalize.addEventListener('click', () => {
+      finalizeTargetOrderId = null;
+      finalizeModal.style.display = 'none';
+    });
+
+    confirmFinalize.addEventListener('click', () => {
+      if (finalizeTargetOrderId != null) {
+        const o = state.orders.find(x=>x.id===finalizeTargetOrderId);
+        if (o) {
+          o.finalized = true;
+        }
+        renderDashboard();
+        renderOrdersTable();
+      }
+      finalizeTargetOrderId = null;
+      finalizeModal.style.display = 'none';
+    });
+
+    resetOrder.addEventListener('click', () => {
+      resetOrderForm();
+    });
+
+    saveOrderBtn.addEventListener('click', () => {
+      const client = orderClient.value.trim();
+      const address = orderAddress.value.trim();
+      const date = orderDate.value;
+      if (!client || !address || !date) {
+        alert('Client, adresse et date sont obligatoires.');
+        return;
+      }
+      const data = {
+        client,
+        phone: orderPhone.value.trim(),
+        address,
+        qty: orderQty.value.trim(),
+        montant: Number(orderAmount.value || 0),
+        date,
+        truck: orderTruck.value,
+        driver: orderDriver.value,
+        product: orderProduct.value,
+        rotations: Number(orderRotations.value || 1),
+        deliveredRotations: 0,
+        finalized: false
+      };
+      if (orderEditId != null) {
+        const idx = state.orders.findIndex(o=>o.id===orderEditId);
+        if (idx>=0) {
+          state.orders[idx] = {...state.orders[idx], ...data};
+        }
+      } else {
+        data.id = state.nextOrderId++;
+        state.orders.push(data);
+      }
+      resetOrderForm();
+      renderDashboard();
       renderOrdersTable();
-      renderManagerDashboard();
-      renderRecapDay();
-      renderYearOptions();
-    }
-
-    function renderDrivers() {
-      driversList.innerHTML = state.drivers.map(d => `
-        <button class="driver-order-btn" data-id="${d.id}">
-          <div class="item">
-            <div class="item-top">
-              <strong>${d.name}</strong>
-              <span class="badge ${d.status==='Actif'?'ok':'wait'}">${d.status}</span>
-            </div>
-            <small>${d.phone || ''}</small>
-            <small>PIN: ${d.pin}</small>
-          </div>
-        </button>
-      `).join('') || '<div class="item"><small>Aucun chauffeur défini.</small></div>';
-
-      driversList.querySelectorAll('.driver-order-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = btn.dataset.id;
-          const d = state.drivers.find(x => x.id === id);
-          if (!d) return;
-          driverFirst.value = d.first || '';
-          driverName.value  = d.name || '';
-          driverPhone.value = d.phone || '';
-          driverEmail.value = d.email || '';
-          driverPin.value   = d.pin || '';
-          driverTruck.value = d.truck || '';
-          driverStatus.value= d.status || 'Actif';
-          driverId.value    = d.id || '';
-        });
-      });
-
-      const fleetOptions = ['<option value="">Sans camion</option>']
-        .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} · ${v.brand}</option>`));
-      driverTruck.innerHTML = fleetOptions.join('');
-
-      driverSelect.innerHTML = state.drivers
-        .map(d => `<option value="${d.id}">${d.name}</option>`)
-        .join('');
-    }
-
-    function renderFleet() {
-      fleetList.innerHTML = state.fleet.map(v => `
-        <button class="driver-order-btn" data-code="${v.code}">
-          <div class="item">
-            <div class="item-top">
-              <strong>${v.code}</strong>
-              <span class="badge">${v.status}</span>
-            </div>
-            <small>${v.brand} ${v.model}</small>
-            <small>${v.plate} · ${v.km.toLocaleString('fr-FR')} km</small>
-          </div>
-        </button>
-      `).join('') || '<div class="item"><small>Aucun véhicule défini.</small></div>';
-
-      fleetList.querySelectorAll('.driver-order-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const code = btn.dataset.code;
-          const v = state.fleet.find(x => x.code === code);
-          if (!v) return;
-          vehCode.value   = v.code || '';
-          vehPlate.value  = v.plate || '';
-          vehBrand.value  = v.brand || '';
-          vehModel.value  = v.model || '';
-          vehType.value   = v.type || 'Camion benne';
-          vehYear.value   = v.year || '';
-          vehKm.value     = v.km || '';
-          vehStatus.value = v.status || 'En service';
-          vehNote.value   = v.note || '';
-        });
-      });
-
-      orderTruck.innerHTML = ['<option value="">Sans camion</option>']
-        .concat(state.fleet.map(v => `<option value="${v.code}">${v.code}</option>`))
-        .join('');
-
-      expenseTruck.innerHTML = ['<option value="">-- Sélectionner un camion --</option>']
-        .concat(state.fleet.map(v => `<option value="${v.code}">${v.code}</option>`))
-        .join('');
-    }
-
-    function renderProducts() {
-      productsList.innerHTML = state.products.map(p => `
-        <button class="driver-order-btn" data-code="${p.code}">
-          <div class="item">
-            <div class="item-top">
-              <strong>${p.code} · ${p.name}</strong>
-              <span class="badge">${p.unit || ''}</span>
-            </div>
-            <small>Prix unitaire : ${euroShort(p.price)}</small>
-            <small>${p.note || ''}</small>
-          </div>
-        </button>
-      `).join('') || '<div class="item"><small>Aucun produit défini.</small></div>';
-
-      productsList.querySelectorAll('.driver-order-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const code = btn.dataset.code;
-          const p = state.products.find(x => x.code === code);
-          if (!p) return;
-          productCode.value = p.code || '';
-          productName.value = p.name || '';
-          productUnit.value = p.unit || '';
-          productPrice.value = p.price || '';
-          productNote.value  = p.note || '';
-        });
-      });
-
-      orderProduct.innerHTML = ['<option value="">Sans produit</option>']
-        .concat(state.products.map(p => `<option value="${p.code}">${p.code} · ${p.name}</option>`))
-        .join('');
-    }
-
-    function renderSites() {
-      sitesList.innerHTML = state.sites.map(s => `
-        <button class="driver-order-btn" data-id="${s.id}">
-          <div class="item">
-            <div class="item-top">
-              <strong>${s.company}</strong>
-              <span class="badge">${s.manager || ''}</span>
-            </div>
-            <small>${s.address || ''}</small>
-            <small>${s.phone || ''}</small>
-          </div>
-        </button>
-      `).join('') || '<div class="item"><small>Aucun chantier défini.</small></div>';
-
-      sitesList.querySelectorAll('.driver-order-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = btn.dataset.id;
-          const s = state.sites.find(x => x.id === id);
-          if (!s) return;
-          siteCompany.value = s.company || '';
-          siteManager.value = s.manager || '';
-          sitePhone.value   = s.phone || '';
-          siteAddress.value = s.address || '';
-          siteId.value      = s.id || '';
-        });
-      });
-    }
-
-    newDriverBtn.addEventListener('click', () => {
-      driverFirst.value = '';
-      driverName.value  = '';
-      driverPhone.value = '';
-      driverEmail.value = '';
-      driverPin.value   = '';
-      driverTruck.value = '';
-      driverStatus.value= 'Actif';
-      driverId.value    = '';
+      renderDriverPage();
     });
-
-    saveDriverBtn.addEventListener('click', () => {
-      const data = {
-        first: driverFirst.value.trim(),
-        name:  driverName.value.trim(),
-        phone: driverPhone.value.trim(),
-        email: driverEmail.value.trim(),
-        pin:   driverPin.value.trim(),
-        truck: driverTruck.value || '',
-        status:driverStatus.value || 'Actif',
-        id:    driverId.value.trim() || driverFirst.value.trim().toLowerCase()
-      };
-
-      if (!data.first || !data.name || !data.pin) {
-        alert('Prénom, Nom et PIN sont obligatoires.');
-        return;
-      }
-
-      const idx = state.drivers.findIndex(d => d.id === data.id);
-      if (idx >= 0) {
-        state.drivers[idx] = data;
-      } else {
-        state.drivers.push(data);
-      }
-
-      renderDrivers();
-    });
-
-    deleteDriverBtn.addEventListener('click', () => {
-      const id = driverId.value.trim();
-      if (!id) {
-        alert('Sélectionnez un chauffeur avant de supprimer.');
-        return;
-      }
-      if (confirm('Supprimer ce chauffeur ?')) {
-        state.drivers = state.drivers.filter(d => d.id !== id);
-        newDriverBtn.click();
-        renderDrivers();
-      }
-    });
-
-    newVehBtn.addEventListener('click', () => {
-      vehCode.value   = '';
-      vehPlate.value  = '';
-      vehBrand.value  = '';
-      vehModel.value  = '';
-      vehType.value   = 'Camion benne';
-      vehYear.value   = '';
-      vehKm.value     = '';
-      vehStatus.value = 'En service';
-      vehNote.value   = '';
-    });
-
-    saveVehBtn.addEventListener('click', () => {
-      const data = {
-        code:  vehCode.value.trim(),
-        plate: vehPlate.value.trim(),
-        brand: vehBrand.value.trim(),
-        model: vehModel.value.trim(),
-        type:  vehType.value,
-        year:  Number(vehYear.value || 0),
-        km:    Number(vehKm.value || 0),
-        status:vehStatus.value || 'En service',
-        note:  vehNote.value.trim()
-      };
-
-      if (!data.code) {
-        alert('Code camion est obligatoire.');
-        return;
-      }
-
-      const idx = state.fleet.findIndex(v => v.code === data.code);
-      if (idx >= 0) {
-        state.fleet[idx] = data;
-      } else {
-        state.fleet.push(data);
-      }
-
-      renderFleet();
-      renderDrivers();
-    });
-
-    deleteVehBtn.addEventListener('click', () => {
-      const code = vehCode.value.trim();
-      if (!code) {
-        alert('Sélectionnez un véhicule avant de supprimer.');
-        return;
-      }
-      if (confirm('Supprimer ce véhicule ?')) {
-        state.fleet = state.fleet.filter(v => v.code !== code);
-        newVehBtn.click();
-        renderFleet();
-        renderDrivers();
-      }
-    });
-
-    newProductBtn.addEventListener('click', () => {
-      productCode.value = '';
-      productName.value = '';
-      productUnit.value = '';
-      productPrice.value = '';
-      productNote.value  = '';
-    });
-
-    saveProductBtn.addEventListener('click', () => {
-      const data = {
-        code: productCode.value.trim(),
-        name: productName.value.trim(),
-        unit: productUnit.value.trim(),
-        price: Number(productPrice.value || 0),
-        note: productNote.value.trim()
-      };
-
-      if (!data.code || !data.name) {
-        alert('Code produit et Libellé sont obligatoires.');
-        return;
-      }
-
-      const idx = state.products.findIndex(p => p.code === data.code);
-      if (idx >= 0) {
-        state.products[idx] = data;
-      } else {
-        state.products.push(data);
-      }
-
-      renderProducts();
-    });
-
-    deleteProductBtn.addEventListener('click', () => {
-      const code = productCode.value.trim();
-      if (!code) {
-        alert('Sélectionnez un produit avant de supprimer.');
-        return;
-      }
-      if (confirm('Supprimer ce produit ?')) {
-        state.products = state.products.filter(p => p.code !== code);
-        newProductBtn.click();
-        renderProducts();
-      }
-    });
-
-    newSiteBtn.addEventListener('click', () => {
-      siteCompany.value = '';
-      siteManager.value = '';
-      sitePhone.value   = '';
-      siteAddress.value = '';
-      siteId.value      = '';
-    });
-
-    saveSiteBtn.addEventListener('click', () => {
-      const data = {
-        company: siteCompany.value.trim(),
-        manager: siteManager.value.trim(),
-        phone:   sitePhone.value.trim(),
-        address: siteAddress.value.trim(),
-        id:      siteId.value.trim() || siteCompany.value.trim().toLowerCase().replace(/\s+/g,'-')
-      };
-
-      if (!data.company || !data.address) {
-        alert('Entreprise et Adresse de livraison sont obligatoires.');
-        return;
-      }
-
-      const idx = state.sites.findIndex(s => s.id === data.id);
-      if (idx >= 0) {
-        state.sites[idx] = data;
-      } else {
-        state.sites.push(data);
-      }
-
-      renderSites();
-    });
-
-    deleteSiteBtn.addEventListener('click', () => {
-      const id = siteId.value.trim();
-      if (!id) {
-        alert('Sélectionnez un chantier avant de supprimer.');
-        return;
-      }
-      if (confirm('Supprimer ce chantier ?')) {
-        state.sites = state.sites.filter(s => s.id !== id);
-        newSiteBtn.click();
-        renderSites();
-      }
-    });
-
-    function renderRecapDay() {
-      const today = (new Date()).toISOString().slice(0,10);
-      const ordersThisMonth = state.orders.filter(o => (o.date || '').startsWith(today.slice(0,7)));
-      const ordersThisMonthFinalized = ordersThisMonth.filter(o => o.finalized);
-
-      const ca  = ordersThisMonthFinalized.reduce((sum,o)=>sum+Number(o.montant||0),0);
-      const nb  = ordersThisMonth.length;
-      const nbFin = ordersThisMonthFinalized.length;
-      const avg = nbFin ? ca/nbFin : 0;
-
-      const totalRotLivrees = ordersThisMonth.reduce((sum,o)=>sum+Number(o.deliveredRotations||0),0);
-
-      recapKpisEl.innerHTML = `
-        <div class="kpi">
-          <span>CA facturé (mois)</span>
-          <strong style="color:#16a34a;">${euroShort(ca)}</strong>
-        </div>
-        <div class="kpi">
-          <span>Commandes finalisées</span>
-          <strong>${nbFin} / ${nb}</strong>
-        </div>
-        <div class="kpi">
-          <span>Panier moyen facturé</span>
-          <strong>${euroShort(avg)}</strong>
-        </div>
-        <div class="kpi">
-          <span>Rotations livrées (mois)</span>
-          <strong>${totalRotLivrees}</strong>
-        </div>
-      `;
-
-      const byDriver = {};
-      state.orders.filter(o => o.finalized).forEach(o => {
-        const key = o.driver || 'inconnu';
-        if (!byDriver[key]) byDriver[key] = { ca:0, nb:0, rotLivrees:0 };
-        byDriver[key].ca += Number(o.montant||0);
-        byDriver[key].nb += 1;
-        byDriver[key].rotLivrees += Number(o.deliveredRotations||0);
-      });
-
-      recapDriversEl.innerHTML = Object.entries(byDriver).map(([driverId,vals]) => `
-        <div class="item">
-          <div class="item-top">
-            <strong>${driverLabelFromId(driverId) || 'Sans chauffeur'}</strong>
-            <span class="badge ok">${vals.nb} finalisées</span>
-          </div>
-          <small>CA facturé : ${euroShort(vals.ca)}</small>
-          <small>Rotations livrées : ${vals.rotLivrees}</small>
-        </div>
-      `).join('') || '<div class="item"><small>Aucune commande finalisée.</small></div>';
-    }
-
-    function renderYearOptions() {
-      const years = new Set();
-      state.orders.forEach(o => {
-        if (o.date) years.add(o.date.slice(0,4));
-      });
-      state.vehicleExpenses.forEach(e => {
-        if (e.date) years.add(e.date.slice(0,4));
-      });
-      const sorted = Array.from(years).sort();
-      yearSelect.innerHTML = sorted.map(y => `<option value="${y}">${y}</option>`).join('');
-      if (sorted.length) yearSelect.value = sorted[sorted.length-1];
-    }
-
-    function applyYearFilter(showAlert = true) {
-      const year = yearSelect.value;
-      if (!year) {
-        if (showAlert) alert("Aucune année disponible.");
-        return;
-      }
-
-      const ordersYear = state.orders.filter(o => (o.date || '').startsWith(year));
-      const expensesYear = state.vehicleExpenses.filter(e => (e.date || '').startsWith(year));
-
-      const months = Array.from({length:12}, (_,i)=> (i+1).toString().padStart(2,'0'));
-
-      const caByMonth = {};
-      const nbByMonth = {};
-      const depByMonth = {};
-
-      months.forEach(m => {
-        caByMonth[m] = 0;
-        nbByMonth[m] = 0;
-        depByMonth[m] = 0;
-      });
-
-      ordersYear.filter(o => o.finalized).forEach(o => {
-        const m = o.date.slice(5,7);
-        caByMonth[m] += Number(o.montant||0);
-        nbByMonth[m] += 1;
-      });
-
-      expensesYear.forEach(e => {
-        const m = e.date.slice(5,7);
-        depByMonth[m] += Number(e.amount||0);
-      });
-
-      const totalCA = Object.values(caByMonth).reduce((a,b)=>a+b,0);
-      const totalDep = Object.values(depByMonth).reduce((a,b)=>a+b,0);
-      const totalMarge = totalCA - totalDep;
-
-      yearSummary.textContent = `Synthèse ${year} : CA ${euroShort(totalCA)}, dépenses ${euroShort(totalDep)}, marge ${euroShort(totalMarge)}.`;
-
-      yearKpis.innerHTML = `
-        <div class="kpi">
-          <span>CA total</span>
-          <strong>${euroShort(totalCA)}</strong>
-        </div>
-        <div class="kpi">
-          <span>Dépenses totales</span>
-          <strong>${euroShort(totalDep)}</strong>
-        </div>
-        <div class="kpi">
-          <span>Marge estimée</span>
-          <strong>${euroShort(totalMarge)}</strong>
-        </div>
-        <div class="kpi">
-          <span>Commandes</span>
-          <strong>${ordersYear.length}</strong>
-        </div>
-      `;
-
-      function buildRow(label, obj, isEuro = true) {
-        const vals = months.map(m => obj[m] || 0);
-        const total = vals.reduce((a,b)=>a+b,0);
-        return `
-          <tr>
-            <td>${label}</td>
-            ${vals.map(v => `<td>${isEuro ? euroShort(v) : v}</td>`).join('')}
-            <td>${isEuro ? euroShort(total) : total}</td>
-          </tr>
-        `;
-      }
-
-      yearSummaryBody.innerHTML = `
-        ${buildRow('CA mensuel (finalisé)', caByMonth, true)}
-        ${buildRow('Dépenses véhicules', depByMonth, true)}
-        ${buildRow('Nb commandes', nbByMonth, false)}
-      `;
-    }
-
-    applyYearFilterBtn.addEventListener('click', () => applyYearFilter(true));
-
-    function renderVehicleExpenses() {
-      const byTruck = {};
-      state.vehicleExpenses.forEach(e => {
-        const key = e.truck || 'inconnu';
-        if (!byTruck[key]) byTruck[key] = 0;
-        byTruck[key] += Number(e.amount||0);
-      });
-
-      const entries = Object.entries(byTruck);
-      const total = entries.reduce((sum,[,v])=>sum+v,0);
-
-      vehicleExpenseKpis.innerHTML = `
-        <div class="kpi">
-          <span>Dépenses totales</span>
-          <strong>${euroShort(total)}</strong>
-        </div>
-        <div class="kpi">
-          <span>Nb de camions concernés</span>
-          <strong>${entries.length}</strong>
-        </div>
-        <div class="kpi">
-          <span>Source</span>
-          <strong>Démo interne</strong>
-        </div>
-        <div class="kpi">
-          <span>Période</span>
-          <strong>Année courante</strong>
-        </div>
-      `;
-
-      vehicleTotalsList.innerHTML = entries.map(([truck,amount]) => `
-        <div class="item">
-          <div class="item-top">
-            <strong>${vehicleLabelFromCode(truck) || truck}</strong>
-            <span class="badge">${euroShort(amount)}</span>
-          </div>
-          <small>Dépenses cumulées pour ce véhicule.</small>
-        </div>
-      `).join('') || '<div class="item"><small>Aucune dépense enregistrée.</small></div>';
-    }
-
-    resetExpense.addEventListener('click', () => {
-      expenseTruck.value = '';
-      expenseType.value  = 'Carburant';
-      expenseDate.value  = '';
-      expenseAmount.value= '';
-      expenseLabel.value = '';
-      expenseSource.value= '';
-    });
-
-    saveExpenseBtn.addEventListener('click', () => {
-      const data = {
-        truck:  expenseTruck.value || '',
-        type:   expenseType.value,
-        date:   expenseDate.value || '',
-        amount: Number(expenseAmount.value || 0),
-        label:  expenseLabel.value.trim(),
-        note:   expenseSource.value.trim()
-      };
-
-      if (!data.truck || !data.amount) {
-        alert('Camion et Montant sont obligatoires pour une dépense.');
-        return;
-      }
-
-      const newId = (state.vehicleExpenses.reduce((max,e)=>Math.max(max,e.id||0),0) || 0) + 1;
-      state.vehicleExpenses.push({ id:newId, ...data });
-
-      resetExpense.click();
-      renderVehicleExpenses();
-      renderYearOptions();
-    });
-
-    let signatureCtx;
-    let drawing = false;
-    let lastX = 0;
-    let lastY = 0;
-    let hasSignature = false;
-    let selectedRotation = null;
-
-    function resizeCanvas() {
-      const rect = signatureCanvas.getBoundingClientRect();
-      signatureCanvas.width  = rect.width;
-      signatureCanvas.height = rect.height;
-      signatureCtx = signatureCanvas.getContext('2d');
-      signatureCtx.lineWidth   = 2;
-      signatureCtx.lineCap     = 'round';
-      signatureCtx.strokeStyle = '#111827';
-    }
-
-    function clearCanvas() {
-      if (!signatureCtx) resizeCanvas();
-      signatureCtx.clearRect(0,0,signatureCanvas.width,signatureCanvas.height);
-      hasSignature = false;
-    }
-
-    function handlePointerDown(e) {
-      drawing = true;
-      hasSignature = true;
-      const rect = signatureCanvas.getBoundingClientRect();
-      lastX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-      lastY = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-    }
-
-    function handlePointerMove(e) {
-      if (!drawing) return;
-      const rect = signatureCanvas.getBoundingClientRect();
-      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-
-      signatureCtx.beginPath();
-      signatureCtx.moveTo(lastX,lastY);
-      signatureCtx.lineTo(x,y);
-      signatureCtx.stroke();
-      lastX = x;
-      lastY = y;
-    }
-
-    function handlePointerUp() {
-      drawing = false;
-    }
-
-    signatureCanvas.addEventListener('mousedown', handlePointerDown);
-    signatureCanvas.addEventListener('mousemove', handlePointerMove);
-    window.addEventListener('mouseup', handlePointerUp);
-
-    signatureCanvas.addEventListener('touchstart', handlePointerDown, {passive:false});
-    signatureCanvas.addEventListener('touchmove', handlePointerMove, {passive:false});
-    signatureCanvas.addEventListener('touchend', handlePointerUp, {passive:false});
-
-    clearSignature.addEventListener('click', () => {
-      clearCanvas();
-    });
-
-    closeSignature.addEventListener('click', () => {
-      signatureModal.style.display = 'none';
-    });
-
-    function buildDriverOrdersForCurrent() {
-      if (!state.currentDriver) return [];
-      const driverId = state.currentDriver.id;
-      return state.orders.filter(o => o.driver === driverId);
-    }
 
     function renderDriverPage() {
       const d = state.currentDriver;
       if (!d) return;
+      driverTitle.textContent = `Espace chauffeur · ${d.name}`;
+      driverSubtitle.textContent = `Camion associé : ${d.truck || 'Aucun'}`;
+      driverTruckInfo.textContent = d.truck || 'Aucun camion associé';
 
-      driverTitle.textContent    = `Espace chauffeur · ${d.name}`;
-      driverSubtitle.textContent = `Camion associé : ${d.truck || '-'}`;
+      const today = (new Date()).toISOString().slice(0,10);
+      const ordersForDriver = state.orders.filter(o => o.driver === d.id && o.date === today);
 
-      const orders = buildDriverOrdersForCurrent();
-
-      driverOrdersList.innerHTML = orders.map(o => {
-        const totalRot     = Number(o.rotations || 1);
-        const deliveredRot = Number(o.deliveredRotations || 0);
-        const remainingRot = Math.max(0, totalRot - deliveredRot);
-
+      driverOrdersList.innerHTML = ordersForDriver.map(o => {
+        const totalRot = Number(o.rotations || 1);
+        const delivered = Number(o.deliveredRotations || 0);
+        const remaining = Math.max(0, totalRot - delivered);
         return `
           <button class="driver-order-btn" data-order-id="${o.id}">
             <div class="item">
               <div class="item-top">
                 <strong>${o.client}</strong>
-                <span class="badge">${o.date || ''}</span>
+                <span class="badge">${formatDate(o.date)}</span>
               </div>
               <small>${o.address}</small>
-              <small>${productLabelFromCode(o.product)} · ${o.qty}</small>
-              <small>Rotations : ${deliveredRot}/${totalRot} · Restantes : ${remainingRot}</small>
+              <small>${productLabelFromCode(o.product)} · ${o.qty || ''}</small>
+              <small>Rotations livrées : ${delivered}/${totalRot} · Restantes : ${remaining}</small>
             </div>
           </button>
         `;
-      }).join('') || '<div class="item"><small>Aucune mission pour ce chauffeur.</small></div>';
+      }).join('') || '<div class="item"><small>Aucune mission pour aujourd’hui.</small></div>';
 
       driverOrdersList.querySelectorAll('.driver-order-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           const orderId = Number(btn.dataset.orderId);
-          const order   = state.orders.find(o => o.id === orderId);
+          const order = state.orders.find(o => o.id === orderId);
           if (!order) return;
 
           selectedRotation = {
             orderId: order.id,
-            client:  order.client,
+            client: order.client,
             address: order.address,
             product: productLabelFromCode(order.product),
-            date:    order.date
+            date: order.date
           };
 
           signatureOrderInfo.textContent =
@@ -3072,96 +1880,259 @@
           signatoryRole.value = '';
           clearCanvas();
           signatureModal.style.display = 'flex';
-          resizeCanvas();
         });
       });
 
-      fuelFeedback.textContent = 'Montant saisi ; valider en signant une mission.';
+      const lastFuel = state.fuel.filter(f => f.driverId === d.id).slice(-1)[0];
+      if (lastFuel) {
+        lastFuelInfo.textContent =
+          `${formatDate(lastFuel.date)} · ${lastFuel.amount} L sur ${lastFuel.truck}`;
+      } else {
+        lastFuelInfo.textContent = 'Aucun plein enregistré.';
+      }
     }
 
-    validateSignature.addEventListener('click', () => {
-      if (!selectedRotation) {
-        signaturePreview.style.color = '#ef4444';
-        signaturePreview.textContent = 'Aucune mission sélectionnée.';
+    btnDeclareFuel.addEventListener('click', () => {
+      const d = state.currentDriver;
+      if (!d) {
+        alert('Connectez-vous comme chauffeur.');
         return;
       }
-
-      const name = signatoryName.value.trim();
-      const role = signatoryRole.value.trim();
-
-      if (!name) {
-        signaturePreview.style.color = '#ef4444';
-        signaturePreview.textContent = '⚠ Nom du signataire obligatoire.';
-        signatoryName.focus();
-        return;
-      }
-      if (!role) {
-        signaturePreview.style.color = '#ef4444';
-        signaturePreview.textContent = '⚠ Qualité / fonction obligatoire.';
-        signatoryRole.focus();
-        return;
-      }
-      if (!hasSignature) {
-        signaturePreview.style.color = '#ef4444';
-        signaturePreview.textContent = '⚠ Merci de signer dans la zone prévue.';
-        return;
-      }
-
-      const pleinMontant = Number(fuelAmount.value || 0);
-      const pleinStation = fuelStation.value.trim();
-
-      const idx = state.orders.findIndex(o => o.id === selectedRotation.orderId);
-      if (idx >= 0) {
-        const order = state.orders[idx];
-        order.deliveredRotations = (order.deliveredRotations || 0) + 1;
-        const totalRot = Number(order.rotations || 1);
-        if (!order.finalized && order.deliveredRotations >= totalRot) {
-          order.status = 'Livrée';
-        }
-      }
-
-      if (pleinMontant > 0 && state.currentDriver && state.currentDriver.truck) {
-        const newId = (state.vehicleExpenses.reduce((m,e)=>Math.max(m,e.id||0),0) || 0) + 1;
-        state.vehicleExpenses.push({
-          id:newId,
-          truck: state.currentDriver.truck,
-          type:'Carburant',
-          date: new Date().toISOString().slice(0,10),
-          amount: pleinMontant,
-          label: `Plein mission #${selectedRotation.orderId} ${pleinStation || ''}`,
-          note:'Enregistré via signature chauffeur'
-        });
-      }
-
-      fuelFeedback.textContent = 'Plein validé pour la mission signée.';
-      signaturePreview.style.color = '#16a34a';
-      signaturePreview.textContent = '✓ Signature enregistrée. Rotation marquée livrée.';
-
-      renderOrdersTable();
-      renderManagerDashboard();
-      renderRecapDay();
-      renderVehicleExpenses();
+      const amount = prompt('Quantité (L) ?');
+      if (!amount) return;
+      const today = (new Date()).toISOString().slice(0,10);
+      state.fuel.push({
+        driverId: d.id,
+        truck: d.truck || '',
+        amount: Number(amount||0),
+        date: today
+      });
+      fuelFeedback.textContent = `Plein de ${amount} L enregistré pour aujourd’hui.`;
       renderDriverPage();
-
-      setTimeout(() => {
-        signatureModal.style.display = 'none';
-      }, 800);
     });
 
-    function renderAll() {
-      renderManagerDashboard();
-      renderOrdersTable();
-      renderDrivers();
-      renderFleet();
-      renderProducts();
-      renderSites();
-      renderRecapDay();
-      renderYearOptions();
-      renderVehicleExpenses();
+    btnViewFuel.addEventListener('click', () => {
+      const d = state.currentDriver;
+      if (!d) {
+        alert('Connectez-vous comme chauffeur.');
+        return;
+      }
+      const list = state.fuel.filter(f => f.driverId===d.id)
+        .map(f => `${formatDate(f.date)} : ${f.amount} L (${f.truck})`).join('\n') || 'Aucun plein.';
+      alert(list);
+    });
+
+    let canvasCtx = null;
+    let drawing = false;
+    let selectedRotation = null;
+
+    function resizeCanvas() {
+      const rect = signatureCanvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      signatureCanvas.width = rect.width * ratio;
+      signatureCanvas.height = rect.height * ratio;
+      canvasCtx = signatureCanvas.getContext('2d');
+      canvasCtx.scale(ratio, ratio);
+      canvasCtx.lineWidth = 2;
+      canvasCtx.lineCap = 'round';
+      canvasCtx.strokeStyle = '#0f172a';
     }
 
-    initState();
-    renderAll();
+    function clearCanvas() {
+      if (!canvasCtx) return;
+      canvasCtx.clearRect(0,0,signatureCanvas.width, signatureCanvas.height);
+    }
+
+    function pointerPos(e) {
+      const rect = signatureCanvas.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+      return {x,y};
+    }
+
+    function startDraw(e) {
+      e.preventDefault();
+      drawing = true;
+      const {x,y} = pointerPos(e);
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(x,y);
+    }
+
+    function moveDraw(e) {
+      if (!drawing) return;
+      e.preventDefault();
+      const {x,y} = pointerPos(e);
+      canvasCtx.lineTo(x,y);
+      canvasCtx.stroke();
+    }
+
+    function endDraw(e) {
+      if (!drawing) return;
+      drawing = false;
+    }
+
+    closeSignatureModal.addEventListener('click', () => {
+      signatureModal.style.display = 'none';
+    });
+
+    clearSignatureBtn.addEventListener('click', () => {
+      clearCanvas();
+      signaturePreview.textContent = '';
+    });
+
+    saveSignatureBtn.addEventListener('click', () => {
+      if (!selectedRotation || !selectedRotation.orderId) {
+        alert('Aucune mission liée à la signature.');
+        return;
+      }
+      const name = signatoryName.value.trim();
+      if (!name) {
+        alert('Le nom du signataire est obligatoire.');
+        return;
+      }
+      const order = state.orders.find(o => o.id === selectedRotation.orderId);
+      if (!order) {
+        alert('Commande introuvable.');
+        return;
+      }
+      order.deliveredRotations = Number(order.deliveredRotations||0) + 1;
+
+      signaturePreview.textContent =
+        `Signature enregistrée pour ${selectedRotation.client} (${name}).`;
+      renderOrdersTable();
+      renderDashboard();
+      renderDriverPage();
+      signatureModal.style.display = 'none';
+    });
+
+    signatureCanvas.addEventListener('mousedown', startDraw);
+    signatureCanvas.addEventListener('mousemove', moveDraw);
+    window.addEventListener('mouseup', endDraw);
+
+    signatureCanvas.addEventListener('touchstart', startDraw, {passive:false});
+    signatureCanvas.addEventListener('touchmove', moveDraw, {passive:false});
+    window.addEventListener('touchend', endDraw);
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+    });
+
+    const navButtons = managerPage.querySelectorAll('.nav button');
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const view = btn.dataset.view;
+        navButtons.forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        managerPage.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+        document.getElementById('view-'+view).classList.add('active');
+        if (view === 'dashboard') {
+          mainTitle.textContent = 'Dashboard';
+          mainDesc.textContent = 'Vue d’ensemble de l’activité journalière.';
+        } else if (view === 'commandes') {
+          mainTitle.textContent = 'Commandes';
+          mainDesc.textContent = 'Gestion des commandes et rotations.';
+        } else if (view === 'recap') {
+          mainTitle.textContent = 'Récapitulatif';
+          mainDesc.textContent = 'Synthèse de l’activité.';
+        } else if (view === 'vehicules') {
+          mainTitle.textContent = 'Dépenses véhicules';
+          mainDesc.textContent = 'Charges et dépenses par camion.';
+        }
+      });
+    });
+
+    logoutManager.addEventListener('click', () => {
+      switchPage(pages.landing);
+      state.currentDriver = null;
+      resetPins();
+    });
+
+    logoutDriver.addEventListener('click', () => {
+      switchPage(pages.landing);
+      state.currentDriver = null;
+      resetPins();
+    });
+
+    loginBtn.addEventListener('click', () => {
+      const pin = readPin();
+      errorBox.classList.remove('show');
+      if (state.role === 'manager') {
+        if (pin === '1234') {
+          switchPage(pages.manager);
+          renderDashboard();
+          renderOrdersTable();
+          resizeCanvas();
+        } else {
+          errorBox.textContent = 'PIN gérant incorrect.';
+          errorBox.classList.add('show');
+        }
+      } else {
+        const driverId = driverSelect.value;
+        const d = state.drivers.find(dr=>dr.id===driverId);
+        if (!d || d.pin !== pin) {
+          errorBox.textContent = 'Chauffeur ou PIN incorrect.';
+          errorBox.classList.add('show');
+          return;
+        }
+        state.currentDriver = d;
+        switchPage(pages.driver);
+        renderDriverPage();
+        resizeCanvas();
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      resetPins();
+      errorBox.classList.remove('show');
+    });
+
+    function seedDemo() {
+      const today = (new Date()).toISOString().slice(0,10);
+      state.orders = [
+        {
+          id: state.nextOrderId++,
+          client: 'Chantier A',
+          phone: '0696 00 00 00',
+          address: 'Zone Industrielle A',
+          qty: '10 T',
+          montant: 1800,
+          date: today,
+          truck: 'TRK-1',
+          driver: 'd1',
+          product: 'SABLE',
+          rotations: 3,
+          deliveredRotations: 1,
+          finalized: false
+        },
+        {
+          id: state.nextOrderId++,
+          client: 'Chantier B',
+          phone: '0696 11 11 11',
+          address: 'Zone Industrielle B',
+          qty: '8 T',
+          montant: 1500,
+          date: today,
+          truck: 'TRK-2',
+          driver: 'd2',
+          product: 'GRAVIER',
+          rotations: 2,
+          deliveredRotations: 2,
+          finalized: true
+        }
+      ];
+    }
+
+    function init() {
+      renderDriversSelect();
+      renderFleet();
+      renderProducts();
+      seedDemo();
+      renderDashboard();
+      renderOrdersTable();
+      resizeCanvas();
+    }
+
+    init();
   </script>
 </body>
 </html>
