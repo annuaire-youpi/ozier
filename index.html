@@ -690,7 +690,7 @@
       color:var(--muted);
     }
 
-        .driver-grid {
+    .driver-grid {
       display:grid;
       grid-template-columns:minmax(0,1.15fr) minmax(0,0.9fr);
       gap:12px;
@@ -1258,8 +1258,7 @@
         </div>
       </div>
     </section>
-
-    <!-- PAGE MANAGER -->
+        <!-- PAGE MANAGER -->
     <section class="page" id="managerPage">
       <div class="app">
         <aside class="sidebar">
@@ -1268,7 +1267,6 @@
             <div class="nav">
               <button class="active" data-view="dashboard"><span>Dashboard</span><span>›</span></button>
               <button data-view="commandes"><span>Commandes</span><span>›</span></button>
-              <!-- menus Chauffeurs & Flotte retirés, remplacés par Paramétrages -->
               <button data-view="recap"><span>Récapitulatif</span><span>›</span></button>
               <button data-view="vehicules"><span>Dépenses véhicules</span><span>›</span></button>
               <button data-view="parametrages"><span>Paramétrages</span><span>›</span></button>
@@ -1421,7 +1419,8 @@
 
             </div>
           </section>
-                    <!-- Récap -->
+
+          <!-- Récap -->
           <section class="view" id="view-recap">
             <div class="recap-layout">
               <div class="recap-top-grid">
@@ -1692,7 +1691,7 @@
         <div class="driver-top">
           <div>
             <h1 id="driverTitle">Espace chauffeur</h1>
-            <p id="driverSubtitle">Missions du jour et validation carburant.</p>
+            <p id="driverSubtitle">Missions du jour et plein du soir.</p>
           </div>
           <button class="btn btn-ghost" id="logoutDriver">Changer de profil</button>
         </div>
@@ -1700,13 +1699,13 @@
         <div class="driver-grid">
           <div class="card">
             <h3>Missions du jour</h3>
-            <p>Commandes assignées avec suivi des rotations.</p>
+            <p>Liste des livraisons à effectuer aujourd'hui.</p>
             <div class="list" id="driverOrdersList"></div>
           </div>
 
           <div class="card">
-            <h3>Validation carburant / signature</h3>
-            <p>Zone dédiée pour le client lors de la livraison.</p>
+            <h3>Plein d'essence du soir</h3>
+            <p>À remplir chaque soir après les missions.</p>
             <div class="fuel-grid">
               <div>
                 <label class="label">Montant du plein (€)</label>
@@ -2069,7 +2068,6 @@
       const totalFleet   = state.fleet.length;
       // CA facturé = uniquement commandes finalisées
       const totalAmountFinalized = state.orders.filter(o => o.finalized).reduce((sum,o)=>sum+Number(o.montant||0),0);
-      // CA estimé = toutes commandes (pour info)
       const totalAmount  = totalAmountFinalized;
 
       managerKpis.innerHTML = `
@@ -2180,7 +2178,6 @@
         status:  (existingOrder && existingOrder.finalized) ? 'Finalisée' : (existingOrder ? (existingOrder.status || 'En attente') : 'En attente'),
         product: orderProduct.value || '',
         rotations: Number(orderRotations.value || 1),
-        // Préserver les champs de suivi des rotations et finalisation
         deliveredRotations: existingOrder ? (existingOrder.deliveredRotations || 0) : 0,
         finalized: existingOrder ? (existingOrder.finalized || false) : false
       };
@@ -2213,7 +2210,6 @@
         const deliveredRot = Number(o.deliveredRotations || 0);
         const remainingRot = Math.max(0, totalRot - deliveredRot);
 
-        // Badge statut
         let statusBadge;
         if (o.finalized) {
           statusBadge = `<span class="status-finalisee">✅ Finalisée</span>`;
@@ -2225,17 +2221,14 @@
           statusBadge = `<span class="badge wait">${o.status || 'En attente'}</span>`;
         }
 
-        // Montant : visible seulement si finalisée
         const montantCell = o.finalized
           ? `<strong style="color:#16a34a;">${euroShort(o.montant)}</strong>`
           : `<span class="montant-pending" title="Montant visible après finalisation">En attente...</span>`;
 
-        // Bouton finaliser
         const finalizeBtn = !o.finalized
           ? `<button class="btn-xs btn-finalize" data-id="${o.id}" title="Marquer la commande comme finalisée et envoyer la facture">✓ Finaliser</button>`
           : ``;
 
-        // Couleur rotations
         const deliveredClass = deliveredRot >= totalRot ? 'rotation-delivered' : '';
         const remainingClass = remainingRot === 0 ? 'rotation-delivered' : 'rotation-remaining';
 
@@ -2266,7 +2259,6 @@
         <tr><td colspan="13" style="text-align:center;color:var(--muted);padding:16px;">Aucune commande enregistrée.</td></tr>
       `;
 
-      // Bouton Finaliser
       ordersTableBody.querySelectorAll('.btn-finalize').forEach(btn => {
         btn.addEventListener('click', () => {
           const id = Number(btn.dataset.id);
@@ -2295,7 +2287,6 @@
       });
     }
 
-    // ===== FINALISER UNE COMMANDE =====
     function finalizeOrder(id) {
       const idx = state.orders.findIndex(o => o.id === id);
       if (idx < 0) return;
@@ -2303,12 +2294,10 @@
       order.finalized = true;
       order.status = 'Finalisée';
 
-      // Afficher la modale de confirmation
       document.getElementById('finalizeClientName').textContent = order.client;
       document.getElementById('finalizeAmount').textContent = euroShort(order.montant);
       document.getElementById('finalizeModal').style.display = 'flex';
 
-      // Mettre à jour tous les tableaux en temps réel
       renderOrdersTable();
       renderManagerDashboard();
       renderRecapDay();
@@ -2381,19 +2370,17 @@
       `).join('') || '<div class="item"><small>Aucun site.</small></div>';
     }
 
-          function renderRecapDay() {
+    function renderRecapDay() {
       const today = (new Date()).toISOString().slice(0,10);
       const currentMonth = today.slice(0,7);
       const ordersThisMonth = state.orders.filter(o => (o.date || '').startsWith(currentMonth));
       const ordersThisMonthFinalized = ordersThisMonth.filter(o => o.finalized);
 
-      // CA = uniquement commandes finalisées
       const ca  = ordersThisMonthFinalized.reduce((sum,o)=>sum+Number(o.montant||0),0);
       const nb  = ordersThisMonth.length;
       const nbFin = ordersThisMonthFinalized.length;
       const avg = nbFin ? ca/nbFin : 0;
 
-      // Rotations livrées ce mois
       const totalRotLivrees = ordersThisMonth.reduce((sum,o)=>sum+Number(o.deliveredRotations||0),0);
 
       recapKpis.innerHTML = `
@@ -2415,7 +2402,6 @@
         </div>
       `;
 
-      // CA par chauffeur (uniquement finalisées)
       const byDriver = {};
       state.orders.filter(o => o.finalized).forEach(o => {
         const key = o.driver || 'inconnu';
@@ -2472,12 +2458,10 @@
         depByMonth[m] = 0;
       });
 
-      // CA mensuel = uniquement commandes finalisées
       ordersYear.filter(o => o.finalized).forEach(o => {
         const m = o.date.slice(5,7);
         caByMonth[m] += Number(o.montant||0);
       });
-      // Nb commandes = toutes (pour info)
       ordersYear.forEach(o => {
         const m = o.date.slice(5,7);
         nbByMonth[m] += 1;
@@ -2793,16 +2777,13 @@
       selectedRotation.signatureDate = now;
       selectedRotation.signatureData = dataUrl;
 
-      // ===== MISE À JOUR EN TEMPS RÉEL : incrémenter les rotations livrées =====
       const orderIdx = state.orders.findIndex(o => o.id === selectedRotation.orderId);
       if (orderIdx >= 0) {
         const order = state.orders[orderIdx];
         order.deliveredRotations = (order.deliveredRotations || 0) + 1;
-        // Si toutes les rotations sont livrées, passer en statut "Livrée" (si pas encore finalisée)
         if (!order.finalized && order.deliveredRotations >= (order.rotations || 1)) {
           order.status = 'Livrée';
         }
-        // Mettre à jour le tableau des commandes gérant en temps réel
         renderOrdersTable();
         renderManagerDashboard();
         renderRecapDay();
