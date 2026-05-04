@@ -1082,6 +1082,44 @@
         font-size: 11px;
       }
     }
+
+    .driver-wrap {
+      border-radius:var(--radius-lg);
+      padding:18px;
+      background:linear-gradient(145deg,#ffffff,#e0f2fe);
+      border:1px solid rgba(148,163,184,0.4);
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      width:100%;
+    }
+
+    .driver-top {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+    }
+
+    .driver-top h1 {
+      font-size:20px;
+      color:#111827;
+    }
+
+    .driver-top p {
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .driver-grid {
+      display:grid;
+      grid-template-columns:minmax(0,1.15fr) minmax(0,0.9fr);
+      gap:12px;
+    }
+
+    @media (max-width: 1100px) {
+      .driver-grid { grid-template-columns:1fr; }
+    }
   </style>
 </head>
 <body>
@@ -1170,52 +1208,6 @@
       </div>
     </section>
 
-    <!-- PAGE DRIVER -->
-    <section class="page" id="driverPage">
-      <div class="driver-wrap">
-        <div class="driver-top">
-          <div>
-            <h1 id="driverWelcome">Espace chauffeur</h1>
-            <p id="driverInfo">Vos livraisons du jour</p>
-          </div>
-          <button class="btn btn-ghost" id="logoutDriver">Déconnexion</button>
-        </div>
-
-        <div class="driver-grid">
-          <div class="card">
-            <h3>Mes livraisons</h3>
-            <p>Chaque ligne correspond à une rotation/livraison à effectuer</p>
-            <div class="list" id="driverOrdersList"></div>
-          </div>
-
-          <div class="card">
-            <h3>Détails de la livraison</h3>
-            <p>Informations complètes sur la commande sélectionnée</p>
-            <div id="driverOrderDetail" style="font-size:12px;color:var(--muted);">
-              Sélectionnez une livraison pour voir les détails.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Modal signature -->
-      <div class="signature-modal" id="signatureModal">
-        <div class="signature-box">
-          <div class="signature-head">
-            <h3>Signature de livraison</h3>
-            <button class="btn btn-ghost" id="closeSignature">Fermer</button>
-          </div>
-          <p style="margin-top:8px;font-size:12px;color:var(--muted);">
-            Rotation <strong id="signatureRotationNum"></strong> - <span id="signatureClient"></span>
-          </p>
-          <div style="margin-top:12px;">
-            <button class="btn btn-primary" id="validateSignature">✓ Valider la livraison</button>
-          </div>
-          <div class="signature-preview" id="signaturePreview"></div>
-        </div>
-      </div>
-    </section>
-
     <!-- PAGE MANAGER -->
     <section class="page" id="managerPage">
       <div class="app">
@@ -1297,11 +1289,6 @@
                   </div>
 
                   <div>
-                    <label class="label">Produit</label>
-                    <select id="orderProduct" class="select"></select>
-                  </div>
-
-                  <div>
                     <label class="label">Quantité</label>
                     <input id="orderQty" class="input" placeholder="12 tonnes">
                   </div>
@@ -1335,12 +1322,13 @@
                     </select>
                   </div>
 
-                  <div>
-                    <label class="label">Nbre de rotations</label>
-                    <input id="orderRotations" class="input" type="number" min="1" value="1" placeholder="1">
+                  <div class="full">
+                    <label class="label">Source</label>
+                    <select id="orderSource" class="select">
+                      <option value="WhatsApp">WhatsApp</option>
+                      <option value="Téléphone">Téléphone</option>
+                    </select>
                   </div>
-
-
                 </div>
 
                 <div class="order-form-actions">
@@ -1364,7 +1352,7 @@
                         <th>Montant</th>
                         <th>Statut</th>
                         <th>Chauffeur</th>
-                        <th>Produit</th>
+                        <th>Source</th>
                         <th>Date</th>
                         <th>Actions</th>
                       </tr>
@@ -1757,6 +1745,52 @@
         </main>
       </div>
     </section>
+
+    <!-- PAGE DRIVER -->
+    <section class="page" id="driverPage">
+      <div class="driver-wrap">
+        <div class="driver-top">
+          <div>
+            <h1 id="driverWelcome">Espace chauffeur</h1>
+            <p id="driverInfo">Vos livraisons du jour</p>
+          </div>
+          <button class="btn btn-ghost" id="logoutDriver">Déconnexion</button>
+        </div>
+
+        <div class="driver-grid">
+          <div class="card">
+            <h3>Mes livraisons</h3>
+            <p>Chaque ligne correspond à une rotation/livraison à effectuer</p>
+            <div class="list" id="driverOrdersList"></div>
+          </div>
+
+          <div class="card">
+            <h3>Détails de la livraison</h3>
+            <p>Informations complètes sur la commande sélectionnée</p>
+            <div id="driverOrderDetail" style="font-size:12px;color:var(--muted);">
+              Sélectionnez une livraison pour voir les détails.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal signature -->
+      <div class="signature-modal" id="signatureModal" style="position:fixed;inset:0;background:rgba(15,23,42,0.5);display:none;align-items:center;justify-content:center;z-index:9999;">
+        <div class="signature-box" style="background:#fff;border-radius:20px;padding:20px;max-width:600px;width:90%;">
+          <div class="signature-head" style="display:flex;justify-content:space-between;align-items:center;">
+            <h3>Signature de livraison</h3>
+            <button class="btn btn-ghost" id="closeSignature">Fermer</button>
+          </div>
+          <p style="margin-top:8px;font-size:12px;color:var(--muted);">
+            Rotation <strong id="signatureRotationNum"></strong> - <span id="signatureClient"></span>
+          </p>
+          <div style="margin-top:12px;">
+            <button class="btn btn-primary" id="validateSignature" style="width:100%;">✓ Valider la livraison</button>
+          </div>
+          <div class="signature-preview" id="signaturePreview" style="margin-top:8px;font-size:11px;color:#16a34a;"></div>
+        </div>
+      </div>
+    </section>
   </div>
 
   <script>
@@ -1809,8 +1843,6 @@
     const signatureClient = document.getElementById('signatureClient');
     const signaturePreview = document.getElementById('signaturePreview');
 
-    let selectedRotation = null;
-
     const managerKpis   = document.getElementById('managerKpis');
     const recentOrders  = document.getElementById('recentOrders');
     const teamList      = document.getElementById('teamList');
@@ -1824,6 +1856,7 @@
     const orderTruck   = document.getElementById('orderTruck');
     const orderDriver  = document.getElementById('orderDriver');
     const orderStatus  = document.getElementById('orderStatus');
+    const orderSource  = document.getElementById('orderSource');
     const orderProduct = document.getElementById('orderProduct');
     const orderRotations = document.getElementById('orderRotations');
 
@@ -1914,9 +1947,9 @@
     ];
 
     const initialOrders = [
-      {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1', qty:'12 tonnes', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean', status:'Livrée', product:'SABLE-10T', rotations:1},
-      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', product:'GRAVIER-10T', rotations:2},
-      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', product:'SABLE-10T', rotations:3}
+      {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1', qty:'12 tonnes', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean', status:'Livrée', source:'WhatsApp', product:'SABLE-10T', rotations:1},
+      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', source:'Téléphone', product:'GRAVIER-10T', rotations:2},
+      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', source:'WhatsApp', product:'SABLE-10T', rotations:3}
     ];
 
     const initialExpenses = [
@@ -2140,7 +2173,7 @@
           <td>${euroShort(o.montant)}</td>
           <td>${o.status}</td>
           <td>${driverLabelFromId(o.driver)}</td>
-          <td>${productLabelFromCode(o.product)}</td>
+          <td>${o.source}</td>
           <td>${o.date || ''}</td>
           <td>
             <div class="order-actions">
@@ -2183,16 +2216,6 @@
       return v ? `${v.code} · ${v.brand}` : (code || '');
     }
 
-    function productLabelFromCode(code) {
-      const p = state.products.find(x => x.code === code);
-      return p ? `${p.code} · ${p.name}` : (code || '');
-    }
-
-    function vehiclePlateLabelFromCode(code) {
-      const v = state.fleet.find(x => x.code === code);
-      return v ? v.plate : (code || '');
-    }
-
     function resetOrderForm() {
       state.editingOrderId = null;
       orderClient.value  = '';
@@ -2204,8 +2227,7 @@
       orderTruck.value   = '';
       orderDriver.value  = '';
       orderStatus.value  = 'En attente';
-      orderProduct.value = '';
-      orderRotations.value = '1';
+      orderSource.value  = 'WhatsApp';
       orderFormTitle.textContent = 'Créer une commande';
       orderFormDesc.textContent  = 'Structure prête pour écrire ensuite dans Google Sheets.';
       orderEditBadge.classList.remove('show');
@@ -2224,8 +2246,7 @@
       orderTruck.value   = o.truck || '';
       orderDriver.value  = o.driver || '';
       orderStatus.value  = o.status || 'En attente';
-      orderProduct.value = o.product || '';
-      orderRotations.value = o.rotations || '1';
+      orderSource.value  = o.source || 'WhatsApp';
 
       orderFormTitle.textContent = 'Modifier la commande';
       orderFormDesc.textContent  = 'Vous pouvez ajuster les informations puis enregistrer.';
@@ -2248,8 +2269,7 @@
         truck:   orderTruck.value || '',
         driver:  orderDriver.value || '',
         status:  orderStatus.value || 'En attente',
-        product: orderProduct.value || '',
-        rotations: Number(orderRotations.value) || 1
+        source:  orderSource.value || 'WhatsApp'
       };
 
       if (!data.client || !data.montant) {
@@ -2306,14 +2326,6 @@
       const fleetOptions = ['<option value="">Sans camion</option>']
         .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} · ${v.brand}</option>`));
       driverTruck.innerHTML = fleetOptions.join('');
-
-      const driverOptions = ['<option value="">Sans chauffeur</option>']
-        .concat(state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`));
-      orderDriver.innerHTML = driverOptions.join('');
-
-      const productOptions = ['<option value="">Sans produit</option>']
-        .concat(state.products.map(p => `<option value="${p.code}">${p.name}</option>`));
-      orderProduct.innerHTML = productOptions.join('');
     }
 
     newDriverBtn.addEventListener('click', () => {
@@ -2401,8 +2413,8 @@
       });
 
       const truckOptions = ['<option value="">-- Sélectionner un camion --</option>']
-        .concat(state.fleet.map(v => `<option value="${v.code}">${v.plate} (${v.code})</option>`));
-      orderTruck.innerHTML  = ['<option value="">Sans camion</option>'].concat(state.fleet.map(v => `<option value="${v.code}">${v.plate}</option>`)).join('');
+        .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} · ${v.brand}</option>`));
+      orderTruck.innerHTML  = ['<option value="">Sans camion</option>'].concat(state.fleet.map(v => `<option value="${v.code}">${v.code}</option>`)).join('');
       expenseTruck.innerHTML= truckOptions.join('');
     }
 
@@ -2893,9 +2905,137 @@
     });
 
     function initLandingDrivers() {
-      const options = state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
-      driverSelect.innerHTML = options;
+      driverSelect.innerHTML = state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
     }
+
+    let currentDeliveries = [];
+    let selectedRotation = null;
+
+    function productLabelFromCode(code) {
+      const p = state.products.find(x => x.code === code);
+      return p ? p.name : (code || 'Produit non défini');
+    }
+
+    function renderDriverPage() {
+      if (!state.currentDriver) {
+        console.error('Aucun chauffeur connecté');
+        driverOrdersList.innerHTML = '<div class="item"><small>Erreur: Aucun chauffeur connecté.</small></div>';
+        return;
+      }
+
+      console.log('=== RENDER DRIVER PAGE ===');
+      console.log('Chauffeur:', state.currentDriver);
+      console.log('Toutes les commandes:', state.orders);
+
+      driverWelcome.textContent = `Bonjour ${state.currentDriver.first}`;
+      driverInfo.textContent = `Vos livraisons du jour`;
+
+      // Récupérer toutes les commandes pour ce chauffeur
+      const myOrders = state.orders.filter(o => o.driver === state.currentDriver.id);
+      console.log('Mes commandes filtrées:', myOrders);
+
+      // Créer une ligne par rotation
+      currentDeliveries = [];
+      myOrders.forEach(order => {
+        const rotations = Number(order.rotations) || 1;
+        console.log(`Commande ${order.id}: ${rotations} rotation(s)`);
+        for (let i = 1; i <= rotations; i++) {
+          currentDeliveries.push({
+            orderId: order.id,
+            rotationNum: i,
+            totalRotations: rotations,
+            client: order.client,
+            address: order.address,
+            qty: order.qty,
+            product: order.product,
+            status: order.status,
+            date: order.date,
+            phone: order.phone,
+            montant: order.montant,
+            signed: false
+          });
+        }
+      });
+
+      console.log('Livraisons générées:', currentDeliveries);
+
+      if (currentDeliveries.length === 0) {
+        driverOrdersList.innerHTML = '<div class="item"><small>Aucune livraison aujourd\'hui.</small></div>';
+        driverOrderDetail.innerHTML = '<div style="font-size:12px;color:var(--muted);">Aucune commande assignée.</div>';
+        return;
+      }
+
+      // Afficher les livraisons
+      driverOrdersList.innerHTML = currentDeliveries.map((d, idx) => `
+        <button class="driver-order-btn" onclick="selectDelivery(${idx})" style="width:100%;text-align:left;background:transparent;border:none;padding:0;cursor:pointer;">
+          <div class="item" style="transition:all 0.2s;">
+            <div class="item-top">
+              <strong>${d.client}</strong>
+              <span class="badge ${d.signed ? 'ok' : 'wait'}">Rotation ${d.rotationNum}/${d.totalRotations}</span>
+            </div>
+            <small>${d.address}</small>
+            <small>${productLabelFromCode(d.product)} - ${d.qty || ''}</small>
+          </div>
+        </button>
+      `).join('');
+
+      console.log('Affichage HTML mis à jour');
+    }
+
+    function selectDelivery(idx) {
+      console.log('Sélection de la livraison index:', idx);
+      if (idx < 0 || idx >= currentDeliveries.length) {
+        console.error('Index invalide:', idx);
+        return;
+      }
+
+      const delivery = currentDeliveries[idx];
+      console.log('Livraison sélectionnée:', delivery);
+      selectedRotation = delivery;
+
+      driverOrderDetail.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div><strong>Client :</strong> ${delivery.client}</div>
+          <div><strong>Téléphone :</strong> ${delivery.phone || 'Non renseigné'}</div>
+          <div><strong>Adresse :</strong> ${delivery.address}</div>
+          <div><strong>Produit :</strong> ${productLabelFromCode(delivery.product)}</div>
+          <div><strong>Quantité :</strong> ${delivery.qty || 'Non renseignée'}</div>
+          <div><strong>Montant :</strong> ${delivery.montant ? euroShort(delivery.montant) : 'Non renseigné'}</div>
+          <div><strong>Rotation :</strong> ${delivery.rotationNum} sur ${delivery.totalRotations}</div>
+          <div><strong>Date :</strong> ${delivery.date || 'Non renseignée'}</div>
+          <div><strong>Statut :</strong> ${delivery.status}</div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:12px;width:100%;" onclick="openSignatureModal()">
+          Signer cette livraison
+        </button>
+      `;
+    }
+
+    function openSignatureModal() {
+      if (!selectedRotation) {
+        alert('Veuillez sélectionner une livraison d\'abord.');
+        return;
+      }
+      signatureRotationNum.textContent = `${selectedRotation.rotationNum}/${selectedRotation.totalRotations}`;
+      signatureClient.textContent = selectedRotation.client;
+      signatureModal.style.display = 'flex';
+      signaturePreview.textContent = '';
+    }
+
+    closeSignature.addEventListener('click', () => {
+      signatureModal.style.display = 'none';
+    });
+
+    validateSignature.addEventListener('click', () => {
+      if (!selectedRotation) return;
+      signaturePreview.textContent = `✓ Livraison rotation ${selectedRotation.rotationNum} signée avec succès !`;
+      selectedRotation.signed = true;
+
+      setTimeout(() => {
+        signatureModal.style.display = 'none';
+        renderDriverPage();
+      }, 1500);
+    });
 
     function renderAll() {
       renderManagerDashboard();
