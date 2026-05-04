@@ -2348,12 +2348,20 @@
         });
       });
 
+      // Chauffeur : alimenter "Camion attribué" de la fiche chauffeur
       const fleetOptions = ['<option value="">Sans camion</option>']
         .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} · ${v.brand}</option>`));
       driverTruck.innerHTML = fleetOptions.join('');
 
-      // mise à jour du sélecteur chauffeur côté login
-      driverSelect.innerHTML = state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+      // Login chauffeur : liste tous les chauffeurs paramétrés
+      driverSelect.innerHTML = state.drivers
+        .map(d => `<option value="${d.id}">${d.name}</option>`)
+        .join('');
+
+      // Formulaire "Créer une commande" : liste déroulante des chauffeurs
+      orderDriver.innerHTML = ['<option value="">Sans chauffeur</option>']
+        .concat(state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`))
+        .join('');
     }
 
     newDriverBtn.addEventListener('click', () => {
@@ -2440,7 +2448,7 @@
         });
       });
 
-      // Camion = uniquement immatriculations dans le formulaire de commande
+      // Formulaire commande : Camion = uniquement immatriculations
       orderTruck.innerHTML  = ['<option value="">Sans camion</option>']
         .concat(state.fleet.map(v => `<option value="${v.plate}">${v.plate}</option>`))
         .join('');
@@ -2504,7 +2512,8 @@
         renderDrivers();
       }
     });
-          function renderProducts() {
+
+    function renderProducts() {
       productsList.innerHTML = state.products.map(p => `
         <button class="driver-order-btn" data-code="${p.code}">
           <div class="item">
@@ -2531,7 +2540,6 @@
         });
       });
 
-      // Alimente la liste déroulante produit dans le formulaire de commande
       orderProduct.innerHTML = ['<option value="">Sans produit</option>']
         .concat(state.products.map(p => `<option value="${p.code}">${p.code} · ${p.name}</option>`))
         .join('');
@@ -2654,8 +2662,7 @@
         renderSites();
       }
     });
-
-    function renderRecapDay() {
+          function renderRecapDay() {
       const today = (new Date()).toISOString().slice(0,10);
       const ordersToday = state.orders.filter(o => (o.date || '').startsWith(today.slice(0,7)));
       const ca = ordersToday.reduce((sum,o)=>sum+Number(o.montant||0),0);
@@ -3108,8 +3115,7 @@
     });
 
     function initLandingDrivers() {
-      // Fonction déjà existante dans le code original (si présente)
-      // laissée telle quelle ou vide si non nécessaire pour la démo
+      // laissé vide pour la démo
     }
 
     function renderAll() {
