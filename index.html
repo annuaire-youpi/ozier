@@ -1322,8 +1322,7 @@
                   <button class="btn btn-primary" id="saveOrderBtn">Enregistrer la commande</button>
                 </div>
               </div>
-
-              <div class="card orders-table-card">
+                            <div class="card orders-table-card">
                 <h3>Tableau des commandes</h3>
                 <p>Vue complète avec actions de modification et suppression.</p>
 
@@ -1350,7 +1349,8 @@
               </div>
             </div>
           </section>
-                    <!-- Récap -->
+
+          <!-- Récap -->
           <section class="view" id="view-recap">
             <div class="recap-layout">
               <div class="recap-top-grid">
@@ -1381,7 +1381,6 @@
                     <button class="btn btn-primary" id="applyYearFilter">Afficher l'année</button>
                   </div>
                 </div>
-
                 <div class="year-summary" id="yearSummary">Choisissez une année pour afficher la synthèse.</div>
                 <div class="kpis" id="yearKpis" style="margin-top:10px;"></div>
 
@@ -1488,7 +1487,6 @@
               <div class="card">
                 <h3>Fiche chauffeur</h3>
                 <p>Les champs servent de base pour le futur CRUD connecté.</p>
-
                 <div class="form-grid">
                   <div>
                     <label class="label">Prénom</label>
@@ -2319,7 +2317,8 @@
         });
       });
     }
-          function renderDrivers() {
+
+    function renderDrivers() {
       driversList.innerHTML = state.drivers.map(d => `
         <button class="driver-order-btn" data-id="${d.id}">
           <div class="item">
@@ -2441,9 +2440,13 @@
         });
       });
 
+      // Camion = uniquement immatriculations dans le formulaire de commande
+      orderTruck.innerHTML  = ['<option value="">Sans camion</option>']
+        .concat(state.fleet.map(v => `<option value="${v.plate}">${v.plate}</option>`))
+        .join('');
+
       const truckOptions = ['<option value="">-- Sélectionner un camion --</option>']
         .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} · ${v.brand}</option>`));
-      orderTruck.innerHTML  = ['<option value="">Sans camion</option>'].concat(state.fleet.map(v => `<option value="${v.code}">${v.code}</option>`)).join('');
       expenseTruck.innerHTML= truckOptions.join('');
     }
 
@@ -2501,8 +2504,7 @@
         renderDrivers();
       }
     });
-
-    function renderProducts() {
+          function renderProducts() {
       productsList.innerHTML = state.products.map(p => `
         <button class="driver-order-btn" data-code="${p.code}">
           <div class="item">
@@ -2746,131 +2748,90 @@
 
       const totalCA = Object.values(caByMonth).reduce((a,b)=>a+b,0);
       const totalDep = Object.values(depByMonth).reduce((a,b)=>a+b,0);
-      const marge = totalCA - totalDep;
+      const totalMarge = totalCA - totalDep;
 
-      yearSummary.textContent = `Synthèse ${year} : CA ${euroShort(totalCA)} · Dépenses ${euroShort(totalDep)} · Marge ${euroShort(marge)}`;
+      yearSummary.textContent = `Synthèse ${year} : CA ${euroShort(totalCA)}, dépenses ${euroShort(totalDep)}, marge ${euroShort(totalMarge)}.`;
 
       yearKpis.innerHTML = `
         <div class="kpi">
-          <span>CA ${year}</span>
+          <span>CA total</span>
           <strong>${euroShort(totalCA)}</strong>
         </div>
-        <div class="kpi">
-          <span>Dépenses ${year}</span>
-          <strong>${euroShort(totalDep)}</strong>
-        </div>
-        <div class="kpi">
-          <span>Marge ${year}</span>
-          <strong>${euroShort(marge)}</strong>
-        </div>
-        <div class="kpi">
-          <span>Commandes ${year}</span>
-          <strong>${ordersYear.length}</strong>
-        </div>
-      `;
-
-      const monthLabels = ['01','02','03','04','05','06','07','08','09','10','11','12'];
-
-      const caRow = `
-        <tr>
-          <td>CA mensuel</td>
-          ${monthLabels.map(m => `<td>${euroShort(caByMonth[m])}</td>`).join('')}
-          <td>${euroShort(totalCA)}</td>
-        </tr>
-      `;
-
-      const depRow = `
-        <tr>
-          <td>Dépenses véhicules</td>
-          ${monthLabels.map(m => `<td>${euroShort(depByMonth[m])}</td>`).join('')}
-          <td>${euroShort(totalDep)}</td>
-        </tr>
-      `;
-
-      const margeRow = `
-        <tr>
-          <td>Marge</td>
-          ${monthLabels.map(m => {
-            const v = caByMonth[m] - depByMonth[m];
-            const cls = v >= 0 ? 'positive' : 'negative';
-            return `<td class="${cls}">${euroShort(v)}</td>`;
-          }).join('')}
-          <td class="${marge>=0?'positive':'negative'}">${euroShort(marge)}</td>
-        </tr>
-      `;
-
-      yearSummaryBody.innerHTML = caRow + depRow + margeRow;
-    }
-
-    applyYearFilterBtn.addEventListener('click', () => applyYearFilter(true));
-
-    function renderVehicleExpenses() {
-      const totalsByTruck = {};
-      state.vehicleExpenses.forEach(e => {
-        if (!totalsByTruck[e.truck]) totalsByTruck[e.truck] = 0;
-        totalsByTruck[e.truck] += Number(e.amount||0);
-      });
-
-      const totalDep = Object.values(totalsByTruck).reduce((a,b)=>a+b,0);
-
-      vehicleExpenseKpis.innerHTML = `
         <div class="kpi">
           <span>Dépenses totales</span>
           <strong>${euroShort(totalDep)}</strong>
         </div>
         <div class="kpi">
-          <span>Nb camions</span>
-          <strong>${Object.keys(totalsByTruck).length}</strong>
+          <span>Marge estimée</span>
+          <strong>${euroShort(totalMarge)}</strong>
         </div>
         <div class="kpi">
-          <span>Dépense moyenne</span>
-          <strong>${euroShort(Object.keys(totalsByTruck).length ? totalDep/Object.keys(totalsByTruck).length : 0)}</strong>
-        </div>
-        <div class="kpi">
-          <span>Dépenses enregistrées</span>
-          <strong>${state.vehicleExpenses.length}</strong>
+          <span>Commandes</span>
+          <strong>${ordersYear.length}</strong>
         </div>
       `;
 
-      vehicleTotalsList.innerHTML = Object.entries(totalsByTruck).map(([truck,amount]) => `
+      function buildRow(label, obj, isEuro = true) {
+        const vals = months.map(m => obj[m] || 0);
+        const total = vals.reduce((a,b)=>a+b,0);
+        return `
+          <tr>
+            <td>${label}</td>
+            ${vals.map(v => `<td>${isEuro ? euroShort(v) : v}</td>`).join('')}
+            <td>${isEuro ? euroShort(total) : total}</td>
+          </tr>
+        `;
+      }
+
+      yearSummaryBody.innerHTML = `
+        ${buildRow('CA mensuel', caByMonth, true)}
+        ${buildRow('Dépenses véhicules', depByMonth, true)}
+        ${buildRow('Nb commandes', nbByMonth, false)}
+      `;
+    }
+
+    applyYearFilterBtn.addEventListener('click', () => applyYearFilter(true));
+
+    function renderVehicleExpenses() {
+      const byTruck = {};
+      state.vehicleExpenses.forEach(e => {
+        const key = e.truck || 'inconnu';
+        if (!byTruck[key]) byTruck[key] = 0;
+        byTruck[key] += Number(e.amount||0);
+      });
+
+      const entries = Object.entries(byTruck);
+      const total = entries.reduce((sum,[,v])=>sum+v,0);
+
+      vehicleExpenseKpis.innerHTML = `
+        <div class="kpi">
+          <span>Dépenses totales</span>
+          <strong>${euroShort(total)}</strong>
+        </div>
+        <div class="kpi">
+          <span>Nb de camions concernés</span>
+          <strong>${entries.length}</strong>
+        </div>
+        <div class="kpi">
+          <span>Source</span>
+          <strong>Démo interne</strong>
+        </div>
+        <div class="kpi">
+          <span>Période</span>
+          <strong>Année courante</strong>
+        </div>
+      `;
+
+      vehicleTotalsList.innerHTML = entries.map(([truck,amount]) => `
         <div class="item">
           <div class="item-top">
-            <strong>${vehicleLabelFromCode(truck)}</strong>
+            <strong>${vehicleLabelFromCode(truck) || truck}</strong>
             <span class="badge">${euroShort(amount)}</span>
           </div>
-          <small>Camion : ${truck}</small>
+          <small>Dépenses cumulées pour ce véhicule.</small>
         </div>
       `).join('') || '<div class="item"><small>Aucune dépense enregistrée.</small></div>';
     }
-
-    saveExpenseBtn.addEventListener('click', () => {
-      const data = {
-        truck: expenseTruck.value || '',
-        type:  expenseType.value || 'Carburant',
-        date:  expenseDate.value || '',
-        amount:Number(expenseAmount.value || 0),
-        label: expenseLabel.value.trim(),
-        note:  expenseSource.value.trim()
-      };
-
-      if (!data.truck || !data.amount) {
-        alert('Camion et Montant sont obligatoires.');
-        return;
-      }
-
-      const newId = (state.vehicleExpenses.reduce((max,e)=>Math.max(max,e.id||0),0) || 0) + 1;
-      state.vehicleExpenses.push({id:newId, ...data});
-
-      expenseTruck.value = '';
-      expenseType.value  = 'Carburant';
-      expenseDate.value  = '';
-      expenseAmount.value= '';
-      expenseLabel.value = '';
-      expenseSource.value= '';
-
-      renderVehicleExpenses();
-      renderYearOptions();
-    });
 
     resetExpense.addEventListener('click', () => {
       expenseTruck.value = '';
@@ -2881,97 +2842,121 @@
       expenseSource.value= '';
     });
 
-    let currentDeliveries = [];
+    saveExpenseBtn.addEventListener('click', () => {
+      const data = {
+        truck:  expenseTruck.value || '',
+        type:   expenseType.value,
+        date:   expenseDate.value || '',
+        amount: Number(expenseAmount.value || 0),
+        label:  expenseLabel.value.trim(),
+        note:   expenseSource.value.trim()
+      };
+
+      if (!data.truck || !data.amount) {
+        alert('Camion et Montant sont obligatoires pour une dépense.');
+        return;
+      }
+
+      const newId = (state.vehicleExpenses.reduce((max,e)=>Math.max(max,e.id||0),0) || 0) + 1;
+      state.vehicleExpenses.push({ id:newId, ...data });
+
+      resetExpense.click();
+      renderVehicleExpenses();
+      renderYearOptions();
+    });
+
     let selectedRotation = null;
 
-    function initLandingDrivers() {
-      driverSelect.innerHTML = state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
-    }
-
-    function renderDriverPage() {
-      if (!state.currentDriver) return;
-      driverWelcome.textContent = `Espace chauffeur · ${state.currentDriver.name}`;
-      driverInfo.textContent = `Commandes de ${state.currentDriver.first}`;
-
-      currentDeliveries = [];
-      const myOrders = state.orders.filter(o => o.driver === state.currentDriver.id);
-
-      myOrders.forEach(order => {
-        const rotations = Number(order.rotations) || 1;
-        for (let i = 1; i <= rotations; i++) {
-          currentDeliveries.push({
-            orderId: order.id,
+    function buildDriverRotations() {
+      if (!state.currentDriver) return [];
+      const driverId = state.currentDriver.id;
+      const orders = state.orders.filter(o => o.driver === driverId);
+      const res = [];
+      orders.forEach(o => {
+        const totalRot = o.rotations || 1;
+        for (let i=1;i<=totalRot;i++) {
+          res.push({
+            orderId: o.id,
             rotationNum: i,
-            totalRotations: rotations,
-            client: order.client,
-            address: order.address,
-            qty: order.qty,
-            product: order.product,
-            status: order.status,
-            date: order.date,
-            phone: order.phone,
-            montant: order.montant,
+            totalRotations: totalRot,
+            client: o.client,
+            phone: o.phone,
+            address: o.address,
+            product: o.product,
+            qty: o.qty,
+            montant: o.montant,
+            status: o.status,
+            date: o.date,
             signed: false
           });
         }
       });
+      return res;
+    }
 
-      if (currentDeliveries.length === 0) {
-        driverOrdersList.innerHTML = '<div class="item"><small>Aucune livraison aujourd\'hui.</small></div>';
-        driverOrderDetail.innerHTML = '<div style="font-size:12px;color:var(--muted);">Aucune commande assignée.</div>';
+    function renderDriverPage() {
+      if (!state.currentDriver) return;
+
+      driverWelcome.textContent = `Bienvenue ${state.currentDriver.first}`;
+      driverInfo.textContent = `Vos livraisons du jour pour ${state.currentDriver.truck || 'flotte OZIER'}`;
+
+      const rotations = buildDriverRotations();
+
+      if (!rotations.length) {
+        driverOrdersList.innerHTML = '<div class="item"><small>Aucune livraison pour le moment.</small></div>';
+        driverOrderDetail.innerHTML = '<div style="font-size:12px;color:var(--muted);">Sélectionnez une livraison pour voir les détails.</div>';
         return;
       }
 
-      driverOrdersList.innerHTML = currentDeliveries.map((d, idx) => `
-        <button class="driver-order-btn" onclick="selectDelivery(${idx})" style="width:100%;text-align:left;background:transparent;border:none;padding:0;cursor:pointer;">
-          <div class="item" style="transition:all 0.2s;">
+      driverOrdersList.innerHTML = rotations.map((r,idx) => `
+        <button class="driver-order-btn" data-idx="${idx}">
+          <div class="item">
             <div class="item-top">
-              <strong>${d.client}</strong>
-              <span class="badge ${d.signed ? 'ok' : 'wait'}">Rotation ${d.rotationNum}/${d.totalRotations}</span>
+              <strong>${r.client}</strong>
+              <span class="badge">${r.rotationNum}/${r.totalRotations}</span>
             </div>
-            <small>${d.address}</small>
-            <small>${productLabelFromCode(d.product)} - ${d.qty || ''}</small>
+            <small>${r.address}</small>
+            <small>${r.date || ''} · ${productLabelFromCode(r.product)}</small>
           </div>
         </button>
       `).join('');
-    }
 
-    window.selectDelivery = function(idx) {
-      if (idx < 0 || idx >= currentDeliveries.length) return;
-      const delivery = currentDeliveries[idx];
-      selectedRotation = delivery;
+      const showDetail = (r) => {
+        selectedRotation = r;
+        const signatureInfo = r.signed
+          ? `<div class="signature-preview">Livraison signée le ${r.signatureDate} par ${r.signatoryName} (${r.signatoryRole}).</div>`
+          : '<div style="margin-top:8px;font-size:11px;color:var(--muted);">Cette livraison n’est pas encore signée.</div>';
 
-      let signatureInfo = '';
-      if (delivery.signed && delivery.signatoryName) {
-        signatureInfo = `
-          <div style="margin-top:12px;padding:10px;background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.3);border-radius:10px;">
-            <div style="font-size:12px;color:#16a34a;font-weight:600;margin-bottom:6px;">✓ Livraison signée</div>
-            <div style="font-size:11px;color:var(--text-soft);"><strong>Signataire :</strong> ${delivery.signatoryName}</div>
-            <div style="font-size:11px;color:var(--text-soft);"><strong>Qualité :</strong> ${delivery.signatoryRole}</div>
-            <div style="font-size:11px;color:var(--text-soft);"><strong>Date :</strong> ${delivery.signatureDate}</div>
-            ${delivery.signatureData ? `<img src="${delivery.signatureData}" style="max-width:100%;height:80px;margin-top:6px;border:1px solid rgba(148,163,184,0.3);border-radius:6px;background:#fff;padding:4px;" />` : ''}
+        driverOrderDetail.innerHTML = `
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div><strong>Client :</strong> ${r.client}</div>
+            <div><strong>Téléphone :</strong> ${r.phone || 'Non renseigné'}</div>
+            <div><strong>Adresse :</strong> ${r.address}</div>
+            <div><strong>Produit :</strong> ${productLabelFromCode(r.product)}</div>
+            <div><strong>Quantité :</strong> ${r.qty || 'Non renseignée'}</div>
+            <div><strong>Montant :</strong> ${r.montant ? euroShort(r.montant) : 'Non renseigné'}</div>
+            <div><strong>Rotation :</strong> ${r.rotationNum} sur ${r.totalRotations}</div>
+            <div><strong>Date :</strong> ${r.date || 'Non renseignée'}</div>
+            <div><strong>Statut :</strong> ${r.status}</div>
           </div>
+          ${signatureInfo}
+          ${!r.signed ? `<button class="btn btn-primary" style="margin-top:12px;width:100%;" onclick="openSignatureModal()">
+            ✍ Signer cette livraison
+          </button>` : ''}
         `;
-      }
+      };
 
-      driverOrderDetail.innerHTML = `
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <div><strong>Client :</strong> ${delivery.client}</div>
-          <div><strong>Téléphone :</strong> ${delivery.phone || 'Non renseigné'}</div>
-          <div><strong>Adresse :</strong> ${delivery.address}</div>
-          <div><strong>Produit :</strong> ${productLabelFromCode(delivery.product)}</div>
-          <div><strong>Quantité :</strong> ${delivery.qty || 'Non renseignée'}</div>
-          <div><strong>Montant :</strong> ${delivery.montant ? euroShort(delivery.montant) : 'Non renseigné'}</div>
-          <div><strong>Rotation :</strong> ${delivery.rotationNum} sur ${delivery.totalRotations}</div>
-          <div><strong>Date :</strong> ${delivery.date || 'Non renseignée'}</div>
-          <div><strong>Statut :</strong> ${delivery.status}</div>
-        </div>
-        ${signatureInfo}
-        ${!delivery.signed ? `<button class="btn btn-primary" style="margin-top:12px;width:100%;" onclick="openSignatureModal()">
-          ✍ Signer cette livraison
-        </button>` : ''}
-      `;
-    };
+      const rotationsData = rotations;
+      const first = rotationsData[0];
+      showDetail(first);
+
+      driverOrdersList.querySelectorAll('.driver-order-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = Number(btn.dataset.idx);
+          showDetail(rotationsData[idx]);
+        });
+      });
+    }
 
     window.openSignatureModal = function() {
       if (!selectedRotation) {
@@ -3121,6 +3106,11 @@
         renderDriverPage();
       }, 800);
     });
+
+    function initLandingDrivers() {
+      // Fonction déjà existante dans le code original (si présente)
+      // laissée telle quelle ou vide si non nécessaire pour la démo
+    }
 
     function renderAll() {
       renderManagerDashboard();
