@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1084,44 +1082,6 @@
       }
     }
 
-    .driver-wrap {
-      border-radius:var(--radius-lg);
-      padding:18px;
-      background:linear-gradient(145deg,#ffffff,#e0f2fe);
-      border:1px solid rgba(148,163,184,0.4);
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      width:100%;
-    }
-
-    .driver-top {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:8px;
-    }
-
-    .driver-top h1 {
-      font-size:20px;
-      color:#111827;
-    }
-
-    .driver-top p {
-      font-size:12px;
-      color:var(--muted);
-    }
-
-    .driver-grid {
-      display:grid;
-      grid-template-columns:minmax(0,1.15fr) minmax(0,0.9fr);
-      gap:12px;
-    }
-
-    @media (max-width: 1100px) {
-      .driver-grid { grid-template-columns:1fr; }
-    }
-
     .signature-canvas-wrapper {
       margin-top: 12px;
       border: 2px dashed rgba(148,163,184,0.5);
@@ -1347,20 +1307,13 @@
                   </div>
 
                   <div>
-                    <label class="label">Statut</label>
-                    <select id="orderStatus" class="select">
-                      <option value="En attente">En attente</option>
-                      <option value="En cours">En cours</option>
-                      <option value="Livrée">Livrée</option>
-                    </select>
+                    <label class="label">Produit</label>
+                    <select id="orderProduct" class="select"></select>
                   </div>
 
-                  <div class="full">
-                    <label class="label">Source</label>
-                    <select id="orderSource" class="select">
-                      <option value="WhatsApp">WhatsApp</option>
-                      <option value="Téléphone">Téléphone</option>
-                    </select>
+                  <div>
+                    <label class="label">Nombre de rotation</label>
+                    <input id="orderRotations" class="input" type="number" min="1" step="1" placeholder="1">
                   </div>
                 </div>
 
@@ -1381,11 +1334,12 @@
                         <th>N°</th>
                         <th>Client</th>
                         <th>Chantier</th>
+                        <th>Produit</th>
+                        <th>Rotation</th>
                         <th>Qté</th>
                         <th>Montant</th>
                         <th>Statut</th>
                         <th>Chauffeur</th>
-                        <th>Source</th>
                         <th>Date</th>
                         <th>Actions</th>
                       </tr>
@@ -1396,8 +1350,7 @@
               </div>
             </div>
           </section>
-
-          <!-- Récap -->
+                    <!-- Récap -->
           <section class="view" id="view-recap">
             <div class="recap-layout">
               <div class="recap-top-grid">
@@ -1726,7 +1679,6 @@
               <div class="card">
                 <h3>Fiche chantier</h3>
                 <p>Chaque chantier contient l'entreprise, le gérant, le téléphone et l'adresse de livraison.</p>
-
                 <div class="form-grid">
                   <div>
                     <label class="label">Nom de l’entreprise</label>
@@ -1852,8 +1804,7 @@
       </div>
     </section>
   </div>
-
-  <script>
+    <script>
     const euro = v => (v || 0).toLocaleString('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0});
 
     const state = {
@@ -1924,7 +1875,6 @@
     const orderTruck   = document.getElementById('orderTruck');
     const orderDriver  = document.getElementById('orderDriver');
     const orderStatus  = document.getElementById('orderStatus');
-    const orderSource  = document.getElementById('orderSource');
     const orderProduct = document.getElementById('orderProduct');
     const orderRotations = document.getElementById('orderRotations');
 
@@ -2014,20 +1964,6 @@
       {code:'OZ-003', plate:'IJ-789-KL', brand:'Scania', model:'P-series', type:'Tracteur benne', year:2017, km:220000, status:'Maintenance', note:'Révision prévue'}
     ];
 
-    const initialOrders = [
-      {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1', qty:'12 tonnes', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean', status:'Livrée', source:'WhatsApp', product:'SABLE-10T', rotations:1},
-      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', source:'Téléphone', product:'GRAVIER-10T', rotations:2},
-      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', source:'WhatsApp', product:'SABLE-10T', rotations:3}
-    ];
-
-    const initialExpenses = [
-      {id:1, truck:'OZ-001', type:'Carburant', date:'2026-01-05', amount:150, label:'Plein GO', note:''},
-      {id:2, truck:'OZ-001', type:'Entretien', date:'2026-01-20', amount:320, label:'Vidange + filtres', note:'garage'},
-      {id:3, truck:'OZ-002', type:'Carburant', date:'2026-01-18', amount:130, label:'Plein GO', note:''},
-      {id:4, truck:'OZ-003', type:'Réparation', date:'2026-02-02', amount:450, label:'Freins arrière', note:'atelier'},
-      {id:5, truck:'OZ-001', type:'Autre', date:'2026-02-10', amount:200, label:'Pneu avant', note:'garage'}
-    ];
-
     const initialProducts = [
       {code:'SABLE-10T', name:'Sable 0/4 benne 10T', unit:'Tonne', price:150, note:'Produit démo'},
       {code:'GRAVIER-10T', name:'Gravier 10/20 benne 10T', unit:'Tonne', price:180, note:''}
@@ -2036,6 +1972,20 @@
     const initialSites = [
       {id:'chantier-morne-rouge', company:'Entreprise BTP B', manager:'M. DUPONT', phone:'0696 00 00 02', address:'Chantier Morne Rouge'},
       {id:'chantier-fdf', company:'Entreprise BTP C', manager:'Mme MARTIN', phone:'0696 00 00 03', address:'Chantier Fort-de-France'}
+    ];
+
+    const initialOrders = [
+      {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1', qty:'12 tonnes', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean', status:'Livrée', product:'SABLE-10T', rotations:1},
+      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', product:'GRAVIER-10T', rotations:2},
+      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', product:'SABLE-10T', rotations:3}
+    ];
+
+    const initialExpenses = [
+      {id:1, truck:'OZ-001', type:'Carburant', date:'2026-01-05', amount:150, label:'Plein GO', note:''},
+      {id:2, truck:'OZ-001', type:'Entretien', date:'2026-01-20', amount:320, label:'Vidange + filtres', note:'garage'},
+      {id:3, truck:'OZ-002', type:'Carburant', date:'2026-01-18', amount:130, label:'Plein GO', note:''},
+      {id:4, truck:'OZ-003', type:'Réparation', date:'2026-02-02', amount:450, label:'Freins arrière', note:'atelier'},
+      {id:5, truck:'OZ-001', type:'Autre', date:'2026-02-10', amount:200, label:'Pneu avant', note:'garage'}
     ];
 
     function initState() {
@@ -2231,49 +2181,6 @@
       `).join('');
     }
 
-    function renderOrdersTable() {
-      ordersTableBody.innerHTML = state.orders.map(o => `
-        <tr>
-          <td>${o.id}</td>
-          <td>${o.client}</td>
-          <td class="col-address">${o.address}</td>
-          <td>${o.qty}</td>
-          <td>${euroShort(o.montant)}</td>
-          <td>${o.status}</td>
-          <td>${driverLabelFromId(o.driver)}</td>
-          <td>${o.source}</td>
-          <td>${o.date || ''}</td>
-          <td>
-            <div class="order-actions">
-              <button class="btn-xs btn-edit" data-id="${o.id}">Modifier</button>
-              <button class="btn-xs btn-delete" data-id="${o.id}">Supprimer</button>
-            </div>
-          </td>
-        </tr>
-      `).join('') || `
-        <tr><td colspan="10">Aucune commande enregistrée.</td></tr>
-      `;
-
-      ordersTableBody.querySelectorAll('.btn-edit').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = Number(btn.dataset.id);
-          startEditOrder(id);
-        });
-      });
-
-      ordersTableBody.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = Number(btn.dataset.id);
-          if (confirm('Supprimer cette commande ?')) {
-            state.orders = state.orders.filter(o => o.id !== id);
-            renderOrdersTable();
-            renderManagerDashboard();
-            renderYearOptions();
-          }
-        });
-      });
-    }
-
     function driverLabelFromId(id) {
       const d = state.drivers.find(x => x.id === id);
       return d ? d.name : '';
@@ -2282,6 +2189,11 @@
     function vehicleLabelFromCode(code) {
       const v = state.fleet.find(x => x.code === code);
       return v ? `${v.code} · ${v.brand}` : (code || '');
+    }
+
+    function productLabelFromCode(code) {
+      const p = state.products.find(x => x.code === code);
+      return p ? `${p.code} · ${p.name}` : (code || '');
     }
 
     function resetOrderForm() {
@@ -2295,7 +2207,8 @@
       orderTruck.value   = '';
       orderDriver.value  = '';
       orderStatus.value  = 'En attente';
-      orderSource.value  = 'WhatsApp';
+      orderProduct.value = '';
+      orderRotations.value = '';
       orderFormTitle.textContent = 'Créer une commande';
       orderFormDesc.textContent  = 'Structure prête pour écrire ensuite dans Google Sheets.';
       orderEditBadge.classList.remove('show');
@@ -2314,7 +2227,8 @@
       orderTruck.value   = o.truck || '';
       orderDriver.value  = o.driver || '';
       orderStatus.value  = o.status || 'En attente';
-      orderSource.value  = o.source || 'WhatsApp';
+      orderProduct.value = o.product || '';
+      orderRotations.value = o.rotations || '';
 
       orderFormTitle.textContent = 'Modifier la commande';
       orderFormDesc.textContent  = 'Vous pouvez ajuster les informations puis enregistrer.';
@@ -2337,7 +2251,8 @@
         truck:   orderTruck.value || '',
         driver:  orderDriver.value || '',
         status:  orderStatus.value || 'En attente',
-        source:  orderSource.value || 'WhatsApp'
+        product: orderProduct.value || '',
+        rotations: Number(orderRotations.value || 1)
       };
 
       if (!data.client || !data.montant) {
@@ -2361,7 +2276,50 @@
       renderYearOptions();
     });
 
-    function renderDrivers() {
+    function renderOrdersTable() {
+      ordersTableBody.innerHTML = state.orders.map(o => `
+        <tr>
+          <td>${o.id}</td>
+          <td>${o.client}</td>
+          <td class="col-address">${o.address}</td>
+          <td>${productLabelFromCode(o.product)}</td>
+          <td>${o.rotations || 1}</td>
+          <td>${o.qty}</td>
+          <td>${euroShort(o.montant)}</td>
+          <td>${o.status}</td>
+          <td>${driverLabelFromId(o.driver)}</td>
+          <td>${o.date || ''}</td>
+          <td>
+            <div class="order-actions">
+              <button class="btn-xs btn-edit" data-id="${o.id}">Modifier</button>
+              <button class="btn-xs btn-delete" data-id="${o.id}">Supprimer</button>
+            </div>
+          </td>
+        </tr>
+      `).join('') || `
+        <tr><td colspan="11">Aucune commande enregistrée.</td></tr>
+      `;
+
+      ordersTableBody.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = Number(btn.dataset.id);
+          startEditOrder(id);
+        });
+      });
+
+      ordersTableBody.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = Number(btn.dataset.id);
+          if (confirm('Supprimer cette commande ?')) {
+            state.orders = state.orders.filter(o => o.id !== id);
+            renderOrdersTable();
+            renderManagerDashboard();
+            renderYearOptions();
+          }
+        });
+      });
+    }
+          function renderDrivers() {
       driversList.innerHTML = state.drivers.map(d => `
         <button class="driver-order-btn" data-id="${d.id}">
           <div class="item">
@@ -2394,6 +2352,9 @@
       const fleetOptions = ['<option value="">Sans camion</option>']
         .concat(state.fleet.map(v => `<option value="${v.code}">${v.code} · ${v.brand}</option>`));
       driverTruck.innerHTML = fleetOptions.join('');
+
+      // mise à jour du sélecteur chauffeur côté login
+      driverSelect.innerHTML = state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
     }
 
     newDriverBtn.addEventListener('click', () => {
@@ -2567,6 +2528,11 @@
           productNote.value  = p.note || '';
         });
       });
+
+      // Alimente la liste déroulante produit dans le formulaire de commande
+      orderProduct.innerHTML = ['<option value="">Sans produit</option>']
+        .concat(state.products.map(p => `<option value="${p.code}">${p.code} · ${p.name}</option>`))
+        .join('');
     }
 
     newProductBtn.addEventListener('click', () => {
@@ -2747,216 +2713,144 @@
 
     function applyYearFilter(showAlert = true) {
       const year = yearSelect.value;
-
       if (!year) {
-        yearSummary.textContent = 'Choisissez une année pour afficher la synthèse.';
-        yearKpis.innerHTML = '';
-        yearSummaryBody.innerHTML = '';
-        if (showAlert) alert('Choisissez une année.');
+        if (showAlert) alert("Aucune année disponible.");
         return;
       }
 
-      const initMonths = () => Array(13).fill(0);
+      const ordersYear = state.orders.filter(o => (o.date || '').startsWith(year));
+      const expensesYear = state.vehicleExpenses.filter(e => (e.date || '').startsWith(year));
 
-      const caMonths = initMonths();
-      const fuelMonths = initMonths();
-      const repairMonths = initMonths();
-      const insuranceMonths = initMonths();
-      const electricityMonths = initMonths();
+      const months = Array.from({length:12}, (_,i)=> (i+1).toString().padStart(2,'0'));
 
-      state.orders.forEach(o => {
-        if (!o.date) return;
-        const d = String(o.date);
-        if (!d.startsWith(year)) return;
+      const caByMonth = {};
+      const nbByMonth = {};
+      const depByMonth = {};
 
-        const m = parseInt(d.slice(5, 7), 10) - 1;
-        const amount = Number(o.montant || 0);
-
-        caMonths[m] += amount;
-        caMonths[12] += amount;
+      months.forEach(m => {
+        caByMonth[m] = 0;
+        nbByMonth[m] = 0;
+        depByMonth[m] = 0;
       });
 
-      state.vehicleExpenses.forEach(e => {
-        if (!e.date) return;
-        const d = String(e.date);
-        if (!d.startsWith(year)) return;
-
-        const m = parseInt(d.slice(5, 7), 10) - 1;
-        const amount = Number(e.amount || 0);
-        const type = String(e.type || '').trim().toLowerCase();
-        const label = String(e.label || '').trim().toLowerCase();
-        const note = String(e.note || '').trim().toLowerCase();
-        const fullText = `${type} ${label} ${note}`;
-
-        if (type === 'carburant') {
-          fuelMonths[m] += amount;
-          fuelMonths[12] += amount;
-          return;
-        }
-
-        if (
-          type === 'réparation' ||
-          type === 'reparation' ||
-          type === 'entretien' ||
-          fullText.includes('réparation') ||
-          fullText.includes('reparation') ||
-          fullText.includes('garage') ||
-          fullText.includes('vidange') ||
-          fullText.includes('pneu') ||
-          fullText.includes('frein') ||
-          fullText.includes('atelier') ||
-          fullText.includes('hydraulique')
-        ) {
-          repairMonths[m] += amount;
-          repairMonths[12] += amount;
-          return;
-        }
-
-        if (type === 'assurance' || fullText.includes('assurance')) {
-          insuranceMonths[m] += amount;
-          insuranceMonths[12] += amount;
-          return;
-        }
-
-        if (
-          type === 'électricité' ||
-          type === 'electricite' ||
-          fullText.includes('électricité') ||
-          fullText.includes('electricite') ||
-          fullText.includes('edf') ||
-          fullText.includes('courant')
-        ) {
-          electricityMonths[m] += amount;
-          electricityMonths[12] += amount;
-          return;
-        }
-
-        repairMonths[m] += amount;
-        repairMonths[12] += amount;
+      ordersYear.forEach(o => {
+        const m = o.date.slice(5,7);
+        caByMonth[m] += Number(o.montant||0);
+        nbByMonth[m] += 1;
       });
 
-      const totalExpensesMonths = initMonths();
-      const marginMonths = initMonths();
+      expensesYear.forEach(e => {
+        const m = e.date.slice(5,7);
+        depByMonth[m] += Number(e.amount||0);
+      });
 
-      for (let i = 0; i < 13; i++) {
-        totalExpensesMonths[i] =
-          (fuelMonths[i] || 0) +
-          (repairMonths[i] || 0) +
-          (insuranceMonths[i] || 0) +
-          (electricityMonths[i] || 0);
+      const totalCA = Object.values(caByMonth).reduce((a,b)=>a+b,0);
+      const totalDep = Object.values(depByMonth).reduce((a,b)=>a+b,0);
+      const marge = totalCA - totalDep;
 
-        marginMonths[i] = (caMonths[i] || 0) - totalExpensesMonths[i];
-      }
+      yearSummary.textContent = `Synthèse ${year} : CA ${euroShort(totalCA)} · Dépenses ${euroShort(totalDep)} · Marge ${euroShort(marge)}`;
 
-      const totalCaYear = caMonths[12] || 0;
-      const totalDepYear = totalExpensesMonths[12] || 0;
-      const margeYear = marginMonths[12] || 0;
-
-      yearKpis.innerHTML = [
-        ['CA annuel', euro(totalCaYear)],
-        ['Total dépenses', euro(totalDepYear)],
-        ['Marge', euro(margeYear)],
-        ['Année affichée', year]
-      ].map(k => `
+      yearKpis.innerHTML = `
         <div class="kpi">
-          <span>${k[0]}</span>
-          <strong>${k[1]}</strong>
+          <span>CA ${year}</span>
+          <strong>${euroShort(totalCA)}</strong>
         </div>
-      `).join('');
+        <div class="kpi">
+          <span>Dépenses ${year}</span>
+          <strong>${euroShort(totalDep)}</strong>
+        </div>
+        <div class="kpi">
+          <span>Marge ${year}</span>
+          <strong>${euroShort(marge)}</strong>
+        </div>
+        <div class="kpi">
+          <span>Commandes ${year}</span>
+          <strong>${ordersYear.length}</strong>
+        </div>
+      `;
 
-      yearSummary.textContent =
-        `Synthèse ${year} · CA ${euro(totalCaYear)} · Dépenses ${euro(totalDepYear)} · Marge ${euro(margeYear)}.`;
+      const monthLabels = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 
-      const monthsRow = (label, arr, className = '') => `
+      const caRow = `
         <tr>
-          <td>${label}</td>
-          ${Array.from({ length: 12 }, (_, i) => `<td class="${className}">${euro(arr[i] || 0)}</td>`).join('')}
-          <td class="${className}">${euro(arr[12] || 0)}</td>
+          <td>CA mensuel</td>
+          ${monthLabels.map(m => `<td>${euroShort(caByMonth[m])}</td>`).join('')}
+          <td>${euroShort(totalCA)}</td>
         </tr>
       `;
 
-      const noData =
-        totalCaYear === 0 &&
-        fuelMonths[12] === 0 &&
-        repairMonths[12] === 0 &&
-        insuranceMonths[12] === 0 &&
-        electricityMonths[12] === 0;
-
-      if (noData) {
-        yearSummaryBody.innerHTML = `<tr><td colspan="14">Aucune donnée sur ${year}.</td></tr>`;
-        return;
-      }
-
-      yearSummaryBody.innerHTML = `
-        ${monthsRow('Chiffre d\'affaires', caMonths, 'positive')}
-        ${monthsRow('Frais essence globaux', fuelMonths)}
-        ${monthsRow('Réparations globales', repairMonths)}
-        ${monthsRow('Assurance', insuranceMonths)}
-        ${monthsRow('Électricité', electricityMonths)}
-        ${monthsRow('Marge (CA - Dépenses)', marginMonths, marginMonths[12] < 0 ? 'negative' : 'positive')}
+      const depRow = `
+        <tr>
+          <td>Dépenses véhicules</td>
+          ${monthLabels.map(m => `<td>${euroShort(depByMonth[m])}</td>`).join('')}
+          <td>${euroShort(totalDep)}</td>
+        </tr>
       `;
+
+      const margeRow = `
+        <tr>
+          <td>Marge</td>
+          ${monthLabels.map(m => {
+            const v = caByMonth[m] - depByMonth[m];
+            const cls = v >= 0 ? 'positive' : 'negative';
+            return `<td class="${cls}">${euroShort(v)}</td>`;
+          }).join('')}
+          <td class="${marge>=0?'positive':'negative'}">${euroShort(marge)}</td>
+        </tr>
+      `;
+
+      yearSummaryBody.innerHTML = caRow + depRow + margeRow;
     }
 
     applyYearFilterBtn.addEventListener('click', () => applyYearFilter(true));
 
     function renderVehicleExpenses() {
-      const totals = {};
+      const totalsByTruck = {};
       state.vehicleExpenses.forEach(e => {
-        const key = e.truck || 'Autre';
-        if (!totals[key]) totals[key] = 0;
-        totals[key] += Number(e.amount || 0);
+        if (!totalsByTruck[e.truck]) totalsByTruck[e.truck] = 0;
+        totalsByTruck[e.truck] += Number(e.amount||0);
       });
-      const entries = Object.entries(totals).sort((a,b)=>b[1]-a[1]);
 
-      const totalAll = entries.reduce((sum, [,v])=>sum+v,0);
+      const totalDep = Object.values(totalsByTruck).reduce((a,b)=>a+b,0);
 
       vehicleExpenseKpis.innerHTML = `
         <div class="kpi">
           <span>Dépenses totales</span>
-          <strong>${euroShort(totalAll)}</strong>
+          <strong>${euroShort(totalDep)}</strong>
         </div>
         <div class="kpi">
-          <span>Nb camions concernés</span>
-          <strong>${entries.length}</strong>
+          <span>Nb camions</span>
+          <strong>${Object.keys(totalsByTruck).length}</strong>
         </div>
         <div class="kpi">
-          <span>Dépense moyenne / camion</span>
-          <strong>${euroShort(entries.length ? totalAll/entries.length : 0)}</strong>
+          <span>Dépense moyenne</span>
+          <strong>${euroShort(Object.keys(totalsByTruck).length ? totalDep/Object.keys(totalsByTruck).length : 0)}</strong>
         </div>
         <div class="kpi">
-          <span>Source</span>
-          <strong>Démo interne</strong>
+          <span>Dépenses enregistrées</span>
+          <strong>${state.vehicleExpenses.length}</strong>
         </div>
       `;
 
-      vehicleTotalsList.innerHTML = entries.map(([truck,amount]) => `
+      vehicleTotalsList.innerHTML = Object.entries(totalsByTruck).map(([truck,amount]) => `
         <div class="item">
           <div class="item-top">
             <strong>${vehicleLabelFromCode(truck)}</strong>
             <span class="badge">${euroShort(amount)}</span>
           </div>
-          <small>Dépenses cumulées pour ce véhicule.</small>
+          <small>Camion : ${truck}</small>
         </div>
       `).join('') || '<div class="item"><small>Aucune dépense enregistrée.</small></div>';
     }
 
-    resetExpense.addEventListener('click', () => {
-      expenseTruck.value  = '';
-      expenseType.value   = 'Carburant';
-      expenseDate.value   = '';
-      expenseAmount.value = '';
-      expenseLabel.value  = '';
-      expenseSource.value = '';
-    });
-
     saveExpenseBtn.addEventListener('click', () => {
       const data = {
-        truck:  expenseTruck.value || '',
-        type:   expenseType.value || 'Carburant',
-        date:   expenseDate.value || '',
-        amount: Number(expenseAmount.value || 0),
-        label:  expenseLabel.value.trim(),
-        note:   expenseSource.value.trim()
+        truck: expenseTruck.value || '',
+        type:  expenseType.value || 'Carburant',
+        date:  expenseDate.value || '',
+        amount:Number(expenseAmount.value || 0),
+        label: expenseLabel.value.trim(),
+        note:  expenseSource.value.trim()
       };
 
       if (!data.truck || !data.amount) {
@@ -2965,48 +2859,45 @@
       }
 
       const newId = (state.vehicleExpenses.reduce((max,e)=>Math.max(max,e.id||0),0) || 0) + 1;
-      state.vehicleExpenses.push({ id:newId, ...data });
+      state.vehicleExpenses.push({id:newId, ...data});
 
-      resetExpense.click();
+      expenseTruck.value = '';
+      expenseType.value  = 'Carburant';
+      expenseDate.value  = '';
+      expenseAmount.value= '';
+      expenseLabel.value = '';
+      expenseSource.value= '';
+
       renderVehicleExpenses();
       renderYearOptions();
     });
+
+    resetExpense.addEventListener('click', () => {
+      expenseTruck.value = '';
+      expenseType.value  = 'Carburant';
+      expenseDate.value  = '';
+      expenseAmount.value= '';
+      expenseLabel.value = '';
+      expenseSource.value= '';
+    });
+
+    let currentDeliveries = [];
+    let selectedRotation = null;
 
     function initLandingDrivers() {
       driverSelect.innerHTML = state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
     }
 
-    let currentDeliveries = [];
-    let selectedRotation = null;
-
-    function productLabelFromCode(code) {
-      const p = state.products.find(x => x.code === code);
-      return p ? p.name : (code || 'Produit non défini');
-    }
-
     function renderDriverPage() {
-      if (!state.currentDriver) {
-        console.error('Aucun chauffeur connecté');
-        driverOrdersList.innerHTML = '<div class="item"><small>Erreur: Aucun chauffeur connecté.</small></div>';
-        return;
-      }
+      if (!state.currentDriver) return;
+      driverWelcome.textContent = `Espace chauffeur · ${state.currentDriver.name}`;
+      driverInfo.textContent = `Commandes de ${state.currentDriver.first}`;
 
-      console.log('=== RENDER DRIVER PAGE ===');
-      console.log('Chauffeur:', state.currentDriver);
-      console.log('Toutes les commandes:', state.orders);
-
-      driverWelcome.textContent = `Bonjour ${state.currentDriver.first}`;
-      driverInfo.textContent = `Vos livraisons du jour`;
-
-      // Récupérer toutes les commandes pour ce chauffeur
-      const myOrders = state.orders.filter(o => o.driver === state.currentDriver.id);
-      console.log('Mes commandes filtrées:', myOrders);
-
-      // Créer une ligne par rotation
       currentDeliveries = [];
+      const myOrders = state.orders.filter(o => o.driver === state.currentDriver.id);
+
       myOrders.forEach(order => {
         const rotations = Number(order.rotations) || 1;
-        console.log(`Commande ${order.id}: ${rotations} rotation(s)`);
         for (let i = 1; i <= rotations; i++) {
           currentDeliveries.push({
             orderId: order.id,
@@ -3025,15 +2916,12 @@
         }
       });
 
-      console.log('Livraisons générées:', currentDeliveries);
-
       if (currentDeliveries.length === 0) {
         driverOrdersList.innerHTML = '<div class="item"><small>Aucune livraison aujourd\'hui.</small></div>';
         driverOrderDetail.innerHTML = '<div style="font-size:12px;color:var(--muted);">Aucune commande assignée.</div>';
         return;
       }
 
-      // Afficher les livraisons
       driverOrdersList.innerHTML = currentDeliveries.map((d, idx) => `
         <button class="driver-order-btn" onclick="selectDelivery(${idx})" style="width:100%;text-align:left;background:transparent;border:none;padding:0;cursor:pointer;">
           <div class="item" style="transition:all 0.2s;">
@@ -3046,19 +2934,11 @@
           </div>
         </button>
       `).join('');
-
-      console.log('Affichage HTML mis à jour');
     }
 
-    function selectDelivery(idx) {
-      console.log('Sélection de la livraison index:', idx);
-      if (idx < 0 || idx >= currentDeliveries.length) {
-        console.error('Index invalide:', idx);
-        return;
-      }
-
+    window.selectDelivery = function(idx) {
+      if (idx < 0 || idx >= currentDeliveries.length) return;
       const delivery = currentDeliveries[idx];
-      console.log('Livraison sélectionnée:', delivery);
       selectedRotation = delivery;
 
       let signatureInfo = '';
@@ -3087,11 +2967,13 @@
           <div><strong>Statut :</strong> ${delivery.status}</div>
         </div>
         ${signatureInfo}
-        ${!delivery.signed ? `<button class="btn btn-primary" style="margin-top:12px;width:100%;" onclick="openSignatureModal()">✍ Signer cette livraison</button>` : ''}
+        ${!delivery.signed ? `<button class="btn btn-primary" style="margin-top:12px;width:100%;" onclick="openSignatureModal()">
+          ✍ Signer cette livraison
+        </button>` : ''}
       `;
-    }
+    };
 
-    function openSignatureModal() {
+    window.openSignatureModal = function() {
       if (!selectedRotation) {
         alert('Veuillez sélectionner une livraison d\'abord.');
         return;
@@ -3099,25 +2981,22 @@
       signatureRotationNum.textContent = `${selectedRotation.rotationNum}/${selectedRotation.totalRotations}`;
       signatureClient.textContent = selectedRotation.client;
 
-      // Réinitialiser les champs
       signatoryName.value = '';
       signatoryRole.value = '';
       signaturePreview.textContent = '';
 
       signatureModal.style.display = 'flex';
 
-      // Initialiser le canvas après affichage pour avoir les bonnes dimensions
       setTimeout(() => {
         initSignatureCanvas();
       }, 100);
-    }
+    };
 
     function initSignatureCanvas() {
       if (!signatureCanvas) return;
 
-      // Ajuster la taille du canvas
       const rect = signatureCanvas.getBoundingClientRect();
-      signatureCanvas.width = rect.width * 2; // Haute résolution
+      signatureCanvas.width = rect.width * 2;
       signatureCanvas.height = rect.height * 2;
       signatureCanvas.style.width = rect.width + 'px';
       signatureCanvas.style.height = rect.height + 'px';
@@ -3129,16 +3008,13 @@
       signatureCtx.lineCap = 'round';
       signatureCtx.lineJoin = 'round';
 
-      // Effacer le canvas
       clearCanvas();
 
-      // Événements souris
       signatureCanvas.addEventListener('mousedown', startDrawing);
       signatureCanvas.addEventListener('mousemove', draw);
       signatureCanvas.addEventListener('mouseup', stopDrawing);
       signatureCanvas.addEventListener('mouseout', stopDrawing);
 
-      // Événements tactiles
       signatureCanvas.addEventListener('touchstart', handleTouch);
       signatureCanvas.addEventListener('touchmove', handleTouch);
       signatureCanvas.addEventListener('touchend', stopDrawing);
@@ -3205,7 +3081,6 @@
     validateSignature.addEventListener('click', () => {
       if (!selectedRotation) return;
 
-      // Vérifier que tous les champs sont remplis
       const name = signatoryName.value.trim();
       const role = signatoryRole.value.trim();
 
@@ -3225,25 +3100,26 @@
 
       if (!hasSignature) {
         signaturePreview.style.color = '#ef4444';
-        signaturePreview.textContent = '⚠ Veuillez signer dans la zone blanche.';
+        signaturePreview.textContent = '⚠ Veuillez signer dans la zone prévue.';
         return;
       }
 
-      // Enregistrer la signature
-      const signatureData = signatureCanvas.toDataURL('image/png');
+      const dataUrl = signatureCanvas.toDataURL('image/png');
+      const now = new Date().toLocaleString('fr-FR');
+
       selectedRotation.signed = true;
       selectedRotation.signatoryName = name;
       selectedRotation.signatoryRole = role;
-      selectedRotation.signatureData = signatureData;
-      selectedRotation.signatureDate = new Date().toLocaleString('fr-FR');
+      selectedRotation.signatureDate = now;
+      selectedRotation.signatureData = dataUrl;
 
       signaturePreview.style.color = '#16a34a';
-      signaturePreview.textContent = `✓ Livraison rotation ${selectedRotation.rotationNum} signée par ${name} (${role}) !`;
+      signaturePreview.textContent = '✓ Signature enregistrée.';
 
       setTimeout(() => {
         signatureModal.style.display = 'none';
         renderDriverPage();
-      }, 1500);
+      }, 800);
     });
 
     function renderAll() {
@@ -3254,15 +3130,13 @@
       renderProducts();
       renderSites();
       renderRecapDay();
-      renderVehicleExpenses();
       renderYearOptions();
-      if (yearSelect.value) {
-        applyYearFilter(false);
-      }
+      renderVehicleExpenses();
+      initLandingDrivers();
     }
 
     initState();
-    initLandingDrivers();
+    renderAll();
   </script>
 </body>
 </html>
