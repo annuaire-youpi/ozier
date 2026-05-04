@@ -1170,6 +1170,52 @@
       </div>
     </section>
 
+    <!-- PAGE DRIVER -->
+    <section class="page" id="driverPage">
+      <div class="driver-wrap">
+        <div class="driver-top">
+          <div>
+            <h1 id="driverWelcome">Espace chauffeur</h1>
+            <p id="driverInfo">Vos livraisons du jour</p>
+          </div>
+          <button class="btn btn-ghost" id="logoutDriver">Déconnexion</button>
+        </div>
+
+        <div class="driver-grid">
+          <div class="card">
+            <h3>Mes livraisons</h3>
+            <p>Chaque ligne correspond à une rotation/livraison à effectuer</p>
+            <div class="list" id="driverOrdersList"></div>
+          </div>
+
+          <div class="card">
+            <h3>Détails de la livraison</h3>
+            <p>Informations complètes sur la commande sélectionnée</p>
+            <div id="driverOrderDetail" style="font-size:12px;color:var(--muted);">
+              Sélectionnez une livraison pour voir les détails.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal signature -->
+      <div class="signature-modal" id="signatureModal">
+        <div class="signature-box">
+          <div class="signature-head">
+            <h3>Signature de livraison</h3>
+            <button class="btn btn-ghost" id="closeSignature">Fermer</button>
+          </div>
+          <p style="margin-top:8px;font-size:12px;color:var(--muted);">
+            Rotation <strong id="signatureRotationNum"></strong> - <span id="signatureClient"></span>
+          </p>
+          <div style="margin-top:12px;">
+            <button class="btn btn-primary" id="validateSignature">✓ Valider la livraison</button>
+          </div>
+          <div class="signature-preview" id="signaturePreview"></div>
+        </div>
+      </div>
+    </section>
+
     <!-- PAGE MANAGER -->
     <section class="page" id="managerPage">
       <div class="app">
@@ -1287,6 +1333,11 @@
                       <option value="En cours">En cours</option>
                       <option value="Livrée">Livrée</option>
                     </select>
+                  </div>
+
+                  <div>
+                    <label class="label">Nbre de rotations</label>
+                    <input id="orderRotations" class="input" type="number" min="1" value="1" placeholder="1">
                   </div>
 
 
@@ -1745,6 +1796,20 @@
     const views      = Array.from(document.querySelectorAll('.view'));
 
     const logoutManager = document.getElementById('logoutManager');
+    const logoutDriver = document.getElementById('logoutDriver');
+    const driverPage = document.getElementById('driverPage');
+    const driverWelcome = document.getElementById('driverWelcome');
+    const driverInfo = document.getElementById('driverInfo');
+    const driverOrdersList = document.getElementById('driverOrdersList');
+    const driverOrderDetail = document.getElementById('driverOrderDetail');
+    const signatureModal = document.getElementById('signatureModal');
+    const closeSignature = document.getElementById('closeSignature');
+    const validateSignature = document.getElementById('validateSignature');
+    const signatureRotationNum = document.getElementById('signatureRotationNum');
+    const signatureClient = document.getElementById('signatureClient');
+    const signaturePreview = document.getElementById('signaturePreview');
+
+    let selectedRotation = null;
 
     const managerKpis   = document.getElementById('managerKpis');
     const recentOrders  = document.getElementById('recentOrders');
@@ -1760,6 +1825,7 @@
     const orderDriver  = document.getElementById('orderDriver');
     const orderStatus  = document.getElementById('orderStatus');
     const orderProduct = document.getElementById('orderProduct');
+    const orderRotations = document.getElementById('orderRotations');
 
     const saveOrderBtn = document.getElementById('saveOrderBtn');
     const resetOrder   = document.getElementById('resetOrder');
@@ -1848,9 +1914,9 @@
     ];
 
     const initialOrders = [
-      {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1', qty:'12 tonnes', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean', status:'Livrée', product:'SABLE-10T'},
-      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', product:'GRAVIER-10T'},
-      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', product:'SABLE-10T'}
+      {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1', qty:'12 tonnes', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean', status:'Livrée', product:'SABLE-10T', rotations:1},
+      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', product:'GRAVIER-10T', rotations:2},
+      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', product:'SABLE-10T', rotations:3}
     ];
 
     const initialExpenses = [
@@ -1987,7 +2053,8 @@
         const driver = findDriverByPin(pin);
         if (driver) {
           state.currentDriver = driver;
-          alert('Connexion chauffeur non implémentée dans cette démo.');
+          showPage('driverPage');
+          renderDriverPage();
           resetBtn.click();
         } else {
           errorBox.textContent = 'Code chauffeur incorrect.';
@@ -1997,6 +2064,12 @@
     });
 
     logoutManager.addEventListener('click', () => {
+      showPage('landingPage');
+      resetBtn.click();
+    });
+
+    logoutDriver.addEventListener('click', () => {
+      state.currentDriver = null;
       showPage('landingPage');
       resetBtn.click();
     });
@@ -2132,6 +2205,7 @@
       orderDriver.value  = '';
       orderStatus.value  = 'En attente';
       orderProduct.value = '';
+      orderRotations.value = '1';
       orderFormTitle.textContent = 'Créer une commande';
       orderFormDesc.textContent  = 'Structure prête pour écrire ensuite dans Google Sheets.';
       orderEditBadge.classList.remove('show');
@@ -2151,6 +2225,7 @@
       orderDriver.value  = o.driver || '';
       orderStatus.value  = o.status || 'En attente';
       orderProduct.value = o.product || '';
+      orderRotations.value = o.rotations || '1';
 
       orderFormTitle.textContent = 'Modifier la commande';
       orderFormDesc.textContent  = 'Vous pouvez ajuster les informations puis enregistrer.';
@@ -2173,7 +2248,8 @@
         truck:   orderTruck.value || '',
         driver:  orderDriver.value || '',
         status:  orderStatus.value || 'En attente',
-        product: orderProduct.value || ''
+        product: orderProduct.value || '',
+        rotations: Number(orderRotations.value) || 1
       };
 
       if (!data.client || !data.montant) {
@@ -2817,7 +2893,8 @@
     });
 
     function initLandingDrivers() {
-      driverSelect.innerHTML = state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+      const options = state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+      driverSelect.innerHTML = options;
     }
 
     function renderAll() {
