@@ -837,8 +837,6 @@
       margin-top:6px;
     }
 
-    /* --- NOUVEAU TABLEAU ANNUEL --- */
-
     .recap-annual-card,
     #view-recap .card {
       min-width: 0;
@@ -902,8 +900,6 @@
     .recap-year-table .positive {
       color: #166534;
     }
-
-    /* Layout spécifique recap */
 
     .recap-layout {
       margin-top: 14px;
@@ -1182,13 +1178,10 @@
             <div class="nav">
               <button class="active" data-view="dashboard"><span>Dashboard</span><span>›</span></button>
               <button data-view="commandes"><span>Commandes</span><span>›</span></button>
-              <button data-view="chauffeurs"><span>Chauffeurs</span><span>›</span></button>
-              <button data-view="vehicules-flotte"><span>Flotte véhicules</span><span>›</span></button>
+              <!-- menus Chauffeurs & Flotte retirés, remplacés par Paramétrages -->
               <button data-view="recap"><span>Récapitulatif</span><span>›</span></button>
               <button data-view="vehicules"><span>Dépenses véhicules</span><span>›</span></button>
-              <!-- NOUVEAU MENU PARAMÉTRAGES -->
               <button data-view="parametrages"><span>Paramétrages</span><span>›</span></button>
-              <!-- FIN NOUVEAU MENU -->
               <button data-view="integration"><span>Intégration</span><span>›</span></button>
             </div>
           </div>
@@ -1206,11 +1199,8 @@
               <p id="mainDesc">Vue d’ensemble de l’activité journalière.</p>
             </div>
 
-            <div class="toolbar">
-              <button class="btn btn-ghost" id="toDrivers">Voir les chauffeurs</button>
-              <button class="btn btn-primary" id="toOrders">Nouvelle commande</button>
-              <button class="btn btn-ghost" id="toVehicles">Dépenses véhicules</button>
-            </div>
+            <!-- toolbar simplifiée : on supprime les 3 boutons -->
+            <div class="toolbar"></div>
           </div>
 
           <!-- Dashboard -->
@@ -1263,13 +1253,6 @@
                     <label class="label">Quantité</label>
                     <input id="orderQty" class="input" placeholder="12 tonnes">
                   </div>
-
-                  <!-- NOUVEAU : NATURE DU PRODUIT -->
-                  <div>
-                    <label class="label">Produit</label>
-                    <select id="orderProduct" class="select"></select>
-                  </div>
-                  <!-- FIN NOUVEAU -->
 
                   <div>
                     <label class="label">Montant TTC</label>
@@ -1327,7 +1310,6 @@
                         <th>Client</th>
                         <th>Chantier</th>
                         <th>Qté</th>
-                        <th>Produit</th>
                         <th>Montant</th>
                         <th>Statut</th>
                         <th>Chauffeur</th>
@@ -1338,154 +1320,6 @@
                     </thead>
                     <tbody id="ordersTableBody"></tbody>
                   </table>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Chauffeurs -->
-          <section class="view" id="view-chauffeurs">
-            <div class="grid-2">
-              <div class="card">
-                <h3>Chauffeurs OZIER</h3>
-                <p>Liste gérée uniquement en mémoire pour la démo.</p>
-                <div class="list" id="driversList"></div>
-              </div>
-
-              <div class="card">
-                <h3>Fiche chauffeur</h3>
-                <p>Les champs servent de base pour le futur CRUD connecté.</p>
-
-                <div class="form-grid">
-                  <div>
-                    <label class="label">Prénom</label>
-                    <input id="driverFirst" class="input" placeholder="Jean">
-                  </div>
-
-                  <div>
-                    <label class="label">Nom complet</label>
-                    <input id="driverName" class="input" placeholder="Jean MARTINEAU">
-                  </div>
-
-                  <div>
-                    <label class="label">Téléphone</label>
-                    <input id="driverPhone" class="input" placeholder="0696 XX XX XX">
-                  </div>
-
-                  <div>
-                    <label class="label">Email</label>
-                    <input id="driverEmail" class="input" placeholder="jean@exemple.com">
-                  </div>
-
-                  <div>
-                    <label class="label">PIN</label>
-                    <input id="driverPin" class="input" placeholder="1111">
-                  </div>
-
-                  <div>
-                    <label class="label">Camion attribué</label>
-                    <select id="driverTruck" class="select">
-                      <option value="">Sans camion</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label class="label">Statut</label>
-                    <select id="driverStatus" class="select">
-                      <option>Actif</option>
-                      <option>En attente</option>
-                    </select>
-                  </div>
-
-                  <div class="full">
-                    <label class="label">Identifiant interne</label>
-                    <input id="driverId" class="input" placeholder="jean">
-                  </div>
-                </div>
-
-                <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
-                  <button class="btn btn-ghost" id="newDriverBtn">Nouveau</button>
-                  <button class="btn btn-danger" id="deleteDriverBtn">Supprimer</button>
-                  <button class="btn btn-primary" id="saveDriverBtn">Enregistrer</button>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Flotte véhicules -->
-          <section class="view" id="view-vehicules-flotte">
-            <div class="grid-2">
-              <div class="card">
-                <h3>Véhicules de la flotte</h3>
-                <p>Liste des camions bennes utilisés dans les commandes.</p>
-                <div class="list" id="fleetList"></div>
-              </div>
-
-              <div class="card">
-                <h3>Fiche véhicule</h3>
-                <p>Base pour le futur CRUD connecté Sheets / Make.</p>
-
-                <div class="form-grid">
-                  <div>
-                    <label class="label">Code camion clé</label>
-                    <input id="vehCode" class="input" placeholder="OZ-001">
-                  </div>
-
-                  <div>
-                    <label class="label">Immatriculation</label>
-                    <input id="vehPlate" class="input" placeholder="AB-123-CD">
-                  </div>
-
-                  <div>
-                    <label class="label">Marque</label>
-                    <input id="vehBrand" class="input" placeholder="Renault, MAN...">
-                  </div>
-
-                  <div>
-                    <label class="label">Modèle</label>
-                    <input id="vehModel" class="input" placeholder="Premium Lander">
-                  </div>
-
-                  <div>
-                    <label class="label">Type</label>
-                    <select id="vehType" class="select">
-                      <option>Camion benne</option>
-                      <option>Camion toupie</option>
-                      <option>Tracteur benne</option>
-                      <option>Utilitaire</option>
-                      <option>Autre</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label class="label">Année</label>
-                    <input id="vehYear" class="input" type="number" placeholder="2018">
-                  </div>
-
-                  <div>
-                    <label class="label">Kilométrage</label>
-                    <input id="vehKm" class="input" type="number" placeholder="180000">
-                  </div>
-
-                  <div>
-                    <label class="label">Statut</label>
-                    <select id="vehStatus" class="select">
-                      <option>En service</option>
-                      <option>Maintenance</option>
-                      <option>Hors service</option>
-                    </select>
-                  </div>
-
-                  <div class="full">
-                    <label class="label">Commentaires</label>
-                    <textarea id="vehNote" class="input" rows="2" placeholder="Infos atelier, pneus, révision..."></textarea>
-                  </div>
-                </div>
-
-                <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
-                  <button class="btn btn-ghost" id="newVehBtn">Nouveau</button>
-                  <button class="btn btn-danger" id="deleteVehBtn">Supprimer</button>
-                  <button class="btn btn-primary" id="saveVehBtn">Enregistrer</button>
                 </div>
               </div>
             </div>
@@ -1616,35 +1450,151 @@
             </div>
           </section>
 
-          <!-- NOUVEL ÉCRAN : PARAMÉTRAGES (liste produits) -->
+          <!-- PARAMÉTRAGES (chauffeurs + flotte + produits) -->
           <section class="view" id="view-parametrages">
             <div class="grid-2">
               <div class="card">
-                <h3>Liste des produits</h3>
-                <p>Produits utilisés dans les commandes (0/25, remblais, sable 0/4, déchets...).</p>
-                <div class="list" id="productsList"></div>
+                <h3>Chauffeurs OZIER</h3>
+                <p>Liste gérée uniquement en mémoire pour la démo.</p>
+                <div class="list" id="driversList"></div>
               </div>
 
               <div class="card">
-                <h3>Paramétrage produit</h3>
-                <p>Créer, modifier ou supprimer des produits utilisés dans les commandes.</p>
+                <h3>Fiche chauffeur</h3>
+                <p>Les champs servent de base pour le futur CRUD connecté.</p>
 
                 <div class="form-grid">
+                  <div>
+                    <label class="label">Prénom</label>
+                    <input id="driverFirst" class="input" placeholder="Jean">
+                  </div>
+
+                  <div>
+                    <label class="label">Nom complet</label>
+                    <input id="driverName" class="input" placeholder="Jean MARTINEAU">
+                  </div>
+
+                  <div>
+                    <label class="label">Téléphone</label>
+                    <input id="driverPhone" class="input" placeholder="0696 XX XX XX">
+                  </div>
+
+                  <div>
+                    <label class="label">Email</label>
+                    <input id="driverEmail" class="input" placeholder="jean@exemple.com">
+                  </div>
+
+                  <div>
+                    <label class="label">PIN</label>
+                    <input id="driverPin" class="input" placeholder="1111">
+                  </div>
+
+                  <div>
+                    <label class="label">Camion attribué</label>
+                    <select id="driverTruck" class="select">
+                      <option value="">Sans camion</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="label">Statut</label>
+                    <select id="driverStatus" class="select">
+                      <option>Actif</option>
+                      <option>En attente</option>
+                    </select>
+                  </div>
+
                   <div class="full">
-                    <label class="label">Libellé produit</label>
-                    <input id="productName" class="input" placeholder="Ex : 0/25, remblais, sable 0/4, déchets...">
+                    <label class="label">Identifiant interne</label>
+                    <input id="driverId" class="input" placeholder="jean">
                   </div>
                 </div>
 
                 <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
-                  <button class="btn btn-ghost" id="newProductBtn">Nouveau</button>
-                  <button class="btn btn-danger" id="deleteProductBtn">Supprimer</button>
-                  <button class="btn btn-primary" id="saveProductBtn">Enregistrer</button>
+                  <button class="btn btn-ghost" id="newDriverBtn">Nouveau</button>
+                  <button class="btn btn-danger" id="deleteDriverBtn">Supprimer</button>
+                  <button class="btn btn-primary" id="saveDriverBtn">Enregistrer</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-2" style="margin-top:14px;">
+              <div class="card">
+                <h3>Véhicules de la flotte</h3>
+                <p>Liste des camions bennes utilisés dans les commandes.</p>
+                <div class="list" id="fleetList"></div>
+              </div>
+
+              <div class="card">
+                <h3>Fiche véhicule</h3>
+                <p>Base pour le futur CRUD connecté Sheets / Make.</p>
+
+                <div class="form-grid">
+                  <div>
+                    <label class="label">Code camion clé</label>
+                    <input id="vehCode" class="input" placeholder="OZ-001">
+                  </div>
+
+                  <div>
+                    <label class="label">Immatriculation</label>
+                    <input id="vehPlate" class="input" placeholder="AB-123-CD">
+                  </div>
+
+                  <div>
+                    <label class="label">Marque</label>
+                    <input id="vehBrand" class="input" placeholder="Renault, MAN...">
+                  </div>
+
+                  <div>
+                    <label class="label">Modèle</label>
+                    <input id="vehModel" class="input" placeholder="Premium Lander">
+                  </div>
+
+                  <div>
+                    <label class="label">Type</label>
+                    <select id="vehType" class="select">
+                      <option>Camion benne</option>
+                      <option>Camion toupie</option>
+                      <option>Tracteur benne</option>
+                      <option>Utilitaire</option>
+                      <option>Autre</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="label">Année</label>
+                    <input id="vehYear" class="input" type="number" placeholder="2018">
+                  </div>
+
+                  <div>
+                    <label class="label">Kilométrage</label>
+                    <input id="vehKm" class="input" type="number" placeholder="180000">
+                  </div>
+
+                  <div>
+                    <label class="label">Statut</label>
+                    <select id="vehStatus" class="select">
+                      <option>En service</option>
+                      <option>Maintenance</option>
+                      <option>Hors service</option>
+                    </select>
+                  </div>
+
+                  <div class="full">
+                    <label class="label">Commentaires</label>
+                    <textarea id="vehNote" class="input" rows="2" placeholder="Infos atelier, pneus, révision..."></textarea>
+                  </div>
+                </div>
+
+                <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
+                  <button class="btn btn-ghost" id="newVehBtn">Nouveau</button>
+                  <button class="btn btn-danger" id="deleteVehBtn">Supprimer</button>
+                  <button class="btn btn-primary" id="saveVehBtn">Enregistrer</button>
                 </div>
               </div>
             </div>
           </section>
-          <!-- FIN NOUVEL ÉCRAN -->
+          <!-- FIN PARAMÉTRAGES -->
 
           <!-- Intégration -->
           <section class="view" id="view-integration">
@@ -1670,7 +1620,6 @@
       drivers: [],
       fleet: [],
       vehicleExpenses: [],
-      products: [],          // NOUVEAU : liste produits
       currentDriver: null,
       editingOrderId: null
     };
@@ -1698,9 +1647,6 @@
     const views      = Array.from(document.querySelectorAll('.view'));
 
     const logoutManager = document.getElementById('logoutManager');
-    const toDrivers  = document.getElementById('toDrivers');
-    const toOrders   = document.getElementById('toOrders');
-    const toVehicles = document.getElementById('toVehicles');
 
     const managerKpis   = document.getElementById('managerKpis');
     const recentOrders  = document.getElementById('recentOrders');
@@ -1710,7 +1656,6 @@
     const orderPhone   = document.getElementById('orderPhone');
     const orderAddress = document.getElementById('orderAddress');
     const orderQty     = document.getElementById('orderQty');
-    const orderProduct = document.getElementById('orderProduct'); // NOUVEAU
     const orderAmount  = document.getElementById('orderAmount');
     const orderDate    = document.getElementById('orderDate');
     const orderTruck   = document.getElementById('orderTruck');
@@ -1772,14 +1717,6 @@
     const saveExpenseBtn = document.getElementById('saveExpenseBtn');
     const resetExpense   = document.getElementById('resetExpense');
 
-    // NOUVEAU : éléments Paramétrages
-    const productsList      = document.getElementById('productsList');
-    const productName       = document.getElementById('productName');
-    const newProductBtn     = document.getElementById('newProductBtn');
-    const deleteProductBtn  = document.getElementById('deleteProductBtn');
-    const saveProductBtn    = document.getElementById('saveProductBtn');
-    // FIN NOUVEAU
-
     const initialDrivers = [
       {id:'jean', first:'Jean', name:'Jean MARTINEAU', phone:'0696 11 11 11', email:'jean@example.com', pin:'1111', truck:'OZ-001', status:'Actif'},
       {id:'marie', first:'Marie', name:'Marie DUPONT', phone:'0696 22 22 22', email:'marie@example.com', pin:'2222', truck:'OZ-002', status:'Actif'},
@@ -1793,9 +1730,9 @@
     ];
 
     const initialOrders = [
-      {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1', qty:'12 tonnes', product:'0/25', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean', status:'Livrée', source:'WhatsApp'},
-      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', product:'Remblais', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', source:'Téléphone'},
-      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', product:'Sable 0/4', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', source:'WhatsApp'}
+      {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1', qty:'12 tonnes', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean', status:'Livrée', source:'WhatsApp'},
+      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', source:'Téléphone'},
+      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', source:'WhatsApp'}
     ];
 
     const initialExpenses = [
@@ -1806,22 +1743,11 @@
       {id:5, truck:'OZ-001', type:'Autre', date:'2026-02-10', amount:200, label:'Pneu avant', note:'garage'}
     ];
 
-    // NOUVEAU : liste initiale de produits
-    const initialProducts = [
-      '0/25',
-      'Remblais',
-      'Sable 0/4',
-      'Déchets',
-      'Tout-venant'
-    ];
-    // FIN NOUVEAU
-
     function initState() {
       state.drivers = JSON.parse(JSON.stringify(initialDrivers));
       state.fleet   = JSON.parse(JSON.stringify(initialFleet));
       state.orders  = JSON.parse(JSON.stringify(initialOrders));
       state.vehicleExpenses = JSON.parse(JSON.stringify(initialExpenses));
-      state.products = JSON.parse(JSON.stringify(initialProducts)); // NOUVEAU
     }
 
     function euroShort(v) {
@@ -1848,12 +1774,6 @@
       } else if (viewKey === 'commandes') {
         mainTitle.textContent = 'Commandes';
         mainDesc.textContent  = 'Saisie et suivi des commandes clients.';
-      } else if (viewKey === 'chauffeurs') {
-        mainTitle.textContent = 'Chauffeurs';
-        mainDesc.textContent  = 'Gestion des chauffeurs et de leur PIN.';
-      } else if (viewKey === 'vehicules-flotte') {
-        mainTitle.textContent = 'Flotte véhicules';
-        mainDesc.textContent  = 'Fiches des camions OZIER.';
       } else if (viewKey === 'recap') {
         mainTitle.textContent = 'Récapitulatif';
         mainDesc.textContent  = 'Vue journalière et annuelle CA / dépenses.';
@@ -1862,7 +1782,7 @@
         mainDesc.textContent  = 'Suivi des charges par camion.';
       } else if (viewKey === 'parametrages') {
         mainTitle.textContent = 'Paramétrages';
-        mainDesc.textContent  = 'Gestion des listes utilisées dans l’application.';
+        mainDesc.textContent  = 'Gestion des chauffeurs et de la flotte.';
       } else if (viewKey === 'integration') {
         mainTitle.textContent = 'Intégration';
         mainDesc.textContent  = 'Notes pour les flux Sheets / Make.';
@@ -1955,15 +1875,8 @@
       btn.addEventListener('click', () => {
         const view = btn.dataset.view;
         showView(view);
-        if (view === 'parametrages') {
-          renderProducts();
-        }
       });
     });
-
-    toDrivers.addEventListener('click', () => showView('chauffeurs'));
-    toOrders.addEventListener('click', () => showView('commandes'));
-    toVehicles.addEventListener('click', () => showView('vehicules'));
 
     function renderManagerDashboard() {
       const totalOrders = state.orders.length;
@@ -2021,7 +1934,6 @@
           <td>${o.client}</td>
           <td class="col-address">${o.address}</td>
           <td>${o.qty}</td>
-          <td>${o.product || ''}</td>
           <td>${euroShort(o.montant)}</td>
           <td>${o.status}</td>
           <td>${driverLabelFromId(o.driver)}</td>
@@ -2035,7 +1947,7 @@
           </td>
         </tr>
       `).join('') || `
-        <tr><td colspan="11">Aucune commande enregistrée.</td></tr>
+        <tr><td colspan="10">Aucune commande enregistrée.</td></tr>
       `;
 
       ordersTableBody.querySelectorAll('.btn-edit').forEach(btn => {
@@ -2074,7 +1986,6 @@
       orderPhone.value   = '';
       orderAddress.value = '';
       orderQty.value     = '';
-      orderProduct.value = '';
       orderAmount.value  = '';
       orderDate.value    = '';
       orderTruck.value   = '';
@@ -2094,7 +2005,6 @@
       orderPhone.value   = o.phone || '';
       orderAddress.value = o.address || '';
       orderQty.value     = o.qty || '';
-      orderProduct.value = o.product || '';
       orderAmount.value  = o.montant || '';
       orderDate.value    = o.date || '';
       orderTruck.value   = o.truck || '';
@@ -2118,7 +2028,6 @@
         phone:   orderPhone.value.trim(),
         address: orderAddress.value.trim(),
         qty:     orderQty.value.trim(),
-        product: orderProduct.value || '',  // NOUVEAU
         montant: Number(orderAmount.value || 0),
         date:    orderDate.value || '',
         truck:   orderTruck.value || '',
@@ -2219,7 +2128,7 @@
       }
 
       renderDrivers();
-      initLandingDrivers(); // pour la sélection chauffeur sur l'écran de login
+      initLandingDrivers();
     });
 
     deleteDriverBtn.addEventListener('click', () => {
@@ -2617,76 +2526,6 @@
       driverSelect.innerHTML = state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
     }
 
-    // NOUVEAU : Rendu de la liste des produits + synchro avec le select de commande
-    function renderProducts() {
-      productsList.innerHTML = state.products.map((p, index) => `
-        <button class="driver-order-btn" data-index="${index}">
-          <div class="item">
-            <div class="item-top">
-              <strong>${p}</strong>
-            </div>
-            <small>Produit utilisé pour les commandes</small>
-          </div>
-        </button>
-      `).join('') || '<div class="item"><small>Aucun produit défini.</small></div>';
-
-      productsList.querySelectorAll('.driver-order-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const idx = Number(btn.dataset.index);
-          const value = state.products[idx] || '';
-          productName.value = value;
-          productName.dataset.index = String(idx);
-        });
-      });
-
-      // met à jour la liste déroulante dans le formulaire de commande
-      orderProduct.innerHTML = ['<option value="">-- Sélectionner un produit --</option>']
-        .concat(state.products.map(p => `<option value="${p}">${p}</option>`))
-        .join('');
-    }
-
-    newProductBtn.addEventListener('click', () => {
-      productName.value = '';
-      delete productName.dataset.index;
-    });
-
-    saveProductBtn.addEventListener('click', () => {
-      const name = productName.value.trim();
-      if (!name) {
-        alert('Libellé produit obligatoire.');
-        return;
-      }
-
-      const existingIndexData = productName.dataset.index;
-      if (existingIndexData !== undefined) {
-        const idx = Number(existingIndexData);
-        state.products[idx] = name;
-      } else {
-        if (!state.products.includes(name)) {
-          state.products.push(name);
-        }
-      }
-
-      newProductBtn.click();
-      renderProducts();
-    });
-
-    deleteProductBtn.addEventListener('click', () => {
-      const existingIndexData = productName.dataset.index;
-      if (existingIndexData === undefined) {
-        alert('Sélectionnez un produit avant de supprimer.');
-        return;
-      }
-      const idx = Number(existingIndexData);
-      if (idx < 0 || idx >= state.products.length) return;
-      if (confirm('Supprimer ce produit ?')) {
-        state.products.splice(idx, 1);
-        newProductBtn.click();
-        renderProducts();
-      }
-    });
-    // FIN NOUVEAU
-
     function renderAll() {
       renderManagerDashboard();
       renderOrdersTable();
@@ -2695,7 +2534,6 @@
       renderRecapDay();
       renderVehicleExpenses();
       renderYearOptions();
-      renderProducts();
       if (yearSelect.value) {
         applyYearFilter(false);
       }
