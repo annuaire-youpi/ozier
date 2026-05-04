@@ -998,8 +998,11 @@
             <div class="nav">
               <button class="active" data-view="dashboard"><span>Dashboard</span><span>›</span></button>
               <button data-view="commandes"><span>Commandes</span><span>›</span></button>
+              <!-- menus Chauffeurs & Flotte retirés, remplacés par Paramétrages -->
               <button data-view="recap"><span>Récapitulatif</span><span>›</span></button>
               <button data-view="vehicules"><span>Dépenses véhicules</span><span>›</span></button>
+              <button data-view="parametrages"><span>Paramétrages</span><span>›</span></button>
+              <button data-view="integration"><span>Intégration</span><span>›</span></button>
             </div>
           </div>
 
@@ -1021,6 +1024,7 @@
           <!-- Dashboard -->
           <section class="view active" id="view-dashboard">
             <div class="kpis" id="managerKpis"></div>
+
             <div class="grid-2">
               <div class="card">
                 <h3>Commandes récentes</h3>
@@ -1042,7 +1046,7 @@
                 <div class="order-form-head">
                   <div>
                     <h3 id="orderFormTitle">Créer une commande</h3>
-                    <p id="orderFormDesc">Structure prête pour un futur export Sheets.</p>
+                    <p id="orderFormDesc">Structure prête pour écrire ensuite dans Google Sheets.</p>
                   </div>
                   <span class="order-edit-badge" id="orderEditBadge">Mode modification</span>
                 </div>
@@ -1052,38 +1056,47 @@
                     <label class="label">Client</label>
                     <input id="orderClient" class="input" placeholder="Entreprise BTP">
                   </div>
+
                   <div>
                     <label class="label">Téléphone</label>
                     <input id="orderPhone" class="input" placeholder="0696 XX XX XX">
                   </div>
+
                   <div class="full">
                     <label class="label">Adresse chantier</label>
                     <input id="orderAddress" class="input" placeholder="Zone industrielle">
                   </div>
+
                   <div>
                     <label class="label">Quantité</label>
                     <input id="orderQty" class="input" placeholder="12 tonnes">
                   </div>
+
                   <div>
                     <label class="label">Montant TTC</label>
                     <input id="orderAmount" class="input" placeholder="1850">
                   </div>
+
                   <div>
                     <label class="label">Date</label>
                     <input id="orderDate" type="date" class="input">
                   </div>
+
                   <div>
                     <label class="label">Camion</label>
                     <select id="orderTruck" class="select"></select>
                   </div>
+
                   <div>
                     <label class="label">Chauffeur</label>
                     <select id="orderDriver" class="select"></select>
                   </div>
+
                   <div>
                     <label class="label">Produit</label>
                     <select id="orderProduct" class="select"></select>
                   </div>
+
                   <div>
                     <label class="label">Nombre de rotations estimées</label>
                     <input id="orderRotations" class="input" type="number" min="1" step="1" placeholder="1">
@@ -1100,7 +1113,7 @@
                 <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
                   <div>
                     <h3>Tableau des commandes</h3>
-                    <p>Suivi des rotations, statut de livraison et finalisation.</p>
+                    <p>Suivi des rotations, statut de livraison et finalisation des commandes.</p>
                   </div>
                   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
                     <span style="font-size:11px;padding:4px 10px;border-radius:999px;background:#ecfdf5;color:#16a34a;border:1px solid rgba(22,163,74,0.3);">● Finalisée = CA comptabilisé</span>
@@ -1116,9 +1129,9 @@
                         <th>Client</th>
                         <th>Chantier</th>
                         <th>Produit</th>
-                        <th>🔄 Rot. Totales</th>
-                        <th>✅ Rot. Livrées</th>
-                        <th>⏳ Rot. Restantes</th>
+                        <th title="Rotations estimées totales">🔄 Rot. Totales</th>
+                        <th title="Rotations réellement livrées (signées)">✅ Rot. Livrées</th>
+                        <th title="Rotations restantes à effectuer">⏳ Rot. Restantes</th>
                         <th>Qté</th>
                         <th>Montant TTC</th>
                         <th>Statut</th>
@@ -1137,10 +1150,58 @@
           <!-- Récap -->
           <section class="view" id="view-recap">
             <div class="recap-layout">
-              <div class="card recap-day-card">
-                <h3>Récapitulatif du jour</h3>
-                <p>Chiffres issus des données statiques de la démo.</p>
-                <div class="kpis" id="recapKpis"></div>
+              <div class="recap-top-grid">
+                <div class="card recap-day-card">
+                  <h3>Récapitulatif du jour</h3>
+                  <p>Chiffres issus des données statiques de la démo.</p>
+                  <div class="kpis" id="recapKpis"></div>
+                </div>
+
+                <div class="card recap-drivers-card">
+                  <h3>Détail par chauffeur</h3>
+                  <p>Présentation préparée pour un futur export CSV / Sheets.</p>
+                  <div class="list" id="recapDrivers"></div>
+                </div>
+              </div>
+
+              <div class="card recap-annual-card">
+                <h3>Synthèse annuelle CA / dépenses</h3>
+                <p>Vue annuelle consolidée du chiffre d'affaires, des charges globales et de la marge.</p>
+
+                <div class="year-filters">
+                  <div>
+                    <label class="label">Année</label>
+                    <select id="yearSelect" class="select"></select>
+                  </div>
+                  <div>
+                    <button class="btn btn-primary" id="applyYearFilter">Afficher l'année</button>
+                  </div>
+                </div>
+                <div class="year-summary" id="yearSummary">Choisissez une année pour afficher la synthèse.</div>
+                <div class="kpis" id="yearKpis" style="margin-top:10px;"></div>
+                <div class="recap-table-wrap">
+                  <table class="recap-year-table">
+                    <thead>
+                      <tr>
+                        <th>Indicateur</th>
+                        <th>Janv.</th>
+                        <th>Fév.</th>
+                        <th>Mars</th>
+                        <th>Avr.</th>
+                        <th>Mai</th>
+                        <th>Juin</th>
+                        <th>Juil.</th>
+                        <th>Août</th>
+                        <th>Sept.</th>
+                        <th>Oct.</th>
+                        <th>Nov.</th>
+                        <th>Déc.</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody id="yearSummaryBody"></tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </section>
@@ -1154,9 +1215,11 @@
                 <div class="kpis" id="vehicleExpenseKpis"></div>
                 <div class="list" id="vehicleTotalsList" style="margin-top:10px;max-height:230px;overflow:auto;"></div>
               </div>
+
               <div class="card">
                 <h3>Ajouter une dépense</h3>
                 <p>Formulaire simplifié pour la démo OZIER.</p>
+
                 <div class="form-grid">
                   <div>
                     <label class="label">Camion code</label>
@@ -1164,6 +1227,7 @@
                       <option value="">-- Sélectionner un camion --</option>
                     </select>
                   </div>
+
                   <div>
                     <label class="label">Type</label>
                     <select id="expenseType" class="select">
@@ -1175,10 +1239,12 @@
                       <option>Autre</option>
                     </select>
                   </div>
+
                   <div>
                     <label class="label">Date</label>
                     <input id="expenseDate" type="date" class="input">
                   </div>
+
                   <div>
                     <label class="label">Montant</label>
                     <input id="expenseAmount" class="input" type="number" step="0.01" placeholder="100">
@@ -1197,6 +1263,22 @@
                   <button class="btn btn-primary" id="saveExpenseBtn">Enregistrer la dépense</button>
                 </div>
               </div>
+            </div>
+          </section>
+
+          <!-- Paramétrages -->
+          <section class="view" id="view-parametrages">
+            <div class="card">
+              <h3>Paramétrages</h3>
+              <p>Zone réservée pour les futures options de configuration (PIN, chauffeurs, camions...).</p>
+            </div>
+          </section>
+
+          <!-- Intégration -->
+          <section class="view" id="view-integration">
+            <div class="card">
+              <h3>Intégration</h3>
+              <p>Zone préparée pour les connexions Make, API et Google Sheets.</p>
             </div>
           </section>
         </main>
@@ -1311,7 +1393,6 @@
   </div>
 
   <script>
-    // ===== Sélecteurs de base =====
     const managerTab   = document.getElementById('managerTab');
     const driverTab    = document.getElementById('driverTab');
     const authTitle    = document.getElementById('authTitle');
@@ -1356,6 +1437,12 @@
     const saveOrderBtn = document.getElementById('saveOrderBtn');
 
     const recapKpis    = document.getElementById('recapKpis');
+    const recapDrivers = document.getElementById('recapDrivers');
+    const yearSelect   = document.getElementById('yearSelect');
+    const applyYearFilter = document.getElementById('applyYearFilter');
+    const yearSummary  = document.getElementById('yearSummary');
+    const yearKpis     = document.getElementById('yearKpis');
+    const yearSummaryBody = document.getElementById('yearSummaryBody');
 
     const expenseTruck  = document.getElementById('expenseTruck');
     const expenseType   = document.getElementById('expenseType');
@@ -1394,7 +1481,6 @@
     const finalizeAmount  = document.getElementById('finalizeAmount');
     const closeFinalizeModalBtn = document.getElementById('closeFinalizeModal');
 
-    // ===== État global =====
     const state = {
       managers: [{ pin:'1234', name:'Gérant OZIER' }],
       drivers: [],
@@ -1469,14 +1555,19 @@
         mainDesc.textContent  = 'Saisie et suivi des commandes clients.';
       } else if (viewKey === 'recap') {
         mainTitle.textContent = 'Récapitulatif';
-        mainDesc.textContent  = 'Vue journalière et mensuelle.';
+        mainDesc.textContent  = 'Synthèse journalière et annuelle.';
       } else if (viewKey === 'vehicules') {
         mainTitle.textContent = 'Dépenses véhicules';
         mainDesc.textContent  = 'Suivi des charges par camion.';
+      } else if (viewKey === 'parametrages') {
+        mainTitle.textContent = 'Paramétrages';
+        mainDesc.textContent  = 'Configuration PIN, chauffeurs, camions.';
+      } else if (viewKey === 'integration') {
+        mainTitle.textContent = 'Intégration';
+        mainDesc.textContent  = 'Connecteurs Make, Google Sheets, API.';
       }
     }
 
-    // Tabs login
     managerTab.addEventListener('click', () => {
       managerTab.classList.add('active');
       driverTab.classList.remove('active');
@@ -1568,7 +1659,6 @@
       });
     });
 
-    // ========= RENDERS =========
     function driverLabelFromId(id) {
       const d = state.drivers.find(x => x.id === id);
       return d ? d.name : '';
@@ -1641,7 +1731,7 @@
       orderProduct.value = '';
       orderRotations.value = '';
       orderFormTitle.textContent = 'Créer une commande';
-      orderFormDesc.textContent  = 'Structure prête pour un futur export Sheets.';
+      orderFormDesc.textContent  = 'Structure prête pour écrire ensuite dans Google Sheets.';
       orderEditBadge.classList.remove('show');
     }
 
@@ -1847,7 +1937,113 @@
           <strong>${totalRotLivrees}</strong>
         </div>
       `;
+
+      recapDrivers.innerHTML = state.drivers.map(d => {
+        const dOrders = state.orders.filter(o => o.driver === d.id);
+        const dFin    = dOrders.filter(o => o.finalized);
+        const dCa     = dFin.reduce((sum,o)=>sum+Number(o.montant||0),0);
+        const dRot    = dOrders.reduce((sum,o)=>sum+Number(o.deliveredRotations||0),0);
+
+        return `
+          <div class="item">
+            <div class="item-top">
+              <strong>${d.name}</strong>
+              <span class="badge">${d.truck || 'Sans camion'}</span>
+            </div>
+            <small>${dOrders.length} commandes · ${dFin.length} finalisées</small>
+            <small>CA : ${euroShort(dCa)} · Rotations livrées : ${dRot}</small>
+          </div>
+        `;
+      }).join('') || '<div class="item"><small>Aucun chauffeur.</small></div>';
     }
+
+    function renderYearOptions() {
+      const years = new Set();
+      state.orders.forEach(o => {
+        if (o.date && o.date.length >= 4) years.add(o.date.slice(0,4));
+      });
+      const list = Array.from(years).sort();
+      yearSelect.innerHTML = list.map(y => `<option value="${y}">${y}</option>`).join('') ||
+        `<option value="">Aucune année</option>`;
+    }
+
+    function renderYearSummary(year) {
+      if (!year) {
+        yearSummary.textContent = 'Choisissez une année pour afficher la synthèse.';
+        yearKpis.innerHTML = '';
+        yearSummaryBody.innerHTML = '';
+        return;
+      }
+      const ordersYear = state.orders.filter(o => (o.date || '').startsWith(year));
+      const expensesYear = state.vehicleExpenses.filter(e => (e.date || '').startsWith(year));
+
+      const monthlyCA   = new Array(12).fill(0);
+      const monthlyDep  = new Array(12).fill(0);
+
+      ordersYear.forEach(o => {
+        if (!o.finalized) return;
+        const m = parseInt((o.date || '').slice(5,7),10)-1;
+        if (m>=0 && m<12) monthlyCA[m] += Number(o.montant||0);
+      });
+
+      expensesYear.forEach(e => {
+        const m = parseInt((e.date || '').slice(5,7),10)-1;
+        if (m>=0 && m<12) monthlyDep[m] += Number(e.amount||0);
+      });
+
+      const totalCA  = monthlyCA.reduce((a,b)=>a+b,0);
+      const totalDep = monthlyDep.reduce((a,b)=>a+b,0);
+      const totalMargin = totalCA - totalDep;
+
+      yearSummary.textContent = `Synthèse ${year} : CA ${euroShort(totalCA)}, Dépenses ${euroShort(totalDep)}, Marge ${euroShort(totalMargin)}.`;
+
+      yearKpis.innerHTML = `
+        <div class="kpi">
+          <span>CA annuel facturé</span>
+          <strong style="color:#16a34a;">${euroShort(totalCA)}</strong>
+        </div>
+        <div class="kpi">
+          <span>Dépenses véhicules</span>
+          <strong style="color:#b91c1c;">${euroShort(totalDep)}</strong>
+        </div>
+        <div class="kpi">
+          <span>Marge estimée</span>
+          <strong>${euroShort(totalMargin)}</strong>
+        </div>
+        <div class="kpi">
+          <span>Commandes finalisées</span>
+          <strong>${ordersYear.filter(o=>o.finalized).length}</strong>
+        </div>
+      `;
+
+      const labels = ['Janv.','Fév.','Mars','Avr.','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.'];
+      const caRow = monthlyCA.map(v => euroShort(v));
+      const depRow= monthlyDep.map(v => euroShort(v));
+      const marRow= monthlyCA.map((v,i)=>euroShort(v-monthlyDep[i]));
+      const caTotal = euroShort(totalCA);
+      const depTotal= euroShort(totalDep);
+      const marTotal= euroShort(totalMargin);
+
+      function row(label, vals, total, cls='') {
+        return `
+          <tr>
+            <td>${label}</td>
+            ${vals.map(v=>`<td class="${cls}">${v}</td>`).join('')}
+            <td class="${cls}">${total}</td>
+          </tr>
+        `;
+      }
+
+      yearSummaryBody.innerHTML = `
+        ${row('CA facturé', caRow, caTotal, 'positive')}
+        ${row('Dépenses véhicules', depRow, depTotal, 'negative')}
+        ${row('Marge estimée', marRow, marTotal, totalMargin>=0?'positive':'negative')}
+      `;
+    }
+
+    applyYearFilter.addEventListener('click', () => {
+      renderYearSummary(yearSelect.value);
+    });
 
     function renderVehicleExpenses() {
       const byTruck = {};
@@ -1933,7 +2129,6 @@
         state.products.map(p => `<option value="${p.code}">${p.label}</option>`).join('');
     }
 
-    // ===== PAGE CHAUFFEUR & SIGNATURE =====
     function renderDriverPage() {
       const d = state.currentDriver;
       if (!d) return;
@@ -1984,7 +2179,6 @@
       });
     }
 
-    // bouton générique "Ouvrir la zone de signature" (sans rotation précise)
     openSignature.addEventListener('click', () => {
       if (!state.currentDriver) {
         alert('Connectez-vous en chauffeur d\'abord.');
@@ -2000,7 +2194,6 @@
       setTimeout(initSignatureCanvas, 50);
     });
 
-    // ===== Canvas de signature (UN SEUL SYSTÈME) =====
     let sigCtx = null;
     let sigDrawing = false;
     let sigHasStroke = false;
@@ -2131,7 +2324,6 @@
       }, 800);
     });
 
-    // ===== Init global =====
     function renderAll() {
       renderManagerDashboard();
       renderOrdersTable();
@@ -2140,6 +2332,7 @@
       renderProductsSelect();
       renderVehicleExpenses();
       renderRecapDay();
+      renderYearOptions();
     }
 
     initState();
