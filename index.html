@@ -791,6 +791,344 @@
       color:#16a34a;
     }
 
+    .monthly-filters{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:8px;
+      align-items:flex-end;
+    }
+
+    .monthly-summary{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .monthly-types{
+      margin-top:8px;
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:8px;
+    }
+
+    .monthly-type-card{
+      border-radius:14px;
+      padding:8px 10px;
+      background:#f9fafb;
+      border:1px solid rgba(148,163,184,0.45);
+      font-size:11px;
+    }
+
+    .monthly-type-card strong{
+      display:block;
+      margin-bottom:3px;
+      font-size:12px;
+      color:#111827;
+    }
+
+    .year-filters{
+      display:flex;
+      gap:10px;
+      align-items:flex-end;
+      margin-top:8px;
+      flex-wrap:wrap;
+    }
+
+    .year-summary{
+      margin-top:8px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .year-table-wrap{
+      max-height:220px;
+      overflow:auto;
+      margin-top:6px;
+    }
+
+    .recap-annual-card,
+    #view-recap .card {
+      min-width: 0;
+    }
+
+    .recap-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,0.22);
+      background: #fff;
+      margin-top: 10px;
+    }
+
+    .recap-year-table {
+      width: 100%;
+      min-width: 980px;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .recap-year-table th,
+    .recap-year-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(148,163,184,0.22);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .recap-year-table th:first-child,
+    .recap-year-table td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background: #f8fafc;
+      min-width: 180px;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .recap-year-table thead th:first-child {
+      z-index: 3;
+    }
+
+    .recap-year-table td:not(:first-child),
+    .recap-year-table th:not(:first-child) {
+      text-align: right;
+    }
+
+    .recap-year-table tbody tr:last-child td {
+      font-weight: 700;
+      background: rgba(59,130,246,0.06);
+    }
+
+    .recap-year-table .negative {
+      color: #b91c1c;
+    }
+
+    .recap-year-table .positive {
+      color: #166534;
+    }
+
+    .recap-layout {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .recap-day-card,
+    .recap-drivers-card,
+    .recap-annual-card {
+      min-width: 0;
+    }
+
+    @media (min-width: 769px) {
+      .recap-top-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .layout { border-radius:0; margin:0; }
+      .landing-inner { grid-template-columns:1fr; }
+      .app { grid-template-columns:1fr; }
+      .hero-grid { grid-template-columns:1fr; }
+      .driver-grid { grid-template-columns:1fr; }
+      .grid-2 { grid-template-columns:1fr; }
+      .kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .monthly-types { grid-template-columns:repeat(2,minmax(0,1fr)); }
+
+      .recap-top-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      #view-recap .kpis {
+        grid-template-columns: repeat(2, minmax(0,1fr));
+      }
+
+      .recap-layout {
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main { padding:12px; }
+      .topbar { flex-direction:column; align-items:stretch; }
+      .toolbar { justify-content:stretch; }
+      .toolbar .btn { width:100%; justify-content:center; }
+      .card { padding:12px; }
+      .form-grid { grid-template-columns:1fr; }
+
+      .orders-layout {
+        gap: 10px;
+      }
+
+      .orders-form-card,
+      .orders-table-card {
+        padding: 12px;
+      }
+
+      .orders-table-wrap {
+        max-height:none;
+      }
+
+      .orders-table {
+        min-width: 720px;
+      }
+
+      .orders-table th,
+      .orders-table td {
+        padding:6px 6px;
+        font-size:11px;
+      }
+
+      .orders-table td.col-address {
+        min-width:180px;
+      }
+
+      #view-recap {
+        padding-bottom: 12px;
+      }
+
+      #view-recap .card {
+        padding: 14px;
+      }
+
+      #view-recap .kpis {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .recap-layout {
+        gap: 14px;
+      }
+
+      .recap-top-grid {
+        gap: 14px;
+      }
+
+      .list {
+        max-height: 200px;
+      }
+
+      .year-filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
+
+      .year-filters > div {
+        width: 100%;
+      }
+
+      .year-filters .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 16px;
+      }
+
+      .year-summary {
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .recap-table-wrap {
+        margin-top: 12px;
+        border-radius: 12px;
+      }
+
+      .recap-year-table {
+        min-width: 920px;
+      }
+
+      .recap-year-table th,
+      .recap-year-table td {
+        padding: 8px 9px;
+        font-size: 11px;
+      }
+
+      .recap-year-table th:first-child,
+      .recap-year-table td:first-child {
+        min-width: 140px;
+        padding: 8px 10px;
+      }
+
+      .recap-annual-card h3 {
+        font-size: 14px;
+      }
+
+      .recap-annual-card p {
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .orders-table {
+        min-width: 650px;
+      }
+
+      .orders-table th,
+      .orders-table td {
+        padding: 5px 6px;
+        font-size:10px;
+      }
+
+      .orders-table td.col-address {
+        min-width:150px;
+      }
+
+      .recap-year-table {
+        min-width: 850px;
+      }
+
+      .recap-year-table th,
+      .recap-year-table td {
+        padding: 7px 8px;
+        font-size: 10px;
+      }
+
+      .recap-year-table th:first-child,
+      .recap-year-table td:first-child {
+        min-width: 120px;
+        font-size: 11px;
+      }
+
+      #view-recap .kpis .kpi {
+        padding: 10px;
+      }
+
+      #view-recap .kpis .kpi span {
+        font-size: 11px;
+      }
+
+      #view-recap .kpis .kpi strong {
+        font-size: 16px;
+        margin-top: 3px;
+      }
+
+      .year-filters .label {
+        font-size: 11px;
+      }
+
+      .year-filters .select,
+      .year-filters .btn {
+        font-size: 13px;
+      }
+
+      .recap-annual-card h3 {
+        font-size: 13px;
+      }
+
+      .recap-annual-card p {
+        font-size: 11px;
+      }
+    }
+
     .signature-canvas-wrapper {
       margin-top: 12px;
       border: 2px dashed rgba(148,163,184,0.5);
@@ -869,37 +1207,8 @@
       font-size: 11px;
       font-weight: 600;
     }
-
-    @media (max-width: 1100px) {
-      .layout { border-radius:0; margin:0; }
-      .landing-inner { grid-template-columns:1fr; }
-      .app { grid-template-columns:1fr; }
-      .hero-grid { grid-template-columns:1fr; }
-      .driver-grid { grid-template-columns:1fr; }
-      .grid-2 { grid-template-columns:1fr; }
-      .kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
-    }
-
-    @media (max-width: 768px) {
-      .main { padding:12px; }
-      .topbar { flex-direction:column; align-items:stretch; }
-      .toolbar { justify-content:stretch; }
-      .toolbar .btn { width:100%; justify-content:center; }
-      .card { padding:12px; }
-      .form-grid { grid-template-columns:1fr; }
-      .orders-table-wrap { max-height:none; }
-      .orders-table { min-width:900px; }
-      th, td { padding:8px 10px; }
-      .list { max-height: 200px; }
-    }
-
-    @media (max-width: 480px) {
-      .orders-table { min-width:850px; }
-      .orders-table th,
-      .orders-table td {
-        padding:7px 8px;
-        font-size:10px;
-      }
+    .orders-table-card h3 {
+      margin-bottom: 4px;
     }
   </style>
 </head>
@@ -998,7 +1307,6 @@
             <div class="nav">
               <button class="active" data-view="dashboard"><span>Dashboard</span><span>›</span></button>
               <button data-view="commandes"><span>Commandes</span><span>›</span></button>
-              <!-- menus Chauffeurs & Flotte retirés, remplacés par Paramétrages -->
               <button data-view="recap"><span>Récapitulatif</span><span>›</span></button>
               <button data-view="vehicules"><span>Dépenses véhicules</span><span>›</span></button>
               <button data-view="parametrages"><span>Paramétrages</span><span>›</span></button>
@@ -1018,6 +1326,7 @@
               <h1 id="mainTitle">Dashboard</h1>
               <p id="mainDesc">Vue d’ensemble de l’activité journalière.</p>
             </div>
+
             <div class="toolbar"></div>
           </div>
 
@@ -1042,6 +1351,7 @@
           <!-- Commandes -->
           <section class="view" id="view-commandes">
             <div class="orders-layout">
+
               <div class="card orders-form-card">
                 <div class="order-form-head">
                   <div>
@@ -1122,7 +1432,7 @@
                 </div>
 
                 <div class="orders-table-wrap" style="max-height:500px;">
-                  <table class="orders-table" style="min-width:1200px;">
+                  <table class="orders-table">
                     <thead>
                       <tr>
                         <th>N°</th>
@@ -1144,6 +1454,7 @@
                   </table>
                 </div>
               </div>
+
             </div>
           </section>
 
@@ -1249,15 +1560,18 @@
                     <label class="label">Montant</label>
                     <input id="expenseAmount" class="input" type="number" step="0.01" placeholder="100">
                   </div>
+
                   <div class="full">
                     <label class="label">Libellé</label>
                     <input id="expenseLabel" class="input" placeholder="Pneu avant, vidange...">
                   </div>
+
                   <div class="full">
                     <label class="label">Source interne</label>
                     <input id="expenseSource" class="input" placeholder="Facture GARAGE, note, etc.">
                   </div>
                 </div>
+
                 <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
                   <button class="btn btn-ghost" id="resetExpense">Annuler</button>
                   <button class="btn btn-primary" id="saveExpenseBtn">Enregistrer la dépense</button>
@@ -1266,19 +1580,116 @@
             </div>
           </section>
 
-          <!-- Paramétrages -->
+          <!-- PARAMÉTRAGES -->
           <section class="view" id="view-parametrages">
-            <div class="card">
-              <h3>Paramétrages</h3>
-              <p>Zone réservée pour les futures options de configuration (PIN, chauffeurs, camions...).</p>
+            <div class="grid-2">
+              <div class="card">
+                <h3>Chauffeurs OZIER</h3>
+                <p>Liste gérée uniquement en mémoire pour la démo.</p>
+                <div class="list" id="driversList"></div>
+              </div>
+
+              <div class="card">
+                <h3>Flotte OZIER</h3>
+                <p>Camions gérés uniquement côté front dans cette démo.</p>
+                <div class="list" id="fleetList"></div>
+              </div>
+            </div>
+
+            <div class="grid-2" style="margin-top:14px;">
+              <div class="card">
+                <h3>Fiche chauffeur</h3>
+                <p>Les champs servent de base pour le futur CRUD connecté.</p>
+                <div class="form-grid">
+                  <div>
+                    <label class="label">Prénom</label>
+                    <input id="driverFirst" class="input" placeholder="Jean">
+                  </div>
+                  <div>
+                    <label class="label">Nom complet</label>
+                    <input id="driverName" class="input" placeholder="Jean MARTINEAU">
+                  </div>
+
+                  <div>
+                    <label class="label">Téléphone</label>
+                    <input id="driverPhone" class="input" placeholder="0696 XX XX XX">
+                  </div>
+
+                  <div>
+                    <label class="label">Email</label>
+                    <input id="driverEmail" class="input" placeholder="jean@exemple.com">
+                  </div>
+
+                  <div>
+                    <label class="label">PIN</label>
+                    <input id="driverPin" class="input" placeholder="1111">
+                  </div>
+
+                  <div>
+                    <label class="label">Camion associé</label>
+                    <select id="driverTruck" class="select"></select>
+                  </div>
+
+                  <div class="full">
+                    <label class="label">Notes internes</label>
+                    <textarea id="driverNotes" rows="2" class="input" placeholder="Particularités, horaires..."></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3>Fiche camion</h3>
+                <p>Prévue pour un futur lien avec les dépenses véhicules.</p>
+                <div class="form-grid">
+                  <div>
+                    <label class="label">Code camion</label>
+                    <input id="truckCode" class="input" placeholder="OZ-001">
+                  </div>
+                  <div>
+                    <label class="label">Immatriculation</label>
+                    <input id="truckPlate" class="input" placeholder="AB-123-CD">
+                  </div>
+                  <div>
+                    <label class="label">Type</label>
+                    <input id="truckType" class="input" placeholder="Benne 10T">
+                  </div>
+                  <div>
+                    <label class="label">Kilométrage</label>
+                    <input id="truckKm" class="input" placeholder="120 000">
+                  </div>
+                  <div class="full">
+                    <label class="label">Notes</label>
+                    <textarea id="truckNotes" rows="2" class="input" placeholder="CT, entretien, remarques..."></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-2" style="margin-top:14px;">
+              <div class="card">
+                <h3>Produits livrés</h3>
+                <p>Liste utilisée dans les commandes (SABLE, GRAVIER, etc.).</p>
+                <div class="list" id="productsList" style="max-height:190px;"></div>
+              </div>
+              <div class="card">
+                <h3>Chantiers / Sites</h3>
+                <p>Préparation pour sélection rapide des adresses récurrentes.</p>
+                <div class="list" id="sitesList" style="max-height:190px;"></div>
+              </div>
             </div>
           </section>
 
           <!-- Intégration -->
           <section class="view" id="view-integration">
             <div class="card">
-              <h3>Intégration</h3>
-              <p>Zone préparée pour les connexions Make, API et Google Sheets.</p>
+              <h3>Notes d'intégration</h3>
+              <p>Idées de raccordement avec Google Sheets et Make (Integromat).</p>
+              <ul style="font-size:13px;color:var(--muted);margin-left:16px;display:flex;flex-direction:column;gap:6px;">
+                <li>Écriture des commandes dans une feuille "Commandes_Jour".</li>
+                <li>Écriture des pleins carburant et dépenses dans "Dépenses_Véhicules".</li>
+                <li>Utilisation d'un scénario Make pour consolider le CA mensuel.</li>
+                <li>Exports chauffeur et camion au format CSV pour backup.</li>
+              </ul>
             </div>
           </section>
         </main>
@@ -1331,26 +1742,24 @@
         <div class="signature-head">
           <div>
             <h3 style="font-size:18px;color:#111827;">Signature client</h3>
-            <p style="font-size:12px;color:var(--muted);">Valide la rotation et le plein associé.</p>
+            <p style="font-size:12px;color:var(--muted);">Permet de valider la rotation et le plein carburant associé.</p>
           </div>
           <button class="btn btn-ghost" id="closeSignature">Fermer</button>
         </div>
 
         <div class="signature-info">
           <div>
-            <span style="font-size:12px;color:var(--muted);">Commande / Rotation :</span>
-            <div id="signatureOrderInfo" style="font-size:13px;color:#111827;font-weight:500;margin-top:2px;">
-              Aucune rotation sélectionnée.
-            </div>
+            <span style="font-size:12px;color:var(--muted);">Commande / Rotation sélectionnée :</span>
+            <div id="signatureOrderInfo" style="font-size:13px;color:#111827;font-weight:500;margin-top:2px;">Aucune rotation sélectionnée.</div>
           </div>
           <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
             <div>
               <label class="label">Nom du signataire</label>
-              <input id="signatoryName" class="input" placeholder="NOM Prénom">
+              <input id="signatoryName" class="input" placeholder="NOM Prénom du responsable chantier">
             </div>
             <div>
               <label class="label">Qualité / Fonction</label>
-              <input id="signatoryRole" class="input" placeholder="Chef de chantier, responsable...">
+              <input id="signatoryRole" class="input" placeholder="Chef de chantier, responsable BTP...">
             </div>
           </div>
         </div>
@@ -1360,7 +1769,9 @@
         </div>
 
         <div class="signature-controls">
-          <button class="btn btn-ghost" id="clearSignature">Effacer</button>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost" id="clearSignature">Effacer</button>
+          </div>
           <button class="btn btn-primary" id="validateSignature">Valider la signature et la rotation</button>
         </div>
         <div class="signature-preview" id="signaturePreview"></div>
@@ -1372,22 +1783,20 @@
       <div class="finalize-box">
         <span class="finalize-icon">✅</span>
         <h3 style="font-size:20px;color:#111827;margin-bottom:10px;">Commande finalisée !</h3>
-        <p style="font-size:13px;color:var(--text-soft);margin-bottom:6px;">
+        <p style="font-size:13px;color:#text-soft;margin-bottom:6px;">
           La commande de <strong id="finalizeClientName"></strong> est maintenant marquée comme <strong style="color:#16a34a;">Finalisée</strong>.
         </p>
         <div style="margin:16px 0;padding:14px;background:#fffbeb;border-radius:14px;border:1px solid rgba(234,179,8,0.4);">
           <p style="font-size:14px;color:#92400e;font-weight:600;">📄 Action requise</p>
           <p style="font-size:13px;color:#78350f;margin-top:4px;">
-            Le montant de cette commande est désormais comptabilisé dans le récapitulatif.<br>
+            Le montant de cette commande est désormais comptabilisé dans le récapitulatif et la synthèse annuelle CA.<br>
             <strong>N'oubliez pas d'envoyer la facture au client !</strong>
           </p>
         </div>
         <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">
           Montant facturé : <strong id="finalizeAmount" style="color:#16a34a;font-size:14px;"></strong>
         </div>
-        <button class="btn btn-primary" id="closeFinalizeModal" style="width:100%;padding:10px;">
-          Compris — Fermer
-        </button>
+        <button class="btn btn-primary" id="closeFinalizeModal" style="width:100%;padding:10px;">Compris — Fermer</button>
       </div>
     </div>
   </div>
@@ -1421,7 +1830,7 @@
 
     const ordersTableBody = document.getElementById('ordersTableBody');
     const orderClient  = document.getElementById('orderClient');
-    const orderPhone   = document.getElementById('orderPhone');
+    the_orderPhone   = document.getElementById('orderPhone');
     const orderAddress = document.getElementById('orderAddress');
     const orderQty     = document.getElementById('orderQty');
     const orderAmount  = document.getElementById('orderAmount');
@@ -1438,8 +1847,9 @@
 
     const recapKpis    = document.getElementById('recapKpis');
     const recapDrivers = document.getElementById('recapDrivers');
+
     const yearSelect   = document.getElementById('yearSelect');
-    const applyYearFilter = document.getElementById('applyYearFilter');
+    const applyYearFilterBtn = document.getElementById('applyYearFilter');
     const yearSummary  = document.getElementById('yearSummary');
     const yearKpis     = document.getElementById('yearKpis');
     const yearSummaryBody = document.getElementById('yearSummaryBody');
@@ -1454,6 +1864,25 @@
     const saveExpenseBtn = document.getElementById('saveExpenseBtn');
     const vehicleExpenseKpis = document.getElementById('vehicleExpenseKpis');
     const vehicleTotalsList  = document.getElementById('vehicleTotalsList');
+
+    const driversList = document.getElementById('driversList');
+    const fleetList   = document.getElementById('fleetList');
+    const driverFirst = document.getElementById('driverFirst');
+    const driverName  = document.getElementById('driverName');
+    const driverPhone = document.getElementById('driverPhone');
+    const driverEmail = document.getElementById('driverEmail');
+    const driverPin   = document.getElementById('driverPin');
+    const driverTruck = document.getElementById('driverTruck');
+    const driverNotes = document.getElementById('driverNotes');
+
+    const truckCode = document.getElementById('truckCode');
+    const truckPlate = document.getElementById('truckPlate');
+    const truckType  = document.getElementById('truckType');
+    const truckKm    = document.getElementById('truckKm');
+    const truckNotes = document.getElementById('truckNotes');
+
+    const productsList = document.getElementById('productsList');
+    const sitesList    = document.getElementById('sitesList');
 
     const logoutManager = document.getElementById('logoutManager');
     const logoutDriver  = document.getElementById('logoutDriver');
@@ -1482,10 +1911,13 @@
     const closeFinalizeModalBtn = document.getElementById('closeFinalizeModal');
 
     const state = {
-      managers: [{ pin:'1234', name:'Gérant OZIER' }],
+      managers: [
+        { pin:'1234', name:'Gérant OZIER' }
+      ],
       drivers: [],
       fleet: [],
       products: [],
+      sites: [],
       orders: [],
       vehicleExpenses: [],
       currentDriver: null,
@@ -1493,15 +1925,15 @@
     };
 
     const initialDrivers = [
-      {id:'jean',  name:'Jean MARTINEAU',  phone:'0696 11 11 11', pin:'1111', truck:'OZ-001'},
-      {id:'marie', name:'Marie DUBOIS',   phone:'0696 22 22 22', pin:'2222', truck:'OZ-002'},
-      {id:'pierre',name:'Pierre LOUIS',   phone:'0696 33 33 33', pin:'3333', truck:'OZ-003'}
+      {id:'jean',  first:'Jean',  name:'Jean MARTINEAU',  phone:'0696 11 11 11', email:'jean@ozier.fr',  pin:'1111', truck:'OZ-001'},
+      {id:'marie', first:'Marie', name:'Marie DUBOIS',   phone:'0696 22 22 22', email:'marie@ozier.fr', pin:'2222', truck:'OZ-002'},
+      {id:'pierre',first:'Pierre',name:'Pierre LOUIS',   phone:'0696 33 33 33', email:'pierre@ozier.fr',pin:'3333', truck:'OZ-003'}
     ];
 
     const initialFleet = [
-      {code:'OZ-001', plate:'AB-001-OZ', type:'Benne 10T', km:120000},
-      {code:'OZ-002', plate:'AB-002-OZ', type:'Benne 10T', km:98000},
-      {code:'OZ-003', plate:'AB-003-OZ', type:'Tracteur', km:150000}
+      {code:'OZ-001', plate:'AB-001-OZ', type:'Benne 10T', km:120000, notes:'Camion principal Jean'},
+      {code:'OZ-002', plate:'AB-002-OZ', type:'Benne 10T', km:98000,  notes:'Camion Marie'},
+      {code:'OZ-003', plate:'AB-003-OZ', type:'Tracteur', km:150000, notes:'Camion Pierre'}
     ];
 
     const initialProducts = [
@@ -1510,20 +1942,31 @@
       {code:'TERRE-10T',   label:'Terre 10T',  unit:'tonne'}
     ];
 
+    const initialSites = [
+      {id:'site-1', label:'Zone Industrielle 1', address:'ZI 1 - FDF'},
+      {id:'site-2', label:'Chantier Morne Rouge', address:'Morne Rouge'},
+      {id:'site-3', label:'Chantier Fort-de-France', address:'Centre-ville FDF'}
+    ];
+
     const initialOrders = [
       {id:1, client:'Entreprise BTP A', phone:'0696 00 00 01', address:'Zone industrielle 1', qty:'12 tonnes', montant:1850, date:'2026-01-10', truck:'OZ-001', driver:'jean', status:'Finalisée', product:'SABLE-10T', rotations:1, deliveredRotations:1, finalized:true},
-      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', product:'GRAVIER-10T', rotations:2, deliveredRotations:1, finalized:false}
+      {id:2, client:'Entreprise BTP B', phone:'0696 00 00 02', address:'Chantier Morne Rouge', qty:'8 tonnes', montant:1200, date:'2026-01-12', truck:'OZ-002', driver:'marie', status:'En cours', product:'GRAVIER-10T', rotations:2, deliveredRotations:1, finalized:false},
+      {id:3, client:'Entreprise BTP C', phone:'0696 00 00 03', address:'Chantier Fort-de-France', qty:'15 tonnes', montant:2450, date:'2026-02-05', truck:'OZ-001', driver:'jean', status:'En attente', product:'SABLE-10T', rotations:3, deliveredRotations:0, finalized:false}
     ];
 
     const initialExpenses = [
       {id:1, truck:'OZ-001', type:'Carburant', date:'2026-01-05', amount:150, label:'Plein GO', note:''},
-      {id:2, truck:'OZ-001', type:'Entretien', date:'2026-01-20', amount:320, label:'Vidange + filtres', note:'garage'}
+      {id:2, truck:'OZ-001', type:'Entretien', date:'2026-01-20', amount:320, label:'Vidange + filtres', note:'garage'},
+      {id:3, truck:'OZ-002', type:'Carburant', date:'2026-01-18', amount:130, label:'Plein GO', note:''},
+      {id:4, truck:'OZ-003', type:'Réparation', date:'2026-02-02', amount:450, label:'Freins arrière', note:'atelier'},
+      {id:5, truck:'OZ-001', type:'Autre', date:'2026-02-10', amount:200, label:'Pneu avant', note:'garage'}
     ];
 
     function initState() {
       state.drivers = JSON.parse(JSON.stringify(initialDrivers));
       state.fleet   = JSON.parse(JSON.stringify(initialFleet));
       state.products= JSON.parse(JSON.stringify(initialProducts));
+      state.sites   = JSON.parse(JSON.stringify(initialSites));
       state.orders  = JSON.parse(JSON.stringify(initialOrders));
       state.vehicleExpenses = JSON.parse(JSON.stringify(initialExpenses));
     }
@@ -1555,16 +1998,16 @@
         mainDesc.textContent  = 'Saisie et suivi des commandes clients.';
       } else if (viewKey === 'recap') {
         mainTitle.textContent = 'Récapitulatif';
-        mainDesc.textContent  = 'Synthèse journalière et annuelle.';
+        mainDesc.textContent  = 'Vue journalière et annuelle CA / dépenses.';
       } else if (viewKey === 'vehicules') {
         mainTitle.textContent = 'Dépenses véhicules';
         mainDesc.textContent  = 'Suivi des charges par camion.';
       } else if (viewKey === 'parametrages') {
         mainTitle.textContent = 'Paramétrages';
-        mainDesc.textContent  = 'Configuration PIN, chauffeurs, camions.';
+        mainDesc.textContent  = 'Gestion des chauffeurs, flotte, produits et chantiers.';
       } else if (viewKey === 'integration') {
         mainTitle.textContent = 'Intégration';
-        mainDesc.textContent  = 'Connecteurs Make, Google Sheets, API.';
+        mainDesc.textContent  = 'Notes pour les flux Sheets / Make.';
       }
     }
 
@@ -1588,7 +2031,6 @@
 
     pinInputs.forEach((input, idx) => {
       input.addEventListener('input', () => {
-        input.value = input.value.replace(/\D/g,'');
         if (input.value.length === 1 && idx < pinInputs.length - 1) {
           pinInputs[idx + 1].focus();
         }
@@ -1673,13 +2115,13 @@
       const totalOrders  = state.orders.length;
       const totalDrivers = state.drivers.length;
       const totalFleet   = state.fleet.length;
-      const totalAmount  = state.orders.filter(o=>o.finalized)
-        .reduce((sum,o)=>sum+Number(o.montant||0),0);
+      const totalAmountFinalized = state.orders.filter(o => o.finalized).reduce((sum,o)=>sum+Number(o.montant||0),0);
+      const totalAmount  = totalAmountFinalized;
 
       managerKpis.innerHTML = `
         <div class="kpi">
           <span>CA facturé (finalisé)</span>
-          <strong style="color:#16a34a;">${euroShort(totalAmount)}</strong>
+          <strong>${euroShort(totalAmount)}</strong>
         </div>
         <div class="kpi">
           <span>Commandes</span>
@@ -1711,7 +2153,7 @@
         <div class="item">
           <div class="item-top">
             <strong>${d.name}</strong>
-            <span class="badge">${d.truck || 'Sans camion'}</span>
+            <span class="badge">${d.truck || 'Aucun camion'}</span>
           </div>
           <small>${d.phone} · PIN ${d.pin}</small>
         </div>
@@ -1721,7 +2163,7 @@
     function resetOrderForm() {
       state.editingOrderId = null;
       orderClient.value  = '';
-      orderPhone.value   = '';
+      the_orderPhone.value   = '';
       orderAddress.value = '';
       orderQty.value     = '';
       orderAmount.value  = '';
@@ -1740,7 +2182,7 @@
       if (!o) return;
       state.editingOrderId = id;
       orderClient.value  = o.client || '';
-      orderPhone.value   = o.phone || '';
+      the_orderPhone.value   = o.phone || '';
       orderAddress.value = o.address || '';
       orderQty.value     = o.qty || '';
       orderAmount.value  = o.montant || '';
@@ -1764,7 +2206,7 @@
       const existingOrder = state.editingOrderId ? state.orders.find(o => o.id === state.editingOrderId) : null;
       const data = {
         client:  orderClient.value.trim(),
-        phone:   orderPhone.value.trim(),
+        phone:   the_orderPhone.value.trim(),
         address: orderAddress.value.trim(),
         qty:     orderQty.value.trim(),
         montant: Number(orderAmount.value || 0),
@@ -1797,6 +2239,7 @@
       renderOrdersTable();
       renderManagerDashboard();
       renderRecapDay();
+      renderYearOptions();
     });
 
     function renderOrdersTable() {
@@ -1818,10 +2261,10 @@
 
         const montantCell = o.finalized
           ? `<strong style="color:#16a34a;">${euroShort(o.montant)}</strong>`
-          : `<span class="montant-pending">En attente...</span>`;
+          : `<span class="montant-pending" title="Montant visible après finalisation">En attente...</span>`;
 
         const finalizeBtn = !o.finalized
-          ? `<button class="btn-xs btn-finalize" data-id="${o.id}">✓ Finaliser</button>`
+          ? `<button class="btn-xs btn-finalize" data-id="${o.id}" title="Marquer la commande comme finalisée et envoyer la facture">✓ Finaliser</button>`
           : ``;
 
         const deliveredClass = deliveredRot >= totalRot ? 'rotation-delivered' : '';
@@ -1851,9 +2294,7 @@
           </tr>
         `;
       }).join('') || `
-        <tr><td colspan="13" style="text-align:center;color:var(--muted);padding:16px;">
-          Aucune commande enregistrée.
-        </td></tr>
+        <tr><td colspan="13" style="text-align:center;color:var(--muted);padding:16px;">Aucune commande enregistrée.</td></tr>
       `;
 
       ordersTableBody.querySelectorAll('.btn-finalize').forEach(btn => {
@@ -1878,6 +2319,7 @@
             renderOrdersTable();
             renderManagerDashboard();
             renderRecapDay();
+            renderYearOptions();
           }
         });
       });
@@ -1897,12 +2339,15 @@
       renderOrdersTable();
       renderManagerDashboard();
       renderRecapDay();
+      renderYearOptions();
     }
 
-    closeFinalizeModalBtn.addEventListener('click', () => {
-      finalizeModal.style.display = 'none';
-    });
-    finalizeModal.addEventListener('click', (e) => {
+    if (closeFinalizeModalBtn) {
+      closeFinalizeModalBtn.addEventListener('click', () => {
+        finalizeModal.style.display = 'none';
+      });
+    }
+    finalizeModal && finalizeModal.addEventListener('click', (e) => {
       if (e.target === finalizeModal) finalizeModal.style.display = 'none';
     });
 
@@ -1938,112 +2383,126 @@
         </div>
       `;
 
-      recapDrivers.innerHTML = state.drivers.map(d => {
-        const dOrders = state.orders.filter(o => o.driver === d.id);
-        const dFin    = dOrders.filter(o => o.finalized);
-        const dCa     = dFin.reduce((sum,o)=>sum+Number(o.montant||0),0);
-        const dRot    = dOrders.reduce((sum,o)=>sum+Number(o.deliveredRotations||0),0);
+      const byDriver = {};
+      state.orders.filter(o => o.finalized).forEach(o => {
+        const key = o.driver || 'inconnu';
+        if (!byDriver[key]) byDriver[key] = { ca:0, nb:0, rotLivrees:0 };
+        byDriver[key].ca += Number(o.montant||0);
+        byDriver[key].nb += 1;
+        byDriver[key].rotLivrees += Number(o.deliveredRotations||0);
+      });
 
-        return `
-          <div class="item">
-            <div class="item-top">
-              <strong>${d.name}</strong>
-              <span class="badge">${d.truck || 'Sans camion'}</span>
-            </div>
-            <small>${dOrders.length} commandes · ${dFin.length} finalisées</small>
-            <small>CA : ${euroShort(dCa)} · Rotations livrées : ${dRot}</small>
+      recapDrivers.innerHTML = Object.entries(byDriver).map(([dId,vals]) => `
+        <div class="item">
+          <div class="item-top">
+            <strong>${driverLabelFromId(dId) || 'Sans chauffeur'}</strong>
+            <span class="badge ok">${vals.nb} finalisées</span>
           </div>
-        `;
-      }).join('') || '<div class="item"><small>Aucun chauffeur.</small></div>';
+          <small>CA facturé : ${euroShort(vals.ca)}</small>
+          <small>Rotations livrées : ${vals.rotLivrees}</small>
+        </div>
+      `).join('') || '<div class="item"><small>Aucune commande finalisée.</small></div>';
     }
 
     function renderYearOptions() {
       const years = new Set();
       state.orders.forEach(o => {
-        if (o.date && o.date.length >= 4) years.add(o.date.slice(0,4));
+        if (o.date) years.add(o.date.slice(0,4));
       });
-      const list = Array.from(years).sort();
-      yearSelect.innerHTML = list.map(y => `<option value="${y}">${y}</option>`).join('') ||
-        `<option value="">Aucune année</option>`;
+      state.vehicleExpenses.forEach(e => {
+        if (e.date) years.add(e.date.slice(0,4));
+      });
+      const sorted = Array.from(years).sort();
+      yearSelect.innerHTML = sorted.map(y => `<option value="${y}">${y}</option>`).join('');
+      if (sorted.length) yearSelect.value = sorted[sorted.length-1];
     }
 
-    function renderYearSummary(year) {
+    function applyYearFilter(showAlert = true) {
+      const year = yearSelect.value;
       if (!year) {
-        yearSummary.textContent = 'Choisissez une année pour afficher la synthèse.';
-        yearKpis.innerHTML = '';
-        yearSummaryBody.innerHTML = '';
+        if (showAlert) alert("Aucune année disponible.");
         return;
       }
+
       const ordersYear = state.orders.filter(o => (o.date || '').startsWith(year));
       const expensesYear = state.vehicleExpenses.filter(e => (e.date || '').startsWith(year));
 
-      const monthlyCA   = new Array(12).fill(0);
-      const monthlyDep  = new Array(12).fill(0);
+      const months = Array.from({length:12}, (_,i)=> (i+1).toString().padStart(2,'0'));
+
+      const caByMonth = {};
+      const nbByMonth = {};
+      const depByMonth = {};
+
+      months.forEach(m => {
+        caByMonth[m] = 0;
+        nbByMonth[m] = 0;
+        depByMonth[m] = 0;
+      });
+
+      ordersYear.filter(o => o.finalized).forEach(o => {
+        const m = o.date.slice(5,7);
+        caByMonth[m] += Number(o.montant||0);
+      });
 
       ordersYear.forEach(o => {
-        if (!o.finalized) return;
-        const m = parseInt((o.date || '').slice(5,7),10)-1;
-        if (m>=0 && m<12) monthlyCA[m] += Number(o.montant||0);
+        const m = o.date.slice(5,7);
+        nbByMonth[m] += 1;
       });
 
       expensesYear.forEach(e => {
-        const m = parseInt((e.date || '').slice(5,7),10)-1;
-        if (m>=0 && m<12) monthlyDep[m] += Number(e.amount||0);
+        const m = e.date.slice(5,7);
+        depByMonth[m] += Number(e.amount||0);
       });
 
-      const totalCA  = monthlyCA.reduce((a,b)=>a+b,0);
-      const totalDep = monthlyDep.reduce((a,b)=>a+b,0);
-      const totalMargin = totalCA - totalDep;
-
-      yearSummary.textContent = `Synthèse ${year} : CA ${euroShort(totalCA)}, Dépenses ${euroShort(totalDep)}, Marge ${euroShort(totalMargin)}.`;
-
-      yearKpis.innerHTML = `
-        <div class="kpi">
-          <span>CA annuel facturé</span>
-          <strong style="color:#16a34a;">${euroShort(totalCA)}</strong>
-        </div>
-        <div class="kpi">
-          <span>Dépenses véhicules</span>
-          <strong style="color:#b91c1c;">${euroShort(totalDep)}</strong>
-        </div>
-        <div class="kpi">
-          <span>Marge estimée</span>
-          <strong>${euroShort(totalMargin)}</strong>
-        </div>
-        <div class="kpi">
-          <span>Commandes finalisées</span>
-          <strong>${ordersYear.filter(o=>o.finalized).length}</strong>
-        </div>
-      `;
-
-      const labels = ['Janv.','Fév.','Mars','Avr.','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.'];
-      const caRow = monthlyCA.map(v => euroShort(v));
-      const depRow= monthlyDep.map(v => euroShort(v));
-      const marRow= monthlyCA.map((v,i)=>euroShort(v-monthlyDep[i]));
-      const caTotal = euroShort(totalCA);
-      const depTotal= euroShort(totalDep);
-      const marTotal= euroShort(totalMargin);
-
-      function row(label, vals, total, cls='') {
+      function buildRow(label, obj, isCurrency=false) {
+        let total = 0;
+        const cells = months.map(m => {
+          const v = obj[m] || 0;
+          total += v;
+          return `<td>${isCurrency ? euroShort(v) : v}</td>`;
+        }).join('');
         return `
           <tr>
             <td>${label}</td>
-            ${vals.map(v=>`<td class="${cls}">${v}</td>`).join('')}
-            <td class="${cls}">${total}</td>
+            ${cells}
+            <td>${isCurrency ? euroShort(total) : total}</td>
           </tr>
         `;
       }
 
+      const totalCA    = Object.values(caByMonth).reduce((s,v)=>s+v,0);
+      const totalDep   = Object.values(depByMonth).reduce((s,v)=>s+v,0);
+      const totalMarge = totalCA - totalDep;
+
+      yearSummary.textContent = `Synthèse ${year} : CA facturé (finalisé) ${euroShort(totalCA)}, dépenses véhicules ${euroShort(totalDep)}, marge estimée ${euroShort(totalMarge)}.`;
+
+      yearKpis.innerHTML = `
+        <div class="kpi">
+          <span>CA facturé (finalisé)</span>
+          <strong style="color:#16a34a;">${euroShort(totalCA)}</strong>
+        </div>
+        <div class="kpi">
+          <span>Dépenses véhicules</span>
+          <strong>${euroShort(totalDep)}</strong>
+        </div>
+        <div class="kpi">
+          <span>Marge estimée</span>
+          <strong>${euroShort(totalMarge)}</strong>
+        </div>
+        <div class="kpi">
+          <span>Nb commandes</span>
+          <strong>${Object.values(nbByMonth).reduce((s,v)=>s+v,0)}</strong>
+        </div>
+      `;
+
       yearSummaryBody.innerHTML = `
-        ${row('CA facturé', caRow, caTotal, 'positive')}
-        ${row('Dépenses véhicules', depRow, depTotal, 'negative')}
-        ${row('Marge estimée', marRow, marTotal, totalMargin>=0?'positive':'negative')}
+        ${buildRow('CA facturé (finalisé)', caByMonth, true)}
+        ${buildRow('Dépenses véhicules', depByMonth, true)}
+        ${buildRow('Nb commandes', nbByMonth, false)}
       `;
     }
 
-    applyYearFilter.addEventListener('click', () => {
-      renderYearSummary(yearSelect.value);
-    });
+    applyYearFilterBtn.addEventListener('click', () => applyYearFilter(true));
 
     function renderVehicleExpenses() {
       const byTruck = {};
@@ -2097,6 +2556,8 @@
       expenseSource.value = '';
 
       renderVehicleExpenses();
+      renderYearOptions();
+      applyYearFilter(false);
     });
 
     resetExpense.addEventListener('click', () => {
@@ -2108,15 +2569,39 @@
       expenseSource.value = '';
     });
 
-    function renderDriversSelects() {
-      driverSelect.innerHTML = '<option value="">-- Sélectionner --</option>' +
-        state.drivers.map(d => `<option value="${d.id}">${d.name} (PIN ${d.pin})</option>`).join('');
+    function renderDrivers() {
+      driversList.innerHTML = state.drivers.map(d => `
+        <div class="item">
+          <div class="item-top">
+            <strong>${d.name}</strong>
+            <span class="badge">${d.truck || 'Sans camion'}</span>
+          </div>
+          <small>${d.phone} · PIN ${d.pin}</small>
+        </div>
+      `).join('') || '<div class="item"><small>Aucun chauffeur.</small></div>';
+
+      driverTruck.innerHTML = '<option value="">-- Aucun --</option>' +
+        state.fleet.map(f => `<option value="${f.code}">${f.code}</option>`).join('');
 
       orderDriver.innerHTML = '<option value="">-- Sélectionner --</option>' +
         state.drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+
+      driverSelect.innerHTML = '<option value="">-- Sélectionner --</option>' +
+        state.drivers.map(d => `<option value="${d.id}">${d.name} (PIN ${d.pin})</option>`).join('');
     }
 
-    function renderFleetSelects() {
+    function renderFleet() {
+      fleetList.innerHTML = state.fleet.map(f => `
+        <div class="item">
+          <div class="item-top">
+            <strong>${f.code}</strong>
+            <span class="badge">${f.type}</span>
+          </div>
+          <small>${f.plate} · ${f.km.toLocaleString('fr-FR')} km</small>
+          <small>${f.notes || ''}</small>
+        </div>
+      `).join('') || '<div class="item"><small>Aucun camion.</small></div>';
+
       orderTruck.innerHTML = '<option value="">-- Sélectionner --</option>' +
         state.fleet.map(f => `<option value="${f.code}">${f.code}</option>`).join('');
 
@@ -2124,10 +2609,33 @@
         state.fleet.map(f => `<option value="${f.code}">${f.code}</option>`).join('');
     }
 
-    function renderProductsSelect() {
+    function renderProducts() {
+      productsList.innerHTML = state.products.map(p => `
+        <div class="item">
+          <div class="item-top">
+            <strong>${p.label}</strong>
+            <span class="badge">${p.unit}</span>
+          </div>
+          <small>Code : ${p.code}</small>
+        </div>
+      `).join('') || '<div class="item"><small>Aucun produit.</small></div>';
+
       orderProduct.innerHTML = '<option value="">-- Sélectionner --</option>' +
         state.products.map(p => `<option value="${p.code}">${p.label}</option>`).join('');
     }
+
+    function renderSites() {
+      sitesList.innerHTML = state.sites.map(s => `
+        <div class="item">
+          <div class="item-top">
+            <strong>${s.label}</strong>
+          </div>
+          <small>${s.address}</small>
+        </div>
+      `).join('') || '<div class="item"><small>Aucun site.</small></div>';
+    }
+
+    function initLandingDrivers() {}
 
     function renderDriverPage() {
       const d = state.currentDriver;
@@ -2167,16 +2675,38 @@
             product: productLabelFromCode(order.product),
             date: order.date
           };
-          signatureOrderInfo.textContent =
-            `${order.client} · ${productLabelFromCode(order.product)} · ${order.address}`;
+          signatureOrderInfo.textContent = `${order.client} · ${productLabelFromCode(order.product)} · ${order.address}`;
           signaturePreview.textContent = '';
-          signaturePreview.style.color = '#16a34a';
           signatoryName.value = '';
           signatoryRole.value = '';
+          clearCanvas();
           signatureModal.style.display = 'flex';
-          setTimeout(initSignatureCanvas, 50);
+          resizeCanvas();
         });
       });
+    }
+
+    let signatureCtx;
+    let drawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    let hasSignature = false;
+    let selectedRotation = null;
+
+    function resizeCanvas() {
+      const rect = signatureCanvas.getBoundingClientRect();
+      signatureCanvas.width = rect.width;
+      signatureCanvas.height = rect.height;
+      signatureCtx = signatureCanvas.getContext('2d');
+      signatureCtx.lineWidth = 2;
+      signatureCtx.lineCap = 'round';
+      signatureCtx.strokeStyle = '#111827';
+    }
+
+    function clearCanvas() {
+      if (!signatureCtx) return;
+      signatureCtx.clearRect(0,0,signatureCanvas.width,signatureCanvas.height);
+      hasSignature = false;
     }
 
     openSignature.addEventListener('click', () => {
@@ -2187,152 +2717,130 @@
       selectedRotation = { orderId:null, client:'', address:'', product:'', date:'' };
       signatureOrderInfo.textContent = 'Signature générique (aucune rotation précise sélectionnée).';
       signaturePreview.textContent   = '';
-      signaturePreview.style.color   = '#16a34a';
       signatoryName.value = '';
       signatoryRole.value = '';
       signatureModal.style.display = 'flex';
-      setTimeout(initSignatureCanvas, 50);
+      resizeCanvas();
+      clearCanvas();
     });
 
-    let sigCtx = null;
-    let sigDrawing = false;
-    let sigHasStroke = false;
-    let selectedRotation = null;
-
-    function initSignatureCanvas() {
-      if (!signatureCanvas) return;
-      const rect  = signatureCanvas.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      const ratio = window.devicePixelRatio || 1;
-      signatureCanvas.width  = rect.width * ratio;
-      signatureCanvas.height = rect.height * ratio;
-      sigCtx = signatureCanvas.getContext('2d');
-      sigCtx.setTransform(1,0,0,1,0,0);
-      sigCtx.scale(ratio, ratio);
-      sigCtx.lineWidth   = 2;
-      sigCtx.lineCap     = 'round';
-      sigCtx.strokeStyle = '#111827';
-      sigCtx.clearRect(0,0,rect.width,rect.height);
-      sigHasStroke = false;
-    }
-
-    function clearSignatureCanvas() {
-      if (!sigCtx) return;
-      const rect = signatureCanvas.getBoundingClientRect();
-      sigCtx.clearRect(0,0,rect.width,rect.height);
-      sigHasStroke = false;
-    }
-
-    function sigPointerPos(e) {
-      const rect    = signatureCanvas.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      return { x: clientX - rect.left, y: clientY - rect.top };
-    }
-
-    function sigStart(e) {
-      e.preventDefault();
-      if (!sigCtx) return;
-      sigDrawing = true;
-      sigHasStroke = true;
-      const {x,y} = sigPointerPos(e);
-      sigCtx.beginPath();
-      sigCtx.moveTo(x,y);
-    }
-
-    function sigMove(e) {
-      if (!sigDrawing || !sigCtx) return;
-      e.preventDefault();
-      const {x,y} = sigPointerPos(e);
-      sigCtx.lineTo(x,y);
-      sigCtx.stroke();
-    }
-
-    function sigEnd(e) {
-      if (!sigDrawing) return;
-      e && e.preventDefault();
-      sigDrawing = false;
-    }
-
-    if (signatureCanvas) {
-      signatureCanvas.addEventListener('mousedown', sigStart);
-      signatureCanvas.addEventListener('mousemove', sigMove);
-      window.addEventListener('mouseup', sigEnd);
-
-      signatureCanvas.addEventListener('touchstart', sigStart, {passive:false});
-      signatureCanvas.addEventListener('touchmove',  sigMove,  {passive:false});
-      window.addEventListener('touchend', sigEnd);
-    }
-
-    clearSignature.addEventListener('click', () => {
-      clearSignatureCanvas();
-      signaturePreview.textContent = '';
-      signaturePreview.style.color = '#16a34a';
+    window.addEventListener('resize', () => {
+      if (signatureModal.style.display === 'flex') {
+        resizeCanvas();
+      }
     });
 
     closeSignature.addEventListener('click', () => {
       signatureModal.style.display = 'none';
     });
 
-    window.addEventListener('resize', () => {
-      if (signatureModal.style.display === 'flex') {
-        initSignatureCanvas();
-      }
+    function handlePointerDown(e) {
+      drawing = true;
+      hasSignature = true;
+      const rect = signatureCanvas.getBoundingClientRect();
+      lastX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      lastY = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    }
+
+    function handlePointerMove(e) {
+      if (!drawing) return;
+      const rect = signatureCanvas.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+      signatureCtx.beginPath();
+      signatureCtx.moveTo(lastX,lastY);
+      signatureCtx.lineTo(x,y);
+      signatureCtx.stroke();
+      lastX = x;
+      lastY = y;
+    }
+
+    function handlePointerUp() {
+      drawing = false;
+    }
+
+    signatureCanvas.addEventListener('mousedown', handlePointerDown);
+    signatureCanvas.addEventListener('mousemove', handlePointerMove);
+    window.addEventListener('mouseup', handlePointerUp);
+
+    signatureCanvas.addEventListener('touchstart', handlePointerDown, {passive:false});
+    signatureCanvas.addEventListener('touchmove', handlePointerMove, {passive:false});
+    signatureCanvas.addEventListener('touchend', handlePointerUp, {passive:false});
+
+    clearSignature.addEventListener('click', () => {
+      clearCanvas();
+      signaturePreview.textContent = '';
+      signaturePreview.style.color = '#16a34a';
     });
 
     validateSignature.addEventListener('click', () => {
-      if (!sigHasStroke) {
-        signaturePreview.style.color = '#ef4444';
-        signaturePreview.textContent = '⚠ Veuillez signer dans la zone prévue.';
-        return;
-      }
-      const name = (signatoryName.value || '').trim();
-      const role = (signatoryRole.value || '').trim();
+      if (!selectedRotation) return;
+
+      const name = signatoryName.value.trim();
+      const role = signatoryRole.value.trim();
+
       if (!name) {
         signaturePreview.style.color = '#ef4444';
-        signaturePreview.textContent = '⚠ Nom du signataire obligatoire.';
+        signaturePreview.textContent = '⚠ Veuillez entrer le nom du signataire.';
         signatoryName.focus();
         return;
       }
+
       if (!role) {
         signaturePreview.style.color = '#ef4444';
-        signaturePreview.textContent = '⚠ Fonction du signataire obligatoire.';
+        signaturePreview.textContent = '⚠ Veuillez entrer la qualité/fonction du signataire.';
         signatoryRole.focus();
         return;
       }
 
-      if (selectedRotation && selectedRotation.orderId != null) {
-        const order = state.orders.find(o => o.id === selectedRotation.orderId);
-        if (order) {
-          order.deliveredRotations = Number(order.deliveredRotations || 0) + 1;
-          if (!order.finalized && order.deliveredRotations >= (order.rotations || 1)) {
-            order.status = 'Livrée';
-          }
+      if (!hasSignature) {
+        signaturePreview.style.color = '#ef4444';
+        signaturePreview.textContent = '⚠ Veuillez signer dans la zone prévue.';
+        return;
+      }
+
+      const dataUrl = signatureCanvas.toDataURL('image/png');
+      const now = new Date().toLocaleString('fr-FR');
+
+      selectedRotation.signed = true;
+      selectedRotation.signatoryName = name;
+      selectedRotation.signatoryRole = role;
+      selectedRotation.signatureDate = now;
+      selectedRotation.signatureData = dataUrl;
+
+      const orderIdx = state.orders.findIndex(o => o.id === selectedRotation.orderId);
+      if (orderIdx >= 0) {
+        const order = state.orders[orderIdx];
+        order.deliveredRotations = (order.deliveredRotations || 0) + 1;
+        if (!order.finalized && order.deliveredRotations >= (order.rotations || 1)) {
+          order.status = 'Livrée';
         }
         renderOrdersTable();
         renderManagerDashboard();
         renderRecapDay();
-        renderDriverPage();
       }
 
       signaturePreview.style.color = '#16a34a';
-      const clientLabel = selectedRotation && selectedRotation.client ? selectedRotation.client : 'rotation';
-      signaturePreview.textContent = `✓ Signature enregistrée pour ${clientLabel} (${name}).`;
+      signaturePreview.textContent = '✓ Signature enregistrée.';
 
       setTimeout(() => {
         signatureModal.style.display = 'none';
+        renderDriverPage();
       }, 800);
     });
 
     function renderAll() {
       renderManagerDashboard();
       renderOrdersTable();
-      renderDriversSelects();
-      renderFleetSelects();
-      renderProductsSelect();
-      renderVehicleExpenses();
+      renderDrivers();
+      renderFleet();
+      renderProducts();
+      renderSites();
       renderRecapDay();
       renderYearOptions();
+      renderVehicleExpenses();
+      initLandingDrivers();
     }
 
     initState();
