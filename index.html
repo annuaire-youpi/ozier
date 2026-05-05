@@ -2,837 +2,3446 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
+  <title>SOTRANSNORD - Gestion Transports</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Profil Créateur – Annuaire YOUPI</title>
-
   <style>
-    /* =============================================
-       RESET & BASE
-    ============================================= */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --primary:       #6366f1;
-      --primary-dark:  #4f46e5;
-      --primary-light: #e0e7ff;
-      --orange:        #f97316;
-      --yellow:        #fbbf24;
-      --bg:            #f3f4f6;
-      --card:          #ffffff;
-      --text:          #111827;
-      --muted:         #6b7280;
-      --border:        #e5e7eb;
-      --success:       #10b981;
-      --warning:       #f59e0b;
-      --radius:        14px;
-      --shadow:        0 2px 12px rgba(0,0,0,.08);
+      --bg-body: #f3f4f6;
+      --bg-card: #ffffff;
+      --bg-sidebar: #0f172a;
+      --bg-sidebar-hover: #1e293b;
+      --primary: #2563eb;
+      --primary-soft: #dbeafe;
+      --accent: #22c55e;
+      --danger: #ef4444;
+      --text-main: #0f172a;
+      --text-soft: #6b7280;
+      --border-soft: #e5e7eb;
+      --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.08);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #e0f2fe 0, #f3f4f6 45%, #e5e7eb 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* --------- LAYOUT GLOBAL --------- */
+    .layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      width: 100%;
       min-height: 100vh;
     }
 
-    /* =============================================
-       HEADER
-    ============================================= */
-    header {
-      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-      color: #fff;
-      padding: 0 24px;
-      height: 68px;
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(0, 1fr);
+      }
+    }
+
+    /* --------- SIDEBAR --------- */
+    .sidebar {
+      background: radial-gradient(circle at top, #1f2937, #020617);
+      color: #e5e7eb;
+      padding: 18px 16px;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 2px 16px rgba(79,70,229,.3);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .header-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo-box {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, var(--orange), var(--yellow));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 22px;
-      color: #fff;
-      flex-shrink: 0;
-      box-shadow: 0 2px 8px rgba(249,115,22,.4);
-    }
-
-    .header-titles h1 {
-      font-size: 17px;
-      font-weight: 700;
-      letter-spacing: .3px;
-    }
-
-    .header-titles span {
-      font-size: 12px;
-      opacity: .8;
-      font-weight: 400;
-    }
-
-    .btn-create {
-      background: linear-gradient(135deg, var(--orange), var(--yellow));
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 50px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      white-space: nowrap;
-      box-shadow: 0 2px 12px rgba(249,115,22,.35);
-      transition: transform .15s, box-shadow .15s;
-    }
-    .btn-create:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(249,115,22,.45); }
-
-    /* =============================================
-       LAYOUT
-    ============================================= */
-    .page-wrapper {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 28px 20px 48px;
-      display: grid;
-      grid-template-columns: 1fr 320px;
-      gap: 24px;
-      align-items: start;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 8px 0 30px rgba(15, 23, 42, 0.45);
+      z-index: 20;
     }
 
     @media (max-width: 900px) {
-      .page-wrapper { grid-template-columns: 1fr; }
+      .sidebar {
+        position: sticky;
+        top: 0;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+      }
     }
 
-    /* =============================================
-       CARTES GÉNÉRIQUES
-    ============================================= */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: conic-gradient(from 160deg, #38bdf8, #22c55e, #fbbf24, #38bdf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(56, 189, 248, 0.4);
+      flex-shrink: 0;
+    }
+
+    .brand-mark span {
+      color: #0b1120;
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .sidebar-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #6b7280;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    @media (max-width: 900px) {
+      .nav {
+        flex-direction: row;
+        gap: 6px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+    }
+
+    .nav button {
+      background: transparent;
+      border: none;
+      color: #cbd5f5;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease, transform 0.1s ease;
+      white-space: nowrap;
+    }
+
+    .nav button span.icon {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .nav button:hover {
+      background: rgba(15, 23, 42, 0.85);
+      transform: translateY(-1px);
+    }
+
+    .nav button.active {
+      background: linear-gradient(135deg, #2563eb, #22c55e);
+      color: #f9fafb;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.55);
+    }
+
+    .sidebar-role-toggle {
+      margin-top: 10px;
+      background: radial-gradient(circle at top left, #0f172a, #020617);
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      padding: 10px 10px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.7);
+    }
+
+    @media (max-width: 900px) {
+      .sidebar-role-toggle {
+        display: none;
+      }
+    }
+
+    .sidebar-role-toggle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .role-switch {
+      display: inline-flex;
+      padding: 2px;
+      border-radius: 999px;
+      background: #020617;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+    }
+
+    .role-pill {
+      font-size: 11px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      cursor: pointer;
+      border: none;
+      color: #9ca3af;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+
+    .role-pill.active {
+      background: linear-gradient(135deg, #22c55e, #a3e635);
+      color: #022c22;
+      font-weight: 600;
+    }
+
+    .role-pill.chauffeur.active {
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      color: #0b1120;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      font-size: 11px;
+      color: #6b7280;
+      border-top: 1px solid rgba(75, 85, 99, 0.6);
+      padding-top: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar-footer {
+        display: none;
+      }
+    }
+
+    /* --------- HEADER / TOPBAR --------- */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(16px);
+      background: linear-gradient(120deg, rgba(248, 250, 252, 0.90), rgba(239, 246, 255, 0.95));
+      border-bottom: 1px solid rgba(209, 213, 219, 0.7);
+    }
+
+    .topbar-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .topbar-title {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .topbar-sub {
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .role-badge-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: #1d4ed8;
+      border: 1px solid rgba(37, 99, 235, 0.25);
+    }
+
+    .role-badge-top.chauffeur {
+      background: #e0f2fe;
+      color: #0369a1;
+      border-color: rgba(59, 130, 246, 0.25);
+    }
+
+    .role-badge-pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.4);
+    }
+
+    .quick-stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      font-size: 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(248, 250, 252, 0.9);
+      color: #4b5563;
+    }
+
+    .compact-role-switch {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .compact-role-switch {
+        display: inline-flex;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.7);
+        background: #0b1120;
+        overflow: hidden;
+      }
+
+      .compact-role-switch button {
+        border: none;
+        background: transparent;
+        font-size: 11px;
+        color: #9ca3af;
+        padding: 5px 9px;
+        cursor: pointer;
+      }
+
+      .compact-role-switch button.active {
+        background: #e5e7eb;
+        color: #111827;
+        font-weight: 600;
+      }
+    }
+
+    /* --------- MAIN CONTENT --------- */
+    .main {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content {
+      padding: 16px 18px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* --------- CARDS & GENERIC UI --------- */
     .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 24px;
-      border: 1px solid var(--border);
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 16px 16px 14px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 12px;
     }
 
     .card-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 18px;
+      font-size: 14px;
+      font-weight: 600;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    /* =============================================
-       PROFIL + PROGRESSION
-    ============================================= */
-    .profile-card {
-      display: flex;
-      gap: 20px;
-      align-items: flex-start;
-      flex-wrap: wrap;
-    }
-
-    .avatar {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: #fff;
-      font-size: 26px;
-      font-weight: 700;
-      display: flex;
+    .card-title-pill {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
-      box-shadow: 0 2px 12px rgba(99,102,241,.35);
+      min-width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: var(--primary-soft);
+      color: #1d4ed8;
+      padding: 0 6px;
     }
 
-    .profile-info { flex: 1; min-width: 200px; }
-
-    .profile-name {
-      font-size: 20px;
-      font-weight: 800;
-      margin-bottom: 4px;
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--text-soft);
     }
 
-    .level-badge {
+    .pill-muted {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      color: #6b7280;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .tag-outline {
+      background: transparent;
+      border: 1px dashed rgba(148, 163, 184, 0.8);
+      color: #6b7280;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 7px 12px;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.16s ease, background 0.16s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #22c55e);
+      color: #f9fafb;
+      box-shadow: 0 12px 25px rgba(37, 99, 235, 0.5);
+    }
+
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+    }
+
+    .btn-text {
+      background: transparent;
+      border-radius: 999px;
+      border: none;
+      color: #6b7280;
+      font-size: 11px;
+      padding: 4px 6px;
+      cursor: pointer;
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(15, 23, 42, 0.15);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .btn-icon-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: #f9fafb;
+      color: #4b5563;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .btn-icon-circle:hover {
+      background: #e5e7eb;
+    }
+
+    .chip {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      background: var(--primary-light);
-      color: var(--primary-dark);
-      font-size: 12px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 50px;
-      margin-bottom: 12px;
-    }
-
-    .progress-label {
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 6px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 10px;
-      background: #e5e7eb;
-      border-radius: 99px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      border-radius: 99px;
-      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
-      transition: width .6s ease;
-    }
-
-    /* Compteurs */
-    .stats-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 24px;
-      flex-wrap: wrap;
-    }
-
-    .stat-box {
-      flex: 1;
-      min-width: 90px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 12px;
-      text-align: center;
-    }
-
-    .stat-value {
-      font-size: 28px;
-      font-weight: 800;
-      color: var(--primary);
-    }
-
-    .stat-label {
+      padding: 3px 8px;
+      border-radius: 999px;
       font-size: 11px;
-      color: var(--muted);
-      margin-top: 3px;
-      line-height: 1.3;
-    }
-
-    /* =============================================
-       GRILLE BADGES
-    ============================================= */
-    .badges-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 14px;
-    }
-
-    .badge-item {
-      border-radius: 12px;
-      padding: 16px 12px;
-      text-align: center;
-      border: 1.5px solid transparent;
-      transition: transform .15s;
-    }
-    .badge-item:hover { transform: translateY(-2px); }
-
-    .badge-item.unlocked {
-      background: linear-gradient(135deg, #fff7ed, #fffbeb);
-      border-color: var(--orange);
-    }
-
-    .badge-item.locked {
       background: #f9fafb;
-      border-color: #e5e7eb;
-      opacity: .65;
-      filter: grayscale(1);
+      border: 1px solid #e5e7eb;
+      color: #4b5563;
     }
 
-    .badge-icon {
-      font-size: 30px;
-      margin-bottom: 6px;
-      display: block;
+    .chip-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
     }
 
-    .badge-name {
+    .chip-dot.warn {
+      background: #f97316;
+    }
+
+    .chip-dot.danger {
+      background: #ef4444;
+    }
+
+    /* --------- FORMULAIRES --------- */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px 12px;
+    }
+
+    @media (max-width: 1100px) {
+      .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 700px) {
+      .form-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
       font-size: 12px;
-      font-weight: 700;
-      color: var(--text);
+    }
+
+    .form-group-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    label {
+      font-size: 11px;
+      color: #4b5563;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    label span.req {
+      color: #ef4444;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+      border-radius: var(--radius-sm);
+      border: 1px solid #d1d5db;
+      padding: 7px 9px;
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+      width: 100%;
+      background: #ffffff;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+      background: #f9fafb;
+    }
+
+    input[type="radio"],
+    input[type="checkbox"] {
+      accent-color: #2563eb;
+    }
+
+    /* --------- TABLEAUX --------- */
+    .table-wrapper {
+      border-radius: var(--radius-md);
+      border: 1px solid #e5e7eb;
+      overflow: hidden;
+      background: #f9fafb;
+    }
+
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 650px;
+      font-size: 12px;
+    }
+
+    th,
+    td {
+      padding: 7px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      white-space: nowrap;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #4b5563;
+      font-weight: 500;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tr:nth-child(even) td {
+      background: #f9fafb;
+    }
+
+    tr:hover td {
+      background: #e5f0ff;
+    }
+
+    .status-pill {
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .status-pill span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+    }
+
+    .status-open {
+      background: #ecfdf3;
+      color: #166534;
+    }
+
+    .status-open .dot {
+      background: #22c55e;
+    }
+
+    .status-pending {
+      background: #fff7ed;
+      color: #92400e;
+    }
+
+    .status-pending .dot {
+      background: #f97316;
+    }
+
+    .status-done {
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .status-done .dot {
+      background: #2563eb;
+    }
+
+    .status-tag {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    /* --------- LAYOUT MANAGER --------- */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.4fr);
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 1100px) {
+      .dashboard-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* --------- SECTION : PARAMÉTRAGE --------- */
+    .tabs {
+      display: inline-flex;
+      padding: 3px;
+      border-radius: 999px;
+      background: #f3f4f6;
+    }
+
+    .tabs button {
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      padding: 5px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      color: #6b7280;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .tabs button.active {
+      background: #ffffff;
+      color: #111827;
+      box-shadow: 0 1px 4px rgba(148, 163, 184, 0.6);
+    }
+
+    .tabs button span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #a3a3a3;
+    }
+
+    .tabs button.active span.dot {
+      background: #22c55e;
+    }
+
+    /* --------- SECTION : MARGE --------- */
+    .margin-table-wrapper {
+      overflow-x: auto;
+    }
+
+    .margin-table {
+      min-width: 720px;
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 12px;
+    }
+
+    .margin-table th,
+    .margin-table td {
+      padding: 7px 10px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .margin-table thead th {
+      background: #eff6ff;
+      font-weight: 500;
+      color: #1f2937;
+      text-align: center;
+    }
+
+    .margin-table td:first-child,
+    .margin-table th:first-child {
+      position: sticky;
+      left: 0;
+      background: #ffffff;
+      z-index: 2;
+      font-weight: 500;
+    }
+
+    .margin-month-current {
+      background: #ecfdf3;
+      box-shadow: inset 0 0 0 1px rgba(34, 197, 94, 0.5);
+    }
+
+    .margin-month-current-header {
+      background: #dcfce7 !important;
+      box-shadow: 0 -2px 0 0 #16a34a inset;
+    }
+
+    .margin-row-total {
+      background: #fefce8;
+      font-weight: 600;
+    }
+
+    /* --------- POPUP / MODAL --------- */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 12px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      max-width: 480px;
+      width: 100%;
+      background: #f9fafb;
+      border-radius: 18px;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: radial-gradient(circle at top left, #eff6ff, #e5f0ff);
+    }
+
+    .modal-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .modal-body {
+      padding: 14px 16px 10px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 10px 16px 12px;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      background: #f9fafb;
+    }
+
+    .signature-box {
+      border-radius: var(--radius-md);
+      border: 1px dashed #cbd5f5;
+      background: #eff6ff;
+      min-height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #64748b;
+      text-align: center;
+      padding: 10px;
+    }
+
+    /* --------- ESPACE CHAUFFEUR --------- */
+    .driver-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.2fr);
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 1000px) {
+      .driver-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .timeline {
+      border-left: 2px dashed #e5e7eb;
+      padding-left: 10px;
+      margin-left: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 8px;
       margin-bottom: 4px;
     }
 
-    .badge-desc {
-      font-size: 10px;
-      color: var(--muted);
-      line-height: 1.4;
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -12px;
+      top: 6px;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #38bdf8;
+      border: 2px solid #eff6ff;
+      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.3);
     }
 
-    .badge-lock {
+    .timeline-title {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .timeline-meta {
       font-size: 11px;
-      color: #9ca3af;
-      margin-top: 5px;
-      font-style: italic;
+      color: #6b7280;
     }
 
-    /* =============================================
-       MISSIONS
-    ============================================= */
-    .missions-list { display: flex; flex-direction: column; gap: 14px; }
-
-    .mission-item {
-      display: flex;
+    .badge-counter {
+      border-radius: 999px;
+      background: #ecfdf3;
+      color: #166534;
+      font-size: 11px;
+      padding: 3px 7px;
+      display: inline-flex;
       align-items: center;
-      gap: 14px;
-      padding: 16px 18px;
-      border-radius: 12px;
-      border: 1.5px solid var(--border);
-      background: #fff;
-      transition: box-shadow .15s;
+      gap: 4px;
     }
-    .mission-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,.07); }
 
-    .mission-status-dot {
-      width: 12px;
+    .badge-counter span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    /* --------- ESPACE GÉRANT / VISIBILITÉ --------- */
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    /* --------- PETIT UTILITAIRE --------- */
+    .muted {
+      color: var(--text-soft);
+      font-size: 11px;
+    }
+
+    .inline-separator {
+      width: 1px;
       height: 12px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .status-todo    { background: #d1d5db; }
-    .status-ongoing { background: var(--warning); }
-    .status-done    { background: var(--success); }
-
-    .mission-content { flex: 1; }
-
-    .mission-title {
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 2px;
+      background: #d1d5db;
+      margin: 0 4px;
+      display: inline-block;
     }
 
-    .mission-desc {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .mission-right {
+    .kpi-row {
       display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 6px;
-      flex-shrink: 0;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
     }
 
-    .mission-pts {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    .mission-status-label {
-      font-size: 10px;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 50px;
-    }
-    .label-todo    { background: #f3f4f6; color: #6b7280; }
-    .label-ongoing { background: #fef3c7; color: #92400e; }
-    .label-done    { background: #d1fae5; color: #065f46; }
-
-    .btn-launch {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--primary);
-      background: var(--primary-light);
-      border: none;
-      padding: 6px 12px;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: background .15s;
-      white-space: nowrap;
-    }
-    .btn-launch:hover { background: #c7d2fe; }
-
-    /* =============================================
-       PANNEAU LATÉRAL
-    ============================================= */
-    .sidebar { display: flex; flex-direction: column; gap: 20px; }
-
-    .why-box { }
-
-    .why-box p {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.65;
-      margin-bottom: 10px;
-    }
-
-    .why-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .why-icon {
-      font-size: 18px;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    .why-text { font-size: 12px; color: var(--muted); line-height: 1.5; }
-    .why-text strong { color: var(--text); display: block; font-size: 13px; }
-
-    /* Prochaines étapes */
-    .next-steps-list { display: flex; flex-direction: column; gap: 10px; }
-
-    .next-step {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      background: var(--bg);
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      cursor: pointer;
-      transition: background .15s;
-    }
-    .next-step:hover { background: var(--primary-light); border-color: var(--primary); }
-
-    .next-step-icon { font-size: 18px; }
-
-    .next-step-text { flex: 1; font-size: 12px; font-weight: 600; }
-
-    .next-step-pts {
+    .kpi-pill {
+      padding: 6px 9px;
+      border-radius: 999px;
       font-size: 11px;
-      color: var(--primary);
-      font-weight: 700;
-      background: var(--primary-light);
-      padding: 2px 7px;
-      border-radius: 50px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
 
-    /* =============================================
-       TOAST NOTIFICATION
-    ============================================= */
-    .toast {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      background: var(--primary-dark);
-      color: #fff;
-      padding: 12px 20px;
-      border-radius: 12px;
-      font-size: 14px;
+    .kpi-pill strong {
       font-weight: 600;
-      box-shadow: 0 4px 20px rgba(79,70,229,.4);
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity .3s, transform .3s;
-      z-index: 9999;
-      pointer-events: none;
     }
-    .toast.show { opacity: 1; transform: translateY(0); }
 
-    /* =============================================
-       SECTION TITRES
-    ============================================= */
-    .section { margin-bottom: 0; }
-    .main-col { display: flex; flex-direction: column; gap: 24px; }
+    .empty-state {
+      border-radius: var(--radius-md);
+      border: 1px dashed #d1d5db;
+      padding: 12px 10px;
+      text-align: center;
+      font-size: 12px;
+      color: #6b7280;
+      background: #f9fafb;
+    }
 
-    /* divider */
-    .divider {
-      height: 1px;
-      background: var(--border);
-      margin: 2px 0 16px;
+    @media (max-width: 480px) {
+      .topbar {
+        padding-inline: 12px;
+      }
+
+      .content {
+        padding-inline: 12px;
+      }
+
+      .card {
+        padding-inline: 12px;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="layout">
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><span>SN</span></div>
+        <div class="brand-text">
+          <div class="brand-title">SOTRANSNORD</div>
+          <div class="brand-sub">Pilotage quotidien transports</div>
+        </div>
+      </div>
 
-<!-- ====== TOAST ====== -->
-<div class="toast" id="toast"></div>
+      <div>
+        <div class="sidebar-section-title">Navigation</div>
+        <nav class="nav" id="navManager">
+          <button class="active" data-section="section-dashboard">
+            <span class="icon">📊</span> Dashboard
+          </button>
+          <button data-section="section-settings">
+            <span class="icon">⚙️</span> Paramétrage
+          </button>
+          <button data-section="section-orders">
+            <span class="icon">📦</span> Commandes
+          </button>
+          <button data-section="section-reports">
+            <span class="icon">📈</span> Rapports
+          </button>
+          <button data-section="section-margin">
+            <span class="icon">💰</span> Marges
+          </button>
+        </nav>
 
-<!-- ====== HEADER ====== -->
-<header>
-  <div class="header-brand">
-    <div class="logo-box">Y</div>
-    <div class="header-titles">
-      <h1>Annuaire YOUPI</h1>
-      <span>Profil créateur</span>
+        <nav class="nav" id="navDriver" style="display:none;">
+          <button class="active" data-section="section-driver-transports">
+            <span class="icon">🚚</span> Transports du jour
+          </button>
+          <button data-section="section-driver-sheet">
+            <span class="icon">📝</span> Fiche de fin de journée
+          </button>
+        </nav>
+      </div>
+
+      <div class="sidebar-role-toggle">
+        <div class="sidebar-role-toggle-header">
+          <span>Vue active</span>
+          <span class="tag-outline">Basculer gérant / chauffeur</span>
+        </div>
+        <div class="role-switch">
+          <button class="role-pill manager active" data-role="manager">
+            <span>👨‍💼</span> Gérant
+          </button>
+          <button class="role-pill chauffeur" data-role="driver">
+            <span>🚚</span> Chauffeur
+          </button>
+        </div>
+        <div class="muted">
+          Le gérant paramètre l'activité, les chauffeurs valident les transports et leur fiche journalière.
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div>Vue démo locale (mock).</div>
+        <div>Connexion Google Sheets &amp; Make à brancher dans de>dataService</code>.</div>
+      </div>
+    </aside>
+
+    <!-- ================= MAIN ================= -->
+    <div class="main">
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title" id="topbarTitle">Vue gérant • Suivi en temps réel</div>
+          <div class="topbar-sub" id="topbarSub">
+            Paramètrez chauffeurs, camions, clients et suivi des commandes pour la journée.
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="quick-stat">
+            📅 <span id="todayLabel"></span>
+            <span class="inline-separator"></span>
+            🚚 <span id="quickTransports"></span> transports à réaliser
+          </div>
+          <div class="role-badge-top" id="badgeManager">
+            <span class="role-badge-pill-dot"></span>
+            <span>Gérant</span>
+          </div>
+          <div class="role-badge-top chauffeur" id="badgeDriver" style="display:none;">
+            <span class="role-badge-pill-dot"></span>
+            <span>Chauffeur</span>
+          </div>
+          <div class="compact-role-switch">
+            <button class="active" data-role="manager">Gérant</button>
+            <button data-role="driver">Chauffeur</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT -->
+      <main class="content">
+        <!-- ===== SECTION DASHBOARD GERANT ===== -->
+        <section id="section-dashboard" class="section active">
+          <div class="dashboard-grid">
+            <div class="stack">
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">
+                      Aperçu de la journée
+                      <span class="card-title-pill" id="kpiTotalTransports">0 tr.</span>
+                    </div>
+                    <div class="card-subtitle">
+                      Synthèse des transports, camions mobilisés et commandes à facturer.
+                    </div>
+                  </div>
+                  <button class="btn-primary btn" id="btnGoToOrders">
+                    + Nouvelle commande
+                  </button>
+                </div>
+                <div class="kpi-row">
+                  <div class="kpi-pill">
+                    🚚 <strong id="kpiActiveTransports">0</strong> transports restants
+                  </div>
+                  <div class="kpi-pill">
+                    🧑‍💼 <strong id="kpiDrivers">0</strong> chauffeurs actifs
+                  </div>
+                  <div class="kpi-pill">
+                    🧾 <strong id="kpiToInvoice">0</strong> commandes à facturer
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">
+                      Commandes en cours
+                      <span class="card-title-pill" id="kpiOrdersCount">0</span>
+                    </div>
+                    <div class="card-subtitle">
+                      Suivi des transports effectués, statut et facturation.
+                    </div>
+                  </div>
+                  <span class="pill-muted">Vue rapide</span>
+                </div>
+                <div class="table-wrapper">
+                  <div class="table-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Client</th>
+                          <th>Chantier</th>
+                          <th>Date</th>
+                          <th>Camion</th>
+                          <th>Chauffeur</th>
+                          <th>Type</th>
+                          <th>Progression</th>
+                          <th>Statut</th>
+                          <th>Facturation</th>
+                        </tr>
+                      </thead>
+                      <tbody id="dashboardOrdersTable">
+                        <!-- rempli dynamiquement -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="stack">
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">
+                      Raccourcis gérant
+                    </div>
+                    <div class="card-subtitle">
+                      Accédez en 1 clic aux principales sections de paramétrage.
+                    </div>
+                  </div>
+                </div>
+                <div class="kpi-row">
+                  <button class="btn-secondary btn" data-jump-section="section-settings" data-jump-tab="drivers">
+                    👨‍✈️ Paramétrer chauffeurs
+                  </button>
+                  <button class="btn-secondary btn" data-jump-section="section-settings" data-jump-tab="trucks">
+                    🚛 Paramétrer camions
+                  </button>
+                  <button class="btn-secondary btn" data-jump-section="section-settings" data-jump-tab="clients">
+                    🧑‍💼 Paramétrer clients
+                  </button>
+                  <button class="btn-secondary btn" data-jump-section="section-settings" data-jump-tab="materials">
+                    🧱 Matériaux &amp; tarifs
+                  </button>
+                  <button class="btn-secondary btn" data-jump-section="section-settings" data-jump-tab="vehicleCosts">
+                    💳 Frais véhicules
+                  </button>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">
+                      État flotte &amp; chauffeurs
+                    </div>
+                    <div class="card-subtitle">
+                      Récapitulatif des camions et contrôles techniques.
+                    </div>
+                  </div>
+                  <span class="tag">Flotte</span>
+                </div>
+                <div class="table-wrapper">
+                  <div class="table-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Camion</th>
+                          <th>Type</th>
+                          <th>Km</th>
+                          <th>CT</th>
+                          <th>Chauffeur</th>
+                        </tr>
+                      </thead>
+                      <tbody id="dashboardFleetTable">
+                        <!-- dynamique -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION PARAMÉTRAGE ===== -->
+        <section id="section-settings" class="section">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  Paramétrage de l'entreprise
+                  <span class="card-title-pill">Données maîtres</span>
+                </div>
+                <div class="card-subtitle">
+                  Gérez les chauffeurs, camions, clients, matériaux, tarifs et frais véhicules.
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="tabs" id="settingsTabs">
+                <button class="active" data-settings-tab="drivers">
+                  <span class="dot"></span> Chauffeurs
+                </button>
+                <button data-settings-tab="trucks">
+                  <span class="dot"></span> Camions
+                </button>
+                <button data-settings-tab="clients">
+                  <span class="dot"></span> Clients
+                </button>
+                <button data-settings-tab="materials">
+                  <span class="dot"></span> Matériaux &amp; tarifs
+                </button>
+                <button data-settings-tab="vehicleCosts">
+                  <span class="dot"></span> Frais véhicules
+                </button>
+              </div>
+
+              <!-- Chauffeurs -->
+              <div class="settings-pane" data-settings-pane="drivers">
+                <div class="card-subtitle" style="margin-bottom:8px;">
+                  Liste des chauffeurs et fiches individuelles.
+                </div>
+                <div class="form-grid" style="margin-bottom:10px;">
+                  <div class="form-group">
+                    abel>Nom complet <span class="req">*</span></label>
+                    <input type="text" id="driverName" placeholder="Nom et prénom..." />
+                  </div>
+                  <div class="form-group">
+                    abel>Date de naissance</label>
+                    <input type="date" id="driverBirthdate" />
+                  </div>
+                  <div class="form-group">
+                    abel>Téléphone</label>
+                    <input type="tel" id="driverPhone" placeholder="06..." />
+                  </div>
+                  <div class="form-group">
+                    abel>Adresse mail</label>
+                    <input type="email" id="driverEmail" placeholder="exemple@..." />
+                  </div>
+                  <div class="form-group">
+                    abel>Permis de conduire</label>
+                    <input type="text" id="driverLicense" placeholder="Type de permis..." />
+                  </div>
+                  <div class="form-group" style="align-self:flex-end;">
+                    <button class="btn-primary btn" id="btnSaveDriver">Enregistrer chauffeur</button>
+                  </div>
+                </div>
+                <div class="table-wrapper">
+                  <div class="table-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Nom</th>
+                          <th>Téléphone</th>
+                          <th>Mail</th>
+                          <th>Permis</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="driversTableBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Camions -->
+              <div class="settings-pane" data-settings-pane="trucks" style="display:none;">
+                <div class="card-subtitle" style="margin-bottom:8px;">
+                  Configurez les camions pour affecter les transports.
+                </div>
+                <div class="form-grid" style="margin-bottom:10px;">
+                  <div class="form-group">
+                    abel>Immatriculation <span class="req">*</span></label>
+                    <input type="text" id="truckPlate" placeholder="AA-123-AA..." />
+                  </div>
+                  <div class="form-group">
+                    abel>Kilométrage</label>
+                    <input type="number" id="truckMileage" min="0" />
+                  </div>
+                  <div class="form-group">
+                    abel>Type</label>
+                    <input type="text" id="truckType" placeholder="Benne, etc." />
+                  </div>
+                  <div class="form-group">
+                    abel>Date du contrôle technique</label>
+                    <input type="date" id="truckCtDate" />
+                  </div>
+                  <div class="form-group" style="align-self:flex-end;">
+                    <button class="btn-primary btn" id="btnSaveTruck">Enregistrer camion</button>
+                  </div>
+                </div>
+                <div class="table-wrapper">
+                  <div class="table-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Immatriculation</th>
+                          <th>Type</th>
+                          <th>Km</th>
+                          <th>CT</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="trucksTableBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Clients -->
+              <div class="settings-pane" data-settings-pane="clients" style="display:none;">
+                <div class="card-subtitle" style="margin-bottom:8px;">
+                  Clients à associer aux commandes.
+                </div>
+                <div class="form-grid" style="margin-bottom:10px;">
+                  <div class="form-group">
+                    abel>Nom de l'entreprise <span class="req">*</span></label>
+                    <input type="text" id="clientCompanyName" />
+                  </div>
+                  <div class="form-group">
+                    abel>Nom du gérant</label>
+                    <input type="text" id="clientManagerName" />
+                  </div>
+                  <div class="form-group">
+                    abel>Téléphone</label>
+                    <input type="tel" id="clientPhone" />
+                  </div>
+                  <div class="form-group">
+                    abel>Mail</label>
+                    <input type="email" id="clientEmail" />
+                  </div>
+                  <div class="form-group" style="align-self:flex-end;">
+                    <button class="btn-primary btn" id="btnSaveClient">Enregistrer client</button>
+                  </div>
+                </div>
+                <div class="table-wrapper">
+                  <div class="table-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Entreprise</th>
+                          <th>Gérant</th>
+                          <th>Téléphone</th>
+                          <th>Mail</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="clientsTableBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Matériaux & tarifs -->
+              <div class="settings-pane" data-settings-pane="materials" style="display:none;">
+                <div class="card-subtitle" style="margin-bottom:8px;">
+                  Matériaux disponibles et grilles de tarifs.
+                </div>
+                <div class="form-grid" style="margin-bottom:10px;">
+                  <div class="form-group">
+                    abel>Nom du matériau <span class="req">*</span></label>
+                    <input type="text" id="materialName" placeholder="Sable 0/4..." />
+                  </div>
+                  <div class="form-group">
+                    abel>Tarif €/tonne</label>
+                    <input type="number" id="materialPricePerTon" min="0" step="0.01" />
+                  </div>
+                  <div class="form-group">
+                    abel>Tarif journée €/jour</label>
+                    <input type="number" id="materialDailyPrice" min="0" step="0.01" />
+                  </div>
+                  <div class="form-group">
+                    abel>Commentaire</label>
+                    <input type="text" id="materialComment" placeholder="Optionnel..." />
+                  </div>
+                  <div class="form-group" style="align-self:flex-end;">
+                    <button class="btn-primary btn" id="btnSaveMaterial">Enregistrer matériau / tarif</button>
+                  </div>
+                </div>
+                <div class="table-wrapper">
+                  <div class="table-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Matériau</th>
+                          <th>€/tonne</th>
+                          <th>€/jour</th>
+                          <th>Commentaire</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="materialsTableBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Frais véhicules -->
+              <div class="settings-pane" data-settings-pane="vehicleCosts" style="display:none;">
+                <div class="card-subtitle" style="margin-bottom:8px;">
+                  Enregistrez les catégories de frais rattachées aux véhicules.
+                </div>
+                <div class="form-grid" style="margin-bottom:10px;">
+                  <div class="form-group">
+                    abel>Catégorie de frais <span class="req">*</span></label>
+                    <select id="vehicleCostCategory">
+                      <option value="Carburant">Carburant</option>
+                      <option value="Vidange">Vidange</option>
+                      <option value="Réparations">Réparations</option>
+                      <option value="Assurance">Assurance</option>
+                      <option value="Pneus">Pneus</option>
+                      <option value="Autre">Autre</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    abel>Description</label>
+                    <input type="text" id="vehicleCostDescription" placeholder="Ex: Contrat assurance 2026..." />
+                  </div>
+                  <div class="form-group">
+                    abel>Camion lié</label>
+                    <select id="vehicleCostTruckSelect"></select>
+                  </div>
+                  <div class="form-group">
+                    abel>Montant estimatif / mois</label>
+                    <input type="number" id="vehicleCostMonthly" min="0" step="0.01" />
+                  </div>
+                  <div class="form-group" style="align-self:flex-end;">
+                    <button class="btn-primary btn" id="btnSaveVehicleCost">Enregistrer frais</button>
+                  </div>
+                </div>
+                <div class="table-wrapper">
+                  <div class="table-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Catégorie</th>
+                          <th>Camion</th>
+                          <th>Description</th>
+                          <th>Montant/mois</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="vehicleCostsTableBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION COMMANDES ===== -->
+        <section id="section-orders" class="section">
+          <div class="stack">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">
+                    Nouvelle commande
+                    <span class="card-title-pill">Planification chantier</span>
+                  </div>
+                  <div class="card-subtitle">
+                    Affectez un client, un camion, un chauffeur et le nombre de transports estimés.
+                  </div>
+                </div>
+                <span class="tag-outline">Les chauffeurs verront les transports instantanément</span>
+              </div>
+              <div class="form-grid">
+                <div class="form-group">
+                  abel>Client <span class="req">*</span></label>
+                  <select id="orderClientSelect"></select>
+                </div>
+                <div class="form-group">
+                  abel>Adresse de livraison <span class="req">*</span></label>
+                  <input type="text" id="orderAddress" />
+                </div>
+                <div class="form-group">
+                  abel>Nombre de transports estimés <span class="req">*</span></label>
+                  <input type="number" id="orderEstimatedTransports" min="1" />
+                </div>
+                <div class="form-group">
+                  abel>Date du chantier <span class="req">*</span></label>
+                  <input type="date" id="orderDate" />
+                </div>
+                <div class="form-group">
+                  abel>Camion</label>
+                  <select id="orderTruckSelect"></select>
+                </div>
+                <div class="form-group">
+                  abel>Chauffeur</label>
+                  <select id="orderDriverSelect"></select>
+                </div>
+                <div class="form-group">
+                  abel>Mode de facturation</label>
+                  <div class="form-group-row">
+                    abel><input type="radio" name="orderType" value="materiaux" checked /> Matériaux</label>
+                    abel><input type="radio" name="orderType" value="journee" /> Journée</label>
+                  </div>
+                </div>
+                <div class="form-group" id="orderMaterialGroup">
+                  abel>Matériau</label>
+                  <select id="orderMaterialSelect"></select>
+                </div>
+                <div class="form-group" style="align-self:flex-end;">
+                  <button class="btn-primary btn" id="btnCreateOrder">Créer la commande</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">
+                    Suivi des commandes
+                  </div>
+                  <div class="card-subtitle">
+                    Consultez la progression des transports et marquez les commandes à facturer.
+                  </div>
+                </div>
+                <span class="pill-muted">
+                  <span class="chip-dot" style="background:#22c55e;"></span> En cours
+                  <span class="inline-separator"></span>
+                  <span class="chip-dot warn"></span> À terminer
+                  <span class="inline-separator"></span>
+                  <span class="chip-dot danger"></span> À facturer
+                </span>
+              </div>
+              <div class="table-wrapper">
+                <div class="table-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Client</th>
+                        <th>Adresse</th>
+                        <th>Date</th>
+                        <th>Transports</th>
+                        <th>Camion</th>
+                        <th>Chauffeur</th>
+                        <th>Statut</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="ordersTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION RAPPORTS ===== -->
+        <section id="section-reports" class="section">
+          <div class="dashboard-grid">
+            <div class="stack">
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">
+                      Consommation moyenne de carburant par camion
+                    </div>
+                    <div class="card-subtitle">
+                      Synthèse approximative basée sur les fiches de fin de journée.
+                    </div>
+                  </div>
+                  <span class="tag">Carburant</span>
+                </div>
+                <div class="table-wrapper">
+                  <div class="table-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Camion</th>
+                          <th>Consommation estimée (L/100km)</th>
+                          <th>Dernière mise à jour</th>
+                        </tr>
+                      </thead>
+                      <tbody id="fuelReportTableBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="stack">
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">
+                      Frais par camion et par mois
+                    </div>
+                    <div class="card-subtitle">
+                      Vue simplifiée des principaux postes de frais véhicules.
+                    </div>
+                  </div>
+                  <span class="tag">Frais véhicules</span>
+                </div>
+                <div class="table-wrapper">
+                  <div class="table-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Camion</th>
+                          <th>Mois</th>
+                          <th>Carburant</th>
+                          <th>Vidange</th>
+                          <th>Réparations</th>
+                          <th>Pneus</th>
+                          <th>Assurance</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody id="costReportTableBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION MARGE ===== -->
+        <section id="section-margin" class="section">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  Tableau mensuel des marges
+                  <span class="card-title-pill">Vue annuelle</span>
+                </div>
+                <div class="card-subtitle">
+                  Suivez le chiffre d'affaires, les principaux coûts et la marge brute mois par mois.
+                </div>
+              </div>
+              <div class="chip">
+                <span class="chip-dot"></span>
+                Mois en cours mis en évidence
+              </div>
+            </div>
+            <div class="margin-table-wrapper">
+              <table class="margin-table" id="marginTable">
+                <!-- rempli dynamiquement -->
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== ESPACE CHAUFFEUR : TRANSPORTS ===== -->
+        <section id="section-driver-transports" class="section">
+          <div class="driver-layout">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">
+                    Transports du jour
+                    <span class="card-title-pill" id="driverTransportsCount">0</span>
+                  </div>
+                  <div class="card-subtitle">
+                    Cliquez sur un transport pour saisir le tonnage et la signature du chantier.
+                  </div>
+                </div>
+                <span class="tag-outline">Le tonnage vient du bon de livraison carrière</span>
+              </div>
+              <div class="timeline" id="driverTransportsTimeline">
+                <!-- éléments transport -->
+              </div>
+              <div id="driverTransportsEmpty" class="empty-state" style="display:none;">
+                Aucun transport prévu pour aujourd'hui. Le gérant doit vous affecter à une commande.
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">
+                    Résumé de la journée
+                  </div>
+                  <div class="card-subtitle">
+                    Visualisez l'état de vos transports validés et en attente.
+                  </div>
+                </div>
+              </div>
+              <div class="table-wrapper">
+                <div class="table-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Chantier</th>
+                        <th>Client</th>
+                        <th>Transport</th>
+                        <th>Tonnage</th>
+                        <th>Réception</th>
+                        <th>Statut</th>
+                      </tr>
+                    </thead>
+                    <tbody id="driverDaySummaryTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== ESPACE CHAUFFEUR : FICHE JOUR ===== -->
+        <section id="section-driver-sheet" class="section">
+          <div class="dashboard-grid">
+            <div class="stack">
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">
+                      Fiche de fin de journée
+                    </div>
+                    <div class="card-subtitle">
+                      Renseignez le kilométrage et le carburant consommé pour clôturer votre journée.
+                    </div>
+                  </div>
+                  <span class="tag">Chauffeur</span>
+                </div>
+                <div class="form-grid">
+                  <div class="form-group">
+                    abel>Camion</label>
+                    <select id="driverSheetTruckSelect"></select>
+                  </div>
+                  <div class="form-group">
+                    abel>Kilométrage fin de journée</label>
+                    <input type="number" id="driverSheetMileage" min="0" />
+                  </div>
+                  <div class="form-group">
+                    abel>Carburant (quantité en litres)</label>
+                    <input type="number" id="driverSheetFuelQty" min="0" step="0.01" />
+                  </div>
+                  <div class="form-group">
+                    abel>Carburant (tarif total €)</label>
+                    <input type="number" id="driverSheetFuelCost" min="0" step="0.01" />
+                  </div>
+                  <div class="form-group" style="align-self:flex-end;">
+                    <button class="btn-primary btn" id="btnSubmitDriverSheet">
+                      Envoyer ma fiche
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="stack">
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">
+                      Historique récent des fiches
+                    </div>
+                    <div class="card-subtitle">
+                      Récapitulatif des dernières fiches envoyées (vue démo).
+                    </div>
+                  </div>
+                  <span class="pill-muted">Envoyé à Google Sheets via Make</span>
+                </div>
+                <div class="table-wrapper">
+                  <div class="table-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Camion</th>
+                          <th>Km</th>
+                          <th>Carburant (L)</th>
+                          <th>Coût (€)</th>
+                        </tr>
+                      </thead>
+                      <tbody id="driverSheetHistoryTableBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
   </div>
-  <button class="btn-create" onclick="showToast('✨ Redirigé vers la création de page YOUPI !')">
-    ＋ Créer une nouvelle page
-  </button>
-</header>
 
-<!-- ====== CONTENU PRINCIPAL ====== -->
-<div class="page-wrapper">
+  <!-- ================= MODAL TRANSPORT (CHAUFFEUR) ================= -->
+  <div class="modal-backdrop" id="transportModalBackdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="transportModalTitle">Validation transport</div>
+          <div class="muted" id="transportModalSubtitle"></div>
+        </div>
+        <button class="btn-icon-circle" id="btnCloseTransportModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group">
+            abel>Tonnage réceptionné (tonnes) <span class="req">*</span></label>
+            <input type="number" id="modalTonnage" min="0" step="0.01" />
+          </div>
+          <div class="form-group">
+            abel>Nom du réceptionneur</label>
+            <input type="text" id="modalReceiverName" placeholder="Nom du chef de chantier..." />
+          </div>
+          <div class="form-group">
+            abel>Statut du réceptionneur</label>
+            <input type="text" id="modalReceiverRole" placeholder="Chef de chantier, etc." />
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          abel>Signature électronique du réceptionneur</label>
+          <div class="signature-box">
+            Signature électronique à recueillir ici (zone tactile sur tablette / smartphone).
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary btn" id="btnCancelTransportModal">Annuler</button>
+        <button class="btn-primary btn" id="btnValidateTransportModal">Valider la réception</button>
+      </div>
+    </div>
+  </div>
 
-  <!-- Colonne principale -->
-  <main class="main-col" id="main-col"></main>
+  <script>
+    // =====================================================
+    //  MOCK DATA (données de démonstration en mémoire)
+    //  Toutes les données de démo sont centralisées ici.
+    // =====================================================
+    const mockData = {
+      // Chauffeurs
+      drivers: [
+        {
+          id: 1,
+          name: "Jean Dupont",
+          birthdate: "1985-06-12",
+          phone: "0600000001",
+          email: "jean.dupont@sotransnord.fr",
+          license: "C / EC"
+        },
+        {
+          id: 2,
+          name: "Marie Martin",
+          birthdate: "1990-03-05",
+          phone: "0600000002",
+          email: "marie.martin@sotransnord.fr",
+          license: "C"
+        }
+      ],
+      // Camions
+      trucks: [
+        {
+          id: 1,
+          plate: "AB-123-CD",
+          mileage: 154200,
+          type: "Benne 26T",
+          ctDate: "2026-02-15",
+          driverId: 1
+        },
+        {
+          id: 2,
+          plate: "EF-456-GH",
+          mileage: 87200,
+          type: "Benne 19T",
+          ctDate: "2025-11-20",
+          driverId: 2
+        }
+      ],
+      // Clients
+      clients: [
+        {
+          id: 1,
+          companyName: "BTP Caraïbes",
+          managerName: "Paul Leroy",
+          phone: "0596000001",
+          email: "contact@btpcaraibes.fr"
+        },
+        {
+          id: 2,
+          companyName: "Chantier Nord",
+          managerName: "Julie Robert",
+          phone: "0596000002",
+          email: "info@chantiernord.fr"
+        }
+      ],
+      // Matériaux / tarifs
+      materials: [
+        {
+          id: 1,
+          name: "Sable 0/4",
+          pricePerTon: 18.5,
+          dailyPrice: null,
+          comment: "Sable pour maçonnerie"
+        },
+        {
+          id: 2,
+          name: "Gravier 4/6",
+          pricePerTon: 22,
+          dailyPrice: null,
+          comment: ""
+        },
+        {
+          id: 3,
+          name: "Journée camion",
+          pricePerTon: null,
+          dailyPrice: 520,
+          comment: "Forfait journée"
+        }
+      ],
+      // Frais véhicules paramétrés (catégories par camion)
+      vehicleCosts: [
+        {
+          id: 1,
+          category: "Assurance",
+          description: "Assurance flotte 2026",
+          truckId: 1,
+          monthlyAmount: 260
+        },
+        {
+          id: 2,
+          category: "Pneus",
+          description: "Renouvellement pneus AR",
+          truckId: 2,
+          monthlyAmount: 150
+        }
+      ],
+      // Commandes (avec transports)
+      orders: [
+        {
+          id: 1,
+          clientId: 1,
+          address: "ZAC de la Zone Nord, Parcelle 12",
+          estimatedTransports: 3,
+          date: "2026-05-05",
+          truckId: 1,
+          driverId: 1,
+          orderType: "materiaux", // "materiaux" ou "journee"
+          materialId: 1,
+          status: "en_cours", // "en_cours", "a_facturer", "facturee"
+          transports: [
+            // Chaque transport est visible côté chauffeur
+            { id: 1, orderId: 1, sequence: 1, isDone: true, tonnage: 18.2, receiverName: "M. Pierre", receiverRole: "Chef de chantier" },
+            { id: 2, orderId: 1, sequence: 2, isDone: false, tonnage: null, receiverName: null, receiverRole: null },
+            { id: 3, orderId: 1, sequence: 3, isDone: false, tonnage: null, receiverName: null, receiverRole: null }
+          ]
+        },
+        {
+          id: 2,
+          clientId: 2,
+          address: "Lotissement Les Pins, Villa 8",
+          estimatedTransports: 2,
+          date: "2026-05-05",
+          truckId: 2,
+          driverId: 2,
+          orderType: "journee",
+          materialId: null,
+          status: "a_facturer",
+          transports: [
+            { id: 4, orderId: 2, sequence: 1, isDone: true, tonnage: 19.0, receiverName: "Mme Durand", receiverRole: "Conductrice travaux" },
+            { id: 5, orderId: 2, sequence: 2, isDone: true, tonnage: 18.7, receiverName: "Mme Durand", receiverRole: "Conductrice travaux" }
+          ]
+        }
+      ],
+      // Fiches de fin de journée chauffeurs
+      driverSheets: [
+        {
+          id: 1,
+          driverId: 1,
+          truckId: 1,
+          date: "2026-05-04",
+          mileage: 154000,
+          fuelQty: 60,
+          fuelCost: 105
+        },
+        {
+          id: 2,
+          driverId: 2,
+          truckId: 2,
+          date: "2026-05-04",
+          mileage: 87000,
+          fuelQty: 45,
+          fuelCost: 80
+        }
+      ]
+    };
 
-  <!-- Panneau latéral -->
-  <aside class="sidebar" id="sidebar"></aside>
+    // =====================================================
+    //  DATA SERVICE (couche d'accès aux données)
+    //  Toutes les méthodes de l'UI passent uniquement par ce service.
+    //  Plus tard, l'intérieur de ces méthodes sera remplacé par
+    //  des appels réseau vers Google Sheets / Make.
+    // =====================================================
 
-</div>
+    const dataService = {
+      // ================= DRIVERS =================
+      listDrivers() {
+        // FUTUR RÔLE :
+        // Ici, on pourra lire la liste des chauffeurs depuis une feuille Google Sheets
+        // via un webhook Make (ou directement l'API Google Sheets).
+        // Exemple d'appel (futur) :
+        // return fetch("URL_WEBHOOK_MAKE_LIST_DRIVERS").then(r => r.json());
+        // FORMAT JSON ATTENDU :
+        // [{ id, name, birthdate, phone, email, license }, ...]
+        return Promise.resolve([...mockData.drivers]);
+      },
+      createDriver(payload) {
+        // FUTUR RÔLE :
+        // Créer un chauffeur dans Google Sheets en envoyant les données
+        // via un webhook Make.
+        // TODO: remplacer cette partie par un appel fetch vers le webhook Make
+        // URL: [VOTRE_WEBHOOK_MAKE_CREATE_DRIVER]
+        // BODY JSON ENVOYÉ :
+        // { name, birthdate, phone, email, license }
+        const newId = mockData.drivers.length ? Math.max(...mockData.drivers.map(d => d.id)) + 1 : 1;
+        mockData.drivers.push({ id: newId, ...payload });
+        return Promise.resolve({ id: newId, ...payload });
+      },
+      updateDriver(id, payload) {
+        // FUTUR RÔLE :
+        // Mise à jour d'un chauffeur dans Google Sheets via Make.
+        // TODO: remplacer cette partie par un fetch("URL_WEBHOOK_MAKE_UPDATE_DRIVER")
+        const idx = mockData.drivers.findIndex(d => d.id === id);
+        if (idx !== -1) mockData.drivers[idx] = { ...mockData.drivers[idx], ...payload };
+        return Promise.resolve(mockData.drivers[idx]);
+      },
+      deleteDriver(id) {
+        // FUTUR RÔLE :
+        // Suppression d'un chauffeur depuis la feuille Google Sheets.
+        // TODO: remplacer cette partie par un fetch("URL_WEBHOOK_MAKE_DELETE_DRIVER")
+        mockData.drivers = mockData.drivers.filter(d => d.id !== id);
+        return Promise.resolve();
+      },
 
-<script>
-/* ==============================================
-   OBJET DE DONNÉES DE DÉMONSTRATION
-   Modifier uniquement ce bloc pour changer l'affichage.
-============================================== */
-const DATA = {
+      // ================= TRUCKS =================
+      listTrucks() {
+        // FUTUR RÔLE :
+        // Lecture des camions stockés dans Google Sheets (référence flotte).
+        // TODO: fetch("URL_WEBHOOK_MAKE_LIST_TRUCKS")...
+        // FORMAT JSON ATTENDU :
+        // [{ id, plate, mileage, type, ctDate, driverId }, ...]
+        return Promise.resolve([...mockData.trucks]);
+      },
+      createTruck(payload) {
+        // FUTUR RÔLE :
+        // Création d'une ligne camion dans la feuille Google Sheets via Make.
+        // TODO: remplacer cette partie par un fetch("URL_WEBHOOK_MAKE_CREATE_TRUCK")
+        const newId = mockData.trucks.length ? Math.max(...mockData.trucks.map(t => t.id)) + 1 : 1;
+        mockData.trucks.push({ id: newId, ...payload });
+        return Promise.resolve({ id: newId, ...payload });
+      },
+      updateTruck(id, payload) {
+        // FUTUR RÔLE :
+        // Mise à jour des informations d'un camion (km, CT, etc.) dans Google Sheets.
+        // TODO: fetch("URL_WEBHOOK_MAKE_UPDATE_TRUCK", { body: JSON.stringify({id, ...payload}) })
+        const idx = mockData.trucks.findIndex(t => t.id === id);
+        if (idx !== -1) mockData.trucks[idx] = { ...mockData.trucks[idx], ...payload };
+        return Promise.resolve(mockData.trucks[idx]);
+      },
+      deleteTruck(id) {
+        // FUTUR RÔLE :
+        // Suppression d'un camion dans la feuille Google Sheets.
+        // TODO: fetch("URL_WEBHOOK_MAKE_DELETE_TRUCK")
+        mockData.trucks = mockData.trucks.filter(t => t.id !== id);
+        return Promise.resolve();
+      },
 
-  /* -- Client -- */
-  client: {
-    nom:      "Boulangerie Soleil",
-    initiales:"BS",
-  },
+      // ================= CLIENTS =================
+      listClients() {
+        // FUTUR RÔLE :
+        // Lecture de la base clients depuis Google Sheets.
+        // TODO: fetch("URL_WEBHOOK_MAKE_LIST_CLIENTS")
+        // FORMAT JSON ATTENDU :
+        // [{ id, companyName, managerName, phone, email }, ...]
+        return Promise.resolve([...mockData.clients]);
+      },
+      createClient(payload) {
+        // FUTUR RÔLE :
+        // Création d'un client (nouvelle ligne) dans la feuille Google Sheets.
+        // TODO: fetch("URL_WEBHOOK_MAKE_CREATE_CLIENT")
+        const newId = mockData.clients.length ? Math.max(...mockData.clients.map(c => c.id)) + 1 : 1;
+        mockData.clients.push({ id: newId, ...payload });
+        return Promise.resolve({ id: newId, ...payload });
+      },
+      updateClient(id, payload) {
+        // FUTUR RÔLE :
+        // Mise à jour d'un client.
+        // TODO: fetch("URL_WEBHOOK_MAKE_UPDATE_CLIENT")
+        const idx = mockData.clients.findIndex(c => c.id === id);
+        if (idx !== -1) mockData.clients[idx] = { ...mockData.clients[idx], ...payload };
+        return Promise.resolve(mockData.clients[idx]);
+      },
+      deleteClient(id) {
+        // FUTUR RÔLE :
+        // Suppression d'un client.
+        // TODO: fetch("URL_WEBHOOK_MAKE_DELETE_CLIENT")
+        mockData.clients = mockData.clients.filter(c => c.id !== id);
+        return Promise.resolve();
+      },
 
-  /* -- Niveaux -- */
-  niveaux: [
-    { numero: 1, nom: "Découvreur",       ptMin: 0   },
-    { numero: 2, nom: "Contributeur Actif", ptMin: 60  },
-    { numero: 3, nom: "Ambassadeur Local", ptMin: 200 },
-    { numero: 4, nom: "Expert Visibilité", ptMin: 400 },
-  ],
-  pointsActuels: 120,
+      // ================= MATERIALS =================
+      listMaterials() {
+        // FUTUR RÔLE :
+        // Liste des matériaux + tarifs associés stockés dans Google Sheets.
+        // TODO: fetch("URL_WEBHOOK_MAKE_LIST_MATERIALS")
+        // FORMAT JSON :
+        // [{ id, name, pricePerTon, dailyPrice, comment }, ...]
+        return Promise.resolve([...mockData.materials]);
+      },
+      createMaterial(payload) {
+        // FUTUR RÔLE :
+        // Ajout d'un matériau / ligne de tarif dans Google Sheets.
+        // TODO: fetch("URL_WEBHOOK_MAKE_CREATE_MATERIAL")
+        const newId = mockData.materials.length ? Math.max(...mockData.materials.map(m => m.id)) + 1 : 1;
+        mockData.materials.push({ id: newId, ...payload });
+        return Promise.resolve({ id: newId, ...payload });
+      },
+      updateMaterial(id, payload) {
+        // FUTUR RÔLE :
+        // Mise à jour d'un matériau.
+        // TODO: fetch("URL_WEBHOOK_MAKE_UPDATE_MATERIAL")
+        const idx = mockData.materials.findIndex(m => m.id === id);
+        if (idx !== -1) mockData.materials[idx] = { ...mockData.materials[idx], ...payload };
+        return Promise.resolve(mockData.materials[idx]);
+      },
+      deleteMaterial(id) {
+        // FUTUR RÔLE :
+        // Suppression d'un matériau.
+        // TODO: fetch("URL_WEBHOOK_MAKE_DELETE_MATERIAL")
+        mockData.materials = mockData.materials.filter(m => m.id !== id);
+        return Promise.resolve();
+      },
 
-  /* -- Statistiques clés -- */
-  stats: {
-    pagesCreees:    8,
-    mAJCeMois:      4,
-    badgesObtenus:  4,
-  },
+      // ================= VEHICLE COSTS =================
+      listVehicleCosts() {
+        // FUTUR RÔLE :
+        // Lecture des lignes de frais véhicules (carburant, vidange, etc.).
+        // TODO: fetch("URL_WEBHOOK_MAKE_LIST_VEHICLE_COSTS")
+        // FORMAT JSON :
+        // [{ id, category, description, truckId, monthlyAmount }, ...]
+        return Promise.resolve([...mockData.vehicleCosts]);
+      },
+      createVehicleCost(payload) {
+        // FUTUR RÔLE :
+        // Ajout d'un frais véhicule dans Google Sheets.
+        // TODO: fetch("URL_WEBHOOK_MAKE_CREATE_VEHICLE_COST")
+        const newId = mockData.vehicleCosts.length ? Math.max(...mockData.vehicleCosts.map(v => v.id)) + 1 : 1;
+        mockData.vehicleCosts.push({ id: newId, ...payload });
+        return Promise.resolve({ id: newId, ...payload });
+      },
+      updateVehicleCost(id, payload) {
+        // FUTUR RÔLE :
+        // Mise à jour d'un frais véhicule.
+        // TODO: fetch("URL_WEBHOOK_MAKE_UPDATE_VEHICLE_COST")
+        const idx = mockData.vehicleCosts.findIndex(v => v.id === id);
+        if (idx !== -1) mockData.vehicleCosts[idx] = { ...mockData.vehicleCosts[idx], ...payload };
+        return Promise.resolve(mockData.vehicleCosts[idx]);
+      },
+      deleteVehicleCost(id) {
+        // FUTUR RÔLE :
+        // Suppression d'un frais véhicule.
+        // TODO: fetch("URL_WEBHOOK_MAKE_DELETE_VEHICLE_COST")
+        mockData.vehicleCosts = mockData.vehicleCosts.filter(v => v.id !== id);
+        return Promise.resolve();
+      },
 
-  /* -- Badges (obtenu: true/false) -- */
-  badges: [
-    {
-      id: "premiere-vitrine",
-      icon: "🏪",
-      nom: "Première vitrine",
-      desc: "1ère page publiée dans l'annuaire",
-      obtenu: true,
-    },
-    {
-      id: "semaine-productive",
-      icon: "🚀",
-      nom: "Semaine productive",
-      desc: "3 pages créées en une seule semaine",
-      obtenu: true,
-    },
-    {
-      id: "page-optimisee",
-      icon: "⭐",
-      nom: "Page optimisée",
-      desc: "Tous les champs d'une page remplis à 100 %",
-      obtenu: true,
-    },
-    {
-      id: "page-ia",
-      icon: "🤖",
-      nom: "Page IA",
-      desc: "Contenu rédigé avec l'IA YOUPI",
-      obtenu: true,
-    },
-    {
-      id: "editeur-regulier",
-      icon: "📅",
-      nom: "Éditeur régulier",
-      desc: "1 mise à jour/semaine pendant 4 semaines",
-      obtenu: false,
-    },
-    {
-      id: "multi-activite",
-      icon: "🗂️",
-      nom: "Multi-activité",
-      desc: "5 pages dans des catégories différentes",
-      obtenu: false,
-    },
-    {
-      id: "galerie-active",
-      icon: "📸",
-      nom: "Galerie active",
-      desc: "Photos mises à jour sur plusieurs pages",
-      obtenu: false,
-    },
-    {
-      id: "focus-visibilite",
-      icon: "🔍",
-      nom: "Focus visibilité",
-      desc: "Titres et descriptions optimisés SEO",
-      obtenu: false,
-    },
-  ],
+      // ================= ORDERS & TRANSPORTS =================
+      listOrders() {
+        // FUTUR RÔLE :
+        // Lecture de la liste des commandes depuis Google Sheets
+        // (une feuille pour les commandes + une feuille pour les transports liés).
+        // TODO: fetch("URL_WEBHOOK_MAKE_LIST_ORDERS")
+        // FORMAT JSON :
+        // [{ id, clientId, address, estimatedTransports, date, truckId, driverId,
+        //    orderType, materialId, status, transports: [...] }, ...]
+        return Promise.resolve([...mockData.orders]);
+      },
+      createOrder(payload) {
+        // FUTUR RÔLE :
+        // Création d'une commande + création des lignes transports associées.
+        // Ce service pourra déclencher un scénario Make qui écrit :
+        // - 1 ligne dans la feuille "Commandes"
+        // - N lignes dans la feuille "Transports"
+        // TODO: fetch("URL_WEBHOOK_MAKE_CREATE_ORDER", { method: "POST", body: JSON.stringify(payload) })
+        const newOrderId = mockData.orders.length ? Math.max(...mockData.orders.map(o => o.id)) + 1 : 1;
+        const transports = [];
+        for (let i = 1; i <= payload.estimatedTransports; i++) {
+          const newTransportId = mockData.orders.reduce(
+            (acc, o) => Math.max(acc, ...o.transports.map(t => t.id)),
+            0
+          ) + i;
+          transports.push({
+            id: newTransportId,
+            orderId: newOrderId,
+            sequence: i,
+            isDone: false,
+            tonnage: null,
+            receiverName: null,
+            receiverRole: null
+          });
+        }
+        const newOrder = {
+          id: newOrderId,
+          ...payload,
+          status: "en_cours",
+          transports
+        };
+        mockData.orders.push(newOrder);
+        return Promise.resolve(newOrder);
+      },
+      updateOrder(id, payload) {
+        // FUTUR RÔLE :
+        // Mise à jour d'une commande (statut, adresses, etc).
+        // TODO: fetch("URL_WEBHOOK_MAKE_UPDATE_ORDER", { body: JSON.stringify({ id, ...payload }) })
+        const idx = mockData.orders.findIndex(o => o.id === id);
+        if (idx !== -1) mockData.orders[idx] = { ...mockData.orders[idx], ...payload };
+        return Promise.resolve(mockData.orders[idx]);
+      },
+      updateOrderStatus(id, status) {
+        // FUTUR RÔLE :
+        // Mise à jour du statut (en cours, à facturer, facturée).
+        const idx = mockData.orders.findIndex(o => o.id === id);
+        if (idx !== -1) mockData.orders[idx].status = status;
+        // TODO: fetch("URL_WEBHOOK_MAKE_UPDATE_ORDER_STATUS", ...)
+        return Promise.resolve(mockData.orders[idx]);
+      },
+      deleteOrder(id) {
+        // FUTUR RÔLE :
+        // Suppression d'une commande et de tous ses transports associés.
+        // TODO: fetch("URL_WEBHOOK_MAKE_DELETE_ORDER", ...)
+        mockData.orders = mockData.orders.filter(o => o.id !== id);
+        return Promise.resolve();
+      },
+      listDriverTransportsForDate(driverId, dateStr) {
+        // FUTUR RÔLE :
+        // Récupérer tous les transports d'un chauffeur pour une date donnée
+        // (jointure commandes + transports).
+        // Ce sera typiquement un scénario Make qui lit les deux feuilles.
+        // TODO: fetch("URL_WEBHOOK_MAKE_LIST_DRIVER_TRANSPORTS?driverId=...&date=...")
+        const transports = [];
+        mockData.orders
+          .filter(o => o.driverId === driverId && o.date === dateStr)
+          .forEach(o => {
+            o.transports.forEach(t => {
+              transports.push({
+                ...t,
+                order: o
+              });
+            });
+          });
+        return Promise.resolve(transports);
+      },
+      updateTransport(transportId, payload) {
+        // FUTUR RÔLE :
+        // Mise à jour d'un transport (tonnage, signature, etc.).
+        // TODO: fetch("URL_WEBHOOK_MAKE_UPDATE_TRANSPORT", { body: JSON.stringify({ transportId, ...payload }) })
+        for (const order of mockData.orders) {
+          const idx = order.transports.findIndex(t => t.id === transportId);
+          if (idx !== -1) {
+            order.transports[idx] = { ...order.transports[idx], ...payload };
+            return Promise.resolve(order.transports[idx]);
+          }
+        }
+        return Promise.resolve(null);
+      },
 
-  /* -- Missions -- */
-  /* statut: "todo" | "ongoing" | "done" */
-  missions: [
-    {
-      titre: "Créer 1 nouvelle page cette semaine",
-      desc:  "Publiez une nouvelle fiche pour un produit ou service de votre boulangerie.",
-      pts:   40,
-      statut:"done",
-    },
-    {
-      titre: "Compléter tous les champs d'une page",
-      desc:  "Remplissez chaque section : description, horaires, photos, localisation…",
-      pts:   30,
-      statut:"ongoing",
-    },
-    {
-      titre: "Mettre à jour les photos de 2 pages",
-      desc:  "Ajoutez au moins 2 nouvelles photos fraîches sur vos fiches existantes.",
-      pts:   25,
-      statut:"todo",
-    },
-    {
-      titre: "Utiliser l'IA YOUPI pour rédiger une page",
-      desc:  "Laissez l'IA générer le contenu de votre prochaine fiche en quelques secondes.",
-      pts:   25,
-      statut:"todo",
-    },
-  ],
+      // ================= DRIVER SHEETS =================
+      listDriverSheets() {
+        // FUTUR RÔLE :
+        // Lecture des fiches de fin de journée (feuille dédiée).
+        // TODO: fetch("URL_WEBHOOK_MAKE_LIST_DRIVER_SHEETS")
+        // FORMAT JSON :
+        // [{ id, driverId, truckId, date, mileage, fuelQty, fuelCost }, ...]
+        return Promise.resolve([...mockData.driverSheets]);
+      },
+      createDriverSheet(payload) {
+        // FUTUR RÔLE :
+        // Envoi de la fiche de fin de journée vers Google Sheets.
+        // TODO: remplacer par fetch("URL_WEBHOOK_MAKE_CREATE_DRIVER_SHEET", { method: "POST", body: JSON.stringify(payload) })
+        const newId = mockData.driverSheets.length ? Math.max(...mockData.driverSheets.map(s => s.id)) + 1 : 1;
+        const newSheet = { id: newId, ...payload };
+        mockData.driverSheets.push(newSheet);
+        return Promise.resolve(newSheet);
+      }
+    };
 
-  /* -- Panneau : pourquoi créer des pages -- */
-  pourquoi: [
-    {
-      icon: "🔎",
-      titre: "Google vous trouve plus vite",
-      texte: "Chaque nouvelle page est une URL indexable. Plus vous en créez, plus Google vous référence.",
-    },
-    {
-      icon: "🤖",
-      titre: "Les IA citent vos infos",
-      texte: "ChatGPT, Gemini et Perplexity s'appuient sur des données fraîches. Mettez à jour régulièrement pour être cité.",
-    },
-    {
-      icon: "📈",
-      titre: "Votre score de visibilité grimpe",
-      texte: "L'algorithme YOUPI booste les profils actifs dans les résultats de l'annuaire.",
-    },
-  ],
+    // =====================================================
+    //  LOGIQUE UI / ÉTAT LOCAL
+    // =====================================================
 
-  /* -- Prochaines étapes rapides -- */
-  prochainesEtapes: [
-    { icon: "✏️", texte: "Ajouter les horaires d'été",            pts: "+10 pts" },
-    { icon: "📷", texte: "Mettre à jour les photos de la vitrine", pts: "+15 pts" },
-    { icon: "🤖", texte: "Générer une page Viennoiseries avec l'IA", pts: "+25 pts" },
-  ],
-};
+    const appState = {
+      role: "manager", // "manager" ou "driver"
+      currentManagerSection: "section-dashboard",
+      currentDriverSection: "section-driver-transports",
+      currentSettingsTab: "drivers",
+      modalTransportContext: null,
+      currentDriverIdForDemo: 1 // Chauffeur "actif" côté démo
+    };
 
-
-/* ==============================================
-   UTILITAIRES
-============================================== */
-
-/** Affiche un toast de notification */
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3200);
-}
-
-/** Détermine le niveau actuel et le suivant */
-function getNiveauInfo() {
-  const pts   = DATA.pointsActuels;
-  const niv   = DATA.niveaux;
-  let current = niv[0], next = niv[1];
-  for (let i = 0; i < niv.length; i++) {
-    if (pts >= niv[i].ptMin) {
-      current = niv[i];
-      next    = niv[i + 1] || null;
+    // ---------- UTILITAIRES ----------
+    function formatDateLabel(date) {
+      return date.toLocaleDateString("fr-FR", {
+        weekday: "short",
+        day: "2-digit",
+        month: "short"
+      });
     }
-  }
-  const ptsDansNiveau = pts - current.ptMin;
-  const ptsNecessaires = next ? next.ptMin - current.ptMin : 1;
-  const pct = next ? Math.round((ptsDansNiveau / ptsNecessaires) * 100) : 100;
-  return { current, next, pct, pts };
-}
 
-/** Retourne le libellé CSS du statut mission */
-function statusClass(s) {
-  return s === 'done' ? 'done' : s === 'ongoing' ? 'ongoing' : 'todo';
-}
-function statusLabel(s) {
-  return s === 'done' ? 'Terminée ✓' : s === 'ongoing' ? 'En cours…' : 'À faire';
-}
+    function htmlEscape(str) {
+      if (str == null) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
 
+    // =====================================================
+    //  RENDUS UI
+    // =====================================================
 
-/* ==============================================
-   RENDU : BLOC PROFIL + STATS
-============================================== */
-function renderProfile() {
-  const { current, next, pct, pts } = getNiveauInfo();
-  const s = DATA.stats;
+    // ---------- Mise à jour topbar ----------
+    function refreshTopbar(transportsTodayCount) {
+      const today = new Date();
+      document.getElementById("todayLabel").textContent = formatDateLabel(today);
+      document.getElementById("quickTransports").textContent = transportsTodayCount;
 
-  return `
-  <div class="card">
-    <div class="profile-card">
-      <div class="avatar">${DATA.client.initiales}</div>
-      <div class="profile-info">
-        <div class="profile-name">${DATA.client.nom}</div>
-        <div class="level-badge">
-          ⚡ Niveau ${current.numero} — ${current.nom}
-        </div>
-        <div class="progress-label">
-          <span>${pts} pts</span>
-          <span>${next ? `Prochain : ${next.nom} (${next.ptMin} pts)` : 'Niveau max atteint 🎉'}</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" style="width:${pct}%"></div>
-        </div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px;text-align:right;">${pct} % accompli</div>
-      </div>
-    </div>
+      const isManager = appState.role === "manager";
+      const title = isManager
+        ? "Vue gérant • Suivi en temps réel"
+        : "Vue chauffeur • Ma journée de transports";
+      const sub = isManager
+        ? "Paramètrez les données maîtres et suivez vos commandes en quelques clics."
+        : "Consultez vos transports, faites signer les chantiers et envoyez votre fiche de fin de journée.";
 
-    <div class="stats-row">
-      <div class="stat-box">
-        <div class="stat-value">${s.pagesCreees}</div>
-        <div class="stat-label">Pages créées</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-value">${s.mAJCeMois}</div>
-        <div class="stat-label">Mises à jour ce mois</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-value">${s.badgesObtenus}</div>
-        <div class="stat-label">Badges obtenus</div>
-      </div>
-    </div>
-  </div>`;
-}
+      document.getElementById("topbarTitle").textContent = title;
+      document.getElementById("topbarSub").textContent = sub;
 
+      const badgeManager = document.getElementById("badgeManager");
+      const badgeDriver = document.getElementById("badgeDriver");
+      if (isManager) {
+        badgeManager.style.display = "inline-flex";
+        badgeDriver.style.display = "none";
+      } else {
+        badgeManager.style.display = "none";
+        badgeDriver.style.display = "inline-flex";
+      }
+    }
 
-/* ==============================================
-   RENDU : GRILLE BADGES
-============================================== */
-function renderBadges() {
-  const items = DATA.badges.map(b => `
-    <div class="badge-item ${b.obtenu ? 'unlocked' : 'locked'}" title="${b.desc}">
-      <span class="badge-icon">${b.icon}</span>
-      <div class="badge-name">${b.nom}</div>
-      <div class="badge-desc">${b.desc}</div>
-      ${b.obtenu
-        ? ''
-        : '<div class="badge-lock">🔒 À débloquer</div>'}
-    </div>`).join('');
+    // ---------- Navigation / sections ----------
+    function showSection(sectionId) {
+      const sections = document.querySelectorAll("main .section");
+      sections.forEach(sec => {
+        sec.classList.toggle("active", sec.id === sectionId);
+      });
+    }
 
-  return `
-  <div class="card section">
-    <div class="card-title">🏅 Mes badges</div>
-    <div class="divider"></div>
-    <div class="badges-grid">${items}</div>
-  </div>`;
-}
+    function handleSidebarNavClick(e) {
+      const btn = e.target.closest("button[data-section]");
+      if (!btn) return;
+      const sectionId = btn.getAttribute("data-section");
 
+      const navManager = document.getElementById("navManager");
+      const navDriver = document.getElementById("navDriver");
+      const nav = appState.role === "manager" ? navManager : navDriver;
+      nav.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
 
-/* ==============================================
-   RENDU : MISSIONS
-============================================== */
-function renderMissions() {
-  const items = DATA.missions.map(m => {
-    const sc = statusClass(m.statut);
-    return `
-    <div class="mission-item">
-      <div class="mission-status-dot status-${sc}"></div>
-      <div class="mission-content">
-        <div class="mission-title">${m.titre}</div>
-        <div class="mission-desc">${m.desc}</div>
-      </div>
-      <div class="mission-right">
-        <div class="mission-pts">+${m.pts} pts</div>
-        <div class="mission-status-label label-${sc}">${statusLabel(m.statut)}</div>
-        <button class="btn-launch"
-          onclick="showToast('🚀 Mission « ${m.titre.substring(0, 30)}… » lancée dans YOUPI !')">
-          Lancer dans YOUPI →
-        </button>
-      </div>
-    </div>`;
-  }).join('');
+      if (appState.role === "manager") {
+        appState.currentManagerSection = sectionId;
+      } else {
+        appState.currentDriverSection = sectionId;
+      }
 
-  return `
-  <div class="card section">
-    <div class="card-title">🎯 Missions du moment</div>
-    <div class="divider"></div>
-    <div class="missions-list">${items}</div>
-  </div>`;
-}
+      showSection(sectionId);
+    }
 
+    // ---------- Role switch ----------
+    function switchRole(role) {
+      appState.role = role;
+      const isManager = role === "manager";
+      const navManager = document.getElementById("navManager");
+      const navDriver = document.getElementById("navDriver");
+      navManager.style.display = isManager ? "flex" : "none";
+      navDriver.style.display = isManager ? "none" : "flex";
 
-/* ==============================================
-   RENDU : PANNEAU LATÉRAL
-============================================== */
-function renderSidebar() {
-  /* Bloc pédagogique */
-  const whyItems = DATA.pourquoi.map(p => `
-    <div class="why-item">
-      <div class="why-icon">${p.icon}</div>
-      <div class="why-text"><strong>${p.titre}</strong>${p.texte}</div>
-    </div>`).join('');
+      // Mise à jour des pills dans la sidebar
+      document.querySelectorAll(".role-pill").forEach(p => {
+        p.classList.toggle("active", p.dataset.role === role);
+      });
+      // Mise à jour du switch compact (mobile)
+      document.querySelectorAll(".compact-role-switch button").forEach(b => {
+        b.classList.toggle("active", b.dataset.role === role);
+      });
 
-  /* Prochaines étapes */
-  const nextItems = DATA.prochainesEtapes.map(e => `
-    <div class="next-step" onclick="showToast('✅ Action ajoutée à votre liste YOUPI !')">
-      <div class="next-step-icon">${e.icon}</div>
-      <div class="next-step-text">${e.texte}</div>
-      <div class="next-step-pts">${e.pts}</div>
-    </div>`).join('');
+      // Section par défaut
+      const sectionId = isManager ? appState.currentManagerSection : appState.currentDriverSection;
+      showSection(sectionId);
 
-  return `
-  <div class="card why-box">
-    <div class="card-title">💡 Pourquoi créer des pages ?</div>
-    <div class="divider"></div>
-    ${whyItems}
-  </div>
+      // Met à jour les boutons actifs dans la nav correspondante
+      const nav = isManager ? navManager : navDriver;
+      nav.querySelectorAll("button").forEach(b => {
+        b.classList.toggle("active", b.getAttribute("data-section") === sectionId);
+      });
 
-  <div class="card">
-    <div class="card-title">⚡ Prochaines étapes rapides</div>
-    <div class="divider"></div>
-    <div class="next-steps-list">${nextItems}</div>
-  </div>`;
-}
+      refreshAll();
+    }
 
+    // ---------- Paramétrage : tabs ----------
+    function switchSettingsTab(tabKey) {
+      appState.currentSettingsTab = tabKey;
+      document.querySelectorAll("#settingsTabs button").forEach(b => {
+        b.classList.toggle("active", b.getAttribute("data-settings-tab") === tabKey);
+      });
+      document.querySelectorAll(".settings-pane").forEach(pane => {
+        pane.style.display = pane.getAttribute("data-settings-pane") === tabKey ? "block" : "none";
+      });
+    }
 
-/* ==============================================
-   INITIALISATION : injection dans le DOM
-============================================== */
-function init() {
-  document.getElementById('main-col').innerHTML =
-    renderProfile() +
-    renderBadges()  +
-    renderMissions();
+    // ---------- Dashboard / gérant ----------
+    async function renderDashboard() {
+      const [orders, drivers, trucks] = await Promise.all([
+        dataService.listOrders(),
+        dataService.listDrivers(),
+        dataService.listTrucks()
+      ]);
 
-  document.getElementById('sidebar').innerHTML = renderSidebar();
-}
+      const todayStr = new Date().toISOString().slice(0, 10);
+      const transportsToday = orders
+        .filter(o => o.date === todayStr)
+        .reduce((acc, o) => acc + o.transports.length, 0);
 
-/* Lancement au chargement */
-document.addEventListener('DOMContentLoaded', init);
-</script>
+      // KPIs
+      document.getElementById("kpiTotalTransports").textContent = transportsToday + " tr.";
+      const activeTransports = orders
+        .filter(o => o.date === todayStr)
+        .reduce((acc, o) => acc + o.transports.filter(t => !t.isDone).length, 0);
+      document.getElementById("kpiActiveTransports").textContent = activeTransports;
+      document.getElementById("kpiDrivers").textContent = drivers.length;
+      const toInvoice = orders.filter(o => o.status === "a_facturer").length;
+      document.getElementById("kpiToInvoice").textContent = toInvoice;
+      document.getElementById("kpiOrdersCount").textContent = orders.length;
+
+      // Table commandes
+      const tbody = document.getElementById("dashboardOrdersTable");
+      tbody.innerHTML = "";
+      const clients = await dataService.listClients();
+      const materials = await dataService.listMaterials();
+
+      orders.forEach(order => {
+        const client = clients.find(c => c.id === order.clientId);
+        const truck = trucks.find(t => t.id === order.truckId);
+        const driver = drivers.find(d => d.id === order.driverId);
+        const doneCount = order.transports.filter(t => t.isDone).length;
+        const typeLabel =
+          order.orderType === "materiaux"
+            ? "Matériaux" + (order.materialId ? " (" + (materials.find(m => m.id === order.materialId)?.name || "") + ")" : "")
+            : "Journée";
+
+        let statusClass = "status-pending";
+        let statusText = "En cours";
+        if (order.status === "a_facturer") {
+          statusClass = "status-done";
+          statusText = "À facturer";
+        }
+        if (doneCount === 0) {
+          statusClass = "status-pending";
+          statusText = "Non démarrée";
+        }
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${htmlEscape(client?.companyName || "")}</td>
+          <td>${htmlEscape(order.address)}</td>
+          <td>${htmlEscape(order.date)}</td>
+          <td>${htmlEscape(truck?.plate || "-")}</td>
+          <td>${htmlEscape(driver?.name || "-")}</td>
+          <td><span class="status-tag">${htmlEscape(typeLabel)}</span></td>
+          <td>${doneCount} / ${order.estimatedTransports}</td>
+          <td><span class="status-pill ${statusClass}">
+                <span class="dot"></span>${statusText}
+              </span></td>
+          <td>
+            ${
+              order.status === "a_facturer"
+                ? '<span class="chip"><span class="chip-dot danger"></span>À facturer</span>'
+                : doneCount >= order.estimatedTransports
+                  ? '<button class="btn btn-danger" data-action="markToInvoice" data-order-id="' + order.id + '">À facturer</button>'
+                  : '<span class="muted">En cours...</span>'
+            }
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Table flotte
+      const fleetTbody = document.getElementById("dashboardFleetTable");
+      fleetTbody.innerHTML = "";
+      trucks.forEach(truck => {
+        const driver = drivers.find(d => d.id === truck.driverId);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${htmlEscape(truck.plate)}</td>
+          <td>${htmlEscape(truck.type)}</td>
+          <td>${htmlEscape(truck.mileage)}</td>
+          <td>${htmlEscape(truck.ctDate || "-")}</td>
+          <td>${htmlEscape(driver?.name || "-")}</td>
+        `;
+        fleetTbody.appendChild(tr);
+      });
+
+      refreshTopbar(transportsToday);
+    }
+
+    // ---------- Paramétrage : chauffeurs ----------
+    async function renderDriversSettings() {
+      const drivers = await dataService.listDrivers();
+      const tbody = document.getElementById("driversTableBody");
+      tbody.innerHTML = "";
+      drivers.forEach(driver => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${htmlEscape(driver.name)}</td>
+          <td>${htmlEscape(driver.phone || "")}</td>
+          <td>${htmlEscape(driver.email || "")}</td>
+          <td>${htmlEscape(driver.license || "")}</td>
+          <td>
+            <button class="btn-text" data-action="editDriver" data-id="${driver.id}">Modifier</button>
+            <button class="btn-text" data-action="deleteDriver" data-id="${driver.id}">Supprimer</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Alimenter certains selects (ordre / driver sheet)
+      const orderDriverSelect = document.getElementById("orderDriverSelect");
+      const driverSheetTruckSelect = document.getElementById("driverSheetTruckSelect");
+      // driverSheetTruckSelect utilisera les camions, donc rien à faire ici pour lui.
+      orderDriverSelect.innerHTML = '<option value="">-- Sélectionner un chauffeur --</option>';
+      drivers.forEach(d => {
+        const opt = document.createElement("option");
+        opt.value = String(d.id);
+        opt.textContent = d.name;
+        orderDriverSelect.appendChild(opt);
+      });
+    }
+
+    // ---------- Paramétrage : camions ----------
+    async function renderTrucksSettings() {
+      const trucks = await dataService.listTrucks();
+      const tbody = document.getElementById("trucksTableBody");
+      tbody.innerHTML = "";
+      trucks.forEach(truck => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${htmlEscape(truck.plate)}</td>
+          <td>${htmlEscape(truck.type || "")}</td>
+          <td>${htmlEscape(truck.mileage == null ? "" : truck.mileage)}</td>
+          <td>${htmlEscape(truck.ctDate || "")}</td>
+          <td>
+            <button class="btn-text" data-action="editTruck" data-id="${truck.id}">Modifier</button>
+            <button class="btn-text" data-action="deleteTruck" data-id="${truck.id}">Supprimer</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Remplir selects pour commandes & fiche chauffeur & frais véhicules
+      const orderTruckSelect = document.getElementById("orderTruckSelect");
+      const driverSheetTruckSelect = document.getElementById("driverSheetTruckSelect");
+      const vehicleCostTruckSelect = document.getElementById("vehicleCostTruckSelect");
+      orderTruckSelect.innerHTML = '<option value="">-- Sélectionner un camion --</option>';
+      driverSheetTruckSelect.innerHTML = '<option value="">-- Sélectionner un camion --</option>';
+      vehicleCostTruckSelect.innerHTML = '<option value="">-- Sélectionner un camion --</option>';
+      trucks.forEach(t => {
+        const label = `${t.plate} (${t.type || ""})`;
+        [orderTruckSelect, driverSheetTruckSelect, vehicleCostTruckSelect].forEach(sel => {
+          const opt = document.createElement("option");
+          opt.value = String(t.id);
+          opt.textContent = label;
+          sel.appendChild(opt);
+        });
+      });
+    }
+
+    // ---------- Paramétrage : clients ----------
+    async function renderClientsSettings() {
+      const clients = await dataService.listClients();
+      const tbody = document.getElementById("clientsTableBody");
+      tbody.innerHTML = "";
+      clients.forEach(client => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${htmlEscape(client.companyName)}</td>
+          <td>${htmlEscape(client.managerName || "")}</td>
+          <td>${htmlEscape(client.phone || "")}</td>
+          <td>${htmlEscape(client.email || "")}</td>
+          <td>
+            <button class="btn-text" data-action="editClient" data-id="${client.id}">Modifier</button>
+            <button class="btn-text" data-action="deleteClient" data-id="${client.id}">Supprimer</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const orderClientSelect = document.getElementById("orderClientSelect");
+      orderClientSelect.innerHTML = '<option value="">-- Sélectionner un client --</option>';
+      clients.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = String(c.id);
+        opt.textContent = c.companyName;
+        orderClientSelect.appendChild(opt);
+      });
+    }
+
+    // ---------- Paramétrage : matériaux & tarifs ----------
+    async function renderMaterialsSettings() {
+      const materials = await dataService.listMaterials();
+      const tbody = document.getElementById("materialsTableBody");
+      tbody.innerHTML = "";
+      materials.forEach(material => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${htmlEscape(material.name)}</td>
+          <td>${material.pricePerTon != null ? material.pricePerTon.toFixed(2) + " €" : "-"}</td>
+          <td>${material.dailyPrice != null ? material.dailyPrice.toFixed(2) + " €" : "-"}</td>
+          <td>${htmlEscape(material.comment || "")}</td>
+          <td>
+            <button class="btn-text" data-action="editMaterial" data-id="${material.id}">Modifier</button>
+            <button class="btn-text" data-action="deleteMaterial" data-id="${material.id}">Supprimer</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const orderMaterialSelect = document.getElementById("orderMaterialSelect");
+      orderMaterialSelect.innerHTML = '<option value="">-- Sélectionner un matériau --</option>';
+      materials.forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = String(m.id);
+        opt.textContent = m.name;
+        orderMaterialSelect.appendChild(opt);
+      });
+    }
+
+    // ---------- Paramétrage : frais véhicules ----------
+    async function renderVehicleCostsSettings() {
+      const [vehicleCosts, trucks] = await Promise.all([
+        dataService.listVehicleCosts(),
+        dataService.listTrucks()
+      ]);
+      const tbody = document.getElementById("vehicleCostsTableBody");
+      tbody.innerHTML = "";
+      vehicleCosts.forEach(vc => {
+        const truck = trucks.find(t => t.id === vc.truckId);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${htmlEscape(vc.category)}</td>
+          <td>${htmlEscape(truck ? truck.plate : "")}</td>
+          <td>${htmlEscape(vc.description || "")}</td>
+          <td>${vc.monthlyAmount != null ? vc.monthlyAmount.toFixed(2) + " €" : "-"}</td>
+          <td>
+            <button class="btn-text" data-action="editVehicleCost" data-id="${vc.id}">Modifier</button>
+            <button class="btn-text" data-action="deleteVehicleCost" data-id="${vc.id}">Supprimer</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ---------- Commandes ----------
+    async function renderOrders() {
+      const [orders, clients, drivers, trucks, materials] = await Promise.all([
+        dataService.listOrders(),
+        dataService.listClients(),
+        dataService.listDrivers(),
+        dataService.listTrucks(),
+        dataService.listMaterials()
+      ]);
+      const tbody = document.getElementById("ordersTableBody");
+      tbody.innerHTML = "";
+      orders.forEach(order => {
+        const client = clients.find(c => c.id === order.clientId);
+        const driver = drivers.find(d => d.id === order.driverId);
+        const truck = trucks.find(t => t.id === order.truckId);
+        const doneCount = order.transports.filter(t => t.isDone).length;
+        const typeLabel =
+          order.orderType === "materiaux"
+            ? "Matériaux" + (order.materialId ? " (" + (materials.find(m => m.id === order.materialId)?.name || "") + ")" : "")
+            : "Journée";
+
+        let statusText = "En cours";
+        if (order.status === "a_facturer") statusText = "À facturer";
+        if (order.status === "facturee") statusText = "Facturée";
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${order.id}</td>
+          <td>${htmlEscape(client?.companyName || "")}</td>
+          <td>${htmlEscape(order.address)}</td>
+          <td>${htmlEscape(order.date)}</td>
+          <td>${doneCount} / ${order.estimatedTransports}</td>
+          <td>${htmlEscape(truck?.plate || "-")}</td>
+          <td>${htmlEscape(driver?.name || "-")}</td>
+          <td>${htmlEscape(typeLabel)}</td>
+          <td>
+            ${
+              order.status === "a_facturer"
+                ? '<span class="chip"><span class="chip-dot danger"></span>À facturer</span>'
+                : doneCount >= order.estimatedTransports
+                  ? '<button class="btn btn-danger" data-action="markToInvoice" data-order-id="' + order.id + '">À facturer</button>'
+                  : '<span class="muted">' + statusText + "</span>"
+            }
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ---------- Rapports : consommation carburant ----------
+    async function renderFuelReport() {
+      const [driverSheets, trucks] = await Promise.all([
+        dataService.listDriverSheets(),
+        dataService.listTrucks()
+      ]);
+      const tbody = document.getElementById("fuelReportTableBody");
+      tbody.innerHTML = "";
+
+      // Calcul simple : moyenne L/100km par camion à partir des fiches
+      const grouped = {};
+      driverSheets.forEach(sheet => {
+        if (!sheet.mileage || !sheet.fuelQty) return;
+        if (!grouped[sheet.truckId]) grouped[sheet.truckId] = [];
+        grouped[sheet.truckId].push(sheet);
+      });
+
+      Object.keys(grouped).forEach(truckIdStr => {
+        const truckId = Number(truckIdStr);
+        const sheets = grouped[truckId];
+        let totalLitres = 0;
+        let totalKm = 0;
+        sheets.forEach(s => {
+          totalLitres += Number(s.fuelQty || 0);
+          // Ici, pour la démo, on suppose un trajet de 200km par fiche pour illustrer
+          totalKm += 200;
+        });
+        const consumption = totalKm > 0 ? (totalLitres / totalKm) * 100 : null;
+        const lastDate = sheets[sheets.length - 1].date;
+        const truck = trucks.find(t => t.id === truckId);
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${htmlEscape(truck ? truck.plate : "Camion " + truckId)}</td>
+          <td>${consumption != null ? consumption.toFixed(1) + " L/100km" : "-"}</td>
+          <td>${htmlEscape(lastDate || "")}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      if (!tbody.children.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="3" class="muted">Aucune fiche de fin de journée enregistrée pour calculer la consommation.</td>`;
+        tbody.appendChild(tr);
+      }
+    }
+
+    // ---------- Rapports : frais par camion / mois ----------
+    async function renderCostReport() {
+      const [vehicleCosts, trucks] = await Promise.all([
+        dataService.listVehicleCosts(),
+        dataService.listTrucks()
+      ]);
+      const tbody = document.getElementById("costReportTableBody");
+      tbody.innerHTML = "";
+
+      // Simplification : pour la démo, on considère que vehicleCosts.monthlyAmount
+      // couvre l'ensemble des postes, et on répartit arbitrairement par catégories.
+      vehicleCosts.forEach(vc => {
+        const truck = trucks.find(t => t.id === vc.truckId);
+        const monthLabel = "Mois actuel";
+        const total = vc.monthlyAmount || 0;
+        const carburant = (total * 0.4).toFixed(2);
+        const vidange = (total * 0.1).toFixed(2);
+        const reparations = (total * 0.25).toFixed(2);
+        const pneus = (total * 0.15).toFixed(2);
+        const assurance = (total * 0.1).toFixed(2);
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${htmlEscape(truck ? truck.plate : "")}</td>
+          <td>${monthLabel}</td>
+          <td>${carburant} €</td>
+          <td>${vidange} €</td>
+          <td>${reparations} €</td>
+          <td>${pneus} €</td>
+          <td>${assurance} €</td>
+          <td>${total.toFixed(2)} €</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      if (!tbody.children.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="8" class="muted">Aucun frais véhicule paramétré pour l'instant.</td>`;
+        tbody.appendChild(tr);
+      }
+    }
+
+    // ---------- Marges (tableau mensuel) ----------
+    function renderMarginTable() {
+      const table = document.getElementById("marginTable");
+      table.innerHTML = "";
+      const months = [
+        "Janv.", "Fév.", "Mars", "Avril", "Mai", "Juin",
+        "Juil.", "Août", "Sept.", "Oct.", "Nov.", "Déc."
+      ];
+      const now = new Date();
+      const currentMonthIndex = now.getMonth(); // 0-11
+
+      const thead = document.createElement("thead");
+      const headRow = document.createElement("tr");
+      headRow.innerHTML = `<th>Catégorie</th>`;
+      months.forEach((label, idx) => {
+        const th = document.createElement("th");
+        th.textContent = label;
+        if (idx === currentMonthIndex) {
+          th.classList.add("margin-month-current-header");
+        }
+        headRow.appendChild(th);
+      });
+      thead.appendChild(headRow);
+
+      const tbody = document.createElement("tbody");
+      const categories = [
+        "Chiffre d'affaires mensuel",
+        "Carburant",
+        "Vidange",
+        "Réparations",
+        "Pneus",
+        "Assurance",
+        "Marge brute"
+      ];
+      categories.forEach(cat => {
+        const tr = document.createElement("tr");
+        if (cat === "Marge brute") {
+          tr.classList.add("margin-row-total");
+        }
+        const firstCell = document.createElement("td");
+        firstCell.textContent = cat;
+        tr.appendChild(firstCell);
+
+        months.forEach((_, idx) => {
+          const td = document.createElement("td");
+          if (idx === currentMonthIndex) {
+            td.classList.add("margin-month-current");
+          }
+          // Pour la démo, on laisse les cellules vides.
+          td.textContent = "";
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(thead);
+      table.appendChild(tbody);
+    }
+
+    // ---------- Espace chauffeur : transports du jour ----------
+    async function renderDriverTransports() {
+      const dateStr = new Date().toISOString().slice(0, 10);
+      const transports = await dataService.listDriverTransportsForDate(appState.currentDriverIdForDemo, dateStr);
+      const timeline = document.getElementById("driverTransportsTimeline");
+      const empty = document.getElementById("driverTransportsEmpty");
+      const countEl = document.getElementById("driverTransportsCount");
+      const summaryTbody = document.getElementById("driverDaySummaryTableBody");
+
+      timeline.innerHTML = "";
+      summaryTbody.innerHTML = "";
+
+      if (!transports.length) {
+        empty.style.display = "block";
+        countEl.textContent = "0";
+        return;
+      }
+      empty.style.display = "none";
+      countEl.textContent = transports.length;
+
+      transports.forEach(t => {
+        const order = t.order;
+        const item = document.createElement("div");
+        item.className = "timeline-item";
+        const status = t.isDone ? "Validé" : "À faire";
+        const badgeClass = t.isDone ? "badge-counter" : "badge-counter";
+        const dotStyle = t.isDone ? "" : "background:#f97316;";
+        item.innerHTML = `
+          <div class="timeline-title">
+            Transport n°${t.sequence} • ${htmlEscape(order.address)}
+          </div>
+          <div class="timeline-meta">
+            Client : ${htmlEscape(order.clientId ? (mockData.clients.find(c => c.id === order.clientId)?.companyName || "") : "")}
+            <span class="inline-separator"></span>
+            Matière / mode : ${order.orderType === "materiaux" ? "Matériaux" : "Journée"}
+          </div>
+          <div style="margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span class="${badgeClass}">
+              <span class="dot" style="${dotStyle}"></span>${status}
+            </span>
+            ${
+              t.isDone && t.tonnage != null
+                ? `<span class="pill-muted">Tonnage : ${t.tonnage.toFixed(2)} t</span>`
+                : ""
+            }
+            <button class="btn-secondary btn" data-action="openTransportModal" data-transport-id="${t.id}">
+              ${t.isDone ? "Modifier la réception" : "Valider la réception"}
+            </button>
+          </div>
+        `;
+        timeline.appendChild(item);
+
+        const summaryTr = document.createElement("tr");
+        const client = mockData.clients.find(c => c.id === order.clientId);
+        summaryTr.innerHTML = `
+          <td>${htmlEscape(order.address)}</td>
+          <td>${htmlEscape(client ? client.companyName : "")}</td>
+          <td>${t.sequence}/${order.estimatedTransports}</td>
+          <td>${t.tonnage != null ? t.tonnage.toFixed(2) + " t" : "-"}</td>
+          <td>${htmlEscape(t.receiverName || "-")} (${htmlEscape(t.receiverRole || "")})</td>
+          <td>${t.isDone ? "Validé" : "En attente"}</td>
+        `;
+        summaryTbody.appendChild(summaryTr);
+      });
+    }
+
+    // ---------- Espace chauffeur : fiche de fin de journée ----------
+    async function renderDriverSheets() {
+      const [driverSheets, trucks] = await Promise.all([
+        dataService.listDriverSheets(),
+        dataService.listTrucks()
+      ]);
+      const tbody = document.getElementById("driverSheetHistoryTableBody");
+      tbody.innerHTML = "";
+
+      const sheetsToShow = driverSheets
+        .filter(s => s.driverId === appState.currentDriverIdForDemo)
+        .slice(-5)
+        .reverse(); // les plus récents d'abord
+
+      sheetsToShow.forEach(sheet => {
+        const truck = trucks.find(t => t.id === sheet.truckId);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${htmlEscape(sheet.date)}</td>
+          <td>${htmlEscape(truck ? truck.plate : "")}</td>
+          <td>${sheet.mileage != null ? sheet.mileage : ""}</td>
+          <td>${sheet.fuelQty != null ? sheet.fuelQty : ""}</td>
+          <td>${sheet.fuelCost != null ? sheet.fuelCost.toFixed(2) : ""}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      if (!tbody.children.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="5" class="muted">Aucune fiche enregistrée pour l'instant.</td>`;
+        tbody.appendChild(tr);
+      }
+    }
+
+    // ---------- Modal transport ----------
+    function openTransportModal(transportId) {
+      // Récupérer le transport et la commande associée dans mockData
+      let selectedTransport = null;
+      let relatedOrder = null;
+      for (const o of mockData.orders) {
+        const t = o.transports.find(t => t.id === transportId);
+        if (t) {
+          selectedTransport = t;
+          relatedOrder = o;
+          break;
+        }
+      }
+      if (!selectedTransport || !relatedOrder) return;
+
+      appState.modalTransportContext = { transportId, orderId: relatedOrder.id };
+
+      document.getElementById("modalTonnage").value = selectedTransport.tonnage != null ? selectedTransport.tonnage : "";
+      document.getElementById("modalReceiverName").value = selectedTransport.receiverName || "";
+      document.getElementById("modalReceiverRole").value = selectedTransport.receiverRole || "";
+
+      const client = mockData.clients.find(c => c.id === relatedOrder.clientId);
+      const subtitle = `Client : ${client ? client.companyName : ""} • Adresse : ${relatedOrder.address}`;
+
+      document.getElementById("transportModalTitle").textContent =
+        "Transport n°" + selectedTransport.sequence + " • Validation chantier";
+      document.getElementById("transportModalSubtitle").textContent = subtitle;
+
+      document.getElementById("transportModalBackdrop").classList.add("show");
+    }
+
+    function closeTransportModal() {
+      appState.modalTransportContext = null;
+      document.getElementById("transportModalBackdrop").classList.remove("show");
+    }
+
+    async function validateTransportFromModal() {
+      if (!appState.modalTransportContext) return;
+      const transportId = appState.modalTransportContext.transportId;
+
+      const tonnage = parseFloat(document.getElementById("modalTonnage").value || "0");
+      const receiverName = document.getElementById("modalReceiverName").value.trim();
+      const receiverRole = document.getElementById("modalReceiverRole").value.trim();
+
+      if (!tonnage || tonnage <= 0) {
+        alert("Merci de renseigner un tonnage valide.");
+        return;
+      }
+
+      await dataService.updateTransport(transportId, {
+        isDone: true,
+        tonnage,
+        receiverName,
+        receiverRole
+      });
+
+      // Vérifier si la commande est entièrement réalisée, passer en "à_facturer"
+      const order = mockData.orders.find(o => o.transports.some(t => t.id === transportId));
+      if (order) {
+        const allDone = order.transports.every(t => t.isDone);
+        if (allDone && order.status === "en_cours") {
+          await dataService.updateOrderStatus(order.id, "a_facturer");
+        }
+      }
+
+      closeTransportModal();
+      await refreshAll(); // pour mettre à jour tableau de suivi + dashboard
+    }
+
+    // =====================================================
+    //  ÉCOUTEURS D'ÉVÉNEMENTS (UI)
+    // =====================================================
+
+    function attachEventListeners() {
+      // Sidebar nav
+      document.getElementById("navManager").addEventListener("click", handleSidebarNavClick);
+      document.getElementById("navDriver").addEventListener("click", handleSidebarNavClick);
+
+      // Role switch (sidebar)
+      document.querySelectorAll(".role-pill").forEach(btn => {
+        btn.addEventListener("click", () => {
+          switchRole(btn.dataset.role);
+        });
+      });
+      // Role switch compact
+      document.querySelectorAll(".compact-role-switch button").forEach(btn => {
+        btn.addEventListener("click", () => switchRole(btn.dataset.role));
+      });
+
+      // Dashboard : bouton "Nouvelle commande"
+      document.getElementById("btnGoToOrders").addEventListener("click", () => {
+        switchRole("manager");
+        document.querySelector('#navManager button[data-section="section-orders"]').click();
+      });
+
+      // Jump depuis raccourcis paramétrage
+      document.querySelectorAll("[data-jump-section]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const sectionId = btn.getAttribute("data-jump-section");
+          const tabKey = btn.getAttribute("data-jump-tab");
+          switchRole("manager");
+          document.querySelector('#navManager button[data-section="' + sectionId + '"]').click();
+          if (tabKey) switchSettingsTab(tabKey);
+        });
+      });
+
+      // Settings tabs
+      document.getElementById("settingsTabs").addEventListener("click", e => {
+        const btn = e.target.closest("button[data-settings-tab]");
+        if (!btn) return;
+        switchSettingsTab(btn.getAttribute("data-settings-tab"));
+      });
+
+      // Forms paramétrage
+      document.getElementById("btnSaveDriver").addEventListener("click", async () => {
+        const name = document.getElementById("driverName").value.trim();
+        const birthdate = document.getElementById("driverBirthdate").value || null;
+        const phone = document.getElementById("driverPhone").value.trim();
+        const email = document.getElementById("driverEmail").value.trim();
+        const license = document.getElementById("driverLicense").value.trim();
+        if (!name) {
+          alert("Merci de renseigner le nom du chauffeur.");
+          return;
+        }
+        await dataService.createDriver({ name, birthdate, phone, email, license });
+        document.getElementById("driverName").value = "";
+        document.getElementById("driverBirthdate").value = "";
+        document.getElementById("driverPhone").value = "";
+        document.getElementById("driverEmail").value = "";
+        document.getElementById("driverLicense").value = "";
+        await refreshAll();
+      });
+
+      document.getElementById("driversTableBody").addEventListener("click", async e => {
+        const btn = e.target.closest("button[data-action]");
+        if (!btn) return;
+        const id = Number(btn.dataset.id);
+        if (btn.dataset.action === "deleteDriver") {
+          if (confirm("Supprimer ce chauffeur ?")) {
+            await dataService.deleteDriver(id);
+            await refreshAll();
+          }
+        }
+        // Pour la démo, l'édition n'est pas implémentée en détail.
+      });
+
+      document.getElementById("btnSaveTruck").addEventListener("click", async () => {
+        const plate = document.getElementById("truckPlate").value.trim();
+        const mileage = document.getElementById("truckMileage").value ? Number(document.getElementById("truckMileage").value) : null;
+        const type = document.getElementById("truckType").value.trim();
+        const ctDate = document.getElementById("truckCtDate").value || null;
+        if (!plate) {
+          alert("Merci de renseigner l'immatriculation.");
+          return;
+        }
+        await dataService.createTruck({ plate, mileage, type, ctDate, driverId: null });
+        document.getElementById("truckPlate").value = "";
+        document.getElementById("truckMileage").value = "";
+        document.getElementById("truckType").value = "";
+        document.getElementById("truckCtDate").value = "";
+        await refreshAll();
+      });
+
+      document.getElementById("trucksTableBody").addEventListener("click", async e => {
+        const btn = e.target.closest("button[data-action]");
+        if (!btn) return;
+        const id = Number(btn.dataset.id);
+        if (btn.dataset.action === "deleteTruck") {
+          if (confirm("Supprimer ce camion ?")) {
+            await dataService.deleteTruck(id);
+            await refreshAll();
+          }
+        }
+      });
+
+      document.getElementById("btnSaveClient").addEventListener("click", async () => {
+        const companyName = document.getElementById("clientCompanyName").value.trim();
+        const managerName = document.getElementById("clientManagerName").value.trim();
+        const phone = document.getElementById("clientPhone").value.trim();
+        const email = document.getElementById("clientEmail").value.trim();
+        if (!companyName) {
+          alert("Merci de renseigner le nom de l'entreprise.");
+          return;
+        }
+        await dataService.createClient({ companyName, managerName, phone, email });
+        document.getElementById("clientCompanyName").value = "";
+        document.getElementById("clientManagerName").value = "";
+        document.getElementById("clientPhone").value = "";
+        document.getElementById("clientEmail").value = "";
+        await refreshAll();
+      });
+
+      document.getElementById("clientsTableBody").addEventListener("click", async e => {
+        const btn = e.target.closest("button[data-action]");
+        if (!btn) return;
+        const id = Number(btn.dataset.id);
+        if (btn.dataset.action === "deleteClient") {
+          if (confirm("Supprimer ce client ?")) {
+            await dataService.deleteClient(id);
+            await refreshAll();
+          }
+        }
+      });
+
+      document.getElementById("btnSaveMaterial").addEventListener("click", async () => {
+        const name = document.getElementById("materialName").value.trim();
+        const pricePerTon = document.getElementById("materialPricePerTon").value ? Number(document.getElementById("materialPricePerTon").value) : null;
+        const dailyPrice = document.getElementById("materialDailyPrice").value ? Number(document.getElementById("materialDailyPrice").value) : null;
+        const comment = document.getElementById("materialComment").value.trim();
+        if (!name) {
+          alert("Merci de renseigner le nom du matériau.");
+          return;
+        }
+        await dataService.createMaterial({ name, pricePerTon, dailyPrice, comment });
+        document.getElementById("materialName").value = "";
+        document.getElementById("materialPricePerTon").value = "";
+        document.getElementById("materialDailyPrice").value = "";
+        document.getElementById("materialComment").value = "";
+        await refreshAll();
+      });
+
+      document.getElementById("materialsTableBody").addEventListener("click", async e => {
+        const btn = e.target.closest("button[data-action]");
+        if (!btn) return;
+        const id = Number(btn.dataset.id);
+        if (btn.dataset.action === "deleteMaterial") {
+          if (confirm("Supprimer ce matériau ?")) {
+            await dataService.deleteMaterial(id);
+            await refreshAll();
+          }
+        }
+      });
+
+      document.getElementById("btnSaveVehicleCost").addEventListener("click", async () => {
+        const category = document.getElementById("vehicleCostCategory").value;
+        const description = document.getElementById("vehicleCostDescription").value.trim();
+        const truckIdVal = document.getElementById("vehicleCostTruckSelect").value;
+        const monthlyAmount = document.getElementById("vehicleCostMonthly").value ? Number(document.getElementById("vehicleCostMonthly").value) : null;
+        const truckId = truckIdVal ? Number(truckIdVal) : null;
+        if (!truckId) {
+          alert("Merci de sélectionner un camion.");
+          return;
+        }
+        await dataService.createVehicleCost({ category, description, truckId, monthlyAmount });
+        document.getElementById("vehicleCostDescription").value = "";
+        document.getElementById("vehicleCostTruckSelect").value = "";
+        document.getElementById("vehicleCostMonthly").value = "";
+        await refreshAll();
+      });
+
+      document.getElementById("vehicleCostsTableBody").addEventListener("click", async e => {
+        const btn = e.target.closest("button[data-action]");
+        if (!btn) return;
+        const id = Number(btn.dataset.id);
+        if (btn.dataset.action === "deleteVehicleCost") {
+          if (confirm("Supprimer ce frais véhicule ?")) {
+            await dataService.deleteVehicleCost(id);
+            await refreshAll();
+          }
+        }
+      });
+
+      // Commandes : type radio
+      document.querySelectorAll('input[name="orderType"]').forEach(radio => {
+        radio.addEventListener("change", () => {
+          const isMateriaux = document.querySelector('input[name="orderType"]:checked').value === "materiaux";
+          document.getElementById("orderMaterialGroup").style.display = isMateriaux ? "block" : "none";
+        });
+      });
+
+      document.getElementById("btnCreateOrder").addEventListener("click", async () => {
+        const clientId = Number(document.getElementById("orderClientSelect").value);
+        const address = document.getElementById("orderAddress").value.trim();
+        const estimatedTransports = Number(document.getElementById("orderEstimatedTransports").value || "0");
+        const date = document.getElementById("orderDate").value;
+        const truckIdVal = document.getElementById("orderTruckSelect").value;
+        const driverIdVal = document.getElementById("orderDriverSelect").value;
+        const orderType = document.querySelector('input[name="orderType"]:checked').value;
+        const materialIdVal = document.getElementById("orderMaterialSelect").value;
+
+        if (!clientId || !address || !estimatedTransports || !date) {
+          alert("Merci de renseigner tous les champs obligatoires (client, adresse, nombre de transports, date).");
+          return;
+        }
+        const payload = {
+          clientId,
+          address,
+          estimatedTransports,
+          date,
+          truckId: truckIdVal ? Number(truckIdVal) : null,
+          driverId: driverIdVal ? Number(driverIdVal) : null,
+          orderType,
+          materialId: materialIdVal ? Number(materialIdVal) : null
+        };
+        await dataService.createOrder(payload);
+        document.getElementById("orderAddress").value = "";
+        document.getElementById("orderEstimatedTransports").value = "";
+        document.getElementById("orderDate").value = "";
+        await refreshAll();
+      });
+
+      document.getElementById("ordersTableBody").addEventListener("click", async e => {
+        const btn = e.target.closest("button[data-action]");
+        if (!btn) return;
+        if (btn.dataset.action === "markToInvoice") {
+          const orderId = Number(btn.dataset.orderId);
+          await dataService.updateOrderStatus(orderId, "a_facturer");
+          await refreshAll();
+        }
+      });
+
+      document.getElementById("dashboardOrdersTable").addEventListener("click", async e => {
+        const btn = e.target.closest("button[data-action]");
+        if (!btn) return;
+        if (btn.dataset.action === "markToInvoice") {
+          const orderId = Number(btn.dataset.orderId);
+          await dataService.updateOrderStatus(orderId, "a_facturer");
+          await refreshAll();
+        }
+      });
+
+      // Espace chauffeur : timeline
+      document.getElementById("driverTransportsTimeline").addEventListener("click", e => {
+        const btn = e.target.closest("button[data-action='openTransportModal']");
+        if (!btn) return;
+        const transportId = Number(btn.dataset.transportId);
+        openTransportModal(transportId);
+      });
+
+      // Modal transport
+      document.getElementById("btnCloseTransportModal").addEventListener("click", closeTransportModal);
+      document.getElementById("btnCancelTransportModal").addEventListener("click", closeTransportModal);
+      document.getElementById("btnValidateTransportModal").addEventListener("click", validateTransportFromModal);
+      document.getElementById("transportModalBackdrop").addEventListener("click", e => {
+        if (e.target.id === "transportModalBackdrop") closeTransportModal();
+      });
+
+      // Fiche chauffeur
+      document.getElementById("btnSubmitDriverSheet").addEventListener("click", async () => {
+        const truckIdVal = document.getElementById("driverSheetTruckSelect").value;
+        const mileageVal = document.getElementById("driverSheetMileage").value;
+        const fuelQtyVal = document.getElementById("driverSheetFuelQty").value;
+        const fuelCostVal = document.getElementById("driverSheetFuelCost").value;
+
+        if (!truckIdVal) {
+          alert("Merci de sélectionner un camion.");
+          return;
+        }
+        if (!mileageVal) {
+          alert("Merci de renseigner le kilométrage.");
+          return;
+        }
+
+        const payload = {
+          driverId: appState.currentDriverIdForDemo,
+          truckId: Number(truckIdVal),
+          date: new Date().toISOString().slice(0, 10),
+          mileage: Number(mileageVal),
+          fuelQty: fuelQtyVal ? Number(fuelQtyVal) : null,
+          fuelCost: fuelCostVal ? Number(fuelCostVal) : null
+        };
+        await dataService.createDriverSheet(payload);
+        document.getElementById("driverSheetMileage").value = "";
+        document.getElementById("driverSheetFuelQty").value = "";
+        document.getElementById("driverSheetFuelCost").value = "";
+        await renderDriverSheets();
+        await renderFuelReport();
+        await renderCostReport();
+        alert("Fiche de fin de journée envoyée (mock).");
+      });
+    }
+
+    // =====================================================
+    //  RAFRAÎCHISSEMENT GLOBAL
+    // =====================================================
+
+    async function refreshAll() {
+      if (appState.role === "manager") {
+        await renderDashboard();
+        await renderDriversSettings();
+        await renderTrucksSettings();
+        await renderClientsSettings();
+        await renderMaterialsSettings();
+        await renderVehicleCostsSettings();
+        await renderOrders();
+        await renderFuelReport();
+        await renderCostReport();
+        renderMarginTable();
+      } else {
+        const todayStr = new Date().toISOString().slice(0, 10);
+        const transports = await dataService.listDriverTransportsForDate(appState.currentDriverIdForDemo, todayStr);
+        refreshTopbar(transports.length);
+        await renderDriverTransports();
+        await renderDriverSheets();
+      }
+    }
+
+    // =====================================================
+    //  INITIALISATION
+    // =====================================================
+
+    (function init() {
+      attachEventListeners();
+      switchRole("manager"); // par défaut
+      // Initialiser la tab de paramétrage par défaut
+      switchSettingsTab("drivers");
+      refreshAll();
+    })();
+  </script>
 </body>
 </html>
