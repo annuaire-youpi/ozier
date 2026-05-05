@@ -3,2987 +3,836 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SOTRANSNORD - Démo flotte camions</title>
-  <!-- Intégration prévue dès le départ pour Make via webhook personnalisé, et pour Google Apps Script via web app doPost/doGet en JSON. [web:1][web:2][web:7] -->
+  <title>Profil Créateur – Annuaire YOUPI</title>
+
   <style>
-    :root{
-      --bg:#f5f7fb;
-      --panel:#ffffff;
-      --line:#e6ebf2;
-      --text:#182230;
-      --muted:#667085;
-      --primary:#1769ff;
-      --primary-2:#0f55d6;
-      --success:#16a34a;
-      --warning:#f59e0b;
-      --danger:#dc2626;
-      --info:#0ea5e9;
-      --shadow:0 12px 30px rgba(15,23,42,.08);
-      --radius:18px;
-      --radius-sm:12px;
-      --sidebar:280px;
-    }
-
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:linear-gradient(180deg,#f8fbff 0%,#f4f6fa 100%);
-      color:var(--text);
-    }
-
-    button,input,select,textarea{
-      font:inherit;
-    }
-
-    .app{
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
-    }
-
-    .hidden{display:none!important}
-    .muted{color:var(--muted)}
-    .danger{color:var(--danger)}
-    .success{color:var(--success)}
-    .warning{color:var(--warning)}
-    .info{color:var(--info)}
-    .nowrap{white-space:nowrap}
-
-    .login-screen{
-      min-height:100vh;
-      display:grid;
-      grid-template-columns:1.05fr .95fr;
-      background:
-        radial-gradient(circle at top left, rgba(23,105,255,.15), transparent 35%),
-        radial-gradient(circle at bottom right, rgba(14,165,233,.12), transparent 35%),
-        linear-gradient(180deg,#f8fbff,#f3f6fb);
-    }
-
-    .login-hero{
-      padding:48px;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-      gap:24px;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-    }
-
-    .brand-logo{
-      width:56px;height:56px;border-radius:16px;
-      background:linear-gradient(135deg,var(--primary),#5da0ff);
-      color:#fff;font-weight:800;font-size:22px;
-      display:grid;place-items:center;
-      box-shadow:var(--shadow);
-    }
-
-    .brand h1{
-      margin:0;
-      font-size:26px;
-      line-height:1.1;
-    }
-
-    .hero-card{
-      background:rgba(255,255,255,.72);
-      backdrop-filter:blur(10px);
-      border:1px solid rgba(255,255,255,.8);
-      border-radius:24px;
-      box-shadow:var(--shadow);
-      padding:28px;
-      max-width:680px;
-    }
-
-    .hero-card h2{
-      margin:0 0 12px;
-      font-size:42px;
-      line-height:1.05;
-    }
-
-    .hero-card p{
-      margin:0;
-      color:var(--muted);
-      font-size:16px;
-      line-height:1.65;
-    }
-
-    .hero-grid{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:16px;
-    }
-
-    .hero-metric{
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:18px;
-      box-shadow:var(--shadow);
-    }
-
-    .hero-metric span{
-      display:block;
-      color:var(--muted);
-      font-size:13px;
-      margin-bottom:8px;
-    }
-
-    .hero-metric strong{
-      font-size:26px;
-    }
-
-    .login-panel{
-      padding:28px;
-      display:grid;
-      place-items:center;
-    }
-
-    .card{
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-    }
-
-    .login-card{
-      width:min(100%,460px);
-      padding:26px;
-    }
-
-    .login-card h3{
-      margin:0 0 6px;
-      font-size:28px;
-    }
-
-    .login-card p{
-      margin:0 0 22px;
-      color:var(--muted);
-      line-height:1.55;
-    }
-
-    .switch{
-      display:flex;
-      background:#eef3fb;
-      border-radius:14px;
-      padding:4px;
-      margin-bottom:18px;
-      gap:4px;
-    }
-
-    .switch button{
-      flex:1;
-      border:none;
-      background:transparent;
-      padding:12px 14px;
-      border-radius:10px;
-      cursor:pointer;
-      color:var(--muted);
-      font-weight:600;
-      transition:.2s ease;
-    }
-
-    .switch button.active{
-      background:#fff;
-      color:var(--text);
-      box-shadow:0 4px 14px rgba(15,23,42,.08);
-    }
-
-    .field{
-      margin-bottom:14px;
-    }
-
-    .field label{
-      display:block;
-      font-size:13px;
-      color:var(--muted);
-      margin-bottom:8px;
-      font-weight:600;
-    }
-
-    .pin-wrap{
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-
-    .pin-wrap input{
-      flex:1;
-      padding:16px 18px;
-      border:1px solid var(--line);
-      border-radius:14px;
-      outline:none;
-      font-size:26px;
-      letter-spacing:8px;
-      text-align:center;
-      background:#fbfcff;
-    }
-
-    .kbd{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:10px;
-      margin:16px 0 8px;
-    }
-
-    .kbd button{
-      border:none;
-      background:#f7f9fd;
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:16px;
-      cursor:pointer;
-      font-size:20px;
-      font-weight:700;
-      transition:.15s ease;
-    }
-
-    .kbd button:hover,
-    .btn:hover,
-    .icon-btn:hover{
-      transform:translateY(-1px);
-    }
-
-    .actions{
-      display:flex;
-      gap:10px;
-      margin-top:14px;
-    }
-
-    .btn{
-      border:none;
-      border-radius:14px;
-      padding:13px 16px;
-      cursor:pointer;
-      transition:.15s ease;
-      font-weight:700;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-    }
-
-    .btn-primary{background:var(--primary);color:#fff}
-    .btn-primary:hover{background:var(--primary-2)}
-    .btn-light{background:#eef3fb;color:var(--text)}
-    .btn-danger{background:#fee2e2;color:#991b1b}
-    .btn-success{background:#dcfce7;color:#166534}
-    .btn-warning{background:#fef3c7;color:#92400e}
-    .btn-block{width:100%}
-    .btn-xs{padding:8px 10px;border-radius:10px;font-size:13px}
-    .btn-sm{padding:10px 12px;border-radius:12px;font-size:14px}
-
-    .demo-pins{
-      margin-top:16px;
-      background:#f8fbff;
-      border:1px dashed #cfe0ff;
-      border-radius:14px;
-      padding:14px;
-      color:var(--muted);
-      line-height:1.55;
-      font-size:14px;
-    }
-
-    .toast-wrap{
-      position:fixed;
-      top:16px;
-      right:16px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      z-index:3000;
-    }
-
-    .toast{
-      background:#111827;
-      color:#fff;
-      padding:12px 14px;
-      border-radius:14px;
-      box-shadow:var(--shadow);
-      min-width:260px;
-      max-width:360px;
-      font-size:14px;
-    }
-
-    .workspace{
-      display:grid;
-      grid-template-columns:var(--sidebar) 1fr;
-      min-height:100vh;
-    }
-
-    .sidebar{
-      background:#0f172a;
-      color:#e5ecf8;
-      padding:18px;
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-      position:sticky;
-      top:0;
-      height:100vh;
-    }
-
-    .sidebar .brand{
-      align-items:flex-start;
-    }
-
-    .sidebar .brand-logo{
-      width:48px;height:48px;font-size:20px;
-    }
-
-    .sidebar .brand h1{
-      color:#fff;
-      font-size:22px;
-    }
-
-    .sidebar small{
-      color:#94a3b8;
-    }
-
-    .side-group{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-
-    .nav-btn{
-      width:100%;
-      text-align:left;
-      border:none;
-      padding:14px 15px;
-      border-radius:14px;
-      cursor:pointer;
-      background:transparent;
-      color:#d9e3f5;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      font-weight:600;
-    }
-
-    .nav-btn.active,
-    .nav-btn:hover{
-      background:rgba(255,255,255,.08);
-      color:#fff;
-    }
-
-    .sidebar-footer{
-      margin-top:auto;
-      padding-top:12px;
-      border-top:1px solid rgba(255,255,255,.1);
-      display:grid;
-      gap:10px;
-    }
-
-    .main{
-      min-width:0;
-      padding:22px;
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-    }
-
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      flex-wrap:wrap;
-    }
-
-    .topbar h2{
-      margin:0;
-      font-size:28px;
-    }
-
-    .topbar p{
-      margin:4px 0 0;
-      color:var(--muted);
-    }
-
-    .topbar-actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:9px 12px;
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:999px;
-      color:var(--muted);
-      font-size:13px;
-      box-shadow:var(--shadow);
-    }
-
-    .section{
-      display:none;
-      flex-direction:column;
-      gap:18px;
-    }
-
-    .section.active{display:flex}
-
-    .grid-4{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:16px;
-    }
-
-    .grid-3{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:16px;
-    }
-
-    .grid-2{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:16px;
-    }
-
-    .metric{
-      padding:18px;
-      min-width:0;
-    }
-
-    .metric .label{
-      color:var(--muted);
-      font-size:13px;
-      margin-bottom:8px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-    }
-
-    .metric .value{
-      font-size:30px;
-      font-weight:800;
-      letter-spacing:-.02em;
-    }
-
-    .metric .sub{
-      margin-top:8px;
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    .panel{
-      padding:18px;
-    }
-
-    .panel-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:14px;
-      flex-wrap:wrap;
-    }
-
-    .panel-head h3{
-      margin:0;
-      font-size:18px;
-    }
-
-    .panel-head p{
-      margin:4px 0 0;
-      color:var(--muted);
-      font-size:14px;
-    }
-
-    .toolbar{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-
-    .toolbar input,
-    .toolbar select,
-    .form-grid input,
-    .form-grid select,
-    .form-grid textarea,
-    .inline-form input,
-    .inline-form select,
-    .inline-form textarea{
-      width:100%;
-      padding:12px 14px;
-      border:1px solid var(--line);
-      border-radius:12px;
-      background:#fff;
-      outline:none;
-    }
-
-    .search{
-      min-width:220px;
-    }
-
-    .table-wrap{
-      overflow:auto;
-      border:1px solid var(--line);
-      border-radius:14px;
-      background:#fff;
-    }
-
-    table{
-      width:100%;
-      border-collapse:collapse;
-      min-width:860px;
-      font-size:14px;
-    }
-
-    th,td{
-      padding:13px 14px;
-      border-bottom:1px solid #eef2f7;
-      text-align:left;
-      vertical-align:top;
-    }
-
-    th{
-      background:#f8fbff;
-      color:#475467;
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:.05em;
-      position:sticky;
-      top:0;
-      z-index:1;
-    }
-
-    tr:hover td{
-      background:#fafcff;
-    }
-
-    .status{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:700;
-      white-space:nowrap;
-    }
-
-    .status.blue{background:#e0f2fe;color:#075985}
-    .status.green{background:#dcfce7;color:#166534}
-    .status.orange{background:#fef3c7;color:#92400e}
-    .status.red{background:#fee2e2;color:#991b1b}
-    .status.gray{background:#eef2f7;color:#475467}
-
-    .progress{
-      width:100%;
-      height:10px;
-      border-radius:999px;
-      background:#edf2f7;
-      overflow:hidden;
-      margin-top:6px;
-    }
-
-    .progress > span{
-      display:block;
-      height:100%;
-      border-radius:999px;
-      background:linear-gradient(90deg,var(--primary),#59a0ff);
-    }
-
-    .list{
-      display:grid;
-      gap:12px;
-    }
-
-    .list-item{
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:14px;
-      background:#fff;
-      display:flex;
-      gap:12px;
-      justify-content:space-between;
-      align-items:flex-start;
-      flex-wrap:wrap;
-    }
-
-    .list-item h4{
-      margin:0 0 6px;
-      font-size:16px;
-    }
-
-    .list-item p{
-      margin:0;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.5;
-    }
-
-    .stack{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-
-    .chips{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-top:8px;
-    }
-
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:7px 10px;
-      border-radius:999px;
-      background:#f3f6fb;
-      color:#475467;
-      font-size:12px;
-      font-weight:600;
-      border:1px solid var(--line);
-    }
-
-    .drawer{
-      position:fixed;
-      inset:0;
-      background:rgba(15,23,42,.46);
-      display:none;
-      align-items:flex-end;
-      justify-content:center;
-      z-index:2500;
-      padding:18px;
-    }
-
-    .drawer.open{display:flex}
-
-    .modal{
-      width:min(980px,100%);
-      max-height:92vh;
-      overflow:auto;
-      background:#fff;
-      border-radius:24px;
-      box-shadow:0 24px 60px rgba(15,23,42,.25);
-      border:1px solid var(--line);
-    }
-
-    .modal-sm{
-      width:min(640px,100%);
-    }
-
-    .modal-head{
-      padding:18px 18px 0;
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:flex-start;
-    }
-
-    .modal-head h3{
-      margin:0;
-      font-size:22px;
-    }
-
-    .modal-head p{
-      margin:6px 0 0;
-      color:var(--muted);
-    }
-
-    .modal-body{
-      padding:18px;
-    }
-
-    .modal-foot{
-      padding:0 18px 18px;
-      display:flex;
-      justify-content:flex-end;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
-    .icon-btn{
-      border:none;
-      cursor:pointer;
-      background:#f3f6fb;
-      width:42px;height:42px;
-      border-radius:12px;
-      font-size:18px;
-    }
-
-    .form-grid{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:14px;
-    }
-
-    .form-grid .full{
-      grid-column:1/-1;
-    }
-
-    .form-card{
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:14px;
-      background:#fafcff;
-    }
-
-    .form-card h4{
-      margin:0 0 12px;
-      font-size:16px;
-    }
-
-    .inline-form{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:12px;
-    }
-
-    .sign-box{
-      border:1px dashed #bfd2ff;
-      border-radius:16px;
-      background:#fbfdff;
-      padding:12px;
-    }
-
-    #signaturePad{
-      width:100%;
-      height:200px;
-      border:1px solid var(--line);
-      border-radius:14px;
-      background:#fff;
-      touch-action:none;
-      display:block;
-    }
-
-    .empty{
-      padding:22px;
-      text-align:center;
-      color:var(--muted);
-      border:1px dashed var(--line);
-      border-radius:14px;
-      background:#fbfcff;
-    }
-
-    .driver-shell{
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      padding:18px;
-    }
-
-    .driver-head{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-
-    .driver-cards{
-      display:grid;
-      grid-template-columns:1.2fr .8fr;
-      gap:16px;
-    }
-
-    .mini-stats{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:12px;
-    }
-
-    .sep{
-      height:1px;
-      background:var(--line);
-      margin:8px 0;
-    }
-
-    .mobile-nav-toggle{
-      display:none;
-      border:none;
-      width:44px;height:44px;
-      border-radius:12px;
-      background:#fff;
-      box-shadow:var(--shadow);
-      font-size:20px;
-      cursor:pointer;
-    }
-
-    .sidebar-overlay{
-      display:none;
-      position:fixed;
-      inset:0;
-      background:rgba(15,23,42,.42);
-      z-index:1800;
-    }
-
-    .sidebar-overlay.open{display:block}
-
-    @media (max-width:1100px){
-      .grid-4{grid-template-columns:repeat(2,1fr)}
-      .grid-3{grid-template-columns:1fr}
-      .driver-cards{grid-template-columns:1fr}
-      .hero-grid{grid-template-columns:1fr}
-      .login-screen{grid-template-columns:1fr}
-      .login-hero{display:none}
-    }
-
-    @media (max-width:920px){
-      .workspace{
-        grid-template-columns:1fr;
-      }
-      .sidebar{
-        position:fixed;
-        left:-100%;
-        top:0;
-        height:100vh;
-        width:min(88vw,320px);
-        z-index:2000;
-        transition:left .22s ease;
-      }
-      .sidebar.open{left:0}
-      .mobile-nav-toggle{display:inline-grid;place-items:center}
-      .main{padding:16px}
-      .grid-2,.form-grid,.inline-form,.mini-stats{grid-template-columns:1fr}
-      .topbar h2{font-size:24px}
-    }
-
-    @media (max-width:640px){
-      .grid-4{grid-template-columns:1fr}
-      .actions{flex-direction:column}
-      .pin-wrap input{font-size:22px;letter-spacing:6px}
-      .login-card{padding:20px}
-      .panel,.metric{padding:16px}
-      .modal{border-radius:18px}
-      .hero-card h2{font-size:34px}
+    /* =============================================
+       RESET & BASE
+    ============================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:       #6366f1;
+      --primary-dark:  #4f46e5;
+      --primary-light: #e0e7ff;
+      --orange:        #f97316;
+      --yellow:        #fbbf24;
+      --bg:            #f3f4f6;
+      --card:          #ffffff;
+      --text:          #111827;
+      --muted:         #6b7280;
+      --border:        #e5e7eb;
+      --success:       #10b981;
+      --warning:       #f59e0b;
+      --radius:        14px;
+      --shadow:        0 2px 12px rgba(0,0,0,.08);
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* =============================================
+       HEADER
+    ============================================= */
+    header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      color: #fff;
+      padding: 0 24px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 16px rgba(79,70,229,.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--orange), var(--yellow));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 22px;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(249,115,22,.4);
+    }
+
+    .header-titles h1 {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: .3px;
+    }
+
+    .header-titles span {
+      font-size: 12px;
+      opacity: .8;
+      font-weight: 400;
+    }
+
+    .btn-create {
+      background: linear-gradient(135deg, var(--orange), var(--yellow));
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+      box-shadow: 0 2px 12px rgba(249,115,22,.35);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn-create:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(249,115,22,.45); }
+
+    /* =============================================
+       LAYOUT
+    ============================================= */
+    .page-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 20px 48px;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .page-wrapper { grid-template-columns: 1fr; }
+    }
+
+    /* =============================================
+       CARTES GÉNÉRIQUES
+    ============================================= */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      border: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* =============================================
+       PROFIL + PROGRESSION
+    ============================================= */
+    .profile-card {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      font-size: 26px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 12px rgba(99,102,241,.35);
+    }
+
+    .profile-info { flex: 1; min-width: 200px; }
+
+    .profile-name {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .level-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 50px;
+      margin-bottom: 12px;
+    }
+
+    .progress-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      transition: width .6s ease;
+    }
+
+    /* Compteurs */
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .stat-box {
+      flex: 1;
+      min-width: 90px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 12px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+      line-height: 1.3;
+    }
+
+    /* =============================================
+       GRILLE BADGES
+    ============================================= */
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 14px;
+    }
+
+    .badge-item {
+      border-radius: 12px;
+      padding: 16px 12px;
+      text-align: center;
+      border: 1.5px solid transparent;
+      transition: transform .15s;
+    }
+    .badge-item:hover { transform: translateY(-2px); }
+
+    .badge-item.unlocked {
+      background: linear-gradient(135deg, #fff7ed, #fffbeb);
+      border-color: var(--orange);
+    }
+
+    .badge-item.locked {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+      opacity: .65;
+      filter: grayscale(1);
+    }
+
+    .badge-icon {
+      font-size: 30px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .badge-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .badge-desc {
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .badge-lock {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 5px;
+      font-style: italic;
+    }
+
+    /* =============================================
+       MISSIONS
+    ============================================= */
+    .missions-list { display: flex; flex-direction: column; gap: 14px; }
+
+    .mission-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      transition: box-shadow .15s;
+    }
+    .mission-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,.07); }
+
+    .mission-status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status-todo    { background: #d1d5db; }
+    .status-ongoing { background: var(--warning); }
+    .status-done    { background: var(--success); }
+
+    .mission-content { flex: 1; }
+
+    .mission-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .mission-desc {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .mission-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .mission-pts {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .mission-status-label {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 50px;
+    }
+    .label-todo    { background: #f3f4f6; color: #6b7280; }
+    .label-ongoing { background: #fef3c7; color: #92400e; }
+    .label-done    { background: #d1fae5; color: #065f46; }
+
+    .btn-launch {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      border: none;
+      padding: 6px 12px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background .15s;
+      white-space: nowrap;
+    }
+    .btn-launch:hover { background: #c7d2fe; }
+
+    /* =============================================
+       PANNEAU LATÉRAL
+    ============================================= */
+    .sidebar { display: flex; flex-direction: column; gap: 20px; }
+
+    .why-box { }
+
+    .why-box p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 10px;
+    }
+
+    .why-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .why-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .why-text { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .why-text strong { color: var(--text); display: block; font-size: 13px; }
+
+    /* Prochaines étapes */
+    .next-steps-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .next-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--bg);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .next-step:hover { background: var(--primary-light); border-color: var(--primary); }
+
+    .next-step-icon { font-size: 18px; }
+
+    .next-step-text { flex: 1; font-size: 12px; font-weight: 600; }
+
+    .next-step-pts {
+      font-size: 11px;
+      color: var(--primary);
+      font-weight: 700;
+      background: var(--primary-light);
+      padding: 2px 7px;
+      border-radius: 50px;
+    }
+
+    /* =============================================
+       TOAST NOTIFICATION
+    ============================================= */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--primary-dark);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 4px 20px rgba(79,70,229,.4);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .3s, transform .3s;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* =============================================
+       SECTION TITRES
+    ============================================= */
+    .section { margin-bottom: 0; }
+    .main-col { display: flex; flex-direction: column; gap: 24px; }
+
+    /* divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 2px 0 16px;
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <div id="toastWrap" class="toast-wrap"></div>
 
-    <!-- Écran de connexion -->
-    <section id="loginScreen" class="login-screen">
-      <div class="login-hero">
-        <div class="brand">
-          <div class="brand-logo">SN</div>
-          <div>
-            <h1>SOTRANSNORD</h1>
-            <small>Base de démonstration flotte camions • Gabriel OZIER</small>
-          </div>
-        </div>
+<!-- ====== TOAST ====== -->
+<div class="toast" id="toast"></div>
 
-        <div class="hero-card">
-          <h2>Gestion moderne des commandes, chauffeurs et dépenses véhicules.</h2>
-          <p>
-            Démo front-end en une page pour illustrer le parcours gérant et chauffeur, avec données mockées,
-            tableaux de suivi, fiches de fin de journée et connecteurs prêts pour Google Sheets / Make.
-          </p>
-        </div>
-
-        <div class="hero-grid">
-          <div class="hero-metric">
-            <span>Camions suivis</span>
-            <strong id="heroTruckCount">0</strong>
-          </div>
-          <div class="hero-metric">
-            <span>Commandes actives</span>
-            <strong id="heroOrderCount">0</strong>
-          </div>
-          <div class="hero-metric">
-            <span>Chauffeurs</span>
-            <strong id="heroDriverCount">0</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="login-panel">
-        <div class="card login-card">
-          <h3>Connexion</h3>
-          <p>Choisissez votre profil, saisissez votre code PIN à 6 chiffres puis entrez dans la démonstration.</p>
-
-          <div class="switch">
-            <button id="roleManagerBtn" class="active" type="button">Connexion gérant</button>
-            <button id="roleDriverBtn" type="button">Connexion chauffeur</button>
-          </div>
-
-          <div class="field">
-            <label for="pinInput">Code PIN (6 chiffres)</label>
-            <div class="pin-wrap">
-              <input id="pinInput" maxlength="6" inputmode="numeric" placeholder="••••••" autocomplete="off" />
-            </div>
-          </div>
-
-          <div class="kbd" id="kbd"></div>
-
-          <div class="actions">
-            <button id="enterBtn" class="btn btn-primary btn-block" type="button">Entrer</button>
-            <button id="clearBtn" class="btn btn-light btn-block" type="button">Effacer</button>
-          </div>
-
-          <div class="demo-pins">
-            <strong>Codes de démonstration :</strong><br>
-            Gérant : <strong>123456</strong><br>
-            Chauffeur Jean-Marc PIERRE : <strong>654321</strong><br>
-            Chauffeur Lucien DORVAL : <strong>111111</strong><br>
-            Chauffeur Kévin MONROSE : <strong>222222</strong>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Application gérant -->
-    <div id="managerApp" class="workspace hidden">
-      <div id="sidebarOverlay" class="sidebar-overlay"></div>
-      <aside id="sidebar" class="sidebar">
-        <div class="brand">
-          <div class="brand-logo">SN</div>
-          <div>
-            <h1>SOTRANSNORD</h1>
-            <small>Démo gérant • flotte camions</small>
-          </div>
-        </div>
-
-        <div class="side-group">
-          <button class="nav-btn active" data-section="dashboard">Dashboard <span>▸</span></button>
-          <button class="nav-btn" data-section="commandes">Commandes <span>▸</span></button>
-          <button class="nav-btn" data-section="parametres">Paramétrages <span>▸</span></button>
-          <button class="nav-btn" data-section="rapports">Rapports <span>▸</span></button>
-          <button class="nav-btn" data-section="marge">Marge <span>▸</span></button>
-          <button class="nav-btn" data-section="integrations">Intégrations <span>▸</span></button>
-        </div>
-
-        <div class="sidebar-footer">
-          <div class="badge">Connecteurs prévus : Google Sheets / Make</div>
-          <button id="logoutManagerBtn" class="btn btn-light btn-sm" type="button">Déconnexion</button>
-        </div>
-      </aside>
-
-      <main class="main">
-        <div class="topbar">
-          <div class="stack">
-            <button id="mobileNavToggle" class="mobile-nav-toggle" type="button">☰</button>
-            <div>
-              <h2 id="sectionTitle">Dashboard</h2>
-              <p id="sectionSubtitle">Vue générale de l’activité démonstration.</p>
-            </div>
-          </div>
-          <div class="topbar-actions">
-            <span class="badge">Gérant connecté : Gabriel OZIER</span>
-            <span class="badge" id="syncBadge">Sync locale active</span>
-          </div>
-        </div>
-
-        <!-- Dashboard -->
-        <section id="section-dashboard" class="section active">
-          <div class="grid-4">
-            <div class="card metric">
-              <div class="label"><span>Commandes actives</span><span class="info">Aujourd’hui</span></div>
-              <div class="value" id="metricOrdersActive">0</div>
-              <div class="sub">Commandes en cours et à planifier</div>
-            </div>
-            <div class="card metric">
-              <div class="label"><span>Transports réalisés</span><span class="success">Validés</span></div>
-              <div class="value" id="metricTripsDone">0</div>
-              <div class="sub">Tous chantiers confondus</div>
-            </div>
-            <div class="card metric">
-              <div class="label"><span>Dépenses du mois</span><span class="warning">Véhicules</span></div>
-              <div class="value" id="metricExpensesMonth">0 €</div>
-              <div class="sub">Carburant, entretien, pneus, assurance</div>
-            </div>
-            <div class="card metric">
-              <div class="label"><span>CA du mois</span><span class="success">Démo</span></div>
-              <div class="value" id="metricRevenueMonth">0 €</div>
-              <div class="sub">Calculé à partir des commandes</div>
-            </div>
-          </div>
-
-          <div class="grid-2">
-            <div class="card panel">
-              <div class="panel-head">
-                <div>
-                  <h3>Commandes en cours</h3>
-                  <p>Suivi rapide de l’avancement des chantiers.</p>
-                </div>
-                <button class="btn btn-primary btn-sm" id="quickAddOrderBtn" type="button">Nouvelle commande</button>
-              </div>
-              <div id="dashboardOrdersList" class="list"></div>
-            </div>
-
-            <div class="card panel">
-              <div class="panel-head">
-                <div>
-                  <h3>Alertes flotte</h3>
-                  <p>Points d’attention sur camions et documents.</p>
-                </div>
-              </div>
-              <div id="alertsList" class="list"></div>
-            </div>
-          </div>
-
-          <div class="grid-2">
-            <div class="card panel">
-              <div class="panel-head">
-                <div>
-                  <h3>Dernières dépenses</h3>
-                  <p>Historique synthétique des frais saisis.</p>
-                </div>
-              </div>
-              <div id="recentExpensesList" class="list"></div>
-            </div>
-
-            <div class="card panel">
-              <div class="panel-head">
-                <div>
-                  <h3>Chauffeurs du jour</h3>
-                  <p>Charge opérationnelle par conducteur.</p>
-                </div>
-              </div>
-              <div id="driverDayList" class="list"></div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Commandes -->
-        <section id="section-commandes" class="section">
-          <div class="card panel">
-            <div class="panel-head">
-              <div>
-                <h3>Gestion des commandes</h3>
-                <p>Ajout, suivi des transports et passage en “À facturer”.</p>
-              </div>
-              <div class="toolbar">
-                <input id="orderSearch" class="search" type="text" placeholder="Rechercher client ou chantier" />
-                <button id="addOrderBtn" class="btn btn-primary btn-sm" type="button">Ajouter une commande</button>
-              </div>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Commande</th>
-                    <th>Client</th>
-                    <th>Chantier</th>
-                    <th>Type</th>
-                    <th>Affectation</th>
-                    <th>Avancement</th>
-                    <th>Statut</th>
-                    <th>Facturation</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="ordersTableBody"></tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- Paramétrages -->
-        <section id="section-parametres" class="section">
-          <div class="grid-2">
-            <div class="card panel">
-              <div class="panel-head">
-                <div>
-                  <h3>Données de base</h3>
-                  <p>Choisissez une catégorie pour ajouter, modifier ou supprimer.</p>
-                </div>
-                <div class="toolbar">
-                  <select id="settingsEntitySelect">
-                    <option value="drivers">Chauffeurs</option>
-                    <option value="trucks">Camions</option>
-                    <option value="clients">Clients</option>
-                    <option value="materials">Matériaux</option>
-                    <option value="rates">Tarifs</option>
-                    <option value="expenseTypes">Frais véhicules</option>
-                  </select>
-                  <button id="addSettingBtn" class="btn btn-primary btn-sm" type="button">Ajouter</button>
-                </div>
-              </div>
-              <div class="table-wrap">
-                <table>
-                  <thead id="settingsHead"></thead>
-                  <tbody id="settingsBody"></tbody>
-                </table>
-              </div>
-            </div>
-
-            <div class="card panel">
-              <div class="panel-head">
-                <div>
-                  <h3>Connexion données</h3>
-                  <p>Prépare les flux vers Google Sheets et Make.</p>
-                </div>
-              </div>
-              <div class="list">
-                <div class="list-item">
-                  <div>
-                    <h4>Mode actuel</h4>
-                    <p>Les modifications sont conservées en mémoire locale pour la démonstration, avec possibilité de simulation d’envoi JSON.</p>
-                  </div>
-                  <span class="status blue">Démo front</span>
-                </div>
-                <div class="list-item">
-                  <div>
-                    <h4>Flux prévu</h4>
-                    <p>Chaque entité est prête à être poussée via webhook Make ou vers une Web App Google Apps Script.</p>
-                  </div>
-                  <div class="stack">
-                    <button class="btn btn-light btn-xs" type="button" id="testSettingsSyncBtn">Tester l’envoi</button>
-                  </div>
-                </div>
-                <div class="list-item">
-                  <div>
-                    <h4>Recommandation structure</h4>
-                    <p>Une feuille dédiée par entité : chauffeurs, camions, clients, matériaux, tarifs, frais, commandes, transports, fiches chauffeur.</p>
-                  </div>
-                  <span class="status gray">Prêt</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Rapports -->
-        <section id="section-rapports" class="section">
-          <div class="grid-2">
-            <div class="card panel">
-              <div class="panel-head">
-                <div>
-                  <h3>Consommation moyenne carburant / camion</h3>
-                  <p>Calcul basé sur les fiches chauffeur de fin de journée.</p>
-                </div>
-              </div>
-              <div class="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Camion</th>
-                      <th>Kilomètres</th>
-                      <th>Litres</th>
-                      <th>Moyenne L/100</th>
-                    </tr>
-                  </thead>
-                  <tbody id="fuelReportBody"></tbody>
-                </table>
-              </div>
-            </div>
-
-            <div class="card panel">
-              <div class="panel-head">
-                <div>
-                  <h3>Frais par camion et par mois</h3>
-                  <p>Vision synthétique des coûts mensuels.</p>
-                </div>
-              </div>
-              <div class="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Mois</th>
-                      <th>Camion</th>
-                      <th>Total frais</th>
-                      <th>Détail</th>
-                    </tr>
-                  </thead>
-                  <tbody id="expensesByTruckMonthBody"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Marge -->
-        <section id="section-marge" class="section">
-          <div class="card panel">
-            <div class="panel-head">
-              <div>
-                <h3>Tableau mensuel de marge</h3>
-                <p>Chiffre d’affaires, catégories de dépenses et marge brute.</p>
-              </div>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead id="marginHead"></thead>
-                <tbody id="marginBody"></tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- Intégrations -->
-        <section id="section-integrations" class="section">
-          <div class="grid-2">
-            <div class="card panel">
-              <div class="panel-head">
-                <div>
-                  <h3>Configuration Make / Google Sheets</h3>
-                  <p>Renseignez vos endpoints pour remplacer le mode démonstration.</p>
-                </div>
-              </div>
-
-              <div class="form-grid">
-                <div class="full">
-                  <label class="muted">Webhook Make.com</label>
-                  <input id="makeWebhookInput" type="text" placeholder="https://hook.eu2.make.com/xxxxxxxxxxxx" />
-                </div>
-                <div class="full">
-                  <label class="muted">URL Google Apps Script Web App</label>
-                  <input id="gasWebhookInput" type="text" placeholder="https://script.google.com/macros/s/xxxxxxxx/exec" />
-                </div>
-                <div>
-                  <label class="muted">Clé API facultative</label>
-                  <input id="apiKeyInput" type="text" placeholder="api-key-demo" />
-                </div>
-                <div>
-                  <label class="muted">Mode d’envoi</label>
-                  <select id="syncModeInput">
-                    <option value="demo">Démo locale</option>
-                    <option value="make">Webhook Make</option>
-                    <option value="gas">Google Apps Script</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="actions" style="margin-top:16px">
-                <button id="saveIntegrationBtn" class="btn btn-primary btn-sm" type="button">Enregistrer la configuration</button>
-                <button id="testIntegrationBtn" class="btn btn-light btn-sm" type="button">Tester une notification</button>
-              </div>
-            </div>
-
-            <div class="card panel">
-              <div class="panel-head">
-                <div>
-                  <h3>Payloads de démonstration</h3>
-                  <p>Exemples des événements envoyés par l’application.</p>
-                </div>
-              </div>
-              <div class="list">
-                <div class="list-item">
-                  <div>
-                    <h4>settings.updated</h4>
-                    <p>Ajout / modification / suppression d’une donnée de paramétrage.</p>
-                    <div class="chips">
-                      <span class="chip">entity</span>
-                      <span class="chip">action</span>
-                      <span class="chip">record</span>
-                      <span class="chip">timestamp</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="list-item">
-                  <div>
-                    <h4>order.created</h4>
-                    <p>Création d’une commande et génération automatique des lignes de transport chauffeur.</p>
-                    <div class="chips">
-                      <span class="chip">client</span>
-                      <span class="chip">truckId</span>
-                      <span class="chip">driverId</span>
-                      <span class="chip">estimatedTrips</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="list-item">
-                  <div>
-                    <h4>driver.daySheet.sent</h4>
-                    <p>Fiche de fin de journée envoyée par un chauffeur avec kilométrage et carburant.</p>
-                    <div class="chips">
-                      <span class="chip">kilometers</span>
-                      <span class="chip">fuelLiters</span>
-                      <span class="chip">fuelAmount</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
-
-    <!-- Application chauffeur -->
-    <div id="driverApp" class="driver-shell hidden">
-      <div class="driver-head">
-        <div>
-          <h2 style="margin:0">Espace chauffeur</h2>
-          <p id="driverSubtitle" class="muted" style="margin:6px 0 0">Transports du jour et fiche de fin de journée.</p>
-        </div>
-        <div class="stack">
-          <span id="driverBadge" class="badge">Chauffeur</span>
-          <button id="logoutDriverBtn" class="btn btn-light btn-sm" type="button">Déconnexion</button>
-        </div>
-      </div>
-
-      <div class="mini-stats">
-        <div class="card metric">
-          <div class="label"><span>Transports du jour</span><span class="blue"></span></div>
-          <div class="value" id="driverTripsTotal">0</div>
-          <div class="sub">Lignes reçues depuis les commandes</div>
-        </div>
-        <div class="card metric">
-          <div class="label"><span>Réceptionnés</span><span class="success">Signés</span></div>
-          <div class="value" id="driverTripsDone">0</div>
-          <div class="sub">Avec tonnage et signature</div>
-        </div>
-        <div class="card metric">
-          <div class="label"><span>Reste à faire</span><span class="warning">En attente</span></div>
-          <div class="value" id="driverTripsRemaining">0</div>
-          <div class="sub">Transports encore ouverts</div>
-        </div>
-      </div>
-
-      <div class="driver-cards">
-        <div class="card panel">
-          <div class="panel-head">
-            <div>
-              <h3>1er bloc • Liste des transports du jour</h3>
-              <p>Ouvrez un transport pour enregistrer la réception du chantier.</p>
-            </div>
-          </div>
-          <div id="driverTripsList" class="list"></div>
-        </div>
-
-        <div class="card panel">
-          <div class="panel-head">
-            <div>
-              <h3>2ème bloc • Fiche de fin de journée</h3>
-              <p>Kilométrage et carburant, prêts à être envoyés vers Google Sheets.</p>
-            </div>
-          </div>
-
-          <div class="form-grid">
-            <div>
-              <label class="muted">Date</label>
-              <input id="daySheetDate" type="date" />
-            </div>
-            <div>
-              <label class="muted">Camion</label>
-              <select id="daySheetTruck"></select>
-            </div>
-            <div>
-              <label class="muted">Kilométrage du jour</label>
-              <input id="daySheetKm" type="number" min="0" placeholder="Ex. 186" />
-            </div>
-            <div>
-              <label class="muted">Carburant (litres)</label>
-              <input id="daySheetFuelLiters" type="number" min="0" step="0.01" placeholder="Ex. 42" />
-            </div>
-            <div class="full">
-              <label class="muted">Montant carburant (€)</label>
-              <input id="daySheetFuelAmount" type="number" min="0" step="0.01" placeholder="Ex. 78.50" />
-            </div>
-          </div>
-
-          <div class="actions">
-            <button id="sendDaySheetBtn" class="btn btn-primary btn-block" type="button">Envoyer ma fiche</button>
-          </div>
-
-          <div class="sep"></div>
-
-          <div id="driverDaySheetsHistory" class="list"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal commande -->
-    <div id="orderModal" class="drawer">
-      <div class="modal">
-        <div class="modal-head">
-          <div>
-            <h3 id="orderModalTitle">Nouvelle commande</h3>
-            <p>Créez une commande et générez automatiquement les transports chauffeur.</p>
-          </div>
-          <button class="icon-btn" data-close="orderModal" type="button">✕</button>
-        </div>
-        <div class="modal-body">
-          <div class="form-grid">
-            <div>
-              <label class="muted">Client</label>
-              <select id="orderClient"></select>
-            </div>
-            <div>
-              <label class="muted">Date du chantier</label>
-              <input id="orderDate" type="date" />
-            </div>
-            <div class="full">
-              <label class="muted">Adresse de livraison</label>
-              <input id="orderAddress" type="text" placeholder="Adresse complète du chantier" />
-            </div>
-            <div>
-              <label class="muted">Nombre de transports estimés</label>
-              <input id="orderTrips" type="number" min="1" value="1" />
-            </div>
-            <div>
-              <label class="muted">Camion</label>
-              <select id="orderTruck"></select>
-            </div>
-            <div>
-              <label class="muted">Chauffeur</label>
-              <select id="orderDriver"></select>
-            </div>
-            <div>
-              <label class="muted">Type de commande</label>
-              <select id="orderType">
-                <option value="materiaux">Matériaux</option>
-                <option value="journee">Journée</option>
-              </select>
-            </div>
-            <div id="materialWrap">
-              <label class="muted">Matériau</label>
-              <select id="orderMaterial"></select>
-            </div>
-            <div>
-              <label class="muted">Prix unitaire (€)</label>
-              <input id="orderUnitPrice" type="number" step="0.01" min="0" />
-            </div>
-            <div>
-              <label class="muted">Tonnage estimé / transport</label>
-              <input id="orderEstimatedTonnage" type="number" step="0.01" min="0" value="12" />
-            </div>
-            <div class="full">
-              <label class="muted">Notes</label>
-              <textarea id="orderNotes" rows="3" placeholder="Informations chantier, horaires, consignes..."></textarea>
-            </div>
-          </div>
-        </div>
-        <div class="modal-foot">
-          <button class="btn btn-light" data-close="orderModal" type="button">Annuler</button>
-          <button id="saveOrderBtn" class="btn btn-primary" type="button">Enregistrer la commande</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal paramétrage -->
-    <div id="settingModal" class="drawer">
-      <div class="modal modal-sm">
-        <div class="modal-head">
-          <div>
-            <h3 id="settingModalTitle">Ajouter un élément</h3>
-            <p id="settingModalSubtitle">Formulaire dynamique selon la catégorie choisie.</p>
-          </div>
-          <button class="icon-btn" data-close="settingModal" type="button">✕</button>
-        </div>
-        <div class="modal-body">
-          <div id="settingFormContainer"></div>
-        </div>
-        <div class="modal-foot">
-          <button class="btn btn-light" data-close="settingModal" type="button">Annuler</button>
-          <button id="saveSettingBtn" class="btn btn-primary" type="button">Enregistrer</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal réception transport -->
-    <div id="tripModal" class="drawer">
-      <div class="modal modal-sm">
-        <div class="modal-head">
-          <div>
-            <h3>Réception du transport</h3>
-            <p id="tripModalSubtitle">Complétez les informations du bon de livraison et faites signer le réceptionneur.</p>
-          </div>
-          <button class="icon-btn" data-close="tripModal" type="button">✕</button>
-        </div>
-        <div class="modal-body">
-          <div class="form-grid">
-            <div>
-              <label class="muted">Tonnage réceptionné</label>
-              <input id="tripTonnage" type="number" min="0" step="0.01" placeholder="Ex. 13.25" />
-            </div>
-            <div>
-              <label class="muted">Nom du réceptionneur</label>
-              <input id="tripReceiver" type="text" placeholder="Nom complet" />
-            </div>
-            <div class="full">
-              <label class="muted">Statut du réceptionneur</label>
-              <input id="tripReceiverRole" type="text" placeholder="Ex. Chef de chantier" />
-            </div>
-            <div class="full sign-box">
-              <div class="stack" style="justify-content:space-between;margin-bottom:10px">
-                <strong>Signature électronique</strong>
-                <button id="clearSignatureBtn" class="btn btn-light btn-xs" type="button">Effacer la signature</button>
-              </div>
-              <canvas id="signaturePad"></canvas>
-            </div>
-          </div>
-        </div>
-        <div class="modal-foot">
-          <button class="btn btn-light" data-close="tripModal" type="button">Annuler</button>
-          <button id="saveTripBtn" class="btn btn-primary" type="button">Valider la réception</button>
-        </div>
-      </div>
+<!-- ====== HEADER ====== -->
+<header>
+  <div class="header-brand">
+    <div class="logo-box">Y</div>
+    <div class="header-titles">
+      <h1>Annuaire YOUPI</h1>
+      <span>Profil créateur</span>
     </div>
   </div>
+  <button class="btn-create" onclick="showToast('✨ Redirigé vers la création de page YOUPI !')">
+    ＋ Créer une nouvelle page
+  </button>
+</header>
 
-  <script>
-    // =========================
-    // Données de démonstration
-    // =========================
-    const state = {
-      auth: {
-        role: "manager",
-        currentUser: null
-      },
-      ui: {
-        currentSection: "dashboard",
-        orderEditingId: null,
-        settingEditing: { entity: null, id: null },
-        activeTripId: null
-      },
-      integration: {
-        mode: "demo",
-        makeWebhook: "",
-        gasWebhook: "",
-        apiKey: ""
-      },
-      users: {
-        managerPin: "123456",
-        driverPins: {
-          "654321": 1,
-          "111111": 2,
-          "222222": 3
-        }
-      },
-      drivers: [
-        { id:1, fullName:"Jean-Marc PIERRE", birthDate:"1984-05-12", phone:"0696 10 20 30", email:"jm.pierre@sotransnord.demo", license:"C/EC", pin:"654321" },
-        { id:2, fullName:"Lucien DORVAL", birthDate:"1979-11-03", phone:"0696 44 50 60", email:"l.dorval@sotransnord.demo", license:"C/EC", pin:"111111" },
-        { id:3, fullName:"Kévin MONROSE", birthDate:"1992-08-24", phone:"0696 70 80 90", email:"k.monrose@sotransnord.demo", license:"C", pin:"222222" }
-      ],
-      trucks: [
-        { id:1, plate:"FT-301-AA", mileage:186540, type:"8x4 benne", controlDate:"2026-08-18", driverId:1 },
-        { id:2, plate:"FT-672-BB", mileage:142200, type:"Semi-benne", controlDate:"2026-06-03", driverId:2 },
-        { id:3, plate:"FT-915-CC", mileage:96840, type:"6x4 benne", controlDate:"2026-05-22", driverId:3 }
-      ],
-      clients: [
-        { id:1, company:"BTP Caraïbes", manager:"Olivier RAMASSAMY", phone:"0596 50 10 20", email:"contact@btpcaraibes.demo" },
-        { id:2, company:"Travaux Nord Martinique", manager:"Sonia BARNIER", phone:"0596 65 32 11", email:"chantier@tnm.demo" },
-        { id:3, company:"Construct Plus", manager:"Patrick RICHARD", phone:"0596 70 44 18", email:"commercial@constructplus.demo" }
-      ],
-      materials: [
-        { id:1, name:"Sable 0/4", ratePerTon:28 },
-        { id:2, name:"Gravier 4/6", ratePerTon:34 },
-        { id:3, name:"Remblais", ratePerTon:19 }
-      ],
-      rates: [
-        { id:1, label:"Journée camion", type:"journee", amount:680, unit:"€/jour" },
-        { id:2, label:"Sable 0/4", type:"materiaux", amount:28, unit:"€/tonne" },
-        { id:3, label:"Gravier 4/6", type:"materiaux", amount:34, unit:"€/tonne" },
-        { id:4, label:"Remblais", type:"materiaux", amount:19, unit:"€/tonne" }
-      ],
-      expenseTypes: [
-        { id:1, label:"Carburant" },
-        { id:2, label:"Vidange" },
-        { id:3, label:"Réparations" },
-        { id:4, label:"Assurance" },
-        { id:5, label:"Pneus" }
-      ],
-      expenses: [
-        { id:1, truckId:1, type:"Carburant", amount:146, date:"2026-05-02", note:"Plein station La Trinité" },
-        { id:2, truckId:2, type:"Pneus", amount:420, date:"2026-05-04", note:"Remplacement pneu avant" },
-        { id:3, truckId:1, type:"Vidange", amount:195, date:"2026-04-27", note:"Entretien périodique" },
-        { id:4, truckId:3, type:"Réparations", amount:860, date:"2026-05-01", note:"Hydraulique benne" },
-        { id:5, truckId:2, type:"Assurance", amount:310, date:"2026-05-03", note:"Mensualité assurance flotte" },
-        { id:6, truckId:3, type:"Carburant", amount:128, date:"2026-05-04", note:"Station Gros-Morne" }
-      ],
-      orders: [
-        {
-          id:1,
-          clientId:1,
-          address:"ZAC Acajou, Le Lamentin",
-          estimatedTrips:3,
-          completedTrips:2,
-          siteDate:"2026-05-04",
-          truckId:1,
-          driverId:1,
-          type:"materiaux",
-          materialId:1,
-          unitPrice:28,
-          estimatedTonnage:12,
-          notes:"Livraison matin 7h30",
-          status:"en_cours",
-          billable:false,
-          createdAt:"2026-05-02"
-        },
-        {
-          id:2,
-          clientId:2,
-          address:"Chemin Fonds-Saint-Denis",
-          estimatedTrips:2,
-          completedTrips:2,
-          siteDate:"2026-05-04",
-          truckId:2,
-          driverId:2,
-          type:"journee",
-          materialId:null,
-          unitPrice:680,
-          estimatedTonnage:0,
-          notes:"Mise à disposition journée complète",
-          status:"terminee",
-          billable:true,
-          createdAt:"2026-05-01"
-        },
-        {
-          id:3,
-          clientId:3,
-          address:"Morne-Rouge, carrière secondaire",
-          estimatedTrips:4,
-          completedTrips:1,
-          siteDate:"2026-05-05",
-          truckId:3,
-          driverId:3,
-          type:"materiaux",
-          materialId:2,
-          unitPrice:34,
-          estimatedTonnage:13,
-          notes:"Accès chantier étroit",
-          status:"en_cours",
-          billable:false,
-          createdAt:"2026-05-04"
-        }
-      ],
-      trips: [
-        { id:101, orderId:1, sequence:1, driverId:1, truckId:1, date:"2026-05-04", status:"done", tonnage:12.4, receiverName:"L. Mathurin", receiverRole:"Chef de chantier", signed:true },
-        { id:102, orderId:1, sequence:2, driverId:1, truckId:1, date:"2026-05-04", status:"done", tonnage:11.9, receiverName:"L. Mathurin", receiverRole:"Chef de chantier", signed:true },
-        { id:103, orderId:1, sequence:3, driverId:1, truckId:1, date:"2026-05-04", status:"pending", tonnage:null, receiverName:"", receiverRole:"", signed:false },
+<!-- ====== CONTENU PRINCIPAL ====== -->
+<div class="page-wrapper">
 
-        { id:201, orderId:2, sequence:1, driverId:2, truckId:2, date:"2026-05-04", status:"done", tonnage:null, receiverName:"S. Barnier", receiverRole:"Conductrice travaux", signed:true },
-        { id:202, orderId:2, sequence:2, driverId:2, truckId:2, date:"2026-05-04", status:"done", tonnage:null, receiverName:"S. Barnier", receiverRole:"Conductrice travaux", signed:true },
+  <!-- Colonne principale -->
+  <main class="main-col" id="main-col"></main>
 
-        { id:301, orderId:3, sequence:1, driverId:3, truckId:3, date:"2026-05-05", status:"done", tonnage:13.2, receiverName:"P. Richard", receiverRole:"Responsable chantier", signed:true },
-        { id:302, orderId:3, sequence:2, driverId:3, truckId:3, date:"2026-05-05", status:"pending", tonnage:null, receiverName:"", receiverRole:"", signed:false },
-        { id:303, orderId:3, sequence:3, driverId:3, truckId:3, date:"2026-05-05", status:"pending", tonnage:null, receiverName:"", receiverRole:"", signed:false },
-        { id:304, orderId:3, sequence:4, driverId:3, truckId:3, date:"2026-05-05", status:"pending", tonnage:null, receiverName:"", receiverRole:"", signed:false }
-      ],
-      daySheets: [
-        { id:1, date:"2026-05-03", driverId:1, truckId:1, kilometers:182, fuelLiters:39, fuelAmount:74.10, sentAt:"2026-05-03T18:42:00" },
-        { id:2, date:"2026-05-03", driverId:2, truckId:2, kilometers:210, fuelLiters:46, fuelAmount:86.20, sentAt:"2026-05-03T18:51:00" },
-        { id:3, date:"2026-05-04", driverId:3, truckId:3, kilometers:165, fuelLiters:34, fuelAmount:64.60, sentAt:"2026-05-04T19:05:00" }
-      ]
-    };
+  <!-- Panneau latéral -->
+  <aside class="sidebar" id="sidebar"></aside>
 
-    // =========================
-    // Utilitaires
-    // =========================
-    const $ = sel => document.querySelector(sel);
-    const $$ = sel => [...document.querySelectorAll(sel)];
-    const euro = v => new Intl.NumberFormat('fr-FR', { style:'currency', currency:'EUR', maximumFractionDigits:2 }).format(Number(v || 0));
-    const shortDate = d => new Date(d).toLocaleDateString('fr-FR');
-    const todayStr = () => {
-      const d = new Date();
-      const pad = n => String(n).padStart(2, "0");
-      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-    };
-    const uid = arr => arr.length ? Math.max(...arr.map(x => x.id)) + 1 : 1;
+</div>
 
-    function showToast(message, type="info"){
-      const el = document.createElement("div");
-      el.className = "toast";
-      el.style.background = type === "error" ? "#7f1d1d" : type === "success" ? "#065f46" : "#111827";
-      el.textContent = message;
-      $("#toastWrap").appendChild(el);
-      setTimeout(() => el.remove(), 3200);
+<script>
+/* ==============================================
+   OBJET DE DONNÉES DE DÉMONSTRATION
+   Modifier uniquement ce bloc pour changer l'affichage.
+============================================== */
+const DATA = {
+
+  /* -- Client -- */
+  client: {
+    nom:      "Boulangerie Soleil",
+    initiales:"BS",
+  },
+
+  /* -- Niveaux -- */
+  niveaux: [
+    { numero: 1, nom: "Découvreur",       ptMin: 0   },
+    { numero: 2, nom: "Contributeur Actif", ptMin: 60  },
+    { numero: 3, nom: "Ambassadeur Local", ptMin: 200 },
+    { numero: 4, nom: "Expert Visibilité", ptMin: 400 },
+  ],
+  pointsActuels: 120,
+
+  /* -- Statistiques clés -- */
+  stats: {
+    pagesCreees:    8,
+    mAJCeMois:      4,
+    badgesObtenus:  4,
+  },
+
+  /* -- Badges (obtenu: true/false) -- */
+  badges: [
+    {
+      id: "premiere-vitrine",
+      icon: "🏪",
+      nom: "Première vitrine",
+      desc: "1ère page publiée dans l'annuaire",
+      obtenu: true,
+    },
+    {
+      id: "semaine-productive",
+      icon: "🚀",
+      nom: "Semaine productive",
+      desc: "3 pages créées en une seule semaine",
+      obtenu: true,
+    },
+    {
+      id: "page-optimisee",
+      icon: "⭐",
+      nom: "Page optimisée",
+      desc: "Tous les champs d'une page remplis à 100 %",
+      obtenu: true,
+    },
+    {
+      id: "page-ia",
+      icon: "🤖",
+      nom: "Page IA",
+      desc: "Contenu rédigé avec l'IA YOUPI",
+      obtenu: true,
+    },
+    {
+      id: "editeur-regulier",
+      icon: "📅",
+      nom: "Éditeur régulier",
+      desc: "1 mise à jour/semaine pendant 4 semaines",
+      obtenu: false,
+    },
+    {
+      id: "multi-activite",
+      icon: "🗂️",
+      nom: "Multi-activité",
+      desc: "5 pages dans des catégories différentes",
+      obtenu: false,
+    },
+    {
+      id: "galerie-active",
+      icon: "📸",
+      nom: "Galerie active",
+      desc: "Photos mises à jour sur plusieurs pages",
+      obtenu: false,
+    },
+    {
+      id: "focus-visibilite",
+      icon: "🔍",
+      nom: "Focus visibilité",
+      desc: "Titres et descriptions optimisés SEO",
+      obtenu: false,
+    },
+  ],
+
+  /* -- Missions -- */
+  /* statut: "todo" | "ongoing" | "done" */
+  missions: [
+    {
+      titre: "Créer 1 nouvelle page cette semaine",
+      desc:  "Publiez une nouvelle fiche pour un produit ou service de votre boulangerie.",
+      pts:   40,
+      statut:"done",
+    },
+    {
+      titre: "Compléter tous les champs d'une page",
+      desc:  "Remplissez chaque section : description, horaires, photos, localisation…",
+      pts:   30,
+      statut:"ongoing",
+    },
+    {
+      titre: "Mettre à jour les photos de 2 pages",
+      desc:  "Ajoutez au moins 2 nouvelles photos fraîches sur vos fiches existantes.",
+      pts:   25,
+      statut:"todo",
+    },
+    {
+      titre: "Utiliser l'IA YOUPI pour rédiger une page",
+      desc:  "Laissez l'IA générer le contenu de votre prochaine fiche en quelques secondes.",
+      pts:   25,
+      statut:"todo",
+    },
+  ],
+
+  /* -- Panneau : pourquoi créer des pages -- */
+  pourquoi: [
+    {
+      icon: "🔎",
+      titre: "Google vous trouve plus vite",
+      texte: "Chaque nouvelle page est une URL indexable. Plus vous en créez, plus Google vous référence.",
+    },
+    {
+      icon: "🤖",
+      titre: "Les IA citent vos infos",
+      texte: "ChatGPT, Gemini et Perplexity s'appuient sur des données fraîches. Mettez à jour régulièrement pour être cité.",
+    },
+    {
+      icon: "📈",
+      titre: "Votre score de visibilité grimpe",
+      texte: "L'algorithme YOUPI booste les profils actifs dans les résultats de l'annuaire.",
+    },
+  ],
+
+  /* -- Prochaines étapes rapides -- */
+  prochainesEtapes: [
+    { icon: "✏️", texte: "Ajouter les horaires d'été",            pts: "+10 pts" },
+    { icon: "📷", texte: "Mettre à jour les photos de la vitrine", pts: "+15 pts" },
+    { icon: "🤖", texte: "Générer une page Viennoiseries avec l'IA", pts: "+25 pts" },
+  ],
+};
+
+
+/* ==============================================
+   UTILITAIRES
+============================================== */
+
+/** Affiche un toast de notification */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+/** Détermine le niveau actuel et le suivant */
+function getNiveauInfo() {
+  const pts   = DATA.pointsActuels;
+  const niv   = DATA.niveaux;
+  let current = niv[0], next = niv[1];
+  for (let i = 0; i < niv.length; i++) {
+    if (pts >= niv[i].ptMin) {
+      current = niv[i];
+      next    = niv[i + 1] || null;
     }
+  }
+  const ptsDansNiveau = pts - current.ptMin;
+  const ptsNecessaires = next ? next.ptMin - current.ptMin : 1;
+  const pct = next ? Math.round((ptsDansNiveau / ptsNecessaires) * 100) : 100;
+  return { current, next, pct, pts };
+}
 
-    function getDriverById(id){ return state.drivers.find(x => x.id === id); }
-    function getTruckById(id){ return state.trucks.find(x => x.id === id); }
-    function getClientById(id){ return state.clients.find(x => x.id === id); }
-    function getMaterialById(id){ return state.materials.find(x => x.id === id); }
+/** Retourne le libellé CSS du statut mission */
+function statusClass(s) {
+  return s === 'done' ? 'done' : s === 'ongoing' ? 'ongoing' : 'todo';
+}
+function statusLabel(s) {
+  return s === 'done' ? 'Terminée ✓' : s === 'ongoing' ? 'En cours…' : 'À faire';
+}
 
-    function statusLabel(status){
-      if(status === "en_cours") return `<span class="status blue">En cours</span>`;
-      if(status === "terminee") return `<span class="status green">Terminée</span>`;
-      if(status === "a_facturer") return `<span class="status orange">À facturer</span>`;
-      return `<span class="status gray">Brouillon</span>`;
-    }
 
-    function tripStatusLabel(status){
-      return status === "done"
-        ? `<span class="status green">Réceptionné</span>`
-        : `<span class="status orange">À faire</span>`;
-    }
+/* ==============================================
+   RENDU : BLOC PROFIL + STATS
+============================================== */
+function renderProfile() {
+  const { current, next, pct, pts } = getNiveauInfo();
+  const s = DATA.stats;
 
-    function calculateOrderRevenue(order){
-      if(order.type === "journee"){
-        return Number(order.unitPrice || 0);
-      }
-      const doneTrips = state.trips.filter(t => t.orderId === order.id && t.status === "done");
-      const totalTonnage = doneTrips.reduce((sum, t) => sum + Number(t.tonnage || order.estimatedTonnage || 0), 0);
-      if(totalTonnage > 0) return totalTonnage * Number(order.unitPrice || 0);
-      return Number(order.estimatedTrips || 0) * Number(order.estimatedTonnage || 0) * Number(order.unitPrice || 0);
-    }
-
-    function monthKey(dateStr){
-      const d = new Date(dateStr);
-      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-    }
-
-    function friendlyMonth(key){
-      const [y,m] = key.split("-");
-      return new Date(Number(y), Number(m)-1, 1).toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
-    }
-
-    function syncEvent(type, payload){
-      const cfg = state.integration;
-      const body = { event:type, source:"SOTRANSNORD-DEMO", timestamp:new Date().toISOString(), payload };
-
-      if(cfg.mode === "demo" || (!cfg.makeWebhook && !cfg.gasWebhook)){
-        console.log("SYNC DEMO", body);
-        $("#syncBadge").textContent = "Sync démo locale";
-        return Promise.resolve({ ok:true, mode:"demo" });
-      }
-
-      const headers = { "Content-Type":"application/json" };
-      if(cfg.apiKey) headers["x-api-key"] = cfg.apiKey;
-
-      let url = "";
-      if(cfg.mode === "make") url = cfg.makeWebhook;
-      if(cfg.mode === "gas") url = cfg.gasWebhook;
-      if(!url){
-        showToast("Aucun endpoint configuré.", "error");
-        return Promise.resolve({ ok:false });
-      }
-
-      $("#syncBadge").textContent = cfg.mode === "make" ? "Sync Make en cours..." : "Sync Google Apps Script en cours...";
-
-      return fetch(url, {
-        method:"POST",
-        headers,
-        body:JSON.stringify(body)
-      })
-      .then(async res => {
-        $("#syncBadge").textContent = cfg.mode === "make" ? "Sync Make active" : "Sync Google Apps Script active";
-        showToast(`Événement "${type}" envoyé.`, "success");
-        return { ok:res.ok, status:res.status, text: await res.text().catch(()=> "") };
-      })
-      .catch(err => {
-        console.error(err);
-        $("#syncBadge").textContent = "Erreur de sync";
-        showToast("Échec d’envoi vers l’endpoint configuré.", "error");
-        return { ok:false, error:String(err) };
-      });
-    }
-
-    // =========================
-    // Rendu général
-    // =========================
-    function renderLoginStats(){
-      $("#heroTruckCount").textContent = state.trucks.length;
-      $("#heroOrderCount").textContent = state.orders.filter(o => o.status !== "a_facturer").length;
-      $("#heroDriverCount").textContent = state.drivers.length;
-    }
-
-    function renderAll(){
-      renderLoginStats();
-      renderDashboard();
-      renderOrders();
-      renderSettings();
-      renderReports();
-      renderMargin();
-      renderIntegrationFields();
-      renderDriverView();
-      fillOrderSelects();
-      fillDriverDaySheetTruckOptions();
-    }
-
-    function renderDashboard(){
-      const activeOrders = state.orders.filter(o => o.status === "en_cours" || o.status === "terminee");
-      const tripsDone = state.trips.filter(t => t.status === "done").length;
-      const currentMonth = monthKey(todayStr());
-
-      const expensesMonth = state.expenses
-        .filter(x => monthKey(x.date) === currentMonth)
-        .reduce((sum, x) => sum + Number(x.amount || 0), 0);
-
-      const revenueMonth = state.orders
-        .filter(x => monthKey(x.siteDate) === currentMonth)
-        .reduce((sum, x) => sum + calculateOrderRevenue(x), 0);
-
-      $("#metricOrdersActive").textContent = activeOrders.length;
-      $("#metricTripsDone").textContent = tripsDone;
-      $("#metricExpensesMonth").textContent = euro(expensesMonth);
-      $("#metricRevenueMonth").textContent = euro(revenueMonth);
-
-      const list = $("#dashboardOrdersList");
-      list.innerHTML = "";
-      const inProgress = state.orders
-        .slice()
-        .sort((a,b) => new Date(a.siteDate) - new Date(b.siteDate))
-        .filter(o => ["en_cours","terminee","a_facturer"].includes(o.status))
-        .slice(0, 5);
-
-      if(!inProgress.length){
-        list.innerHTML = `<div class="empty">Aucune commande à afficher.</div>`;
-      } else {
-        inProgress.forEach(order => {
-          const client = getClientById(order.clientId);
-          const driver = getDriverById(order.driverId);
-          const truck = getTruckById(order.truckId);
-          const percent = Math.min(100, Math.round((order.completedTrips / order.estimatedTrips) * 100));
-          const item = document.createElement("div");
-          item.className = "list-item";
-          item.innerHTML = `
-            <div>
-              <h4>${client.company}</h4>
-              <p>${order.address} • ${shortDate(order.siteDate)} • ${driver.fullName} • ${truck.plate}</p>
-              <div class="progress"><span style="width:${percent}%"></span></div>
-              <p style="margin-top:8px">${order.completedTrips}/${order.estimatedTrips} transports effectués</p>
-            </div>
-            <div class="stack">
-              ${statusLabel(order.status)}
-            </div>
-          `;
-          list.appendChild(item);
-        });
-      }
-
-      const alerts = [];
-      state.trucks.forEach(truck => {
-        const diff = Math.ceil((new Date(truck.controlDate) - new Date(todayStr())) / (1000*60*60*24));
-        if(diff <= 45){
-          alerts.push({
-            title:`Contrôle technique proche`,
-            text:`${truck.plate} • échéance le ${shortDate(truck.controlDate)}`
-          });
-        }
-      });
-      state.orders.forEach(order => {
-        if(order.completedTrips >= order.estimatedTrips && !order.billable){
-          alerts.push({
-            title:`Commande à facturer`,
-            text:`${getClientById(order.clientId).company} • ${order.address}`
-          });
-        }
-      });
-
-      const alertsList = $("#alertsList");
-      alertsList.innerHTML = alerts.length
-        ? alerts.map(a => `
-          <div class="list-item">
-            <div>
-              <h4>${a.title}</h4>
-              <p>${a.text}</p>
-            </div>
-            <span class="status orange">Action</span>
-          </div>`).join("")
-        : `<div class="empty">Aucune alerte actuellement.</div>`;
-
-      const recentExpenses = state.expenses.slice().sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0,5);
-      $("#recentExpensesList").innerHTML = recentExpenses.map(exp => `
-        <div class="list-item">
-          <div>
-            <h4>${exp.type} • ${getTruckById(exp.truckId).plate}</h4>
-            <p>${shortDate(exp.date)} • ${exp.note}</p>
-          </div>
-          <strong>${euro(exp.amount)}</strong>
+  return `
+  <div class="card">
+    <div class="profile-card">
+      <div class="avatar">${DATA.client.initiales}</div>
+      <div class="profile-info">
+        <div class="profile-name">${DATA.client.nom}</div>
+        <div class="level-badge">
+          ⚡ Niveau ${current.numero} — ${current.nom}
         </div>
-      `).join("");
-
-      const todayTrips = state.drivers.map(driver => {
-        const trips = state.trips.filter(t => t.driverId === driver.id && t.date === todayStr());
-        const done = trips.filter(t => t.status === "done").length;
-        return { driver, total: trips.length, done };
-      });
-
-      $("#driverDayList").innerHTML = todayTrips.map(row => `
-        <div class="list-item">
-          <div>
-            <h4>${row.driver.fullName}</h4>
-            <p>${row.done}/${row.total} transports validés aujourd’hui</p>
-          </div>
-          <span class="status ${row.done === row.total && row.total ? 'green' : 'blue'}">${row.total} ligne(s)</span>
+        <div class="progress-label">
+          <span>${pts} pts</span>
+          <span>${next ? `Prochain : ${next.nom} (${next.ptMin} pts)` : 'Niveau max atteint 🎉'}</span>
         </div>
-      `).join("");
-    }
-
-    function renderOrders(){
-      const tbody = $("#ordersTableBody");
-      const search = ($("#orderSearch").value || "").toLowerCase().trim();
-      tbody.innerHTML = "";
-
-      let rows = state.orders.slice().sort((a,b) => new Date(b.siteDate) - new Date(a.siteDate));
-      if(search){
-        rows = rows.filter(order => {
-          const client = getClientById(order.clientId);
-          return [
-            client.company,
-            order.address,
-            getDriverById(order.driverId)?.fullName || "",
-            getTruckById(order.truckId)?.plate || ""
-          ].join(" ").toLowerCase().includes(search);
-        });
-      }
-
-      if(!rows.length){
-        tbody.innerHTML = `<tr><td colspan="9"><div class="empty">Aucune commande trouvée.</div></td></tr>`;
-        return;
-      }
-
-      rows.forEach(order => {
-        const client = getClientById(order.clientId);
-        const driver = getDriverById(order.driverId);
-        const truck = getTruckById(order.truckId);
-        const material = order.materialId ? getMaterialById(order.materialId) : null;
-        const percent = Math.min(100, Math.round((order.completedTrips / order.estimatedTrips) * 100));
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>
-            <strong>#CMD-${String(order.id).padStart(4,"0")}</strong><br>
-            <span class="muted">${shortDate(order.siteDate)}</span>
-          </td>
-          <td>${client.company}</td>
-          <td>${order.address}</td>
-          <td>${order.type === "journee" ? "Journée" : `Matériaux${material ? ` • ${material.name}` : ""}`}</td>
-          <td>${driver.fullName}<br><span class="muted">${truck.plate}</span></td>
-          <td>
-            <div>${order.completedTrips}/${order.estimatedTrips}</div>
-            <div class="progress"><span style="width:${percent}%"></span></div>
-          </td>
-          <td>${statusLabel(order.status)}</td>
-          <td>${order.billable ? `<span class="status green">Prête</span>` : `<span class="status gray">En attente</span>`}</td>
-          <td>
-            <div class="stack">
-              <button class="btn btn-light btn-xs" type="button" onclick="openOrderModal(${order.id})">Éditer</button>
-              ${order.completedTrips >= order.estimatedTrips && !order.billable
-                ? `<button class="btn btn-warning btn-xs" type="button" onclick="markOrderBillable(${order.id})">À facturer</button>`
-                : ``}
-              <button class="btn btn-danger btn-xs" type="button" onclick="deleteOrder(${order.id})">Supprimer</button>
-            </div>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function renderSettings(){
-      const entity = $("#settingsEntitySelect").value;
-      const head = $("#settingsHead");
-      const body = $("#settingsBody");
-
-      const schemas = {
-        drivers: ["Nom complet","Naissance","Téléphone","Mail","Permis","PIN","Actions"],
-        trucks: ["Immatriculation","Kilométrage","Type","Contrôle technique","Chauffeur","Actions"],
-        clients: ["Entreprise","Gérant","Téléphone","Mail","Actions"],
-        materials: ["Matériau","Tarif €/tonne","Actions"],
-        rates: ["Libellé","Type","Montant","Unité","Actions"],
-        expenseTypes: ["Catégorie","Actions"]
-      };
-
-      head.innerHTML = `<tr>${schemas[entity].map(x => `<th>${x}</th>`).join("")}</tr>`;
-      body.innerHTML = "";
-
-      state[entity].forEach(item => {
-        const tr = document.createElement("tr");
-
-        if(entity === "drivers"){
-          tr.innerHTML = `
-            <td>${item.fullName}</td>
-            <td>${shortDate(item.birthDate)}</td>
-            <td>${item.phone}</td>
-            <td>${item.email}</td>
-            <td>${item.license}</td>
-            <td>${item.pin}</td>
-            <td>
-              <div class="stack">
-                <button class="btn btn-light btn-xs" type="button" onclick="openSettingModal('drivers', ${item.id})">Modifier</button>
-                <button class="btn btn-danger btn-xs" type="button" onclick="deleteSetting('drivers', ${item.id})">Supprimer</button>
-              </div>
-            </td>`;
-        }
-
-        if(entity === "trucks"){
-          const driver = getDriverById(item.driverId);
-          tr.innerHTML = `
-            <td>${item.plate}</td>
-            <td>${item.mileage.toLocaleString('fr-FR')} km</td>
-            <td>${item.type}</td>
-            <td>${shortDate(item.controlDate)}</td>
-            <td>${driver ? driver.fullName : "-"}</td>
-            <td>
-              <div class="stack">
-                <button class="btn btn-light btn-xs" type="button" onclick="openSettingModal('trucks', ${item.id})">Modifier</button>
-                <button class="btn btn-danger btn-xs" type="button" onclick="deleteSetting('trucks', ${item.id})">Supprimer</button>
-              </div>
-            </td>`;
-        }
-
-        if(entity === "clients"){
-          tr.innerHTML = `
-            <td>${item.company}</td>
-            <td>${item.manager}</td>
-            <td>${item.phone}</td>
-            <td>${item.email}</td>
-            <td>
-              <div class="stack">
-                <button class="btn btn-light btn-xs" type="button" onclick="openSettingModal('clients', ${item.id})">Modifier</button>
-                <button class="btn btn-danger btn-xs" type="button" onclick="deleteSetting('clients', ${item.id})">Supprimer</button>
-              </div>
-            </td>`;
-        }
-
-        if(entity === "materials"){
-          tr.innerHTML = `
-            <td>${item.name}</td>
-            <td>${euro(item.ratePerTon)}</td>
-            <td>
-              <div class="stack">
-                <button class="btn btn-light btn-xs" type="button" onclick="openSettingModal('materials', ${item.id})">Modifier</button>
-                <button class="btn btn-danger btn-xs" type="button" onclick="deleteSetting('materials', ${item.id})">Supprimer</button>
-              </div>
-            </td>`;
-        }
-
-        if(entity === "rates"){
-          tr.innerHTML = `
-            <td>${item.label}</td>
-            <td>${item.type}</td>
-            <td>${euro(item.amount)}</td>
-            <td>${item.unit}</td>
-            <td>
-              <div class="stack">
-                <button class="btn btn-light btn-xs" type="button" onclick="openSettingModal('rates', ${item.id})">Modifier</button>
-                <button class="btn btn-danger btn-xs" type="button" onclick="deleteSetting('rates', ${item.id})">Supprimer</button>
-              </div>
-            </td>`;
-        }
-
-        if(entity === "expenseTypes"){
-          tr.innerHTML = `
-            <td>${item.label}</td>
-            <td>
-              <div class="stack">
-                <button class="btn btn-light btn-xs" type="button" onclick="openSettingModal('expenseTypes', ${item.id})">Modifier</button>
-                <button class="btn btn-danger btn-xs" type="button" onclick="deleteSetting('expenseTypes', ${item.id})">Supprimer</button>
-              </div>
-            </td>`;
-        }
-
-        body.appendChild(tr);
-      });
-    }
-
-    function renderReports(){
-      const fuelBody = $("#fuelReportBody");
-      const expBody = $("#expensesByTruckMonthBody");
-      fuelBody.innerHTML = "";
-      expBody.innerHTML = "";
-
-      state.trucks.forEach(truck => {
-        const sheets = state.daySheets.filter(d => d.truckId === truck.id);
-        const km = sheets.reduce((s, x) => s + Number(x.kilometers || 0), 0);
-        const liters = sheets.reduce((s, x) => s + Number(x.fuelLiters || 0), 0);
-        const avg = km > 0 ? (liters / km) * 100 : 0;
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${truck.plate}</td>
-          <td>${km.toLocaleString('fr-FR')} km</td>
-          <td>${liters.toFixed(2)} L</td>
-          <td>${avg.toFixed(2)} L/100</td>
-        `;
-        fuelBody.appendChild(tr);
-      });
-
-      const grouped = {};
-      state.expenses.forEach(exp => {
-        const key = `${monthKey(exp.date)}__${exp.truckId}`;
-        if(!grouped[key]) grouped[key] = { month: monthKey(exp.date), truckId: exp.truckId, total:0, details:{} };
-        grouped[key].total += Number(exp.amount || 0);
-        grouped[key].details[exp.type] = (grouped[key].details[exp.type] || 0) + Number(exp.amount || 0);
-      });
-
-      Object.values(grouped)
-        .sort((a,b) => b.month.localeCompare(a.month))
-        .forEach(row => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${friendlyMonth(row.month)}</td>
-            <td>${getTruckById(row.truckId).plate}</td>
-            <td>${euro(row.total)}</td>
-            <td>${Object.entries(row.details).map(([k,v]) => `${k}: ${euro(v)}`).join(" • ")}</td>
-          `;
-          expBody.appendChild(tr);
-        });
-    }
-
-    function renderMargin(){
-      const allMonths = new Set([
-        ...state.orders.map(o => monthKey(o.siteDate)),
-        ...state.expenses.map(e => monthKey(e.date))
-      ]);
-      const months = [...allMonths].sort();
-
-      const categories = ["Chiffre d'affaire mensuel","Carburant","Vidange","Réparations","Pneus","Assurance","Marge brute"];
-
-      $("#marginHead").innerHTML = `
-        <tr>
-          <th>Catégorie</th>
-          ${months.map(m => `<th>${friendlyMonth(m)}</th>`).join("")}
-        </tr>
-      `;
-
-      const getExpenseByCatMonth = (label, month) =>
-        state.expenses
-          .filter(e => monthKey(e.date) === month && e.type.toLowerCase() === label.toLowerCase())
-          .reduce((s,e) => s + Number(e.amount || 0), 0);
-
-      const getRevenueMonth = month =>
-        state.orders
-          .filter(o => monthKey(o.siteDate) === month)
-          .reduce((s,o) => s + calculateOrderRevenue(o), 0);
-
-      let html = "";
-      categories.forEach(cat => {
-        html += `<tr><td><strong>${cat}</strong></td>`;
-        months.forEach(month => {
-          let value = 0;
-          if(cat === "Chiffre d'affaire mensuel") value = getRevenueMonth(month);
-          else if(cat === "Marge brute"){
-            const revenue = getRevenueMonth(month);
-            const expenseTotal = ["Carburant","Vidange","Réparations","Pneus","Assurance"]
-              .reduce((s,c) => s + getExpenseByCatMonth(c, month), 0);
-            value = revenue - expenseTotal;
-          } else {
-            value = getExpenseByCatMonth(cat, month);
-          }
-          html += `<td>${euro(value)}</td>`;
-        });
-        html += `</tr>`;
-      });
-      $("#marginBody").innerHTML = html;
-    }
-
-    function renderIntegrationFields(){
-      $("#makeWebhookInput").value = state.integration.makeWebhook;
-      $("#gasWebhookInput").value = state.integration.gasWebhook;
-      $("#apiKeyInput").value = state.integration.apiKey;
-      $("#syncModeInput").value = state.integration.mode;
-    }
-
-    function renderDriverView(){
-      const driver = state.auth.currentUser && state.auth.role === "driver" ? state.auth.currentUser : null;
-      if(!driver) return;
-
-      $("#driverBadge").textContent = `Chauffeur connecté : ${driver.fullName}`;
-      $("#driverSubtitle").textContent = `Camion affecté : ${state.trucks.find(t => t.driverId === driver.id)?.plate || "Non affecté"} • Démonstration opérationnelle`;
-
-      const trips = state.trips.filter(t => t.driverId === driver.id && t.date === todayStr());
-      const done = trips.filter(t => t.status === "done").length;
-      $("#driverTripsTotal").textContent = trips.length;
-      $("#driverTripsDone").textContent = done;
-      $("#driverTripsRemaining").textContent = trips.length - done;
-
-      const list = $("#driverTripsList");
-      list.innerHTML = "";
-
-      if(!trips.length){
-        list.innerHTML = `<div class="empty">Aucun transport attribué aujourd’hui.</div>`;
-      } else {
-        trips.forEach(trip => {
-          const order = state.orders.find(o => o.id === trip.orderId);
-          const client = getClientById(order.clientId);
-          const truck = getTruckById(trip.truckId);
-          const material = order.materialId ? getMaterialById(order.materialId) : null;
-
-          const item = document.createElement("div");
-          item.className = "list-item";
-          item.innerHTML = `
-            <div>
-              <h4>Transport ${trip.sequence} • ${client.company}</h4>
-              <p>${order.address}</p>
-              <div class="chips">
-                <span class="chip">${truck.plate}</span>
-                <span class="chip">${order.type === "journee" ? "Journée" : (material?.name || "Matériau")}</span>
-                ${trip.tonnage ? `<span class="chip">${trip.tonnage} t</span>` : ``}
-                ${trip.receiverName ? `<span class="chip">${trip.receiverName}</span>` : ``}
-              </div>
-            </div>
-            <div class="stack">
-              ${tripStatusLabel(trip.status)}
-              ${trip.status !== "done"
-                ? `<button class="btn btn-primary btn-xs" type="button" onclick="openTripModal(${trip.id})">Réceptionner</button>`
-                : `<button class="btn btn-light btn-xs" type="button" onclick="openTripModal(${trip.id})">Voir</button>`}
-            </div>
-          `;
-          list.appendChild(item);
-        });
-      }
-
-      $("#daySheetDate").value = todayStr();
-
-      const history = state.daySheets
-        .filter(x => x.driverId === driver.id)
-        .slice()
-        .sort((a,b) => new Date(b.date) - new Date(a.date))
-        .slice(0,4);
-
-      $("#driverDaySheetsHistory").innerHTML = history.length
-        ? history.map(h => `
-            <div class="list-item">
-              <div>
-                <h4>Fiche du ${shortDate(h.date)}</h4>
-                <p>${getTruckById(h.truckId)?.plate || "-"} • ${h.kilometers} km • ${h.fuelLiters} L</p>
-              </div>
-              <strong>${euro(h.fuelAmount)}</strong>
-            </div>
-          `).join("")
-        : `<div class="empty">Aucune fiche envoyée pour ce chauffeur.</div>`;
-    }
-
-    function fillOrderSelects(){
-      $("#orderClient").innerHTML = state.clients.map(c => `<option value="${c.id}">${c.company}</option>`).join("");
-      $("#orderTruck").innerHTML = state.trucks.map(t => `<option value="${t.id}">${t.plate} • ${t.type}</option>`).join("");
-      $("#orderDriver").innerHTML = state.drivers.map(d => `<option value="${d.id}">${d.fullName}</option>`).join("");
-      $("#orderMaterial").innerHTML = state.materials.map(m => `<option value="${m.id}">${m.name}</option>`).join("");
-      refreshOrderPrice();
-    }
-
-    function fillDriverDaySheetTruckOptions(){
-      const driver = state.auth.currentUser;
-      const trucks = driver && state.auth.role === "driver"
-        ? state.trucks.filter(t => t.driverId === driver.id)
-        : state.trucks;
-      $("#daySheetTruck").innerHTML = trucks.map(t => `<option value="${t.id}">${t.plate} • ${t.type}</option>`).join("");
-    }
-
-    // =========================
-    // Connexion PIN
-    // =========================
-    function setRole(role){
-      state.auth.role = role;
-      $("#roleManagerBtn").classList.toggle("active", role === "manager");
-      $("#roleDriverBtn").classList.toggle("active", role === "driver");
-      $("#pinInput").value = "";
-      $("#pinInput").focus();
-    }
-
-    function handleLogin(){
-      const pin = ($("#pinInput").value || "").trim();
-      if(!/^\d{6}$/.test(pin)){
-        showToast("Veuillez saisir un code PIN à 6 chiffres.", "error");
-        return;
-      }
-
-      if(state.auth.role === "manager"){
-        if(pin === state.users.managerPin){
-          state.auth.currentUser = { fullName:"Gabriel OZIER", role:"manager" };
-          $("#loginScreen").classList.add("hidden");
-          $("#managerApp").classList.remove("hidden");
-          renderAll();
-          showToast("Connexion gérant réussie.", "success");
-        } else {
-          showToast("PIN gérant incorrect.", "error");
-        }
-        return;
-      }
-
-      const driverId = state.users.driverPins[pin];
-      if(driverId){
-        state.auth.currentUser = getDriverById(driverId);
-        $("#loginScreen").classList.add("hidden");
-        $("#driverApp").classList.remove("hidden");
-        renderAll();
-        showToast("Connexion chauffeur réussie.", "success");
-      } else {
-        showToast("PIN chauffeur incorrect.", "error");
-      }
-    }
-
-    function logout(){
-      state.auth.currentUser = null;
-      $("#managerApp").classList.add("hidden");
-      $("#driverApp").classList.add("hidden");
-      $("#loginScreen").classList.remove("hidden");
-      $("#pinInput").value = "";
-      setRole("manager");
-      closeSidebar();
-    }
-
-    // =========================
-    // Navigation gérant
-    // =========================
-    const sectionMeta = {
-      dashboard: { title:"Dashboard", subtitle:"Vue générale de l’activité démonstration." },
-      commandes: { title:"Commandes", subtitle:"Création, suivi des transports et facturation." },
-      parametres: { title:"Paramétrages", subtitle:"Gestion des chauffeurs, camions, clients, tarifs et frais." },
-      rapports: { title:"Rapports", subtitle:"Consommation moyenne et frais mensuels par camion." },
-      marge: { title:"Marge", subtitle:"Tableau mensuel des revenus, charges et marge brute." },
-      integrations: { title:"Intégrations", subtitle:"Configuration des liaisons Google Sheets et Make.com." }
-    };
-
-    function switchSection(section){
-      state.ui.currentSection = section;
-      $$(".nav-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.section === section));
-      $$(".section").forEach(sec => sec.classList.remove("active"));
-      $(`#section-${section}`).classList.add("active");
-      $("#sectionTitle").textContent = sectionMeta[section].title;
-      $("#sectionSubtitle").textContent = sectionMeta[section].subtitle;
-      closeSidebar();
-    }
-
-    function openSidebar(){
-      $("#sidebar").classList.add("open");
-      $("#sidebarOverlay").classList.add("open");
-    }
-
-    function closeSidebar(){
-      $("#sidebar").classList.remove("open");
-      $("#sidebarOverlay").classList.remove("open");
-    }
-
-    // =========================
-    // Commandes
-    // =========================
-    function refreshOrderPrice(){
-      const type = $("#orderType").value;
-      const materialId = Number($("#orderMaterial").value);
-      $("#materialWrap").style.display = type === "materiaux" ? "block" : "none";
-
-      if(type === "journee"){
-        const dayRate = state.rates.find(r => r.type === "journee");
-        $("#orderUnitPrice").value = dayRate ? dayRate.amount : 0;
-      } else {
-        const mat = getMaterialById(materialId);
-        $("#orderUnitPrice").value = mat ? mat.ratePerTon : 0;
-      }
-    }
-
-    function resetOrderModal(){
-      state.ui.orderEditingId = null;
-      $("#orderModalTitle").textContent = "Nouvelle commande";
-      $("#orderClient").value = state.clients[0]?.id || "";
-      $("#orderDate").value = todayStr();
-      $("#orderAddress").value = "";
-      $("#orderTrips").value = 1;
-      $("#orderTruck").value = state.trucks[0]?.id || "";
-      $("#orderDriver").value = state.drivers[0]?.id || "";
-      $("#orderType").value = "materiaux";
-      $("#orderMaterial").value = state.materials[0]?.id || "";
-      $("#orderEstimatedTonnage").value = 12;
-      $("#orderNotes").value = "";
-      refreshOrderPrice();
-    }
-
-    function openOrderModal(orderId=null){
-      resetOrderModal();
-      if(orderId){
-        const order = state.orders.find(o => o.id === orderId);
-        state.ui.orderEditingId = orderId;
-        $("#orderModalTitle").textContent = "Modifier la commande";
-        $("#orderClient").value = order.clientId;
-        $("#orderDate").value = order.siteDate;
-        $("#orderAddress").value = order.address;
-        $("#orderTrips").value = order.estimatedTrips;
-        $("#orderTruck").value = order.truckId;
-        $("#orderDriver").value = order.driverId;
-        $("#orderType").value = order.type;
-        $("#orderMaterial").value = order.materialId || "";
-        $("#orderUnitPrice").value = order.unitPrice;
-        $("#orderEstimatedTonnage").value = order.estimatedTonnage;
-        $("#orderNotes").value = order.notes || "";
-        refreshOrderPrice();
-      }
-      $("#orderModal").classList.add("open");
-    }
-
-    function saveOrder(){
-      const payload = {
-        clientId: Number($("#orderClient").value),
-        siteDate: $("#orderDate").value,
-        address: $("#orderAddress").value.trim(),
-        estimatedTrips: Number($("#orderTrips").value),
-        truckId: Number($("#orderTruck").value),
-        driverId: Number($("#orderDriver").value),
-        type: $("#orderType").value,
-        materialId: $("#orderType").value === "materiaux" ? Number($("#orderMaterial").value) : null,
-        unitPrice: Number($("#orderUnitPrice").value),
-        estimatedTonnage: Number($("#orderEstimatedTonnage").value),
-        notes: $("#orderNotes").value.trim()
-      };
-
-      if(!payload.address || !payload.siteDate || payload.estimatedTrips < 1){
-        showToast("Merci de compléter les champs obligatoires de la commande.", "error");
-        return;
-      }
-
-      if(state.ui.orderEditingId){
-        const order = state.orders.find(o => o.id === state.ui.orderEditingId);
-        Object.assign(order, payload);
-
-        const trips = state.trips.filter(t => t.orderId === order.id);
-        if(trips.length < payload.estimatedTrips){
-          for(let i = trips.length + 1; i <= payload.estimatedTrips; i++){
-            state.trips.push({
-              id: uid(state.trips),
-              orderId: order.id,
-              sequence: i,
-              driverId: payload.driverId,
-              truckId: payload.truckId,
-              date: payload.siteDate,
-              status:"pending",
-              tonnage:null,
-              receiverName:"",
-              receiverRole:"",
-              signed:false
-            });
-          }
-        } else if(trips.length > payload.estimatedTrips){
-          const removable = trips.filter(t => t.status !== "done").slice(payload.estimatedTrips - trips.filter(t => t.status === "done").length);
-          removable.forEach(r => state.trips = state.trips.filter(t => t.id !== r.id));
-        }
-
-        state.trips
-          .filter(t => t.orderId === order.id)
-          .forEach((t, idx) => {
-            t.sequence = idx + 1;
-            t.driverId = payload.driverId;
-            t.truckId = payload.truckId;
-            t.date = payload.siteDate;
-          });
-
-        recomputeOrder(order.id);
-        syncEvent("order.updated", order);
-        showToast("Commande modifiée.", "success");
-      } else {
-        const id = uid(state.orders);
-        const newOrder = {
-          id,
-          ...payload,
-          completedTrips:0,
-          status:"en_cours",
-          billable:false,
-          createdAt:todayStr()
-        };
-        state.orders.push(newOrder);
-
-        for(let i = 1; i <= payload.estimatedTrips; i++){
-          state.trips.push({
-            id: uid(state.trips),
-            orderId:id,
-            sequence:i,
-            driverId:payload.driverId,
-            truckId:payload.truckId,
-            date:payload.siteDate,
-            status:"pending",
-            tonnage:null,
-            receiverName:"",
-            receiverRole:"",
-            signed:false
-          });
-        }
-
-        syncEvent("order.created", newOrder);
-        showToast("Commande créée et transports générés.", "success");
-      }
-
-      closeModal("orderModal");
-      renderAll();
-    }
-
-    function recomputeOrder(orderId){
-      const order = state.orders.find(o => o.id === orderId);
-      const done = state.trips.filter(t => t.orderId === orderId && t.status === "done").length;
-      order.completedTrips = done;
-
-      if(done >= order.estimatedTrips && order.billable){
-        order.status = "a_facturer";
-      } else if(done >= order.estimatedTrips){
-        order.status = "terminee";
-      } else {
-        order.status = "en_cours";
-      }
-    }
-
-    function markOrderBillable(orderId){
-      const order = state.orders.find(o => o.id === orderId);
-      if(order.completedTrips < order.estimatedTrips){
-        showToast("Tous les transports doivent être réalisés avant facturation.", "error");
-        return;
-      }
-      order.billable = true;
-      order.status = "a_facturer";
-      syncEvent("order.billable", order);
-      renderAll();
-      showToast("Commande marquée “À facturer”.", "success");
-    }
-
-    function deleteOrder(orderId){
-      if(!confirm("Supprimer cette commande et ses transports associés ?")) return;
-      state.orders = state.orders.filter(o => o.id !== orderId);
-      state.trips = state.trips.filter(t => t.orderId !== orderId);
-      syncEvent("order.deleted", { id:orderId });
-      renderAll();
-      showToast("Commande supprimée.", "success");
-    }
-
-    // =========================
-    // Paramétrages CRUD
-    // =========================
-    const settingSchemas = {
-      drivers: [
-        { key:"fullName", label:"Nom complet", type:"text" },
-        { key:"birthDate", label:"Date de naissance", type:"date" },
-        { key:"phone", label:"Téléphone", type:"text" },
-        { key:"email", label:"Mail", type:"email" },
-        { key:"license", label:"Permis de conduire", type:"text" },
-        { key:"pin", label:"PIN (6 chiffres)", type:"text" }
-      ],
-      trucks: [
-        { key:"plate", label:"Immatriculation", type:"text" },
-        { key:"mileage", label:"Kilométrage", type:"number" },
-        { key:"type", label:"Type", type:"text" },
-        { key:"controlDate", label:"Date du contrôle technique", type:"date" },
-        { key:"driverId", label:"Chauffeur", type:"select-drivers" }
-      ],
-      clients: [
-        { key:"company", label:"Nom de l'entreprise", type:"text" },
-        { key:"manager", label:"Nom du gérant", type:"text" },
-        { key:"phone", label:"Téléphone", type:"text" },
-        { key:"email", label:"Mail", type:"email" }
-      ],
-      materials: [
-        { key:"name", label:"Matériau", type:"text" },
-        { key:"ratePerTon", label:"Tarif €/tonne", type:"number" }
-      ],
-      rates: [
-        { key:"label", label:"Libellé", type:"text" },
-        { key:"type", label:"Type", type:"select-rate-type" },
-        { key:"amount", label:"Montant", type:"number" },
-        { key:"unit", label:"Unité", type:"text" }
-      ],
-      expenseTypes: [
-        { key:"label", label:"Catégorie de frais", type:"text" }
-      ]
-    };
-
-    function openSettingModal(entity, id=null){
-      state.ui.settingEditing = { entity, id };
-      const isEdit = !!id;
-      const item = isEdit ? state[entity].find(x => x.id === id) : {};
-      $("#settingModalTitle").textContent = isEdit ? "Modifier un élément" : "Ajouter un élément";
-      $("#settingModalSubtitle").textContent = `Catégorie : ${labelEntity(entity)}`;
-
-      const fields = settingSchemas[entity];
-      $("#settingFormContainer").innerHTML = `
-        <div class="form-grid">
-          ${fields.map(field => {
-            const value = item[field.key] ?? "";
-            if(field.type === "select-drivers"){
-              return `
-                <div class="full">
-                  <label class="muted">${field.label}</label>
-                  <select data-setting-field="${field.key}">
-                    ${state.drivers.map(d => `<option value="${d.id}" ${String(value)===String(d.id)?'selected':''}>${d.fullName}</option>`).join("")}
-                  </select>
-                </div>`;
-            }
-            if(field.type === "select-rate-type"){
-              return `
-                <div class="full">
-                  <label class="muted">${field.label}</label>
-                  <select data-setting-field="${field.key}">
-                    <option value="materiaux" ${value==="materiaux"?"selected":""}>Matériaux</option>
-                    <option value="journee" ${value==="journee"?"selected":""}>Journée</option>
-                  </select>
-                </div>`;
-            }
-            return `
-              <div class="${fields.length===1 || field.key==='email' || field.key==='company' || field.key==='fullName' || field.key==='type' ? 'full' : ''}">
-                <label class="muted">${field.label}</label>
-                <input data-setting-field="${field.key}" type="${field.type}" value="${value}">
-              </div>
-            `;
-          }).join("")}
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:${pct}%"></div>
         </div>
-      `;
-      $("#settingModal").classList.add("open");
-    }
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;text-align:right;">${pct} % accompli</div>
+      </div>
+    </div>
 
-    function saveSetting(){
-      const entity = state.ui.settingEditing.entity || $("#settingsEntitySelect").value;
-      const id = state.ui.settingEditing.id;
-      const obj = {};
-      settingSchemas[entity].forEach(f => {
-        const el = document.querySelector(`[data-setting-field="${f.key}"]`);
-        let val = el.value;
-        if(["mileage","ratePerTon","amount","driverId"].includes(f.key)) val = Number(val);
-        obj[f.key] = val;
-      });
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-value">${s.pagesCreees}</div>
+        <div class="stat-label">Pages créées</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">${s.mAJCeMois}</div>
+        <div class="stat-label">Mises à jour ce mois</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">${s.badgesObtenus}</div>
+        <div class="stat-label">Badges obtenus</div>
+      </div>
+    </div>
+  </div>`;
+}
 
-      if(entity === "drivers" && !/^\d{6}$/.test(String(obj.pin || ""))){
-        showToast("Le PIN chauffeur doit contenir 6 chiffres.", "error");
-        return;
-      }
 
-      if(id){
-        const item = state[entity].find(x => x.id === id);
-        Object.assign(item, obj);
-        if(entity === "drivers"){
-          state.users.driverPins = {};
-          state.drivers.forEach(d => state.users.driverPins[d.pin] = d.id);
-        }
-        syncEvent("settings.updated", { entity, action:"update", record:item });
-        showToast(`${labelEntity(entity)} modifié.`, "success");
-      } else {
-        const item = { id: uid(state[entity]), ...obj };
-        state[entity].push(item);
-        if(entity === "drivers") state.users.driverPins[item.pin] = item.id;
-        syncEvent("settings.updated", { entity, action:"create", record:item });
-        showToast(`${labelEntity(entity)} ajouté.`, "success");
-      }
+/* ==============================================
+   RENDU : GRILLE BADGES
+============================================== */
+function renderBadges() {
+  const items = DATA.badges.map(b => `
+    <div class="badge-item ${b.obtenu ? 'unlocked' : 'locked'}" title="${b.desc}">
+      <span class="badge-icon">${b.icon}</span>
+      <div class="badge-name">${b.nom}</div>
+      <div class="badge-desc">${b.desc}</div>
+      ${b.obtenu
+        ? ''
+        : '<div class="badge-lock">🔒 À débloquer</div>'}
+    </div>`).join('');
 
-      closeModal("settingModal");
-      renderAll();
-    }
+  return `
+  <div class="card section">
+    <div class="card-title">🏅 Mes badges</div>
+    <div class="divider"></div>
+    <div class="badges-grid">${items}</div>
+  </div>`;
+}
 
-    function deleteSetting(entity, id){
-      if(!confirm(`Supprimer cet élément de ${labelEntity(entity)} ?`)) return;
-      state[entity] = state[entity].filter(x => x.id !== id);
 
-      if(entity === "drivers"){
-        state.users.driverPins = {};
-        state.drivers.forEach(d => state.users.driverPins[d.pin] = d.id);
-      }
+/* ==============================================
+   RENDU : MISSIONS
+============================================== */
+function renderMissions() {
+  const items = DATA.missions.map(m => {
+    const sc = statusClass(m.statut);
+    return `
+    <div class="mission-item">
+      <div class="mission-status-dot status-${sc}"></div>
+      <div class="mission-content">
+        <div class="mission-title">${m.titre}</div>
+        <div class="mission-desc">${m.desc}</div>
+      </div>
+      <div class="mission-right">
+        <div class="mission-pts">+${m.pts} pts</div>
+        <div class="mission-status-label label-${sc}">${statusLabel(m.statut)}</div>
+        <button class="btn-launch"
+          onclick="showToast('🚀 Mission « ${m.titre.substring(0, 30)}… » lancée dans YOUPI !')">
+          Lancer dans YOUPI →
+        </button>
+      </div>
+    </div>`;
+  }).join('');
 
-      syncEvent("settings.updated", { entity, action:"delete", recordId:id });
-      renderAll();
-      showToast("Élément supprimé.", "success");
-    }
+  return `
+  <div class="card section">
+    <div class="card-title">🎯 Missions du moment</div>
+    <div class="divider"></div>
+    <div class="missions-list">${items}</div>
+  </div>`;
+}
 
-    function labelEntity(entity){
-      return {
-        drivers:"chauffeurs",
-        trucks:"camions",
-        clients:"clients",
-        materials:"matériaux",
-        rates:"tarifs",
-        expenseTypes:"frais véhicules"
-      }[entity] || entity;
-    }
 
-    // =========================
-    // Chauffeur : réception transport
-    // =========================
-    let signatureCtx = null;
-    let isSigning = false;
-    let hasSignature = false;
+/* ==============================================
+   RENDU : PANNEAU LATÉRAL
+============================================== */
+function renderSidebar() {
+  /* Bloc pédagogique */
+  const whyItems = DATA.pourquoi.map(p => `
+    <div class="why-item">
+      <div class="why-icon">${p.icon}</div>
+      <div class="why-text"><strong>${p.titre}</strong>${p.texte}</div>
+    </div>`).join('');
 
-    function initSignaturePad(){
-      const canvas = $("#signaturePad");
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * devicePixelRatio;
-      canvas.height = rect.height * devicePixelRatio;
-      signatureCtx = canvas.getContext("2d");
-      signatureCtx.scale(devicePixelRatio, devicePixelRatio);
-      signatureCtx.lineWidth = 2;
-      signatureCtx.lineCap = "round";
-      signatureCtx.strokeStyle = "#111827";
-      signatureCtx.fillStyle = "#6b7280";
-      signatureCtx.font = "14px Inter, sans-serif";
-      signatureCtx.fillText("Signez ici", 14, 22);
-    }
+  /* Prochaines étapes */
+  const nextItems = DATA.prochainesEtapes.map(e => `
+    <div class="next-step" onclick="showToast('✅ Action ajoutée à votre liste YOUPI !')">
+      <div class="next-step-icon">${e.icon}</div>
+      <div class="next-step-text">${e.texte}</div>
+      <div class="next-step-pts">${e.pts}</div>
+    </div>`).join('');
 
-    function resetSignaturePad(){
-      const canvas = $("#signaturePad");
-      if(!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * devicePixelRatio;
-      canvas.height = rect.height * devicePixelRatio;
-      signatureCtx = canvas.getContext("2d");
-      signatureCtx.scale(devicePixelRatio, devicePixelRatio);
-      signatureCtx.lineWidth = 2;
-      signatureCtx.lineCap = "round";
-      signatureCtx.strokeStyle = "#111827";
-      signatureCtx.fillStyle = "#6b7280";
-      signatureCtx.font = "14px Inter, sans-serif";
-      signatureCtx.fillText("Signez ici", 14, 22);
-      hasSignature = false;
-    }
+  return `
+  <div class="card why-box">
+    <div class="card-title">💡 Pourquoi créer des pages ?</div>
+    <div class="divider"></div>
+    ${whyItems}
+  </div>
 
-    function getCanvasPos(evt){
-      const canvas = $("#signaturePad");
-      const rect = canvas.getBoundingClientRect();
-      const point = evt.touches ? evt.touches[0] : evt;
-      return { x: point.clientX - rect.left, y: point.clientY - rect.top };
-    }
+  <div class="card">
+    <div class="card-title">⚡ Prochaines étapes rapides</div>
+    <div class="divider"></div>
+    <div class="next-steps-list">${nextItems}</div>
+  </div>`;
+}
 
-    function openTripModal(tripId){
-      state.ui.activeTripId = tripId;
-      const trip = state.trips.find(t => t.id === tripId);
-      const order = state.orders.find(o => o.id === trip.orderId);
-      const client = getClientById(order.clientId);
-      $("#tripModalSubtitle").textContent = `${client.company} • ${order.address} • transport ${trip.sequence}`;
 
-      $("#tripTonnage").value = trip.tonnage ?? "";
-      $("#tripReceiver").value = trip.receiverName || "";
-      $("#tripReceiverRole").value = trip.receiverRole || "";
-      $("#tripModal").classList.add("open");
+/* ==============================================
+   INITIALISATION : injection dans le DOM
+============================================== */
+function init() {
+  document.getElementById('main-col').innerHTML =
+    renderProfile() +
+    renderBadges()  +
+    renderMissions();
 
-      setTimeout(() => {
-        initSignaturePad();
-        if(trip.signed && trip.signatureData){
-          const img = new Image();
-          img.onload = () => {
-            signatureCtx.clearRect(0,0,$("#signaturePad").width,$("#signaturePad").height);
-            signatureCtx.drawImage(img,0,0,$("#signaturePad").getBoundingClientRect().width,$("#signaturePad").getBoundingClientRect().height);
-            hasSignature = true;
-          };
-          img.src = trip.signatureData;
-        }
-      }, 30);
-    }
+  document.getElementById('sidebar').innerHTML = renderSidebar();
+}
 
-    function saveTripReception(){
-      const trip = state.trips.find(t => t.id === state.ui.activeTripId);
-      const order = state.orders.find(o => o.id === trip.orderId);
-
-      const tonnage = $("#tripTonnage").value ? Number($("#tripTonnage").value) : null;
-      const receiverName = $("#tripReceiver").value.trim();
-      const receiverRole = $("#tripReceiverRole").value.trim();
-
-      if(!receiverName || !receiverRole){
-        showToast("Merci de renseigner le réceptionneur et son statut.", "error");
-        return;
-      }
-
-      if(order.type === "materiaux" && (tonnage === null || tonnage <= 0)){
-        showToast("Le tonnage réceptionné est obligatoire pour un transport matériau.", "error");
-        return;
-      }
-
-      if(!hasSignature){
-        showToast("La signature électronique est obligatoire.", "error");
-        return;
-      }
-
-      trip.status = "done";
-      trip.tonnage = tonnage;
-      trip.receiverName = receiverName;
-      trip.receiverRole = receiverRole;
-      trip.signed = true;
-      trip.signatureData = $("#signaturePad").toDataURL("image/png");
-
-      recomputeOrder(order.id);
-      syncEvent("trip.received", trip);
-      closeModal("tripModal");
-      renderAll();
-      showToast("Transport réceptionné et remonté dans le suivi commande.", "success");
-    }
-
-    // =========================
-    // Chauffeur : fiche fin journée
-    // =========================
-    function sendDaySheet(){
-      const driver = state.auth.currentUser;
-      const payload = {
-        id: uid(state.daySheets),
-        date: $("#daySheetDate").value,
-        driverId: driver.id,
-        truckId: Number($("#daySheetTruck").value),
-        kilometers: Number($("#daySheetKm").value),
-        fuelLiters: Number($("#daySheetFuelLiters").value),
-        fuelAmount: Number($("#daySheetFuelAmount").value),
-        sentAt: new Date().toISOString()
-      };
-
-      if(!payload.date || payload.truckId <= 0 || payload.kilometers <= 0 || payload.fuelLiters < 0 || payload.fuelAmount < 0){
-        showToast("Merci de compléter la fiche de fin de journée.", "error");
-        return;
-      }
-
-      state.daySheets.push(payload);
-      state.expenses.push({
-        id: uid(state.expenses),
-        truckId: payload.truckId,
-        type: "Carburant",
-        amount: payload.fuelAmount,
-        date: payload.date,
-        note: `Fiche chauffeur ${driver.fullName}`
-      });
-
-      syncEvent("driver.daySheet.sent", payload);
-      $("#daySheetKm").value = "";
-      $("#daySheetFuelLiters").value = "";
-      $("#daySheetFuelAmount").value = "";
-      renderAll();
-      showToast("Fiche envoyée avec succès.", "success");
-    }
-
-    // =========================
-    // Modales
-    // =========================
-    function closeModal(id){
-      document.getElementById(id).classList.remove("open");
-    }
-
-    // =========================
-    // Events
-    // =========================
-    function initKeyboard(){
-      const kbd = $("#kbd");
-      const keys = ["1","2","3","4","5","6","7","8","9","0"];
-      kbd.innerHTML = "";
-      keys.forEach(key => {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.textContent = key;
-        b.addEventListener("click", () => {
-          const input = $("#pinInput");
-          if(input.value.length < 6) input.value += key;
-        });
-        kbd.appendChild(b);
-      });
-      const back = document.createElement("button");
-      back.type = "button";
-      back.textContent = "⌫";
-      back.addEventListener("click", () => {
-        const input = $("#pinInput");
-        input.value = input.value.slice(0, -1);
-      });
-      const fill = document.createElement("button");
-      fill.type = "button";
-      fill.textContent = "000";
-      fill.addEventListener("click", () => {
-        const input = $("#pinInput");
-        input.value = (input.value + "000").slice(0,6);
-      });
-      kbd.appendChild(back);
-      kbd.appendChild(fill);
-    }
-
-    function bindEvents(){
-      $("#roleManagerBtn").addEventListener("click", () => setRole("manager"));
-      $("#roleDriverBtn").addEventListener("click", () => setRole("driver"));
-      $("#enterBtn").addEventListener("click", handleLogin);
-      $("#clearBtn").addEventListener("click", () => $("#pinInput").value = "");
-      $("#pinInput").addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g, "").slice(0,6));
-      $("#pinInput").addEventListener("keydown", e => { if(e.key === "Enter") handleLogin(); });
-
-      $("#logoutManagerBtn").addEventListener("click", logout);
-      $("#logoutDriverBtn").addEventListener("click", logout);
-
-      $$(".nav-btn").forEach(btn => btn.addEventListener("click", () => switchSection(btn.dataset.section)));
-      $("#mobileNavToggle").addEventListener("click", openSidebar);
-      $("#sidebarOverlay").addEventListener("click", closeSidebar);
-
-      $("#quickAddOrderBtn").addEventListener("click", () => openOrderModal());
-      $("#addOrderBtn").addEventListener("click", () => openOrderModal());
-      $("#saveOrderBtn").addEventListener("click", saveOrder);
-      $("#orderType").addEventListener("change", refreshOrderPrice);
-      $("#orderMaterial").addEventListener("change", refreshOrderPrice);
-      $("#orderSearch").addEventListener("input", renderOrders);
-
-      $("#settingsEntitySelect").addEventListener("change", renderSettings);
-      $("#addSettingBtn").addEventListener("click", () => openSettingModal($("#settingsEntitySelect").value));
-      $("#saveSettingBtn").addEventListener("click", saveSetting);
-      $("#testSettingsSyncBtn").addEventListener("click", () => {
-        syncEvent("settings.updated", { entity:$("#settingsEntitySelect").value, action:"test", record:{ demo:true } });
-        showToast("Test d’envoi paramétrage simulé.", "success");
-      });
-
-      $("#saveIntegrationBtn").addEventListener("click", () => {
-        state.integration.makeWebhook = $("#makeWebhookInput").value.trim();
-        state.integration.gasWebhook = $("#gasWebhookInput").value.trim();
-        state.integration.apiKey = $("#apiKeyInput").value.trim();
-        state.integration.mode = $("#syncModeInput").value;
-        renderIntegrationFields();
-        showToast("Configuration d’intégration enregistrée.", "success");
-      });
-
-      $("#testIntegrationBtn").addEventListener("click", () => {
-        state.integration.makeWebhook = $("#makeWebhookInput").value.trim();
-        state.integration.gasWebhook = $("#gasWebhookInput").value.trim();
-        state.integration.apiKey = $("#apiKeyInput").value.trim();
-        state.integration.mode = $("#syncModeInput").value;
-        syncEvent("notification.test", {
-          subject:"Test SOTRANSNORD",
-          message:"Notification de démonstration envoyée depuis l’interface."
-        });
-      });
-
-      $("#sendDaySheetBtn").addEventListener("click", sendDaySheet);
-      $("#daySheetDate").value = todayStr();
-
-      $$("[data-close]").forEach(btn => btn.addEventListener("click", () => closeModal(btn.dataset.close)));
-
-      $("#clearSignatureBtn").addEventListener("click", resetSignaturePad);
-      $("#saveTripBtn").addEventListener("click", saveTripReception);
-
-      const canvas = $("#signaturePad");
-      const start = evt => {
-        if(!signatureCtx) return;
-        isSigning = true;
-        hasSignature = true;
-        const {x,y} = getCanvasPos(evt);
-        signatureCtx.beginPath();
-        signatureCtx.moveTo(x,y);
-        evt.preventDefault();
-      };
-      const move = evt => {
-        if(!isSigning || !signatureCtx) return;
-        const {x,y} = getCanvasPos(evt);
-        signatureCtx.lineTo(x,y);
-        signatureCtx.stroke();
-        evt.preventDefault();
-      };
-      const end = evt => {
-        isSigning = false;
-        if(evt) evt.preventDefault();
-      };
-
-      canvas.addEventListener("mousedown", start);
-      canvas.addEventListener("mousemove", move);
-      window.addEventListener("mouseup", end);
-
-      canvas.addEventListener("touchstart", start, { passive:false });
-      canvas.addEventListener("touchmove", move, { passive:false });
-      canvas.addEventListener("touchend", end, { passive:false });
-
-      window.addEventListener("resize", () => {
-        if($("#tripModal").classList.contains("open")) {
-          const trip = state.trips.find(t => t.id === state.ui.activeTripId);
-          setTimeout(() => {
-            initSignaturePad();
-            if(trip && trip.signatureData){
-              const img = new Image();
-              img.onload = () => {
-                signatureCtx.clearRect(0,0,$("#signaturePad").width,$("#signaturePad").height);
-                signatureCtx.drawImage(img,0,0,$("#signaturePad").getBoundingClientRect().width,$("#signaturePad").getBoundingClientRect().height);
-                hasSignature = true;
-              };
-              img.src = trip.signatureData;
-            }
-          }, 10);
-        }
-      });
-    }
-
-    // =========================
-    // Exposition globale simple
-    // =========================
-    window.openOrderModal = openOrderModal;
-    window.markOrderBillable = markOrderBillable;
-    window.deleteOrder = deleteOrder;
-    window.openSettingModal = openSettingModal;
-    window.deleteSetting = deleteSetting;
-    window.openTripModal = openTripModal;
-
-    // =========================
-    // Initialisation
-    // =========================
-    initKeyboard();
-    bindEvents();
-    renderAll();
-  </script>
+/* Lancement au chargement */
+document.addEventListener('DOMContentLoaded', init);
+</script>
 </body>
 </html>
