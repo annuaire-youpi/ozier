@@ -2,600 +2,691 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SOTRANSNORD</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+  <title>SOTRANSNORD — Démo flotte camions</title>
   <style>
     :root{
-      --bg:#f4f7fb; --card:#ffffff; --text:#102033; --muted:#64748b; --line:#e6edf5;
-      --primary:#2563eb; --primary2:#1d4ed8; --success:#16a34a; --warning:#f59e0b;
-      --danger:#dc2626; --shadow:0 10px 30px rgba(15,23,42,.08);
+      --bg:#f4f7fb;
+      --panel:#ffffff;
+      --text:#182230;
+      --muted:#6b7788;
+      --line:#e6ebf2;
+      --primary:#2563eb;
+      --primary2:#1d4ed8;
+      --success:#16a34a;
+      --warning:#f59e0b;
+      --danger:#ef4444;
+      --shadow:0 10px 30px rgba(15,23,42,.08);
+      --shadow2:0 8px 18px rgba(15,23,42,.06);
       --radius:18px;
+      --radius2:12px;
     }
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
-      margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background:var(--bg); color:var(--text);
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:linear-gradient(180deg,#f8fbff 0%, #eef3f9 100%);
+      color:var(--text);
     }
     button,input,select,textarea{font:inherit}
     .app{min-height:100vh; display:flex; flex-direction:column}
     .hidden{display:none !important}
-    .auth-wrap{
+    .auth{
       min-height:100vh; display:grid; place-items:center; padding:20px;
-      background:linear-gradient(135deg,#eef4ff 0%, #f8fbff 45%, #eef2f7 100%);
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.10), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(22,163,74,.08), transparent 28%),
+        linear-gradient(180deg,#f8fbff,#eef3f9);
     }
     .auth-card{
-      width:min(980px,100%); display:grid; grid-template-columns:1.1fr .9fr; overflow:hidden;
-      border:1px solid var(--line); border-radius:28px; background:rgba(255,255,255,.88); box-shadow:var(--shadow);
+      width:min(980px,100%);
+      background:rgba(255,255,255,.88);
       backdrop-filter: blur(10px);
+      border:1px solid rgba(255,255,255,.8);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
     }
-    .auth-hero{
-      padding:36px; background:linear-gradient(160deg,#0f172a,#1d4ed8); color:#fff; display:flex; flex-direction:column; justify-content:space-between;
-      min-height:520px;
+    .auth-left{
+      padding:34px;
+      background:linear-gradient(135deg, #1d4ed8, #2563eb 55%, #1e40af);
+      color:#fff;
+      position:relative;
+      min-height:420px;
     }
-    .brand{display:flex; align-items:center; gap:14px}
-    .brand-badge{
-      width:54px;height:54px;border-radius:16px;background:rgba(255,255,255,.14);display:grid;place-items:center;
-      font-weight:800;font-size:22px;border:1px solid rgba(255,255,255,.18)
+    .auth-left h1{margin:0 0 12px; font-size:clamp(30px,4vw,48px); line-height:1.05}
+    .auth-left p{margin:0; max-width:520px; opacity:.92; line-height:1.6}
+    .pill-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:24px}
+    .pill{padding:10px 14px; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.2); border-radius:999px; font-size:13px}
+    .auth-right{padding:30px; background:#fff}
+    .brand{display:flex; align-items:center; gap:12px; margin-bottom:22px}
+    .logo{
+      width:48px; height:48px; border-radius:14px; display:grid; place-items:center;
+      background:linear-gradient(135deg,var(--primary),#7c3aed); color:#fff; font-weight:800;
+      box-shadow:0 12px 20px rgba(37,99,235,.2);
     }
-    .brand h1{margin:0;font-size:32px;letter-spacing:.4px}
-    .brand p,.auth-hero p{color:rgba(255,255,255,.82); line-height:1.6}
-    .hero-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:18px}
-    .mini{
-      background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.16); border-radius:18px; padding:14px
+    .brand h2{margin:0; font-size:22px}
+    .sub{margin:4px 0 0; color:var(--muted); font-size:14px}
+    .toggle{
+      display:flex; gap:10px; background:#eef3fb; padding:6px; border-radius:14px; margin:18px 0;
     }
-    .mini b{display:block; font-size:20px}
-    .auth-panel{padding:28px; display:flex; flex-direction:column; justify-content:center}
-    .panel-box{background:#fff;border:1px solid var(--line); border-radius:24px; padding:24px; box-shadow:0 8px 24px rgba(15,23,42,.05)}
-    .switch-row{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:18px}
-    .switch{
-      display:flex; align-items:center; gap:10px; padding:8px; background:#f8fafc; border:1px solid var(--line); border-radius:999px;
+    .toggle button{
+      flex:1; border:0; border-radius:10px; padding:12px 14px; background:transparent; color:var(--muted); cursor:pointer; font-weight:700
     }
-    .switch button{
-      border:0; background:transparent; padding:10px 14px; border-radius:999px; cursor:pointer; color:var(--muted)
-    }
-    .switch button.active{background:var(--primary); color:#fff}
+    .toggle button.active{background:#fff; color:var(--primary); box-shadow:var(--shadow2)}
+    .pin-wrap{margin-top:16px}
     .pin-display{
-      display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin:18px 0 14px;
+      height:62px; border:1px solid var(--line); border-radius:16px; background:#fbfcfe;
+      display:grid; place-items:center; font-size:28px; letter-spacing:10px; font-weight:700;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+      margin-bottom:14px;
     }
-    .pin-box{
-      height:52px; border-radius:14px; border:1px solid var(--line); background:#f8fafc; display:grid; place-items:center;
-      font-size:24px; font-weight:700;
-    }
-    .keypad{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px}
-    .keypad button, .primary-btn, .ghost-btn, .danger-btn, .small-btn, .tab-btn{
-      border:0; cursor:pointer; border-radius:14px; transition:.2s ease; font-weight:700;
+    .keypad{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+    .keypad button,.action-btn,.nav-item,.chip,.tab-btn,.ghost-btn,.primary-btn,.danger-btn,.small-btn{
+      border:0; cursor:pointer;
     }
     .keypad button{
-      height:56px; background:#eef2ff; color:#1e293b; font-size:18px
+      height:58px; border-radius:14px; background:#f3f6fb; font-size:18px; font-weight:700; color:var(--text)
     }
-    .keypad button:hover,.primary-btn:hover,.ghost-btn:hover,.danger-btn:hover,.small-btn:hover,.tab-btn:hover{transform:translateY(-1px)}
-    .actions{display:flex; gap:10px; margin-top:14px}
-    .primary-btn{background:var(--primary); color:#fff; padding:14px 18px}
-    .ghost-btn{background:#eff6ff; color:var(--primary); padding:14px 18px; border:1px solid #dbeafe}
-    .danger-btn{background:#fee2e2; color:#b91c1c; padding:10px 14px}
-    .note{margin-top:14px; color:var(--muted); font-size:14px; line-height:1.5}
-    .layout{display:grid; grid-template-columns:270px 1fr; min-height:100vh}
+    .keypad button:hover{background:#eaf0f9}
+    .login-actions{display:flex; gap:10px; margin-top:12px}
+    .action-btn,.primary-btn,.ghost-btn,.danger-btn,.small-btn,.tab-btn{
+      border-radius:12px; padding:12px 14px; font-weight:700
+    }
+    .primary-btn{background:var(--primary); color:#fff}
+    .primary-btn:hover{background:var(--primary2)}
+    .ghost-btn{background:#eef3fb; color:var(--text)}
+    .danger-btn{background:#fee2e2; color:#991b1b}
+    .small-btn{padding:9px 12px; font-size:13px}
+    .login-hint{
+      margin-top:14px; padding:12px 14px; border-radius:14px; background:#f8fafc; color:var(--muted); font-size:13px; line-height:1.5
+    }
+    .shell{display:flex; min-height:100vh; background:var(--bg)}
     .sidebar{
-      background:#0f172a; color:#fff; padding:22px 16px; position:sticky; top:0; height:100vh; overflow:auto;
+      width:280px; background:linear-gradient(180deg,#0f172a,#172554);
+      color:#fff; padding:18px; position:sticky; top:0; height:100vh; overflow:auto
     }
-    .sidebar .brand h1{font-size:22px}
-    .nav{margin-top:24px; display:flex; flex-direction:column; gap:8px}
-    .nav button{
-      width:100%; text-align:left; padding:13px 14px; background:transparent; color:#cbd5e1; border:1px solid transparent;
-      border-radius:14px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+    .sidebar .brand{margin-bottom:16px}
+    .sidebar .sub,.sidebar .muted{color:rgba(255,255,255,.7)}
+    .nav{display:flex; flex-direction:column; gap:8px; margin-top:16px}
+    .nav-item{
+      width:100%; text-align:left; padding:13px 14px; border-radius:14px; background:transparent; color:#e5eefc; display:flex; justify-content:space-between; align-items:center
     }
-    .nav button.active{background:rgba(37,99,235,.16); color:#fff; border-color:rgba(59,130,246,.25)}
-    .nav button span{opacity:.75}
-    .sidebar-card{
-      margin-top:18px; padding:16px; border-radius:18px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1)
-    }
-    .main{padding:20px; overflow:hidden}
+    .nav-item.active,.nav-item:hover{background:rgba(255,255,255,.12)}
+    .content{flex:1; padding:18px; min-width:0}
     .topbar{
-      display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:18px; flex-wrap:wrap;
+      background:rgba(255,255,255,.72); backdrop-filter: blur(10px); border:1px solid rgba(255,255,255,.75);
+      border-radius:24px; padding:16px 18px; box-shadow:var(--shadow2); display:flex; gap:14px; align-items:center; justify-content:space-between; flex-wrap:wrap
     }
-    .topbar h2{margin:0; font-size:26px}
-    .topbar .meta{color:var(--muted); font-size:14px}
-    .grid{
-      display:grid; gap:16px;
-    }
-    .cards-4{grid-template-columns:repeat(4,1fr)}
-    .cards-3{grid-template-columns:repeat(3,1fr)}
-    .cards-2{grid-template-columns:repeat(2,1fr)}
+    .topbar h3{margin:0; font-size:20px}
+    .topbar .meta{color:var(--muted); font-size:13px}
+    .grid-4{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:16px}
     .card{
-      background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px;
+      background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:16px; box-shadow:var(--shadow2)
     }
-    .stat{display:flex; justify-content:space-between; gap:10px; align-items:flex-start}
-    .stat b{display:block; font-size:26px; margin-top:8px}
-    .stat small{color:var(--muted)}
-    .pill{
-      display:inline-flex; align-items:center; gap:6px; padding:7px 10px; border-radius:999px; background:#eef2ff; color:#1d4ed8; font-size:12px; font-weight:700
-    }
-    .section-head{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap}
-    .section-head h3{margin:0}
-    .toolbar{display:flex; gap:8px; flex-wrap:wrap}
-    .toolbar input,.toolbar select,.form-grid input,.form-grid select,.form-grid textarea{
-      width:100%; border:1px solid var(--line); background:#fff; border-radius:12px; padding:12px 13px; outline:none;
-    }
-    .form-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px}
-    .form-grid .full{grid-column:1/-1}
-    .list,.table-wrap{overflow:auto}
-    table{width:100%; border-collapse:collapse; min-width:760px}
-    th,td{padding:12px 10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top}
-    th{font-size:13px; color:#475569; background:#f8fafc; position:sticky; top:0}
-    .row-actions{display:flex; gap:8px; flex-wrap:wrap}
-    .small-btn{padding:8px 10px; background:#eff6ff; color:#1d4ed8}
-    .small-btn.gray{background:#f1f5f9; color:#334155}
-    .small-btn.green{background:#dcfce7; color:#166534}
-    .small-btn.orange{background:#ffedd5; color:#9a3412}
-    .small-btn.red{background:#fee2e2; color:#991b1b}
-    .two-col{display:grid; grid-template-columns:1.2fr .8fr; gap:16px}
-    .badge{display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:700}
-    .b-green{background:#dcfce7; color:#166534}
-    .b-yellow{background:#fef3c7; color:#92400e}
+    .stat{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
+    .stat .label{color:var(--muted); font-size:13px}
+    .stat .value{font-size:28px; font-weight:800; margin-top:8px}
+    .badge{padding:7px 10px; border-radius:999px; font-size:12px; font-weight:700}
     .b-blue{background:#dbeafe; color:#1d4ed8}
+    .b-green{background:#dcfce7; color:#166534}
+    .b-amber{background:#fef3c7; color:#92400e}
     .b-red{background:#fee2e2; color:#991b1b}
-    .progress{
-      height:10px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin-top:8px
+    .main-grid{display:grid; grid-template-columns:1.25fr .75fr; gap:14px; margin-top:14px}
+    .section-head{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px}
+    .section-head h4{margin:0; font-size:17px}
+    .section-head .muted{color:var(--muted); font-size:13px}
+    .table-wrap{overflow:auto; border-radius:16px; border:1px solid var(--line)}
+    table{width:100%; border-collapse:collapse; min-width:760px; background:#fff}
+    th,td{padding:12px 12px; border-bottom:1px solid #edf1f7; text-align:left; font-size:14px; white-space:nowrap}
+    th{background:#f8fbff; color:#526173; font-size:12px; letter-spacing:.03em; text-transform:uppercase}
+    tr:hover td{background:#fbfdff}
+    .actions{display:flex; gap:8px; flex-wrap:wrap}
+    .mini{padding:7px 10px; border-radius:10px; font-size:12px}
+    .status{padding:7px 10px; border-radius:999px; font-size:12px; font-weight:800; display:inline-flex}
+    .s-open{background:#e0f2fe; color:#0369a1}
+    .s-done{background:#dcfce7; color:#166534}
+    .s-bill{background:#ede9fe; color:#6d28d9}
+    .list{display:flex; flex-direction:column; gap:10px}
+    .list-item{
+      background:#fff; border:1px solid var(--line); border-radius:16px; padding:12px; display:flex; justify-content:space-between; gap:10px; align-items:center
     }
-    .progress > div{height:100%; background:linear-gradient(90deg,var(--primary),#22c55e)}
-    .kpi{
-      display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
+    .list-item .title{font-weight:700}
+    .list-item .subt{font-size:13px; color:var(--muted); margin-top:4px}
+    .two-col{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px}
+    .section{display:none}
+    .section.active{display:block}
+    .form-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px}
+    .field{display:flex; flex-direction:column; gap:6px}
+    .field label{font-size:13px; color:#465366; font-weight:700}
+    .field input,.field select,.field textarea{
+      width:100%; border:1px solid #dbe3ef; background:#fff; border-radius:12px; padding:12px 12px; outline:none
     }
-    .kpi .card{padding:16px}
-    .driver-task{
-      border:1px solid var(--line); border-radius:16px; padding:14px; background:#fff
+    .field textarea{min-height:94px; resize:vertical}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:#93c5fd; box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+    .form-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+    .month-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
+    .month{padding:14px; border-radius:16px; border:1px solid var(--line); background:#fff}
+    .month.current{outline:3px solid rgba(37,99,235,.18); background:#f8fbff}
+    .month .m{font-weight:800}
+    .month .k{margin-top:10px; font-size:26px; font-weight:800}
+    .mobile-bar{
+      display:none; position:fixed; bottom:14px; left:14px; right:14px; z-index:20; background:rgba(15,23,42,.94); color:#fff;
+      border-radius:18px; padding:10px; box-shadow:var(--shadow)
     }
-    .driver-task + .driver-task{margin-top:10px}
-    .task-top{display:flex; justify-content:space-between; gap:10px; align-items:center}
-    .task-top h4{margin:0}
+    .mobile-bar .nav{flex-direction:row; margin:0; overflow:auto}
+    .mobile-bar .nav-item{min-width:max-content; color:#fff}
+    .modal-backdrop{
+      position:fixed; inset:0; background:rgba(15,23,42,.5); display:none; align-items:center; justify-content:center; z-index:50; padding:16px
+    }
+    .modal-backdrop.open{display:flex}
+    .modal{
+      width:min(720px,100%); background:#fff; border-radius:22px; padding:18px; box-shadow:var(--shadow); max-height:90vh; overflow:auto
+    }
+    .modal h3{margin:0 0 10px}
     .signature{
-      border:1px dashed #cbd5e1; border-radius:14px; background:#fff; touch-action:none;
+      border:2px dashed #cbd5e1; border-radius:16px; height:180px; display:grid; place-items:center; color:var(--muted); background:#fbfdff
     }
-    .footer-note{color:var(--muted); font-size:13px; margin-top:8px}
-    .mobile-nav{
-      display:none; position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--line); z-index:30;
-      padding:8px; gap:8px; overflow:auto;
+    .canvas-wrap{border:1px solid var(--line); border-radius:16px; overflow:hidden; background:#fff}
+    canvas{display:block; width:100%; height:180px; touch-action:none}
+    .toast{
+      position:fixed; right:16px; bottom:16px; background:#111827; color:#fff; padding:12px 14px; border-radius:14px; box-shadow:var(--shadow); opacity:0; transform:translateY(10px); transition:.25s; z-index:60
     }
-    .mobile-nav button{flex:1; min-width:110px; padding:11px 12px; border:1px solid var(--line); background:#f8fafc; border-radius:12px}
-    @media (max-width: 1024px){
-      .cards-4,.kpi,.cards-3{grid-template-columns:repeat(2,1fr)}
-      .two-col,.layout,.auth-card{grid-template-columns:1fr}
-      .sidebar{height:auto; position:relative}
+    .toast.show{opacity:1; transform:translateY(0)}
+    .kpi-row{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+    .kpi{background:#fff; border:1px solid var(--line); border-radius:18px; padding:14px}
+    .kpi .n{font-size:24px; font-weight:800; margin-top:8px}
+    @media (max-width: 1100px){
+      .auth-card,.main-grid,.two-col{grid-template-columns:1fr}
+      .grid-4,.month-grid{grid-template-columns:repeat(2,1fr)}
+      .sidebar{width:240px}
     }
-    @media (max-width: 700px){
-      .cards-4,.cards-3,.cards-2,.kpi,.form-grid{grid-template-columns:1fr}
-      .auth-hero{min-height:auto}
-      .main{padding:14px 14px 90px}
+    @media (max-width: 800px){
       .sidebar{display:none}
-      .mobile-nav{display:flex}
-      .topbar h2{font-size:22px}
-      .pin-box{height:46px; font-size:20px}
+      .mobile-bar{display:block}
+      .content{padding-bottom:94px}
+      .grid-4,.form-grid,.kpi-row{grid-template-columns:1fr}
+      .auth-left{min-height:auto}
+      .auth-card{border-radius:22px}
+      .auth-right,.auth-left{padding:22px}
     }
   </style>
 </head>
 <body>
-<div class="app" id="app">
-  <div class="auth-wrap" id="authView">
+<div class="app">
+  <section id="authScreen" class="auth">
     <div class="auth-card">
-      <div class="auth-hero">
-        <div>
-          <div class="brand">
-            <div class="brand-badge">S</div>
-            <div>
-              <h1>SOTRANSNORD</h1>
-              <p>Base de démonstration pour la gestion d'une flotte de camions de Gabriel OZIER.</p>
-            </div>
-          </div>
-          <p>Connexion par PIN, dashboard gérant, commandes, suivi chauffeur, dépenses véhicules et préparation à l'intégration Google Sheet + Make.com.</p>
-          <div class="hero-stats">
-            <div class="mini"><b id="demoOrders">12</b><small>Commandes démo</small></div>
-            <div class="mini"><b id="demoTrucks">6</b><small>Camions</small></div>
-            <div class="mini"><b id="demoDrivers">4</b><small>Chauffeurs</small></div>
+      <div class="auth-left">
+        <h1>SOTRANSNORD</h1>
+        <p>Base de démonstration pour la gestion d’une flotte de camions de Gabriel OZIER, avec accès gérant/chauffeur, commandes, dépenses, rapports et liaison prévue avec Google Sheets + Make.com.</p>
+        <div class="pill-row">
+          <div class="pill">Login PIN</div>
+          <div class="pill">Dashboard SaaS</div>
+          <div class="pill">CRUD complet</div>
+          <div class="pill">Mobile first</div>
+        </div>
+      </div>
+      <div class="auth-right">
+        <div class="brand">
+          <div class="logo">SN</div>
+          <div>
+            <h2>Connexion</h2>
+            <div class="sub">Démo front uniquement</div>
           </div>
         </div>
-        <div class="note">Les données affichées sont simulées côté front pour démontrer les interactions entre les menus.</div>
-      </div>
-      <div class="auth-panel">
-        <div class="panel-box">
-          <div class="switch-row">
-            <div>
-              <h2 style="margin:0 0 6px">Connexion</h2>
-              <div style="color:var(--muted);font-size:14px">Choisissez votre profil puis saisissez votre code PIN.</div>
-            </div>
-            <div class="switch">
-              <button id="modeManager" class="active">Connexion gérant</button>
-              <button id="modeDriver">Connexion chauffeur</button>
-            </div>
+        <div class="toggle">
+          <button id="modeManager" class="active" type="button">Connexion gérant</button>
+          <button id="modeDriver" type="button">Connexion chauffeur</button>
+        </div>
+        <div class="pin-wrap">
+          <div id="pinDisplay" class="pin-display">••••••</div>
+          <div class="keypad">
+            <button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button>
+            <button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button>
+            <button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button>
+            <button data-key="clear" class="ghost-btn" style="grid-column:span 1">Effacer</button>
+            <button data-key="0">0</button>
+            <button data-key="enter" class="primary-btn" style="grid-column:span 1">Entrer</button>
           </div>
-          <div class="pin-display" id="pinDisplay"></div>
-          <div class="keypad" id="keypad"></div>
-          <div class="actions">
-            <button class="primary-btn" id="enterBtn">Entrer</button>
-            <button class="ghost-btn" id="clearBtn">Effacer</button>
+          <div class="login-actions">
+            <button id="loginEnter" class="primary-btn" type="button" style="flex:1">Entrer</button>
+            <button id="loginClear" class="ghost-btn" type="button" style="flex:1">Effacer</button>
           </div>
-          <div class="note">
-            PIN gérant : 123456. PIN chauffeur : 246810, 135790, 112233, 445566.
+          <div class="login-hint">
+            PIN gérant : <strong>123456</strong>. PIN chauffeur de démonstration : <strong>654321</strong> ou <strong>111111</strong>. Les données sont simulées côté front, prêtes à être synchronisées plus tard via Make.com vers Google Sheets.
           </div>
-          <div id="authMsg" class="note"></div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="layout hidden" id="managerView">
+  <section id="dashScreen" class="shell hidden">
     <aside class="sidebar">
       <div class="brand">
-        <div class="brand-badge">S</div>
+        <div class="logo">SN</div>
         <div>
-          <h1>SOTRANSNORD</h1>
-          <p style="margin:4px 0 0">Espace gérant</p>
+          <h2 style="margin:0">SOTRANSNORD</h2>
+          <div class="sub">Gabriel OZIER</div>
         </div>
       </div>
-      <div class="nav" id="sideNav"></div>
-      <div class="sidebar-card">
-        <div class="pill">Connexion simulée</div>
-        <div style="margin-top:10px;font-weight:700" id="currentUser">Gabriel OZIER</div>
-        <div style="color:#cbd5e1;font-size:14px;margin-top:4px">Gestion flotte / commandes / marges</div>
+      <div class="muted" style="font-size:13px">Espace gérant / démo front</div>
+      <div class="nav" id="sideNav">
+        <button class="nav-item active" data-view="dashboard">Dashboard <span>›</span></button>
+        <button class="nav-item" data-view="commandes">Commandes <span>›</span></button>
+        <button class="nav-item" data-view="parametres">Paramétrages <span>›</span></button>
+        <button class="nav-item" data-view="rapports">Rapports <span>›</span></button>
+        <button class="nav-item" data-view="marge">Marge <span>›</span></button>
+        <button class="nav-item" data-view="chauffeur">Vue chauffeur <span>›</span></button>
+      </div>
+      <div style="margin-top:18px; padding:14px; border:1px solid rgba(255,255,255,.12); border-radius:16px; background:rgba(255,255,255,.06)">
+        <div class="muted" style="font-size:12px">Connexion active</div>
+        <div style="margin-top:6px; font-weight:800" id="currentRole">Gérant</div>
       </div>
     </aside>
-    <main class="main">
+
+    <main class="content">
       <div class="topbar">
         <div>
-          <h2 id="viewTitle">Dashboard</h2>
-          <div class="meta" id="viewSubtitle">Vue de pilotage globale de la flotte</div>
+          <h3 id="pageTitle">Dashboard</h3>
+          <div class="meta">Tableaux de bord, commandes, dépenses et synchronisation Google Sheets / Make.com</div>
         </div>
-        <div class="toolbar">
-          <button class="ghost-btn" id="syncBtn">Préparer sync Make</button>
-          <button class="danger-btn" id="logoutBtn">Déconnexion</button>
+        <div class="actions">
+          <button class="ghost-btn small-btn" id="syncBtn">Simuler sync Sheets</button>
+          <button class="danger-btn small-btn" id="logoutBtn">Déconnexion</button>
         </div>
       </div>
-      <div id="content"></div>
+
+      <div id="view-dashboard" class="section active">
+        <div class="grid-4">
+          <div class="card stat"><div><div class="label">Commandes actives</div><div class="value" id="statOrders">0</div></div><span class="badge b-blue">Aujourd’hui</span></div>
+          <div class="card stat"><div><div class="label">Transports réalisés</div><div class="value" id="statTrips">0</div></div><span class="badge b-green">Suivi</span></div>
+          <div class="card stat"><div class="label">Dépenses mois</div><div class="value" id="statExpenses">0 €</div></div><span class="badge b-amber">Véhicules</span></div>
+          <div class="card stat"><div><div class="label">Marge brute</div><div class="value" id="statMargin">0 €</div></div><span class="badge b-blue">Mensuel</span></div>
+        </div>
+
+        <div class="main-grid">
+          <div class="card">
+            <div class="section-head"><h4>Commandes en cours</h4><div class="muted">Lien direct avec les actions chauffeur</div></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Client</th><th>Adresse</th><th>Type</th><th>Camion</th><th>Chauffeur</th><th>Transports</th><th>Statut</th><th>Action</th></tr></thead>
+                <tbody id="ordersTbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-head"><h4>Activité récente</h4><div class="muted">Démo des flux</div></div>
+            <div id="activityList" class="list"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="view-commandes" class="section">
+        <div class="two-col">
+          <div class="card">
+            <div class="section-head"><h4>Créer une commande</h4><div class="muted">Génère des lignes chauffeur</div></div>
+            <div class="form-grid">
+              <div class="field"><label>Client</label><select id="orderClient"></select></div>
+              <div class="field"><label>Adresse de livraison</label><input id="orderAddress" placeholder="Route du chantier, commune..." /></div>
+              <div class="field"><label>Nombre de transports estimés</label><input id="orderTrips" type="number" min="1" value="3" /></div>
+              <div class="field"><label>Date du chantier</label><input id="orderDate" type="date" /></div>
+              <div class="field"><label>Camion</label><select id="orderTruck"></select></div>
+              <div class="field"><label>Chauffeur</label><select id="orderDriver"></select></div>
+              <div class="field"><label>Type</label><select id="orderType"><option>Matériaux</option><option>Journée</option></select></div>
+              <div class="field"><label>Matériau</label><select id="orderMaterial"></select></div>
+            </div>
+            <div class="form-actions">
+              <button class="primary-btn" id="addOrderBtn">Créer la commande</button>
+              <button class="ghost-btn" id="resetOrderBtn">Réinitialiser</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-head"><h4>Suivi et facturation</h4><div class="muted">Statut auto</div></div>
+            <div class="kpi-row">
+              <div class="kpi"><div class="label">En cours</div><div class="n" id="kpiOpen">0</div></div>
+              <div class="kpi"><div class="label">Terminées</div><div class="n" id="kpiDone">0</div></div>
+              <div class="kpi"><div class="label">À facturer</div><div class="n" id="kpiBill">0</div></div>
+            </div>
+            <div style="margin-top:14px" class="table-wrap">
+              <table>
+                <thead><tr><th>Commande</th><th>Réalisés / Estimés</th><th>Statut</th><th>Facture</th></tr></thead>
+                <tbody id="trackingTbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="view-parametres" class="section">
+        <div class="card">
+          <div class="section-head"><h4>Paramétrages CRUD</h4><div class="muted">Ajout, édition, suppression</div></div>
+          <div class="toggle" style="max-width:760px">
+            <button class="tab-btn active" data-tab="drivers">Chauffeurs</button>
+            <button class="tab-btn" data-tab="trucks">Camions</button>
+            <button class="tab-btn" data-tab="clients">Clients</button>
+            <button class="tab-btn" data-tab="materials">Matériaux</button>
+            <button class="tab-btn" data-tab="tarifs">Tarifs</button>
+            <button class="tab-btn" data-tab="expenses">Frais véhicules</button>
+          </div>
+          <div id="paramTab"></div>
+        </div>
+      </div>
+
+      <div id="view-rapports" class="section">
+        <div class="grid-4">
+          <div class="card"><div class="label">Conso moyenne camion 1</div><div class="value" style="font-size:24px">28,4 L/100</div></div>
+          <div class="card"><div class="label">Conso moyenne camion 2</div><div class="value" style="font-size:24px">31,1 L/100</div></div>
+          <div class="card"><div class="label">Coût moyen km</div><div class="value" style="font-size:24px">2,85 €</div></div>
+          <div class="card"><div class="label">Frais moyens/mois</div><div class="value" style="font-size:24px">4 120 €</div></div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <div class="section-head"><h4>Dépenses par camion</h4><div class="muted">Mensuel</div></div>
+            <div class="table-wrap">
+              <table><thead><tr><th>Camion</th><th>Carburant</th><th>Vidange</th><th>Réparations</th><th>Assurance</th><th>Pneus</th></tr></thead>
+              <tbody id="truckExpenseTbody"></tbody></table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-head"><h4>Notifications Make.com</h4><div class="muted">Flux prévu</div></div>
+            <div class="list">
+              <div class="list-item"><div><div class="title">Nouvelle commande</div><div class="subt">Envoi vers Google Sheets + email aux intervenants</div></div><span class="badge b-blue">Webhook</span></div>
+              <div class="list-item"><div><div class="title">Action chauffeur</div><div class="subt">Mise à jour transports réalisés et signature</div></div><span class="badge b-green">Update</span></div>
+              <div class="list-item"><div><div class="title">Fiche fin journée</div><div class="subt">Kilométrage et carburant transmis automatiquement</div></div><span class="badge b-amber">Mail</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="view-marge" class="section">
+        <div class="card">
+          <div class="section-head"><h4>Calcul de la marge mensuelle</h4><div class="muted">12 mois, mois courant mis en évidence</div></div>
+          <div class="month-grid" id="monthGrid"></div>
+        </div>
+      </div>
+
+      <div id="view-chauffeur" class="section">
+        <div class="two-col">
+          <div class="card">
+            <div class="section-head"><h4>Transports du jour</h4><div class="muted">Cliquez pour saisir le bon de livraison</div></div>
+            <div id="driverTrips" class="list"></div>
+          </div>
+          <div class="card">
+            <div class="section-head"><h4>Fiche de fin de journée</h4><div class="muted">Envoi vers le gérant</div></div>
+            <div class="form-grid">
+              <div class="field"><label>Kilométrage</label><input id="dayKm" type="number" value="2640" /></div>
+              <div class="field"><label>Carburant quantité (L)</label><input id="dayFuelQty" type="number" value="54" /></div>
+              <div class="field"><label>Carburant prix (€)</label><input id="dayFuelPrice" type="number" value="112" /></div>
+            </div>
+            <div class="form-actions"><button class="primary-btn" id="sendSheetBtn">Envoyer ma fiche</button></div>
+            <div class="login-hint">Cette fiche simule l’update côté gérant et la transmission aux Google Sheets via Make.com.</div>
+          </div>
+        </div>
+      </div>
     </main>
-    <div class="mobile-nav" id="mobileNav"></div>
+  </section>
+</div>
+
+<div id="tripModalBackdrop" class="modal-backdrop">
+  <div class="modal">
+    <h3>Transport — réception et signature</h3>
+    <div class="form-grid">
+      <div class="field"><label>Tonnage réceptionné</label><input id="mTonnage" type="number" step="0.1" /></div>
+      <div class="field"><label>Nom du réceptionnaire</label><input id="mReceiver" /></div>
+      <div class="field"><label>Fonction</label><input id="mFunction" placeholder="Chef de chantier" /></div>
+    </div>
+    <div style="margin-top:12px" class="canvas-wrap"><canvas id="signCanvas" width="900" height="180"></canvas></div>
+    <div class="actions" style="margin-top:10px">
+      <button class="ghost-btn small-btn" id="clearSignBtn">Effacer signature</button>
+      <button class="primary-btn small-btn" id="saveTripBtn">Valider transport</button>
+      <button class="danger-btn small-btn" id="closeTripBtn">Fermer</button>
+    </div>
   </div>
 </div>
 
+<div class="mobile-bar">
+  <div class="nav" id="mobileNav">
+    <button class="nav-item active" data-view="dashboard">Dashboard</button>
+    <button class="nav-item" data-view="commandes">Commandes</button>
+    <button class="nav-item" data-view="parametres">Paramétrages</button>
+    <button class="nav-item" data-view="rapports">Rapports</button>
+    <button class="nav-item" data-view="marge">Marge</button>
+    <button class="nav-item" data-view="chauffeur">Chauffeur</button>
+  </div>
+</div>
+
+<div id="toast" class="toast">Action effectuée</div>
+
 <script>
 const state = {
-  mode: "manager",
-  pin: "",
-  user: null,
-  view: "dashboard",
-  selectedDriver: "Tous",
-  db: {
-    drivers: [
-      {id:1, nom:"Jean Pierre Louis", dob:"1988-02-14", tel:"0696 11 22 33", mail:"jean.louis@sotransnord.fr", permis:"C", pin:"246810"},
-      {id:2, nom:"Mickaël Sulpice", dob:"1991-06-03", tel:"0696 44 55 66", mail:"m.sulpice@sotransnord.fr", permis:"C", pin:"135790"},
-      {id:3, nom:"Nicolas Ozier", dob:"1987-11-22", tel:"0696 77 88 99", mail:"n.ozier@sotransnord.fr", permis:"CE", pin:"112233"},
-      {id:4, nom:"Fabrice René", dob:"1993-09-18", tel:"0696 00 12 34", mail:"f.rene@sotransnord.fr", permis:"C", pin:"445566"}
+  loginMode: 'manager',
+  pin: '',
+  view: 'dashboard',
+  paramTab: 'drivers',
+  currentTripId: null,
+  orders: [
+    {id:1, client:'SARL BTP Nord', address:'Ducos - Chantier Lot A', trips:3, done:2, date:'2026-05-05', truck:'CAM-001', driver:'Gabriel OZIER', type:'Matériaux', material:'Sable 0/4'},
+    {id:2, client:'Martiniquaise Travaux', address:'Le Lamentin - Zone industrielle', trips:5, done:5, date:'2026-05-05', truck:'CAM-002', driver:'Jean-Philippe', type:'Journée', material:''},
+    {id:3, client:'Rivière Conseil', address:'Fort-de-France - Centre-ville', trips:2, done:1, date:'2026-05-05', truck:'CAM-003', driver:'Kevin', type:'Matériaux', material:'Gravier 4/6'}
+  ],
+  data:{
+    drivers:[
+      {id:1, name:'Gabriel OZIER', dob:'1988-04-12', phone:'0696 11 22 33', email:'gabriel@sotransnord.fr', permit:'C / EC', docs:'Permis.pdf'},
+      {id:2, name:'Kevin', dob:'1994-09-03', phone:'0696 44 55 66', email:'kevin@sotransnord.fr', permit:'C', docs:'ID.pdf'},
     ],
-    trucks: [
-      {id:1, imm:"AB-123-CD", km:126540, type:"Benne", ct:"2026-09-12"},
-      {id:2, imm:"EF-456-GH", km:96420, type:"Toupie", ct:"2026-05-22"},
-      {id:3, imm:"JK-789-LM", km:143200, type:"Benne", ct:"2026-11-03"},
-      {id:4, imm:"NP-321-RS", km:78410, type:"Plateau", ct:"2026-08-01"},
-      {id:5, imm:"TU-654-VW", km:112980, type:"Toupie", ct:"2026-07-15"},
-      {id:6, imm:"XY-987-ZA", km:150440, type:"Benne", ct:"2026-12-20"}
+    trucks:[
+      {id:1, reg:'CAM-001', km:143200, type:'Volvo FM', ct:'2026-10-15', docs:'Carte grise.pdf'},
+      {id:2, reg:'CAM-002', km:189500, type:'Renault Trucks', ct:'2026-08-20', docs:'CT.pdf'},
+      {id:3, reg:'CAM-003', km:96200, type:'MAN TGS', ct:'2026-12-02', docs:'Assurance.pdf'}
     ],
-    clients: [
-      {id:1, entreprise:"BTP Nord Caraïbes", gerant:"Mme L. Valere", tel:"0696 10 10 10", mail:"contact@btpnord.com", adresse:"Fort-de-France"},
-      {id:2, entreprise:"Tropic Chantier", gerant:"M. A. Ozier", tel:"0696 20 20 20", mail:"chantier@tropic.fr", adresse:"Le Lamentin"},
-      {id:3, entreprise:"Caraïbes Routes", gerant:"M. D. Pierre", tel:"0696 30 30 30", mail:"info@caraibesroutes.com", adresse:"Schoelcher"}
+    clients:[
+      {id:1, company:'SARL BTP Nord', manager:'M. Ozier', phone:'0696 55 10 10', email:'btpnord@client.fr'},
+      {id:2, company:'Martiniquaise Travaux', manager:'Mme Louis', phone:'0696 66 20 20', email:'travaux@client.fr'},
+      {id:3, company:'Rivière Conseil', manager:'M. Bernard', phone:'0696 77 30 30', email:'contact@riviere.fr'}
     ],
-    materials: [
-      {id:1, nom:"Sable 0/4"},
-      {id:2, nom:"Gravier 4/6"},
-      {id:3, nom:"Remblais"},
-      {id:4, nom:"Tout-venant"}
-    ],
-    tariffs: {
-      materialsPerTon: {"Sable 0/4":28,"Gravier 4/6":35,"Remblais":19,"Tout-venant":24},
-      dayRate: 420
-    },
-    vehicleExpenses: [
-      {id:1, truckId:1, type:"Carburant", montant:180, date:"2026-05-03", mois:"2026-05"},
-      {id:2, truckId:1, type:"Vidange", montant:260, date:"2026-05-04", mois:"2026-05"},
-      {id:3, truckId:2, type:"Pneus", montant:540, date:"2026-05-08", mois:"2026-05"},
-      {id:4, truckId:3, type:"Réparations", montant:690, date:"2026-05-12", mois:"2026-05"},
-      {id:5, truckId:4, type:"Assurance", montant:320, date:"2026-05-01", mois:"2026-05"}
-    ],
-    orders: [
-      {id:1, clientId:1, adresse:"Zone de la Jambette", date:"2026-05-02", estime:3, fait:2, camionId:1, chauffeurId:1, type:"Materiaux", materiau:"Sable 0/4", etat:"En cours", facture:false},
-      {id:2, clientId:2, adresse:"Dillon chantier B", date:"2026-05-04", estime:2, fait:2, camionId:2, chauffeurId:2, type:"Journée", materiau:"", etat:"A facturer", facture:true},
-      {id:3, clientId:3, adresse:"Rivière-Salée", date:"2026-05-06", estime:4, fait:1, camionId:3, chauffeurId:3, type:"Materiaux", materiau:"Gravier 4/6", etat:"En cours", facture:false}
-    ],
-    driverTrips: [
-      {id:1, driverId:1, orderId:1, chantier:"Zone de la Jambette", date:"2026-05-05", status:"À faire", tonnage:null, receiver:"", receiverRole:"", signature:""},
-      {id:2, driverId:1, orderId:1, chantier:"Zone de la Jambette", date:"2026-05-05", status:"À faire", tonnage:null, receiver:"", receiverRole:"", signature:""},
-      {id:3, driverId:1, orderId:1, chantier:"Zone de la Jambette", date:"2026-05-05", status:"À faire", tonnage:null, receiver:"", receiverRole:"", signature:""},
-      {id:4, driverId:2, orderId:2, chantier:"Dillon chantier B", date:"2026-05-05", status:"Réceptionné", tonnage:18.5, receiver:"Chef de chantier", receiverRole:"Chef de chantier", signature:"ok"},
-      {id:5, driverId:2, orderId:2, chantier:"Dillon chantier B", date:"2026-05-05", status:"Réceptionné", tonnage:19.2, receiver:"Chef de chantier", receiverRole:"Chef de chantier", signature:"ok"}
-    ],
-    endDayReports: [
-      {id:1, driverId:1, date:"2026-05-05", km:312, fuelQty:52, fuelPrice:1.92},
-      {id:2, driverId:2, date:"2026-05-05", km:287, fuelQty:49, fuelPrice:1.88}
+    materials:['Sable 0/4','Gravier 4/6','Remblais','Cailloux 20/40'],
+    tariffs:{materials:42, day:520},
+    expenses:[
+      {id:1, truck:'CAM-001', fuel:1450, oil:210, repair:340, insurance:180, tires:120},
+      {id:2, truck:'CAM-002', fuel:1680, oil:180, repair:260, insurance:190, tires:90},
+      {id:3, truck:'CAM-003', fuel:1210, oil:220, repair:145, insurance:180, tires:130}
     ]
-  }
+  },
+  activities:[
+    'Commande #1 créée puis synchronisée vers Google Sheets.',
+    'Transport #1 validé par le chauffeur avec signature électronique.',
+    'Fiche fin de journée envoyée pour Gabriel OZIER.',
+    'Alerte facture prête pour la commande #2.'
+  ],
+  months:['Janv.','Fév.','Mars','Avr.','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.']
 };
 
-const views = [
-  {id:"dashboard", label:"Dashboard"},
-  {id:"orders", label:"Commandes"},
-  {id:"settings", label:"Paramétrages"},
-  {id:"reports", label:"Rapports"},
-  {id:"marge", label:"Marge"},
-  {id:"driver", label:"Espace chauffeur"}
-];
-
 const $ = s => document.querySelector(s);
-const content = $("#content");
-
-function renderPin(){
-  $("#pinDisplay").innerHTML = Array.from({length:6}, (_,i)=>`<div class="pin-box">${state.pin[i] ? "•" : ""}</div>`).join("");
-}
-function renderKeypad(){
-  const keys = ["1","2","3","4","5","6","7","8","9","","0","⌫"];
-  $("#keypad").innerHTML = keys.map(k=>`<button data-k="${k}">${k||"&nbsp;"}</button>`).join("");
-}
-function setMode(m){
-  state.mode = m;
-  $("#modeManager").classList.toggle("active", m==="manager");
-  $("#modeDriver").classList.toggle("active", m==="driver");
-  $("#authMsg").textContent = m==="manager" ? "Mode gérant prêt." : "Mode chauffeur prêt.";
+const $$ = s => document.querySelectorAll(s);
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1800); }
+function updatePin(){ $("#pinDisplay").textContent = state.pin.padEnd(6,'•').replace(/./g,'•').split('').map((c,i)=> i<state.pin.length ? '●' : '•').join(''); }
+function setLoginMode(mode){
+  state.loginMode = mode;
+  $("#modeManager").classList.toggle("active", mode==='manager');
+  $("#modeDriver").classList.toggle("active", mode==='driver');
 }
 function login(){
-  const pin = state.pin;
-  if(state.mode==="manager" && pin==="123456"){ state.user={role:"manager", name:"Gabriel OZIER"}; openManager(); return; }
-  const drv = state.db.drivers.find(d=>d.pin===pin);
-  if(state.mode==="driver" && drv){ state.user={role:"driver", name:drv.nom, driverId:drv.id}; openManager(); state.view="driver"; render(); return; }
-  $("#authMsg").textContent = "PIN incorrect.";
+  const ok = state.loginMode==='manager' ? state.pin==='123456' : ['654321','111111'].includes(state.pin);
+  if(!ok){ toast("PIN incorrect"); state.pin=''; updatePin(); return; }
+  $("#authScreen").classList.add("hidden"); $("#dashScreen").classList.remove("hidden");
+  $("#currentRole").textContent = state.loginMode==='manager' ? 'Gérant' : 'Chauffeur';
+  renderAll(); toast("Connexion réussie");
 }
-function openManager(){ $("#authView").classList.add("hidden"); $("#managerView").classList.remove("hidden"); renderNav(); render(); }
-function logout(){ state.user=null; state.pin=""; $("#authView").classList.remove("hidden"); $("#managerView").classList.add("hidden"); renderPin(); }
-function navButtons(target){
-  return views.map(v=>`<button class="${state.view===v.id?'active':''}" data-view="${v.id}">${v.label}<span>›</span></button>`).join("");
+function logout(){ $("#dashScreen").classList.add("hidden"); $("#authScreen").classList.remove("hidden"); state.pin=''; updatePin(); }
+function setView(view){
+  state.view=view;
+  $$(".section").forEach(s=>s.classList.remove("active"));
+  $("#view-"+view).classList.add("active");
+  $("#pageTitle").textContent = ({dashboard:'Dashboard',commandes:'Commandes',parametres:'Paramétrages',rapports:'Rapports',marge:'Marge mensuelle',chauffeur:'Vue chauffeur'})[view];
+  $$(".nav-item").forEach(b=>b.classList.toggle("active", b.dataset.view===view));
+  if(view==='parametres') renderParams();
 }
-function renderNav(){
-  $("#sideNav").innerHTML = navButtons();
-  $("#mobileNav").innerHTML = views.map(v=>`<button data-view="${v.id}">${v.label}</button>`).join("");
+function renderSelects(){
+  $("#orderClient").innerHTML = state.data.clients.map(c=>`<option>${c.company}</option>`).join('');
+  $("#orderTruck").innerHTML = state.data.trucks.map(t=>`<option>${t.reg}</option>`).join('');
+  $("#orderDriver").innerHTML = state.data.drivers.map(d=>`<option>${d.name}</option>`).join('');
+  $("#orderMaterial").innerHTML = state.data.materials.map(m=>`<option>${m}</option>`).join('');
 }
-function badgeForOrder(o){ return o.facture ? '<span class="badge b-yellow">A facturer</span>' : `<span class="badge ${o.fait>=o.estime?'b-green':'b-blue'}">${o.fait}/${o.estime}</span>`; }
-
-function dashboardHTML(){
-  const monthlyCa = 18450, fuel=3260, vid=540, rep=690, pneus=540, ass=320, marge = monthlyCa-(fuel+vid+rep+pneus+ass);
-  return `
-    <div class="grid cards-4">
-      <div class="card stat"><div><small>Chiffre d'affaires mensuel</small><b>${monthlyCa.toLocaleString("fr-FR")} €</b></div><div class="pill">CA</div></div>
-      <div class="card stat"><div><small>Commandes en cours</small><b>${state.db.orders.filter(o=>!o.facture && o.fait<o.estime).length}</b></div><div class="pill">Suivi</div></div>
-      <div class="card stat"><div><small>Frais véhicules</small><b>${(fuel+vid+rep+pneus+ass).toLocaleString("fr-FR")} €</b></div><div class="pill">Dépenses</div></div>
-      <div class="card stat"><div><small>Marge brute</small><b>${marge.toLocaleString("fr-FR")} €</b></div><div class="pill">Marge</div></div>
-    </div>
-    <div style="height:16px"></div>
-    <div class="two-col">
-      <div class="card">
-        <div class="section-head"><h3>Suivi des commandes</h3><div class="toolbar"><button class="small-btn" onclick="setView('orders')">Ouvrir</button></div></div>
-        <div class="table-wrap"><table><thead><tr><th>Client</th><th>Camion</th><th>Avancement</th><th>État</th></tr></thead><tbody>
-          ${state.db.orders.map(o=>{
-            const c=state.db.clients.find(x=>x.id===o.clientId), t=state.db.trucks.find(x=>x.id===o.camionId);
-            return `<tr><td>${c.entreprise}</td><td>${t.imm}</td><td>${o.fait}/${o.estime}<div class="progress"><div style="width:${Math.min(100,o.fait/o.estime*100)}%"></div></div></td><td>${badgeForOrder(o)}</td></tr>`;
-          }).join("")}
-        </tbody></table></div>
-      </div>
-      <div class="card">
-        <div class="section-head"><h3>Notifications démo</h3></div>
-        <div class="driver-task"><b>Make.com</b><div class="footer-note">Nouvelle commande → webhook → Google Sheet + email.</div></div>
-        <div class="driver-task"><b>Chauffeur</b><div class="footer-note">Fiche fin de journée → stockage dans la feuille dédiée.</div></div>
-        <div class="driver-task"><b>Facturation</b><div class="footer-note">Lorsque tous les transports sont réalisés, le statut passe à “A facturer”.</div></div>
-      </div>
-    </div>`;
+function statusClass(o){ return o.done>=o.trips ? 's-done' : 's-open'; }
+function renderDashboard(){
+  $("#statOrders").textContent = state.orders.filter(o=>o.done<o.trips).length;
+  $("#statTrips").textContent = state.orders.reduce((a,o)=>a+o.done,0);
+  $("#statExpenses").textContent = `${state.data.expenses.reduce((a,e)=>a+e.fuel+e.oil+e.repair+e.insurance+e.tires,0).toLocaleString('fr-FR')} €`;
+  $("#statMargin").textContent = `${calculateMargin().toLocaleString('fr-FR')} €`;
+  $("#ordersTbody").innerHTML = state.orders.map(o=>`
+    <tr>
+      <td>${o.client}</td><td>${o.address}</td><td>${o.type}${o.material ? ' / ' + o.material : ''}</td><td>${o.truck}</td><td>${o.driver}</td>
+      <td>${o.done}/${o.trips}</td><td><span class="status ${statusClass(o)}">${o.done>=o.trips ? 'Terminé' : 'En cours'}</span></td>
+      <td><button class="ghost-btn mini" onclick="goToOrder(${o.id})">Voir</button></td>
+    </tr>`).join('');
+  $("#activityList").innerHTML = state.activities.map(a=>`<div class="list-item"><div><div class="title">${a}</div><div class="subt">Démo front</div></div><span class="badge b-blue">OK</span></div>`).join('');
 }
-
-function ordersHTML(){
-  return `
-  <div class="grid cards-2">
-    <div class="card">
-      <div class="section-head"><h3>Ajouter une commande</h3></div>
+function renderTracking(){
+  $("#kpiOpen").textContent = state.orders.filter(o=>o.done<o.trips).length;
+  $("#kpiDone").textContent = state.orders.filter(o=>o.done>=o.trips).length;
+  $("#kpiBill").textContent = state.orders.filter(o=>o.done>=o.trips).length;
+  $("#trackingTbody").innerHTML = state.orders.map(o=>`
+    <tr>
+      <td>#${o.id} ${o.client}</td>
+      <td>${o.done} / ${o.trips}</td>
+      <td><span class="status ${statusClass(o)}">${o.done>=o.trips ? 'Terminé' : 'En cours'}</span></td>
+      <td>${o.done>=o.trips ? '<span class="status s-bill">À facturer</span>' : '-'}</td>
+    </tr>`).join('');
+}
+function renderParams(){
+  const tab = state.paramTab;
+  const map = {
+    drivers: `
+      <div class="two-col">
+        <div>
+          <div class="form-grid">
+            <div class="field"><label>Nom complet</label><input id="p1" /></div>
+            <div class="field"><label>Date de naissance</label><input id="p2" type="date" /></div>
+            <div class="field"><label>Téléphone</label><input id="p3" /></div>
+            <div class="field"><label>Email</label><input id="p4" type="email" /></div>
+            <div class="field"><label>Type de permis</label><input id="p5" placeholder="C / EC" /></div>
+            <div class="field"><label>Documents</label><input id="p6" type="file" multiple /></div>
+          </div>
+        </div>
+        <div>${renderCrudTable('drivers',['Nom','Naissance','Téléphone','Email','Permis','Docs'])}</div>
+      </div>`,
+    trucks: `
+      <div class="two-col"><div>
       <div class="form-grid">
-        <input id="oClient" placeholder="Nom du client / entreprise">
-        <input id="oAddress" placeholder="Adresse de livraison">
-        <input id="oEstime" type="number" placeholder="Nombre de transports estimés">
-        <input id="oDate" type="date">
-        <select id="oTruck">${state.db.trucks.map(t=>`<option value="${t.id}">${t.imm} - ${t.type}</option>`).join("")}</select>
-        <select id="oDriver">${state.db.drivers.map(d=>`<option value="${d.id}">${d.nom}</option>`).join("")}</select>
-        <select id="oType"><option>Materiaux</option><option>Journée</option></select>
-        <select id="oMaterial">${state.db.materials.map(m=>`<option>${m.nom}</option>`).join("")}</select>
-      </div>
-      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
-        <button class="primary-btn" onclick="addOrder()">Créer la commande</button>
-        <button class="ghost-btn" onclick="seedTripLines()">Créer lignes chauffeur</button>
-      </div>
-      <div class="footer-note">Les données sont simulées côté front, prêtes à être envoyées vers Google Sheets via Make.com.</div>
+        <div class="field"><label>Immatriculation</label><input id="p1" /></div>
+        <div class="field"><label>Kilométrage</label><input id="p2" type="number" /></div>
+        <div class="field"><label>Type</label><input id="p3" /></div>
+        <div class="field"><label>Date contrôle technique</label><input id="p4" type="date" /></div>
+        <div class="field"><label>Documents</label><input id="p5" type="file" multiple /></div>
+      </div></div><div>${renderCrudTable('trucks',['Immat.','KM','Type','CT','Docs'])}</div></div>`,
+    clients: `
+      <div class="two-col"><div class="form-grid">
+        <div class="field"><label>Nom de l’entreprise</label><input id="p1" /></div>
+        <div class="field"><label>Nom du gérant</label><input id="p2" /></div>
+        <div class="field"><label>Téléphone</label><input id="p3" /></div>
+        <div class="field"><label>Email</label><input id="p4" /></div>
+      </div></div><div>${renderCrudTable('clients',['Entreprise','Gérant','Téléphone','Email'])}</div>`,
+    materials: `<div class="two-col"><div><div class="form-grid"><div class="field"><label>Matériau</label><input id="p1" placeholder="ex : sable 0/4" /></div></div></div><div>${renderCrudTable('materials',['Matériau'])}</div></div>`,
+    tarifs: `<div class="two-col"><div class="form-grid"><div class="field"><label>Tarif matériaux (€/tonne)</label><input id="p1" type="number" value="${state.data.tariffs.materials}" /></div><div class="field"><label>Tarif journée (€/jour)</label><input id="p2" type="number" value="${state.data.tariffs.day}" /></div></div><div>${renderTarifTable()}</div></div>`,
+    expenses: `<div class="two-col"><div class="form-grid">
+        <div class="field"><label>Camion</label><select id="p1">${state.data.trucks.map(t=>`<option>${t.reg}</option>`).join('')}</select></div>
+        <div class="field"><label>Carburant</label><input id="p2" type="number" /></div>
+        <div class="field"><label>Vidange</label><input id="p3" type="number" /></div>
+        <div class="field"><label>Réparations</label><input id="p4" type="number" /></div>
+        <div class="field"><label>Assurance</label><input id="p5" type="number" /></div>
+        <div class="field"><label>Pneus</label><input id="p6" type="number" /></div>
+      </div></div><div>${renderExpenseTable()}</div></div>`
+  };
+  $("#paramTab").innerHTML = `
+    <div class="form-actions">
+      <button class="primary-btn" onclick="addParam()">Ajouter / Enregistrer</button>
+      <button class="ghost-btn" onclick="seedDemo()">Remplir démo</button>
     </div>
-    <div class="card">
-      <div class="section-head"><h3>Indicateur facture</h3></div>
-      <div id="invoiceHint"></div>
-    </div>
-  </div>
-  <div style="height:16px"></div>
-  <div class="card">
-    <div class="section-head"><h3>Tableau de suivi</h3><div class="toolbar"><input id="orderSearch" placeholder="Recherche..." oninput="render()"></div></div>
-    <div class="table-wrap"><table><thead><tr><th>Client</th><th>Chantier</th><th>Date</th><th>Camion</th><th>Chauffeur</th><th>Type</th><th>Suivi</th><th>Actions</th></tr></thead><tbody>
-      ${state.db.orders.filter(o=>JSON.stringify(o).toLowerCase().includes(($("#orderSearch")?.value||"").toLowerCase())).map(o=>{
-        const c=state.db.clients.find(x=>x.id===o.clientId), t=state.db.trucks.find(x=>x.id===o.camionId), d=state.db.drivers.find(x=>x.id===o.chauffeurId);
-        return `<tr>
-          <td>${c.entreprise}</td><td>${o.adresse}</td><td>${o.date}</td><td>${t.imm}</td><td>${d.nom}</td><td>${o.type}${o.materiau?`<div class="footer-note">${o.materiau}</div>`:""}</td>
-          <td>${o.fait}/${o.estime}<div class="progress"><div style="width:${Math.min(100,o.fait/o.estime*100)}%"></div></div>${o.fait>=o.estime?'<div class="badge b-yellow" style="margin-top:8px">A facturer</div>':''}</td>
-          <td><div class="row-actions">
-            <button class="small-btn green" onclick="markInvoiced(${o.id})">A facturer</button>
-            <button class="small-btn orange" onclick="incDone(${o.id})">+ Transport</button>
-            <button class="small-btn red" onclick="delOrder(${o.id})">Supprimer</button>
-          </div></td>
-        </tr>`;
-      }).join("")}
-    </tbody></table></div>
-  </div>`;
+    ${map[tab]}
+  `;
 }
-
-function settingsHTML(){
-  const sect=(title, rows, addFn, type)=>`
-    <div class="card">
-      <div class="section-head"><h3>${title}</h3><button class="small-btn" onclick="${addFn}()">Ajouter</button></div>
-      <div class="table-wrap"><table><thead><tr>${rows.headers.map(h=>`<th>${h}</th>`).join("")}<th>Actions</th></tr></thead><tbody>
-      ${rows.data.map(r=>`<tr>${rows.row(r)}<td><div class="row-actions"><button class="small-btn gray" onclick="editItem('${type}',${r.id})">Modifier</button><button class="small-btn red" onclick="deleteItem('${type}',${r.id})">Supprimer</button></div></td></tr>`).join("")}
-      </tbody></table></div>
-    </div>`;
-  return `
-  <div class="grid cards-2">
-    ${sect("Chauffeurs",{headers:["Nom","Naissance","Téléphone","Mail","Permis"],data:state.db.drivers,row:r=>`<td>${r.nom}</td><td>${r.dob}</td><td>${r.tel}</td><td>${r.mail}</td><td>${r.permis}</td>`},"addDriver","drivers")}
-    ${sect("Camions",{headers:["Immatriculation","Kilométrage","Type","CT"],data:state.db.trucks,row:r=>`<td>${r.imm}</td><td>${r.km}</td><td>${r.type}</td><td>${r.ct}</td>`},"addTruck","trucks")}
-    ${sect("Clients",{headers:["Entreprise","Gérant","Téléphone","Mail","Adresse"],data:state.db.clients,row:r=>`<td>${r.entreprise}</td><td>${r.gerant}</td><td>${r.tel}</td><td>${r.mail}</td><td>${r.adresse}</td>`},"addClient","clients")}
-    ${sect("Matériaux",{headers:["Nom"],data:state.db.materials,row:r=>`<td>${r.nom}</td>`},"addMaterial","materials")}
-  </div>
-  <div style="height:16px"></div>
-  <div class="grid cards-2">
-    <div class="card">
-      <div class="section-head"><h3>Tarifs</h3><button class="small-btn" onclick="saveTariffs()">Sauvegarder</button></div>
-      <div class="form-grid">
-        ${Object.keys(state.db.tariffs.materialsPerTon).map(k=>`<input id="tar_${k.replace(/\s/g,'_')}" value="${state.db.tariffs.materialsPerTon[k]}" placeholder="${k} €/tonne">`).join("")}
-        <input id="dayRate" value="${state.db.tariffs.dayRate}" placeholder="Journée €/jour">
-      </div>
-    </div>
-    <div class="card">
-      <div class="section-head"><h3>Frais véhicules</h3><button class="small-btn" onclick="addExpense()">Ajouter</button></div>
-      <div class="table-wrap"><table><thead><tr><th>Camion</th><th>Type</th><th>Montant</th><th>Date</th><th>Actions</th></tr></thead><tbody>
-      ${state.db.vehicleExpenses.map(e=>`<tr><td>${state.db.trucks.find(t=>t.id===e.truckId)?.imm||""}</td><td>${e.type}</td><td>${e.montant} €</td><td>${e.date}</td><td><button class="small-btn red" onclick="deleteItem('expenses',${e.id})">Supprimer</button></td></tr>`).join("")}
-      </tbody></table></div>
-    </div>
-  </div>`;
+function renderCrudTable(type,headers){
+  const rows = state.data[type].map((r,i)=>{
+    if(type==='materials') return `<tr><td>${r}</td><td><button class="ghost-btn mini" onclick="delParam('${type}',${i})">Supprimer</button></td></tr>`;
+    if(type==='clients') return `<tr><td>${r.company}</td><td>${r.manager}</td><td>${r.phone}</td><td>${r.email}</td><td><button class="ghost-btn mini" onclick="delParam('${type}',${i})">Supprimer</button></td></tr>`;
+    if(type==='trucks') return `<tr><td>${r.reg}</td><td>${r.km}</td><td>${r.type}</td><td>${r.ct}</td><td>${r.docs}</td><td><button class="ghost-btn mini" onclick="delParam('${type}',${i})">Supprimer</button></td></tr>`;
+    return `<tr><td>${r.name}</td><td>${r.dob}</td><td>${r.phone}</td><td>${r.email}</td><td>${r.permit}</td><td>${r.docs}</td><td><button class="ghost-btn mini" onclick="delParam('${type}',${i})">Supprimer</button></td></tr>`;
+  }).join('');
+  return `<div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}<th>Action</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
-
-function reportsHTML(){
-  return `
-  <div class="grid cards-3">
-    <div class="card"><div class="pill">Conso moyenne</div><b style="display:block;margin-top:10px;font-size:30px">24,8 L/100 km</b><div class="footer-note">Exemple calculé à partir des fiches de fin de journée démo.</div></div>
-    <div class="card"><div class="pill">Frais par camion</div><b style="display:block;margin-top:10px;font-size:30px">1 990 €</b><div class="footer-note">Moyenne mensuelle sur la flotte de démonstration.</div></div>
-    <div class="card"><div class="pill">Mois actif</div><b style="display:block;margin-top:10px;font-size:30px">Mai 2026</b><div class="footer-note">Tableaux adaptés pour export Google Sheets.</div></div>
-  </div>
-  <div style="height:16px"></div>
-  <div class="card">
-    <div class="section-head"><h3>Fiches chauffeurs reçues</h3></div>
-    <div class="table-wrap"><table><thead><tr><th>Chauffeur</th><th>Date</th><th>KM</th><th>Carburant</th><th>Tarif</th></tr></thead><tbody>
-      ${state.db.endDayReports.map(r=>`<tr><td>${state.db.drivers.find(d=>d.id===r.driverId).nom}</td><td>${r.date}</td><td>${r.km}</td><td>${r.fuelQty} L</td><td>${r.fuelPrice} €</td></tr>`).join("")}
-    </tbody></table></div>
-  </div>`;
+function renderTarifTable(){ return `<div class="list"><div class="list-item"><div><div class="title">Matériaux</div><div class="subt">${state.data.tariffs.materials} €/tonne</div></div></div><div class="list-item"><div><div class="title">Journée</div><div class="subt">${state.data.tariffs.day} €/jour</div></div></div></div>`; }
+function renderExpenseTable(){ return `<div class="table-wrap"><table><thead><tr><th>Camion</th><th>Carburant</th><th>Vidange</th><th>Réparations</th><th>Assurance</th><th>Pneus</th></tr></thead><tbody>${state.data.expenses.map(e=>`<tr><td>${e.truck}</td><td>${e.fuel}€</td><td>${e.oil}€</td><td>${e.repair}€</td><td>${e.insurance}€</td><td>${e.tires}€</td></tr>`).join('')}</tbody></table></div>`; }
+function renderReports(){ $("#truckExpenseTbody").innerHTML = state.data.expenses.map(e=>`<tr><td>${e.truck}</td><td>${e.fuel}€</td><td>${e.oil}€</td><td>${e.repair}€</td><td>${e.insurance}€</td><td>${e.tires}€</td></tr>`).join(''); }
+function calculateMargin(){ return 48250 - state.data.expenses.reduce((a,e)=>a+e.fuel+e.oil+e.repair+e.insurance+e.tires,0); }
+function renderMargin(){
+  const current = new Date().getMonth();
+  $("#monthGrid").innerHTML = state.months.map((m,i)=>`<div class="month ${i===current?'current':''}"><div class="m">${m}</div><div class="k">${(38000+i*900).toLocaleString('fr-FR')} €</div><div class="subt">Marge brute</div></div>`).join('');
 }
-
-function margeHTML(){
-  const ca = 18450, fuel=3260, vid=540, rep=690, pneus=540, ass=320, brut = ca-(fuel+vid+rep+pneus+ass);
-  return `
-  <div class="card">
-    <div class="section-head"><h3>Tableau mensuel des marges</h3></div>
-    <div class="table-wrap"><table><thead><tr><th>Catégorie</th><th>Montant</th></tr></thead><tbody>
-      <tr><td>Chiffre d'affaire mensuel</td><td>${ca.toLocaleString("fr-FR")} €</td></tr>
-      <tr><td>Carburant</td><td>${fuel.toLocaleString("fr-FR")} €</td></tr>
-      <tr><td>Vidange</td><td>${vid.toLocaleString("fr-FR")} €</td></tr>
-      <tr><td>Réparations</td><td>${rep.toLocaleString("fr-FR")} €</td></tr>
-      <tr><td>Pneus</td><td>${pneus.toLocaleString("fr-FR")} €</td></tr>
-      <tr><td>Assurance</td><td>${ass.toLocaleString("fr-FR")} €</td></tr>
-      <tr><td><b>Marge brute</b></td><td><b>${brut.toLocaleString("fr-FR")} €</b></td></tr>
-    </tbody></table></div>
-  </div>`;
+function renderDriver(){
+  $("#driverTrips").innerHTML = state.orders.flatMap(o=>Array.from({length:o.trips},(_,i)=>({order:o, n:i+1}))).map(t=>`
+    <div class="list-item">
+      <div><div class="title">${t.order.client} — Transport ${t.n}/${t.order.trips}</div><div class="subt">${t.order.address} • ${t.order.truck} • ${t.order.material || 'Journée'}</div></div>
+      <button class="primary-btn small-btn" onclick="openTrip(${t.order.id},${t.n})">Ouvrir</button>
+    </div>`).join('');
 }
-
-function driverHTML(){
-  const id = state.user?.driverId || 1;
-  const tasks = state.db.driverTrips.filter(t=>t.driverId===id);
-  const rep = state.db.endDayReports.find(r=>r.driverId===id) || {date:"2026-05-05",km:"",fuelQty:"",fuelPrice:""};
-  return `
-  <div class="grid cards-2">
-    <div class="card">
-      <div class="section-head"><h3>Transports du jour</h3></div>
-      ${tasks.map(t=>`
-        <div class="driver-task">
-          <div class="task-top"><div><h4>${t.chantier}</h4><div class="footer-note">${t.status} · ${t.date}</div></div><button class="small-btn" onclick="openDelivery(${t.id})">Ouvrir</button></div>
-          <div class="footer-note">Le chauffeur saisit le tonnage, le réceptionnaire et la signature électronique.</div>
-        </div>`).join("")}
-    </div>
-    <div class="card">
-      <div class="section-head"><h3>Fiche de fin de journée</h3></div>
-      <div class="form-grid">
-        <input id="endKm" placeholder="Kilométrage" value="${rep.km||""}">
-        <input id="endFuelQty" placeholder="Carburant quantité (L)" value="${rep.fuelQty||""}">
-        <input id="endFuelPrice" placeholder="Tarif carburant (€)" value="${rep.fuelPrice||""}">
-        <input type="date" id="endDate" value="${rep.date||"2026-05-05"}">
-      </div>
-      <div style="margin-top:12px">
-        <button class="primary-btn" onclick="sendDayReport()">Envoyer ma fiche</button>
-      </div>
-      <div class="footer-note">Cette fiche est pensée pour un scénario Make.com qui l’enverra dans une Google Sheet.</div>
-    </div>
-  </div>`;
-}
-
-function render(){
-  $("#viewTitle").textContent = views.find(v=>v.id===state.view)?.label || "Dashboard";
-  $("#viewSubtitle").textContent = state.user?.role==="driver" ? "Espace chauffeur" : "Vue de pilotage globale de la flotte";
-  $("#currentUser").textContent = state.user?.name || "Gabriel OZIER";
-  $("#sideNav").querySelectorAll("button").forEach(b=>b.classList.toggle("active", b.dataset.view===state.view));
-  $("#mobileNav").querySelectorAll("button").forEach(b=>b.classList.toggle("active", b.dataset.view===state.view));
-  content.innerHTML = state.view==="dashboard" ? dashboardHTML()
-    : state.view==="orders" ? ordersHTML()
-    : state.view==="settings" ? settingsHTML()
-    : state.view==="reports" ? reportsHTML()
-    : state.view==="marge" ? margeHTML()
-    : driverHTML();
-  $("#invoiceHint") && ($("#invoiceHint").innerHTML = state.db.orders.map(o=>`<div class="driver-task"><b>${state.db.clients.find(c=>c.id===o.clientId).entreprise}</b><div class="footer-note">${o.fait>=o.estime?'Facture à envoyer':'En attente de complétion'} — ${o.fait}/${o.estime}</div></div>`).join(""));
-}
-function setView(v){ state.view=v; render(); }
+function goToOrder(id){ setView('commandes'); toast('Commande #'+id+' sélectionnée'); }
+function openTrip(id,n){ state.currentTripId={id,n}; $("#tripModalBackdrop").classList.add("open"); $("#mTonnage").value=10; $("#mReceiver").value='Chef de chantier'; $("#mFunction").value='Chef de chantier'; clearSignature(); }
+function closeTrip(){ $("#tripModalBackdrop").classList.remove("open"); }
 function addOrder(){
-  const client = $("#oClient").value.trim() || "Nouveau client";
-  const newClient = {id:Date.now(), entreprise:client, gerant:"À compléter", tel:"", mail:"", adresse:""};
-  state.db.clients.push(newClient);
-  const o = {id:Date.now()+1, clientId:newClient.id, adresse:$("#oAddress").value||"Adresse démo", date:$("#oDate").value||"2026-05-05", estime:+($("#oEstime").value||1), fait:0, camionId:+$("#oTruck").value, chauffeurId:+$("#oDriver").value, type:$("#oType").value, materiau:$("#oMaterial").value, etat:"En cours", facture:false};
-  state.db.orders.unshift(o);
-  const driverId = o.chauffeurId;
-  for(let i=0;i<o.estime;i++) state.db.driverTrips.unshift({id:Date.now()+i+10, driverId, orderId:o.id, chantier:o.adresse, date:o.date, status:"À faire", tonnage:null, receiver:"", receiverRole:"", signature:""});
-  render();
+  const client=$("#orderClient").value, address=$("#orderAddress").value||'Adresse démo', trips=+$("#orderTrips").value||1, date=$("#orderDate").value||new Date().toISOString().slice(0,10), truck=$("#orderTruck").value, driver=$("#orderDriver").value, type=$("#orderType").value, material=$("#orderMaterial").value;
+  state.orders.unshift({id:Date.now()%10000, client, address, trips, done:0, date, truck, driver, type, material:type==='Matériaux'?material:''});
+  state.activities.unshift(`Nouvelle commande créée pour ${client}.`);
+  renderAll(); toast('Commande créée');
 }
-function seedTripLines(){ alert("Démo : les lignes chauffeur sont générées automatiquement à la création d'une commande."); }
-function markInvoiced(id){ const o=state.db.orders.find(x=>x.id===id); o.facture=true; o.etat="A facturer"; render(); }
-function incDone(id){ const o=state.db.orders.find(x=>x.id===id); if(o.fait<o.estime) o.fait++; if(o.fait>=o.estime){o.facture=true;o.etat="A facturer"} render(); }
-function delOrder(id){ state.db.orders = state.db.orders.filter(o=>o.id!==id); render(); }
-function saveTariffs(){ alert("Tarifs enregistrés côté front. À connecter à Google Sheets via Make.com."); }
-function addDriver(){ state.db.drivers.push({id:Date.now(), nom:"Nouveau chauffeur", dob:"1990-01-01", tel:"", mail:"", permis:"C", pin:String(Math.floor(100000+Math.random()*900000))}); render(); }
-function addTruck(){ state.db.trucks.push({id:Date.now(), imm:"XX-000-XX", km:0, type:"Benne", ct:"2026-12-31"}); render(); }
-function addClient(){ state.db.clients.push({id:Date.now(), entreprise:"Nouvelle entreprise", gerant:"", tel:"", mail:"", adresse:""}); render(); }
-function addMaterial(){ state.db.materials.push({id:Date.now(), nom:"Nouveau matériau"}); render(); }
-function addExpense(){ state.db.vehicleExpenses.unshift({id:Date.now(), truckId:1, type:"Carburant", montant:100, date:"2026-05-05", mois:"2026-05"}); render(); }
-function deleteItem(type,id){
-  if(type==="drivers") state.db.drivers = state.db.drivers.filter(x=>x.id!==id);
-  if(type==="trucks") state.db.trucks = state.db.trucks.filter(x=>x.id!==id);
-  if(type==="clients") state.db.clients = state.db.clients.filter(x=>x.id!==id);
-  if(type==="materials") state.db.materials = state.db.materials.filter(x=>x.id!==id);
-  if(type==="expenses") state.db.vehicleExpenses = state.db.vehicleExpenses.filter(x=>x.id!==id);
-  render();
+function delParam(type,i){ state.data[type].splice(i,1); renderAll(); toast('Élément supprimé'); }
+function addParam(){
+  const tab=state.paramTab;
+  if(tab==='drivers') state.data.drivers.unshift({id:Date.now(), name:$("#p1").value, dob:$("#p2").value, phone:$("#p3").value, email:$("#p4").value, permit:$("#p5").value, docs:'Documents'});
+  if(tab==='trucks') state.data.trucks.unshift({id:Date.now(), reg:$("#p1").value, km:$("#p2").value, type:$("#p3").value, ct:$("#p4").value, docs:'Documents'});
+  if(tab==='clients') state.data.clients.unshift({id:Date.now(), company:$("#p1").value, manager:$("#p2").value, phone:$("#p3").value, email:$("#p4").value});
+  if(tab==='materials') state.data.materials.unshift($("#p1").value);
+  if(tab==='tarifs') { state.data.tariffs.materials=+$("#p1").value; state.data.tariffs.day=+$("#p2").value; }
+  if(tab==='expenses') state.data.expenses.unshift({id:Date.now(), truck:$("#p1").value, fuel:+$("#p2").value||0, oil:+$("#p3").value||0, repair:+$("#p4").value||0, insurance:+$("#p5").value||0, tires:+$("#p6").value||0});
+  renderAll(); toast('Enregistré');
 }
-function editItem(type,id){ alert(`Édition démo de ${type} #${id} — branchement Google Sheet à prévoir via Make.`); }
-function openDelivery(id){ alert("Popup démo : saisir tonnage, réceptionnaire, rôle et signature électronique."); }
-function sendDayReport(){ alert("Fiche envoyée (simulation). À relier à un webhook Make.com puis Google Sheets."); }
+function seedDemo(){ state.activities.unshift('Données de démonstration rechargées.'); renderAll(); toast('Démo rechargée'); }
+function sync(){ toast('Synchronisation simulée vers Google Sheets / Make.com'); state.activities.unshift('Synchronisation simulée vers Sheets via Make.com.'); renderAll(); }
+function sendSheet(){ toast('Fiche envoyée'); state.activities.unshift('Fiche de fin de journée transmise.'); renderAll(); }
+function saveTrip(){
+  if(!state.currentTripId) return;
+  const ord = state.orders.find(o=>o.id===state.currentTripId.id);
+  if(ord && ord.done < ord.trips) ord.done++;
+  state.activities.unshift(`Transport ${state.currentTripId.n} validé pour ${ord.client}.`);
+  closeTrip(); renderAll(); toast('Transport validé');
+}
+let drawing=false, ctx, last={x:0,y:0};
+function clearSignature(){ ctx = $("#signCanvas").getContext("2d"); ctx.clearRect(0,0,900,180); ctx.fillStyle="#f8fafc"; ctx.fillRect(0,0,900,180); ctx.fillStyle="#94a3b8"; ctx.font="20px sans-serif"; ctx.fillText("Signer ici", 20, 34); }
+function pos(e){ const r=$("#signCanvas").getBoundingClientRect(); const p=e.touches?e.touches[0]:e; return {x:(p.clientX-r.left)*($("#signCanvas").width/r.width), y:(p.clientY-r.top)*($("#signCanvas").height/r.height)}; }
+function startDraw(e){ drawing=true; last=pos(e); }
+function moveDraw(e){ if(!drawing) return; e.preventDefault(); const p=pos(e); ctx.lineWidth=3; ctx.lineCap='round'; ctx.strokeStyle='#111827'; ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p; }
+function endDraw(){ drawing=false; }
+function renderAll(){ renderSelects(); renderDashboard(); renderTracking(); renderReports(); renderMargin(); renderDriver(); if(state.view==='parametres') renderParams(); }
 
-document.addEventListener("click", e=>{
-  const v = e.target.closest("[data-view]")?.dataset.view;
-  if(v) setView(v);
-  const k = e.target.closest("[data-k]")?.dataset.k;
-  if(k!==undefined){
-    if(k==="⌫") state.pin = state.pin.slice(0,-1);
-    else if(state.pin.length<6 && /\d/.test(k)) state.pin += k;
-    renderPin();
-  }
-});
-$("#modeManager").onclick = ()=>setMode("manager");
-$("#modeDriver").onclick = ()=>setMode("driver");
-$("#enterBtn").onclick = login;
-$("#clearBtn").onclick = ()=>{state.pin=""; renderPin()};
-$("#logoutBtn").onclick = logout;
-$("#syncBtn").onclick = ()=>alert("Préparation liaison Make.com + Google Sheets : webhook, append, update, notifications email.");
-renderKeypad(); renderPin(); setMode("manager"); renderNav();
+$("#modeManager").onclick=()=>setLoginMode('manager');
+$("#modeDriver").onclick=()=>setLoginMode('driver');
+$("#loginEnter").onclick=login; $("#loginClear").onclick=()=>{state.pin=''; updatePin();};
+$$(".keypad button").forEach(b=>b.onclick=()=>{ const k=b.dataset.key; if(k==='clear'){state.pin='';} else if(k==='enter'){login();} else if(state.pin.length<6){ state.pin+=k; } updatePin();});
+$("#logoutBtn").onclick=logout; $("#syncBtn").onclick=sync; $("#addOrderBtn").onclick=addOrder; $("#resetOrderBtn").onclick=()=>location.reload(); $("#sendSheetBtn").onclick=sendSheet;
+$("#saveTripBtn").onclick=saveTrip; $("#closeTripBtn").onclick=closeTrip; $("#clearSignBtn").onclick=clearSignature;
+$$(".nav-item").forEach(b=>b.onclick=()=>setView(b.dataset.view));
+$$(".tab-btn").forEach(b=>b.onclick=()=>{ state.paramTab=b.dataset.tab; $$(".tab-btn").forEach(x=>x.classList.toggle("active",x===b)); renderParams(); });
+$("#tripModalBackdrop").onclick=e=>{ if(e.target.id==='tripModalBackdrop') closeTrip(); };
+$("#signCanvas").addEventListener("mousedown",startDraw); $("#signCanvas").addEventListener("mousemove",moveDraw); window.addEventListener("mouseup",endDraw);
+$("#signCanvas").addEventListener("touchstart",startDraw,{passive:false}); $("#signCanvas").addEventListener("touchmove",moveDraw,{passive:false}); $("#signCanvas").addEventListener("touchend",endDraw);
+updatePin(); clearSignature(); renderAll();
 </script>
 </body>
 </html>
