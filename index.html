@@ -2,28 +2,29 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>FleetMarge - Suivi Transports & Marge</title>
+  <title>FleetMarge - Console Transports & Marge</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --bg: #0f172a;
-      --bg-soft: #111827;
-      --bg-elevated: #020617;
-      --accent: #22c55e;
-      --accent-soft: rgba(34, 197, 94, 0.1);
-      --accent-strong: #16a34a;
-      --danger: #ef4444;
-      --warning: #f97316;
-      --text-main: #f9fafb;
-      --text-soft: #9ca3af;
-      --border-subtle: #1f2937;
-      --card-radius: 14px;
-      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.7);
-      --shadow-subtle: 0 10px 30px rgba(15, 23, 42, 0.6);
-      --header-height: 64px;
-      --sidebar-width: 260px;
-      --transition-fast: 0.18s ease-out;
-      --transition-med: 0.24s ease-out;
+      --bg-page: #f3f4f6;
+      --bg-card: #ffffff;
+      --bg-soft: #f9fafb;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --accent-strong: #1d4ed8;
+      --danger: #dc2626;
+      --warning: #ea580c;
+      --text-main: #111827;
+      --text-soft: #6b7280;
+      --border-subtle: #e5e7eb;
+      --border-strong: #d1d5db;
+      --radius-card: 14px;
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.12);
+      --shadow-subtle: 0 4px 16px rgba(15, 23, 42, 0.06);
+      --header-height: 56px;
+      --sidebar-width: 250px;
+      --transition-fast: 0.16s ease-out;
+      --transition-med: 0.22s ease-out;
       --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
         "Inter", sans-serif;
     }
@@ -38,7 +39,7 @@
       padding: 0;
       height: 100%;
       font-family: var(--font-sans);
-      background: radial-gradient(circle at top left, #1e293b 0, #020617 45%);
+      background: var(--bg-page);
       color: var(--text-main);
       -webkit-font-smoothing: antialiased;
     }
@@ -67,13 +68,13 @@
       justify-content: center;
     }
 
-    @media (min-width: 1440px) {
+    @media (max-width: 640px) {
       .app-shell {
-        max-width: 1400px;
+        padding: 8px;
       }
     }
 
-    /* LOGIN LAYER */
+    /* LOGIN SIMPLE, CLAIR, MOBILE FIRST */
     .login-layer,
     .dashboard-layer {
       width: 100%;
@@ -85,267 +86,221 @@
     .dashboard-layer.hidden {
       opacity: 0;
       pointer-events: none;
-      transform: translateY(12px);
+      transform: translateY(6px);
     }
 
-    .login-wrapper {
-      background: radial-gradient(circle at top, #1f2937 0, #020617 55%);
-      border-radius: 22px;
-      padding: 28px 22px 24px;
-      box-shadow: var(--shadow-soft);
-      border: 1px solid rgba(148, 163, 184, 0.15);
+    .login-card {
       width: 100%;
-      max-width: 460px;
-      margin: 20px auto;
-      position: relative;
-      overflow: hidden;
+      max-width: 420px;
+      margin: 24px auto;
+      padding: 20px 18px 18px;
+      border-radius: 16px;
+      background: var(--bg-card);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border-subtle);
     }
 
-    .login-glow {
-      position: absolute;
-      inset: -20%;
-      background: radial-gradient(circle at top, rgba(34, 197, 94, 0.13), transparent 55%);
-      opacity: 0.7;
-      pointer-events: none;
+    .login-header {
+      margin-bottom: 16px;
     }
 
-    .login-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    .app-badge {
-      display: inline-flex;
+    .login-app-name {
+      display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 4px 10px 4px 4px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.3);
-      margin-bottom: 18px;
+      gap: 10px;
+      margin-bottom: 4px;
     }
 
-    .badge-dot {
-      width: 20px;
-      height: 20px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 30%, #bbf7d0 0, #22c55e 35%, #14532d 100%);
+    .login-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #eff6ff, #bfdbfe);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 12px rgba(34, 197, 94, 0.7);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--accent-strong);
     }
 
-    .badge-dot span {
-      width: 9px;
-      height: 9px;
-      border-radius: 999px;
-      background: #ecfdf5;
-    }
-
-    .badge-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-soft);
-    }
-
-    .login-header-title {
-      font-size: 22px;
+    .login-title {
+      font-size: 18px;
       font-weight: 600;
-      letter-spacing: -0.03em;
-      margin: 0 0 4px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
-    .login-header-sub {
-      margin: 0;
+    .login-subtitle {
       font-size: 13px;
       color: var(--text-soft);
     }
 
-    .login-header-sub span {
-      color: var(--accent);
+    .login-subtitle span {
+      color: var(--accent-strong);
       font-weight: 500;
     }
 
-    .pin-label {
-      margin: 24px 0 6px;
+    .login-form {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .field-label {
       font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: #6b7280;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      color: var(--text-soft);
+      margin-bottom: 4px;
     }
 
-    .pin-label span.dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 999px;
-      background: #4b5563;
+    .field-label span.required {
+      color: var(--danger);
+      margin-left: 4px;
     }
 
-    .pin-input-group {
-      display: flex;
-      align-items: center;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.95);
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      padding: 4px 4px 4px 14px;
-      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.9);
-      margin-bottom: 8px;
-    }
-
-    .pin-input-group:focus-within {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.8);
-    }
-
-    .pin-input-group input {
-      flex: 1;
-      border: none;
-      outline: none;
-      background: transparent;
-      color: var(--text-main);
+    .pin-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border-strong);
       font-size: 16px;
-      letter-spacing: 0.32em;
-      padding: 8px 10px 8px 2px;
+      letter-spacing: 0.3em;
       text-align: center;
+      font-variant-numeric: tabular-nums;
+      outline: none;
+      background: var(--bg-soft);
+      transition: border-color var(--transition-fast),
+        box-shadow var(--transition-fast), background var(--transition-fast);
     }
 
-    .pin-input-group input::placeholder {
-      color: #4b5563;
-      letter-spacing: 0.28em;
+    .pin-input::placeholder {
+      letter-spacing: 0.3em;
+      color: #d1d5db;
     }
 
-    .pin-helper {
+    .pin-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+      background: #ffffff;
+    }
+
+    .role-select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border-strong);
+      font-size: 13px;
+      outline: none;
+      background: var(--bg-soft);
+      color: var(--text-main);
+    }
+
+    .role-select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12);
+      background: #ffffff;
+    }
+
+    .login-demo {
+      font-size: 12px;
+      color: var(--text-soft);
+      background: var(--bg-soft);
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .login-demo-row {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      color: #6b7280;
-      margin-bottom: 18px;
-    }
-
-    .pin-demo {
-      font-variant-numeric: tabular-nums;
-      color: #9ca3af;
-    }
-
-    .chip-role-container {
-      display: flex;
       gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
     }
 
-    .chip-role {
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      padding: 3px 9px;
-      font-size: 11px;
-      color: #9ca3af;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      background: rgba(15, 23, 42, 0.9);
-    }
-
-    .chip-role strong {
-      color: var(--accent);
-      font-weight: 600;
+    .login-demo-row span.code {
       font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      color: var(--accent-strong);
+      background: var(--accent-soft);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 11px;
     }
 
     .login-actions {
+      margin-top: 8px;
       display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 4px;
+      flex-direction: column;
+      gap: 6px;
     }
 
     .btn-primary {
+      width: 100%;
       border-radius: 999px;
-      padding: 9px 18px;
+      padding: 10px 16px;
       border: none;
       cursor: pointer;
       font-size: 14px;
       font-weight: 500;
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: #022c22;
+      color: #ffffff;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      box-shadow: 0 12px 22px rgba(34, 197, 94, 0.35);
-      transition: transform var(--transition-fast), box-shadow var(--transition-fast),
-        opacity var(--transition-fast), background var(--transition-fast);
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+      transition: transform var(--transition-fast),
+        box-shadow var(--transition-fast), background var(--transition-fast),
+        opacity var(--transition-fast);
     }
 
     .btn-primary:hover {
       transform: translateY(-1px);
-      box-shadow: 0 16px 26px rgba(34, 197, 94, 0.4);
-      background: linear-gradient(135deg, #4ade80, var(--accent-strong));
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.35);
+      background: linear-gradient(135deg, #3b82f6, var(--accent-strong));
     }
 
     .btn-primary:active {
       transform: translateY(0);
-      box-shadow: 0 6px 14px rgba(34, 197, 94, 0.45);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
     }
 
     .btn-primary span.icon {
-      width: 16px;
-      height: 16px;
-      border-radius: 999px;
-      background: rgba(6, 95, 70, 0.2);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-    }
-
-    .login-meta {
-      margin-left: auto;
-      font-size: 11px;
-      color: var(--text-soft);
+      font-size: 15px;
     }
 
     .login-error {
-      margin-top: 10px;
+      margin-top: 4px;
+      min-height: 16px;
       font-size: 12px;
       color: var(--danger);
-      min-height: 16px;
     }
 
     .login-footer {
-      margin-top: 18px;
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text-soft);
       display: flex;
       justify-content: space-between;
-      font-size: 11px;
-      color: #6b7280;
+      gap: 8px;
     }
 
-    .login-footer strong {
-      color: #e5e7eb;
-      font-weight: 500;
+    @media (max-width: 480px) {
+      .login-card {
+        margin: 16px auto;
+        padding-inline: 14px;
+      }
+      .login-footer {
+        flex-direction: column;
+      }
     }
 
-    .badge-divider {
-      width: 1px;
-      height: 12px;
-      background: rgba(75, 85, 99, 0.7);
-      margin: 0 6px;
-    }
-
-    /* DASHBOARD LAYOUT */
+    /* DASHBOARD CLAIR, RESPONSIVE, MOBILE FIRST */
     .dashboard-wrapper {
-      background: rgba(15, 23, 42, 0.98);
-      border-radius: 22px;
-      border: 1px solid rgba(148, 163, 184, 0.25);
+      width: 100%;
+      background: var(--bg-card);
+      border-radius: 18px;
+      border: 1px solid var(--border-subtle);
       box-shadow: var(--shadow-soft);
       display: flex;
       overflow: hidden;
@@ -357,88 +312,76 @@
       .dashboard-wrapper {
         flex-direction: column;
         max-height: none;
+        border-radius: 14px;
       }
     }
 
     /* SIDEBAR */
     .sidebar {
       width: var(--sidebar-width);
-      background: radial-gradient(circle at top, #020617 0, #020617 40%, #020617 100%);
-      border-right: 1px solid rgba(31, 41, 55, 0.9);
-      padding: 18px 14px 14px;
+      background: #f9fafb;
+      border-right: 1px solid var(--border-subtle);
+      padding: 14px 12px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 14px;
     }
 
-    .app-title-row {
+    .sidebar-header {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 6px;
+      gap: 8px;
     }
 
-    .app-logo {
+    .sidebar-logo {
       width: 30px;
       height: 30px;
-      border-radius: 10px;
-      background: radial-gradient(circle at 30% 20%, #bbf7d0 0, #4ade80 26%, #14532d 90%);
+      border-radius: 8px;
+      background: linear-gradient(135deg, #eff6ff, #bfdbfe);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #022c22;
       font-weight: 700;
       font-size: 14px;
-      box-shadow: 0 0 12px rgba(34, 197, 94, 0.7);
+      color: var(--accent-strong);
     }
 
-    .app-title-main {
-      font-size: 17px;
+    .sidebar-title-main {
+      font-size: 15px;
       font-weight: 600;
-      letter-spacing: -0.03em;
-      display: flex;
-      align-items: baseline;
-      gap: 2px;
     }
 
-    .app-title-main span.sub {
-      font-size: 12px;
-      color: #9ca3af;
-      font-weight: 400;
-    }
-
-    .app-title-sub {
+    .sidebar-title-sub {
       font-size: 11px;
-      color: #6b7280;
+      color: var(--text-soft);
     }
 
     .role-pill {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 9px;
+      padding: 4px 8px;
       border-radius: 999px;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: #e5edff;
+      border: 1px solid #bfdbfe;
       font-size: 11px;
-      color: #9ca3af;
-      margin-bottom: 4px;
+      color: #1d4ed8;
     }
 
-    .role-dot {
+    .role-pill span.dot {
       width: 7px;
       height: 7px;
       border-radius: 999px;
       background: #22c55e;
-      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25);
     }
 
     .nav-section-title {
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: #6b7280;
-      margin: 10px 0 6px;
+      letter-spacing: 0.12em;
+      color: var(--text-soft);
+      margin-top: 6px;
+      margin-bottom: 4px;
     }
 
     .nav-list {
@@ -452,29 +395,29 @@
 
     .nav-item {
       border-radius: 10px;
-      padding: 8px 9px;
+      padding: 6px 8px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       cursor: pointer;
       font-size: 13px;
-      color: #e5e7eb;
+      color: #111827;
       border: 1px solid transparent;
       background: transparent;
-      transition: background var(--transition-fast), border-color var(--transition-fast),
-        transform var(--transition-fast);
+      transition: background var(--transition-fast),
+        border-color var(--transition-fast), transform var(--transition-fast);
     }
 
     .nav-item span.icon {
       width: 20px;
       height: 20px;
       border-radius: 999px;
-      background: rgba(31, 41, 55, 0.9);
+      background: #e5e7eb;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-size: 12px;
-      color: #9ca3af;
+      color: var(--text-soft);
     }
 
     .nav-item span.label {
@@ -483,36 +426,35 @@
 
     .nav-item span.badge {
       font-size: 11px;
-      color: #9ca3af;
+      color: var(--text-soft);
       padding: 2px 6px;
       border-radius: 999px;
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      background: rgba(17, 24, 39, 0.9);
-      font-variant-numeric: tabular-nums;
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
     }
 
     .nav-item.active {
-      background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(8, 47, 29, 0.9));
-      border-color: rgba(34, 197, 94, 0.5);
+      background: var(--accent-soft);
+      border-color: #bfdbfe;
       transform: translateY(-1px);
     }
 
     .nav-item.active span.icon {
-      background: rgba(22, 163, 74, 0.14);
-      color: #bbf7d0;
+      background: #1d4ed8;
+      color: #ffffff;
     }
 
-    .nav-item:hover:not(.active) {
-      background: rgba(15, 23, 42, 0.8);
-      border-color: rgba(55, 65, 81, 0.9);
+    .nav-item:hover:not(.active)) {
+      background: #f3f4f6;
+      border-color: var(--border-subtle);
     }
 
     .sidebar-footer {
       margin-top: auto;
-      padding-top: 10px;
-      border-top: 1px dashed rgba(31, 41, 55, 0.9);
+      padding-top: 8px;
+      border-top: 1px solid var(--border-subtle);
       font-size: 11px;
-      color: #6b7280;
+      color: var(--text-soft);
       display: flex;
       flex-direction: column;
       gap: 4px;
@@ -524,50 +466,83 @@
       gap: 6px;
       padding: 3px 8px;
       border-radius: 999px;
-      background: rgba(22, 101, 52, 0.45);
-      color: #bbf7d0;
+      background: #ecfdf3;
+      color: #166534;
       font-size: 10px;
-      border: 1px solid rgba(34, 197, 94, 0.7);
-      font-variant-numeric: tabular-nums;
+      border: 1px solid #bbf7d0;
     }
 
     .status-pill span.dot {
       width: 6px;
       height: 6px;
       border-radius: 999px;
-      background: #bbf7d0;
+      background: #22c55e;
     }
 
     .logout-link {
-      margin-top: 4px;
+      margin-top: 2px;
       cursor: pointer;
-      color: #9ca3af;
+      color: var(--text-soft);
       text-decoration: underline;
       text-underline-offset: 3px;
       align-self: flex-start;
     }
 
     .logout-link:hover {
-      color: #e5e7eb;
+      color: var(--accent-strong);
     }
 
-    /* MAIN AREA */
+    @media (max-width: 880px) {
+      .dashboard-wrapper {
+        border-radius: 12px;
+      }
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+        gap: 8px;
+      }
+      .sidebar-main {
+        flex: 1;
+      }
+      .nav-section-title {
+        display: none;
+      }
+      .nav-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .nav-item span.badge {
+        display: none;
+      }
+      .sidebar-footer {
+        border-top: none;
+        margin-top: 0;
+        padding-top: 0;
+        align-items: flex-end;
+      }
+    }
+
+    /* MAIN PANEL */
     .main-panel {
       flex: 1;
       display: flex;
       flex-direction: column;
       max-height: 90vh;
+      background: var(--bg-soft);
     }
 
     .main-header {
       height: var(--header-height);
-      padding: 10px 18px 8px;
-      border-bottom: 1px solid rgba(31, 41, 55, 0.85);
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      background: radial-gradient(circle at top right, #111827 0, #020617 60%);
+      background: #ffffff;
     }
 
     .main-header-left {
@@ -576,73 +551,66 @@
       gap: 2px;
     }
 
-    .main-title-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
     .main-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 500;
-      letter-spacing: -0.02em;
     }
 
     .main-subtitle {
       font-size: 12px;
-      color: #9ca3af;
+      color: var(--text-soft);
     }
 
     .main-header-right {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       font-size: 11px;
-      color: #9ca3af;
+      color: var(--text-soft);
     }
 
     .pill-month {
       padding: 4px 10px;
       border-radius: 999px;
-      background: rgba(17, 24, 39, 0.94);
-      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: #f9fafb;
+      border: 1px solid var(--border-subtle);
       display: inline-flex;
       align-items: center;
       gap: 6px;
       font-variant-numeric: tabular-nums;
+      cursor: pointer;
     }
 
     .pill-month span.current-dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background: #f97316;
-      box-shadow: 0 0 0 4px rgba(248, 171, 72, 0.3);
+      background: var(--warning);
     }
 
     .pill-user-role {
-      padding: 4px 9px;
+      padding: 4px 8px;
       border-radius: 999px;
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      background: rgba(17, 24, 39, 0.96);
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
 
     .pill-user-role strong {
-      color: #e5e7eb;
+      color: var(--text-main);
       font-weight: 500;
     }
 
     .pill-user-role span {
-      color: #9ca3af;
+      color: var(--text-soft);
     }
 
     .pill-user-role button {
       border: none;
-      background: rgba(31, 41, 55, 0.9);
-      color: #9ca3af;
+      background: #e5e7eb;
+      color: var(--text-soft);
       width: 20px;
       height: 20px;
       border-radius: 999px;
@@ -654,28 +622,47 @@
     }
 
     .pill-user-role button:hover {
-      background: rgba(55, 65, 81, 0.9);
-      color: #e5e7eb;
+      background: #d1d5db;
+      color: var(--text-main);
+    }
+
+    @media (max-width: 640px) {
+      .main-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        padding-inline: 10px;
+      }
+      .main-header-right {
+        align-self: stretch;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
     }
 
     .main-content {
       flex: 1;
-      padding: 12px 14px 16px;
+      padding: 10px 12px 14px;
       overflow: auto;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      background: radial-gradient(circle at top left, #020617 0, #020617 55%, #020617 100%);
-    }
-
-    /* TOP KPIs */
-    .kpi-row {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 10px;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 640px) {
+      .main-content {
+        padding-inline: 8px;
+      }
+    }
+
+    /* KPIs */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    @media (max-width: 960px) {
       .kpi-row {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -688,31 +675,26 @@
     }
 
     .kpi-card {
-      border-radius: var(--card-radius);
-      padding: 10px 10px 9px;
-      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.9) 0, #020617 60%);
-      border: 1px solid rgba(31, 41, 55, 0.9);
+      border-radius: 12px;
+      padding: 8px 10px;
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
       box-shadow: var(--shadow-subtle);
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      position: relative;
-      overflow: hidden;
+      gap: 4px;
     }
 
     .kpi-card.highlight {
-      border-color: rgba(34, 197, 94, 0.7);
-      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4), var(--shadow-subtle);
+      border-color: var(--accent);
     }
 
-    .kpi-meta {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: #6b7280;
+    .kpi-label-row {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-soft);
     }
 
     .kpi-value-row {
@@ -723,100 +705,57 @@
     }
 
     .kpi-value {
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 600;
-      letter-spacing: -0.04em;
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
+      letter-spacing: -0.03em;
     }
 
     .kpi-value span.unit {
       font-size: 12px;
-      color: #9ca3af;
-      letter-spacing: 0;
+      color: var(--text-soft);
+      margin-left: 4px;
     }
 
     .kpi-trend {
       font-size: 11px;
-      color: #22c55e;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 8px;
+      color: #16a34a;
+      background: #dcfce7;
       border-radius: 999px;
-      background: rgba(21, 128, 61, 0.15);
-      border: 1px solid rgba(34, 197, 94, 0.4);
+      padding: 2px 8px;
+      border: 1px solid #bbf7d0;
     }
 
-    .kpi-trend.danger {
-      color: #f97316;
-      background: rgba(146, 64, 14, 0.15);
-      border-color: rgba(248, 171, 72, 0.4);
+    .kpi-trend.warn {
+      color: var(--warning);
+      background: #ffedd5;
+      border-color: #fed7aa;
     }
 
     .kpi-footer {
       font-size: 11px;
-      color: #6b7280;
+      color: var(--text-soft);
       display: flex;
       justify-content: space-between;
-      align-items: center;
     }
 
-    .kpi-dot-strip {
-      display: flex;
-      gap: 3px;
-    }
-
-    .kpi-dot {
-      width: 4px;
-      height: 10px;
-      border-radius: 999px;
-      background: linear-gradient(to top, rgba(55, 65, 81, 0.9), rgba(17, 24, 39, 0.9));
-    }
-
-    .kpi-dot.accent {
-      background: linear-gradient(to top, rgba(34, 197, 94, 0.9), rgba(21, 128, 61, 0.9));
-    }
-
-    .month-chip {
+    .chip-month {
       font-size: 11px;
-      padding: 3px 6px;
+      padding: 2px 6px;
       border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      color: #9ca3af;
-      font-variant-numeric: tabular-nums;
+      background: #eef2ff;
+      color: #4338ca;
     }
 
-    .month-chip.current {
-      border-color: rgba(248, 171, 72, 0.9);
-      color: #fed7aa;
-      background: rgba(146, 64, 14, 0.25);
-    }
-
-    /* GRID SECTIONS */
-    .grid-main {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 12px;
-    }
-
-    @media (max-width: 1024px) {
-      .grid-main {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
+    /* CARDS GÉNÉRIQUES */
     .card {
-      border-radius: var(--card-radius);
-      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.98) 0, #020617 68%);
-      border: 1px solid rgba(31, 41, 55, 0.9);
+      border-radius: var(--radius-card);
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
       box-shadow: var(--shadow-subtle);
-      padding: 10px 10px 10px;
+      padding: 8px 10px 10px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
       min-height: 0;
     }
 
@@ -830,24 +769,11 @@
     .card-title {
       font-size: 14px;
       font-weight: 500;
-      letter-spacing: -0.02em;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .card-title span.tag {
-      font-size: 11px;
-      padding: 2px 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      color: #9ca3af;
-      background: rgba(15, 23, 42, 0.9);
     }
 
     .card-subtitle {
       font-size: 12px;
-      color: #6b7280;
+      color: var(--text-soft);
     }
 
     .card-header-right {
@@ -856,62 +782,57 @@
       gap: 6px;
     }
 
-    .segmented-switch {
-      display: inline-flex;
-      border-radius: 999px;
-      background: rgba(17, 24, 39, 0.96);
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      padding: 2px;
-      gap: 2px;
-    }
-
-    .segmented-switch button {
-      border: none;
-      background: transparent;
-      color: #9ca3af;
-      padding: 3px 9px;
-      border-radius: 999px;
+    .tag {
       font-size: 11px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .segmented-switch button.active {
-      background: rgba(22, 163, 74, 0.16);
-      color: #bbf7d0;
-    }
-
-    .btn-ghost {
+      padding: 2px 6px;
       border-radius: 999px;
-      padding: 4px 8px;
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      background: rgba(15, 23, 42, 0.9);
-      color: #e5e7eb;
-      font-size: 11px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-soft);
+      color: var(--text-soft);
+    }
+
+    .btn-secondary {
+      border-radius: 999px;
+      padding: 5px 10px;
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
+      color: var(--text-main);
+      font-size: 12px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
 
-    .btn-ghost span.icon {
-      font-size: 12px;
-      color: #9ca3af;
+    .btn-secondary span.icon {
+      font-size: 13px;
     }
 
-    .btn-ghost:hover {
-      background: rgba(31, 41, 55, 0.9);
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+
+    /* GRIDS */
+    .grid-main {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-main {
+        grid-template-columns: minmax(0, 1fr);
+      }
     }
 
     /* TABLES */
     .table-wrapper {
+      margin-top: 6px;
       border-radius: 10px;
-      background: rgba(15, 23, 42, 0.96);
-      border: 1px solid rgba(31, 41, 55, 0.9);
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
       overflow: auto;
-      max-height: 270px;
+      max-height: 260px;
     }
 
     .table {
@@ -922,7 +843,7 @@
     }
 
     .table thead {
-      background: rgba(15, 23, 42, 0.98);
+      background: #f9fafb;
       position: sticky;
       top: 0;
       z-index: 1;
@@ -930,8 +851,8 @@
 
     .table th,
     .table td {
-      padding: 8px 10px;
-      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+      padding: 7px 8px;
+      border-bottom: 1px solid var(--border-subtle);
       text-align: left;
       white-space: nowrap;
     }
@@ -940,18 +861,32 @@
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      color: #6b7280;
+      color: var(--text-soft);
     }
 
     .table tbody tr:hover {
-      background: rgba(15, 23, 42, 0.9);
+      background: #f9fafb;
+    }
+
+    .pill-small {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
+      color: var(--text-soft);
+    }
+
+    .pill-small.accent {
+      border-color: var(--accent);
+      color: var(--accent-strong);
+      background: var(--accent-soft);
     }
 
     .badge-status {
       padding: 2px 8px;
       border-radius: 999px;
       font-size: 11px;
-      font-variant-numeric: tabular-nums;
       display: inline-flex;
       align-items: center;
       gap: 5px;
@@ -959,57 +894,42 @@
 
     .badge-status.dot::before {
       content: "";
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 999px;
       background: currentColor;
     }
 
     .badge-status.en-cours {
-      color: #facc15;
-      background: rgba(234, 179, 8, 0.15);
-      border: 1px solid rgba(234, 179, 8, 0.5);
+      color: #a16207;
+      background: #fef9c3;
+      border: 1px solid #facc15;
     }
 
     .badge-status.a-facturer {
-      color: #22c55e;
-      background: rgba(21, 128, 61, 0.18);
-      border: 1px solid rgba(34, 197, 94, 0.7);
+      color: #166534;
+      background: #dcfce7;
+      border: 1px solid #22c55e;
     }
 
     .badge-status.terminee {
-      color: #6ee7b7;
-      background: rgba(6, 95, 70, 0.3);
-      border: 1px solid rgba(45, 212, 191, 0.6);
+      color: #15803d;
+      background: #bbf7d0;
+      border: 1px solid #22c55e;
     }
 
     .badge-status.brouillon {
-      color: #9ca3af;
-      background: rgba(17, 24, 39, 0.9);
-      border: 1px solid rgba(55, 65, 81, 0.8);
+      color: var(--text-soft);
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
     }
 
-    .pill-small {
-      font-size: 11px;
-      padding: 2px 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      color: #9ca3af;
-      background: rgba(15, 23, 42, 0.9);
-    }
-
-    .pill-small.accent {
-      border-color: rgba(34, 197, 94, 0.7);
-      color: #bbf7d0;
-      background: rgba(22, 101, 52, 0.4);
-    }
-
-    /* FORMS */
+    /* FORM FIELDS */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px 10px;
-      margin-top: 6px;
+      margin-top: 4px;
     }
 
     @media (max-width: 720px) {
@@ -1021,46 +941,46 @@
     .form-field {
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 2px;
     }
 
     .form-label {
       font-size: 11px;
-      color: #9ca3af;
+      color: var(--text-soft);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .form-label span.required {
-      color: #f97316;
+      color: var(--danger);
     }
 
     .input,
     .select,
     .textarea {
       border-radius: 9px;
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-soft);
       padding: 6px 8px;
-      color: #e5e7eb;
+      color: var(--text-main);
       font-size: 12px;
       outline: none;
-      transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
-        background var(--transition-fast);
+      transition: border-color var(--transition-fast),
+        box-shadow var(--transition-fast), background var(--transition-fast);
     }
 
     .input::placeholder,
     .textarea::placeholder {
-      color: #4b5563;
+      color: #9ca3af;
     }
 
     .input:focus,
     .select:focus,
     .textarea:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.5);
-      background: rgba(15, 23, 42, 0.98);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+      background: #ffffff;
     }
 
     .textarea {
@@ -1069,118 +989,47 @@
     }
 
     .inline-actions {
-      margin-top: 8px;
+      margin-top: 6px;
       display: flex;
       justify-content: flex-end;
       gap: 6px;
     }
 
-    .btn-secondary {
-      border-radius: 999px;
-      padding: 5px 10px;
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      background: rgba(15, 23, 42, 0.96);
-      color: #e5e7eb;
-      font-size: 12px;
-      cursor: pointer;
+    /* SEGMENTED SWITCH */
+    .segmented-switch {
       display: inline-flex;
-      align-items: center;
-      gap: 6px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      border: 1px solid var(--border-subtle);
+      padding: 2px;
+      gap: 2px;
     }
 
-    .btn-secondary:hover {
-      background: rgba(31, 41, 55, 0.9);
-    }
-
-    .btn-secondary span.icon {
-      color: #9ca3af;
-      font-size: 12px;
-    }
-
-    /* MARCHE TABLE */
-    .margin-table-wrapper {
-      overflow: auto;
-      border-radius: 10px;
-      background: rgba(15, 23, 42, 0.96);
-      border: 1px solid rgba(31, 41, 55, 0.9);
-      max-height: 280px;
-    }
-
-    .margin-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-      min-width: 640px;
-    }
-
-    .margin-table thead {
-      background: rgba(15, 23, 42, 0.98);
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-
-    .margin-table th,
-    .margin-table td {
-      padding: 6px 8px;
-      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-
-    .margin-table th:first-child,
-    .margin-table td:first-child {
-      text-align: left;
-    }
-
-    .margin-table th {
+    .segmented-switch button {
+      border: none;
+      background: transparent;
+      color: var(--text-soft);
+      padding: 3px 8px;
+      border-radius: 999px;
       font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: #6b7280;
+      cursor: pointer;
     }
 
-    .margin-table tbody tr:hover {
-      background: rgba(15, 23, 42, 0.9);
-    }
-
-    .margin-header-month {
-      position: relative;
-      padding-right: 12px;
-    }
-
-    .margin-header-month.current {
+    .segmented-switch button.active {
+      background: #ffffff;
+      color: var(--accent-strong);
       border-radius: 999px;
-      background: rgba(248, 171, 72, 0.12);
-      color: #fed7aa;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.1);
     }
 
-    .margin-header-month.current::after {
-      content: "";
-      position: absolute;
-      inset: 1px;
-      border-radius: 999px;
-      border: 1px solid rgba(248, 171, 72, 0.8);
-      pointer-events: none;
-    }
-
-    .margin-highlight {
-      color: #bbf7d0;
-    }
-
-    .margin-negative {
-      color: #fb7185;
-    }
-
-    /* ROLE-SPECIFIC SECTIONS */
+    /* ROLE NOTE */
     .role-note {
       font-size: 11px;
-      color: #9ca3af;
+      color: var(--text-soft);
       border-radius: 8px;
       padding: 6px 8px;
-      background: rgba(15, 23, 42, 0.96);
-      border: 1px dashed rgba(55, 65, 81, 0.9);
+      background: #eff6ff;
+      border: 1px solid #dbeafe;
       display: flex;
       justify-content: space-between;
       gap: 10px;
@@ -1188,24 +1037,23 @@
     }
 
     .role-note strong {
-      color: #e5e7eb;
-      font-weight: 500;
+      color: var(--text-main);
     }
 
     .role-note span.tag {
       padding: 2px 6px;
       border-radius: 999px;
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      background: rgba(17, 24, 39, 0.9);
+      border: 1px solid #bfdbfe;
+      background: #ffffff;
       font-size: 10px;
-      color: #9ca3af;
+      color: #1d4ed8;
     }
 
-    /* CHAUFFEUR PANELS */
+    /* DRIVER LAYOUT */
     .driver-layout {
       display: grid;
       grid-template-columns: 1.2fr 1fr;
-      gap: 12px;
+      gap: 10px;
     }
 
     @media (max-width: 1024px) {
@@ -1215,26 +1063,25 @@
     }
 
     .driver-transport-list {
-      max-height: 280px;
+      max-height: 260px;
       overflow: auto;
       border-radius: 10px;
-      border: 1px solid rgba(31, 41, 55, 0.9);
-      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid var(--border-subtle);
+      background: #ffffff;
     }
 
     .driver-transport-item {
-      padding: 8px 9px;
-      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+      padding: 8px 8px;
+      border-bottom: 1px solid var(--border-subtle);
       display: flex;
       flex-direction: column;
       gap: 4px;
       cursor: pointer;
-      transition: background var(--transition-fast), border-color var(--transition-fast);
+      transition: background var(--transition-fast);
     }
 
     .driver-transport-item:hover {
-      background: rgba(31, 41, 55, 0.9);
-      border-color: rgba(55, 65, 81, 0.9);
+      background: #f3f4f6;
     }
 
     .driver-transport-item-header {
@@ -1247,35 +1094,35 @@
       display: flex;
       justify-content: space-between;
       font-size: 11px;
-      color: #9ca3af;
+      color: var(--text-soft);
     }
 
     .driver-daily-form {
       border-radius: 10px;
-      border: 1px solid rgba(31, 41, 55, 0.9);
-      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid var(--border-subtle);
+      background: #ffffff;
       padding: 8px;
     }
 
-    /* POPUP MODAL */
+    /* MODAL TRANSPORT */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(15, 23, 42, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 50;
+      z-index: 40;
     }
 
     .modal {
       width: 100%;
-      max-width: 480px;
-      background: radial-gradient(circle at top, #020617 0, #020617 55%, #020617 100%);
-      border-radius: 18px;
-      border: 1px solid rgba(55, 65, 81, 0.9);
+      max-width: 420px;
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid var(--border-subtle);
       box-shadow: var(--shadow-soft);
-      padding: 14px 14px 12px;
+      padding: 10px 10px 10px;
     }
 
     .modal-header {
@@ -1288,14 +1135,13 @@
     .modal-title {
       font-size: 14px;
       font-weight: 500;
-      letter-spacing: -0.02em;
     }
 
-    .modal-header button {
+    .modal-close-btn {
       border-radius: 999px;
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      background: rgba(15, 23, 42, 0.96);
-      color: #9ca3af;
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
+      color: var(--text-soft);
       width: 22px;
       height: 22px;
       cursor: pointer;
@@ -1303,7 +1149,7 @@
     }
 
     .modal-body {
-      margin-top: 6px;
+      margin-top: 4px;
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -1312,110 +1158,111 @@
     .signature-box {
       margin-top: 4px;
       border-radius: 10px;
-      border: 1px dashed rgba(55, 65, 81, 0.9);
-      background: rgba(15, 23, 42, 0.96);
+      border: 1px dashed var(--border-subtle);
+      background: #f9fafb;
       padding: 8px;
       font-size: 11px;
-      color: #9ca3af;
+      color: var(--text-soft);
       text-align: center;
       cursor: crosshair;
     }
 
     .signature-box span {
-      color: #e5e7eb;
+      color: var(--text-main);
     }
 
     .signature-placeholder {
-      margin-top: 3px;
+      margin-top: 4px;
       height: 34px;
       border-radius: 8px;
-      background: radial-gradient(circle at 20% 0, rgba(148, 163, 184, 0.16), transparent 60%);
-      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: #e5e7eb;
     }
 
     .modal-footer {
-      margin-top: 10px;
+      margin-top: 8px;
       display: flex;
       justify-content: flex-end;
-      gap: 8px;
+      gap: 6px;
     }
 
-    /* RESPONSIVE */
-    @media (max-width: 880px) {
-      .sidebar {
-        flex-direction: row;
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid rgba(31, 41, 55, 0.9);
-        padding: 10px;
-        gap: 10px;
-      }
+    /* TABLE MARGES */
+    .margin-table-wrapper {
+      overflow: auto;
+      border-radius: 10px;
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      max-height: 260px;
+    }
 
-      .sidebar-main {
-        flex: 1;
-      }
+    .margin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      min-width: 640px;
+    }
 
-      .sidebar-footer {
-        border-top: none;
-        margin-top: 0;
-        padding-top: 0;
-        align-items: flex-end;
-      }
+    .margin-table thead {
+      background: #f9fafb;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
 
-      .dashboard-wrapper {
-        max-height: none;
-      }
+    .margin-table th,
+    .margin-table td {
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      text-align: right;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
 
-      .main-header {
-        padding-inline: 10px;
-      }
+    .margin-table th:first-child,
+    .margin-table td:first-child {
+      text-align: left;
+    }
 
-      .app-title-sub {
-        display: none;
-      }
+    .margin-table th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-soft);
+    }
 
-      .main-header-right {
-        flex-wrap: wrap;
-        justify-content: flex-end;
-      }
+    .margin-table tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    .margin-header-month {
+      position: relative;
+      display: inline-block;
+      padding-inline: 10px;
+    }
+
+    .margin-header-month.current {
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .margin-header-month.current::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      border: 1px solid #93c5fd;
+    }
+
+    .margin-highlight {
+      color: #166534;
+      font-weight: 500;
+    }
+
+    .margin-negative {
+      color: #b91c1c;
     }
 
     @media (max-width: 640px) {
-      .app-shell {
-        padding: 10px;
-      }
-
-      .login-wrapper {
-        margin: 8px auto;
-        padding-inline: 18px;
-      }
-
-      .main-content {
-        padding-inline: 10px;
-      }
-
-      .dashboard-wrapper {
-        border-radius: 16px;
-      }
-
-      .nav-section-title {
-        display: none;
-      }
-
-      .nav-list {
-        flex-direction: row;
-        flex-wrap: wrap;
-      }
-
-      .nav-item {
-        padding-inline: 7px;
-        font-size: 12px;
-      }
-
-      .nav-item span.badge {
-        display: none;
-      }
-
       .table,
       .margin-table {
         font-size: 11px;
@@ -1426,28 +1273,26 @@
 <body>
   <div id="app-root">
     <div class="app-shell">
-      <!-- LOGIN LAYER -->
+      <!-- LOGIN SIMPLE -->
       <div class="login-layer" id="loginLayer">
-        <div class="login-wrapper">
-          <div class="login-glow"></div>
-          <div class="login-inner">
-            <div class="app-badge">
-              <div class="badge-dot"><span></span></div>
-              <div class="badge-label">Console flotte & marge temps réel</div>
+        <div class="login-card">
+          <div class="login-header">
+            <div class="login-app-name">
+              <div class="login-logo">FM</div>
+              <div>
+                <div class="login-title">FleetMarge</div>
+                <div class="login-subtitle">
+                  Console <span>transports & marge</span> connectée à Google Sheets &amp; Make.
+                </div>
+              </div>
             </div>
-            <h1 class="login-header-title">
-              FleetMarge
-              <span style="font-size:12px;color:#9ca3af;font-weight:400;">Transports & Matériaux</span>
-            </h1>
-            <p class="login-header-sub">
-              Suivez vos <span>commandes, coûts véhicules et marges</span> dans une seule interface connectée à Google Sheets &amp; Make.
-            </p>
+          </div>
 
-            <div class="pin-label">
-              <span class="dot"></span>
-              Code PIN 6 chiffres
-            </div>
-            <div class="pin-input-group">
+          <div class="login-form">
+            <div>
+              <div class="field-label">
+                Code PIN (6 chiffres)<span class="required">*</span>
+              </div>
               <input
                 id="pinInput"
                 type="password"
@@ -1455,106 +1300,96 @@
                 inputmode="numeric"
                 autocomplete="one-time-code"
                 placeholder="••••••"
+                class="pin-input"
               />
-              <button class="btn-primary" id="btnLogin">
-                <span class="icon">↳</span>
-                Accéder au tableau de bord
-              </button>
-            </div>
-            <div class="pin-helper">
-              <div class="pin-demo">
-                Démo gérant : <strong>123456</strong> &nbsp;|&nbsp;
-                Démo chauffeur : <strong>654321</strong>
-              </div>
             </div>
 
-            <div class="chip-role-container">
-              <div class="chip-role">
-                Gérant
-                <span>•</span>
-                PIN <strong>123456</strong>
+            <div>
+              <div class="field-label">
+                Profil<span class="required">*</span>
               </div>
-              <div class="chip-role">
-                Chauffeur
-                <span>•</span>
-                PIN <strong>654321</strong>
+              <select id="roleSelect" class="role-select">
+                <option value="manager">Gérant flotte</option>
+                <option value="driver">Chauffeur</option>
+              </select>
+            </div>
+
+            <div class="login-demo">
+              <div class="login-demo-row">
+                <span>Démo gérant</span>
+                <span class="code">123456</span>
+              </div>
+              <div class="login-demo-row">
+                <span>Démo chauffeur</span>
+                <span class="code">654321</span>
               </div>
             </div>
 
             <div class="login-actions">
-              <div class="login-meta">
-                Les données affichées sont des <strong>données de test</strong> prêtes pour Google Sheets.
-              </div>
+              <button class="btn-primary" id="btnLogin">
+                <span class="icon">→</span>
+                Accéder au tableau de bord
+              </button>
+              <div class="login-error" id="loginError"></div>
             </div>
-            <div class="login-error" id="loginError"></div>
 
             <div class="login-footer">
-              <div>
-                Profil gérant : <strong>commandes, coûts, marge</strong>
-              </div>
-              <div>
-                Profil chauffeur : <strong>tournées & fiche carburant</strong>
-              </div>
+              <span>Gérant : commandes, coûts, marge.</span>
+              <span>Chauffeur : tournées, tonnage, carburant.</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- DASHBOARD LAYER -->
+      <!-- DASHBOARD -->
       <div class="dashboard-layer hidden" id="dashboardLayer">
         <div class="dashboard-wrapper">
           <!-- SIDEBAR -->
           <aside class="sidebar">
             <div class="sidebar-main">
-              <div class="app-title-row">
-                <div class="app-logo">FM</div>
+              <div class="sidebar-header">
+                <div class="sidebar-logo">FM</div>
                 <div>
-                  <div class="app-title-main">
-                    FleetMarge
-                    <span class="sub">Console</span>
-                  </div>
-                  <div class="app-title-sub">Camions • Matériaux • Marge brute</div>
+                  <div class="sidebar-title-main">FleetMarge</div>
+                  <div class="sidebar-title-sub">Transports & matériaux</div>
                 </div>
               </div>
-              <div class="role-pill" id="sidebarRolePill">
-                <span class="role-dot"></span>
+              <div class="role-pill">
+                <span class="dot"></span>
                 <span id="roleLabel">Gérant flotte</span>
               </div>
 
-              <div class="nav-section">
-                <div class="nav-section-title">Navigation</div>
-                <ul class="nav-list" id="navListst">
-                  >
-                    <span class="icon">📊</span>
-                    <span class="label">Tableau de bord</span>
-                    <span class="badge" id="badgeActiveOrders">3 en cours</span>
-                  </l/li>
-                  >
-                    <span class="icon">⚙️</span>
-                    <span class="label">Paramétrages</span>
-                    <span class="badge">Sheets</span>
-                  </l/li>
-                  >
-                    <span class="icon">🚚</span>
-                    <span class="label">Vue chauffeur</span>
-                    <span class="badge" id="badgeDriverTrips">5 trajets</span>
-                  </l/li>
-                  >
-                    <span class="icon">€</span>
-                    <span class="label">Marge mensuelle</span>
-                    <span class="badge">12 mois</span>
-                  </li>
-                </ul>
-              </div>
+              <div class="nav-section-title">Navigation</div>
+              <ul class="nav-list" id="navListst">
+                >
+                  <span class="icon">📊</span>
+                  <span class="label">Tableau de bord</span>
+                  <span class="badge" id="badgeActiveOrders">3 en cours</span>
+                </l/li>
+                >
+                  <span class="icon">⚙️</span>
+                  <span class="label">Paramétrages</span>
+                  <span class="badge">Sheets</span>
+                </l/li>
+                >
+                  <span class="icon">🚚</span>
+                  <span class="label">Vue chauffeur</span>
+                  <span class="badge" id="badgeDriverTrips">5 trajets</span>
+                </l/li>
+                >
+                  <span class="icon">€</span>
+                  <span class="label">Marge mensuelle</span>
+                  <span class="badge">12 mois</span>
+                </li>
+              </ul>
             </div>
-
             <div class="sidebar-footer">
               <div class="status-pill">
                 <span class="dot"></span>
                 Sheets &amp; Make prêts
               </div>
               <div>Chaque tableau ⇄ une feuille dédiée.</div>
-              <span class="logout-link" id="btnLogout">Changer d'utilisateur</span>
+              <span class="logout-link" id="btnLogout">Déconnexion</span>
             </div>
           </aside>
 
@@ -1562,68 +1397,58 @@
           <main class="main-panel">
             <header class="main-header">
               <div class="main-header-left">
-                <div class="main-title-row">
-                  <div class="main-title" id="mainTitle">Vue gérant – Suivi global flotte</div>
+                <div class="main-title" id="mainTitle">
+                  Vue gérant – Suivi global flotte
                 </div>
                 <div class="main-subtitle" id="mainSubtitle">
-                  Données synchronisées avec Google Sheets (commandes du jour, coûts véhicules, carburant, marge brute).
+                  Commandes, transports, coûts véhicules et marge brute à partir de vos Google Sheets.
                 </div>
               </div>
               <div class="main-header-right">
                 <div class="pill-month" id="pillMonth">
                   <span class="current-dot"></span>
-                  <span id="currentMonthLabel">Mai</span> <span id="currentYearLabel">2026</span>
+                  <span id="currentMonthLabel">Mai</span>
+                  <span id="currentYearLabel">2026</span>
                 </div>
                 <div class="pill-user-role">
                   <strong id="userLabelShort">Gérant</strong>
-                  <span id="userDescription">Code PIN 123456</span>
+                  <span id="userDescription">PIN 123456</span>
                   <button id="switchRoleBtn">⇄</button>
                 </div>
               </div>
             </header>
 
             <section class="main-content">
-              <!-- KPIs TOP -->
-              <div class="kpi-row" id="kpiRow">
-                <!-- Filled by JS -->
-              </div>
+              <!-- KPIs -->
+              <div class="kpi-row" id="kpiRow"></div>
 
               <!-- MANAGER DASHBOARD -->
               <section id="view-manager-dashboard" class="view-section">
                 <div class="grid-main">
-                  <!-- Commandes + tableau -->
+                  <!-- Commandes -->
                   <div class="card">
                     <div class="card-header">
                       <div>
-                        <div class="card-title">
-                          Commandes &amp; suivi transports
-                          <span class="tag">Feuille : Commandes</span>
-                        </div>
+                        <div class="card-title">Commandes & suivi transports</div>
                         <div class="card-subtitle">
-                          Ajoutez une commande, suivez le nombre de transports effectués et marquez <strong>A facturer</strong> dès que tout est livré.
+                          Ajoutez une commande, suivez les transports et marquez <strong>A facturer</strong> dès que tout est livré.
                         </div>
                       </div>
                       <div class="card-header-right">
-                        <button class="btn-ghost" id="btnDemoCreateOrder">
-                          <span class="icon">＋</span> Simuler une commande
-                        </button>
+                        <span class="tag">Feuille : Commandes</span>
                       </div>
                     </div>
 
                     <div class="form-grid">
                       <div class="form-field">
                         abel class="form-label">
-                          Client
-                          <span class="required">*</span>
+                          Client <span class="required">*</span>
                         </label>
-                        <select class="select" id="orderClient">
-                          <!-- Filled by JS -->
-                        </select>
+                        <select class="select" id="orderClient"></select>
                       </div>
                       <div class="form-field">
                         abel class="form-label">
-                          Adresse de livraison
-                          <span class="required">*</span>
+                          Adresse de livraison <span class="required">*</span>
                         </label>
                         <input
                           class="input"
@@ -1633,15 +1458,13 @@
                       </div>
                       <div class="form-field">
                         abel class="form-label">
-                          Date du chantier
-                          <span class="required">*</span>
+                          Date du chantier <span class="required">*</span>
                         </label>
                         <input class="input" id="orderDate" type="date" />
                       </div>
                       <div class="form-field">
                         abel class="form-label">
-                          Nb transports estimés
-                          <span class="required">*</span>
+                          Nb transports estimés <span class="required">*</span>
                         </label>
                         <input
                           class="input"
@@ -1654,15 +1477,11 @@
                       </div>
                       <div class="form-field">
                         abel class="form-label">Camion affecté</label>
-                        <select class="select" id="orderTruck">
-                          <!-- Filled by JS -->
-                        </select>
+                        <select class="select" id="orderTruck"></select>
                       </div>
                       <div class="form-field">
                         abel class="form-label">Chauffeur</label>
-                        <select class="select" id="orderDriver">
-                          <!-- Filled by JS -->
-                        </select>
+                        <select class="select" id="orderDriver"></select>
                       </div>
                       <div class="form-field">
                         abel class="form-label">Mode de facturation</label>
@@ -1673,12 +1492,13 @@
                       </div>
                       <div class="form-field" id="orderMaterialField">
                         abel class="form-label">Matériau</label>
-                        <select class="select" id="orderMaterial">
-                          <!-- Filled by JS -->
-                        </select>
+                        <select class="select" id="orderMaterial"></select>
                       </div>
                     </div>
                     <div class="inline-actions">
+                      <button class="btn-secondary" id="btnDemoCreateOrder">
+                        <span class="icon">★</span> Pré-remplir (démo)
+                      </button>
                       <button class="btn-secondary" id="btnResetOrder">
                         <span class="icon">↺</span> Réinitialiser
                       </button>
@@ -1687,7 +1507,7 @@
                       </button>
                     </div>
 
-                    <div class="table-wrapper" style="margin-top:8px;">
+                    <div class="table-wrapper">
                       <table class="table" id="ordersTable">
                         <thead>
                           <tr>
@@ -1699,23 +1519,18 @@
                             <th>A facturer</th>
                           </tr>
                         </thead>
-                        <tbody>
-                          <!-- Filled by JS -->
-                        </tbody>
+                        <tbody></tbody>
                       </table>
                     </div>
                   </div>
 
-                  <!-- Config rapide + frais camions -->
+                  <!-- Paramétrages rapides -->
                   <div class="card">
                     <div class="card-header">
                       <div>
-                        <div class="card-title">
-                          Paramétrages rapides
-                          <span class="tag">Feuilles : Chauffeurs, Camions, Matériaux, Tarifs</span>
-                        </div>
+                        <div class="card-title">Paramétrages rapides</div>
                         <div class="card-subtitle">
-                          Ajoutez, modifiez ou supprimez les données de base depuis l’interface.
+                          Ajoutez, modifiez ou supprimez chauffeurs, camions et matériaux.
                         </div>
                       </div>
                       <div class="card-header-right">
@@ -1726,19 +1541,16 @@
                         </div>
                       </div>
                     </div>
-
-                    <div id="configFormsContainer">
-                      <!-- Filled by JS -->
-                    </div>
+                    <div id="configFormsContainer"></div>
                   </div>
                 </div>
               </section>
 
-              <!-- PARAMÉTRAGES VUE ÉLARGIE -->
+              <!-- PARAMÉTRAGES COMPLETS -->
               <section id="view-manager-config" class="view-section" style="display:none;">
                 <div class="role-note">
                   <div>
-                    <strong>Paramétrages complets</strong> – Chaque bloc correspond à une feuille Google Sheets exploitable par Make (ID, nom, statuts, coûts).
+                    <strong>Paramétrages complets</strong> – Chaque bloc correspond à une feuille Google Sheets exploitée par Make.
                   </div>
                   <span class="tag">Mode gérant</span>
                 </div>
@@ -1747,14 +1559,12 @@
                   <div class="card">
                     <div class="card-header">
                       <div>
-                        <div class="card-title">
-                          Chauffeurs
-                          <span class="tag">Feuille : Chauffeurs</span>
-                        </div>
+                        <div class="card-title">Chauffeurs</div>
                         <div class="card-subtitle">
-                          Identité, permis, contacts et documents importants pour chaque chauffeur.
+                          Identité, permis, contacts et documents pour chaque chauffeur.
                         </div>
                       </div>
+                      <span class="tag">Feuille : Chauffeurs</span>
                     </div>
                     <div class="table-wrapper" style="max-height:210px;">
                       <table class="table" id="driversTable">
@@ -1767,23 +1577,19 @@
                             <th>Actions</th>
                           </tr>
                         </thead>
-                        <tbody>
-                          <!-- Filled by JS -->
-                        </tbody>
+                        <tbody></tbody>
                       </table>
                     </div>
                   </div>
                   <div class="card">
                     <div class="card-header">
                       <div>
-                        <div class="card-title">
-                          Camions & frais
-                          <span class="tag">Feuilles : Camions, Frais véhicules</span>
-                        </div>
+                        <div class="card-title">Camions & frais</div>
                         <div class="card-subtitle">
-                          Immatriculation, CT, kilométrage, carburant, vidanges, réparations, assurances, pneus.
+                          Immatriculation, CT, kilométrage et principaux frais mensuels.
                         </div>
                       </div>
+                      <span class="tag">Feuilles : Camions, Frais véhicules</span>
                     </div>
                     <div class="table-wrapper" style="max-height:210px;">
                       <table class="table" id="trucksTable">
@@ -1796,9 +1602,7 @@
                             <th>Actions</th>
                           </tr>
                         </thead>
-                        <tbody>
-                          <!-- Filled by JS -->
-                        </tbody>
+                        <tbody></tbody>
                       </table>
                     </div>
                   </div>
@@ -1808,14 +1612,12 @@
                   <div class="card">
                     <div class="card-header">
                       <div>
-                        <div class="card-title">
-                          Clients
-                          <span class="tag">Feuille : Clients</span>
-                        </div>
+                        <div class="card-title">Clients</div>
                         <div class="card-subtitle">
-                          Entreprise, gérant, mail, téléphone pour facturation et relances.
+                          Entreprise, gérant, mail, téléphone pour la facturation.
                         </div>
                       </div>
+                      <span class="tag">Feuille : Clients</span>
                     </div>
                     <div class="table-wrapper" style="max-height:210px;">
                       <table class="table" id="clientsTable">
@@ -1828,23 +1630,19 @@
                             <th>Actions</th>
                           </tr>
                         </thead>
-                        <tbody>
-                          <!-- Filled by JS -->
-                        </tbody>
+                        <tbody></tbody>
                       </table>
                     </div>
                   </div>
                   <div class="card">
                     <div class="card-header">
                       <div>
-                        <div class="card-title">
-                          Matériaux & tarifs
-                          <span class="tag">Feuilles : Matériaux, Tarifs</span>
-                        </div>
+                        <div class="card-title">Matériaux & tarifs</div>
                         <div class="card-subtitle">
-                          Tarifs par tonne, forfait journée et catégories de coûts associés.
+                          Tarifs par tonne et familles de coûts associées.
                         </div>
                       </div>
+                      <span class="tag">Feuilles : Matériaux, Tarifs</span>
                     </div>
                     <div class="table-wrapper" style="max-height:210px;">
                       <table class="table" id="materialsTable">
@@ -1856,9 +1654,7 @@
                             <th>Actions</th>
                           </tr>
                         </thead>
-                        <tbody>
-                          <!-- Filled by JS -->
-                        </tbody>
+                        <tbody></tbody>
                       </table>
                     </div>
                   </div>
@@ -1869,49 +1665,39 @@
               <section id="view-driver-dashboard" class="view-section" style="display:none;">
                 <div class="role-note">
                   <div>
-                    <strong>Vue chauffeur</strong> – Liste des transports du jour à signer, plus fiche de fin de journée (km &amp; carburant).
+                    <strong>Vue chauffeur</strong> – Transports du jour + fiche de fin de journée (km, carburant).
                   </div>
-                  <span class="tag">Données envoyées vers Google Sheets &amp; Make</span>
+                  <span class="tag">Feuilles : Transports, Fiche_chauffeur</span>
                 </div>
 
                 <div class="driver-layout" style="margin-top:8px;">
                   <div class="card">
                     <div class="card-header">
                       <div>
-                        <div class="card-title">
-                          Transports du jour
-                          <span class="tag">Feuille : Transports</span>
-                        </div>
+                        <div class="card-title">Transports du jour</div>
                         <div class="card-subtitle">
-                          Cliquez sur un transport pour saisir le tonnage, le réceptionnaire et enregistrer la signature.
+                          Cliquez sur un transport pour saisir le tonnage, le réceptionnaire et valider la signature.
                         </div>
                       </div>
-                      <div class="card-header-right">
-                        <span class="pill-small" id="driverTripsCountLabel">5 transports à faire</span>
-                      </div>
+                      <span class="tag" id="driverTripsCountLabel">5 transports à faire</span>
                     </div>
-                    <div class="driver-transport-list" id="driverTransportList">
-                      <!-- Filled by JS -->
-                    </div>
+                    <div class="driver-transport-list" id="driverTransportList"></div>
                   </div>
+
                   <div class="card">
                     <div class="card-header">
                       <div>
-                        <div class="card-title">
-                          Fiche de fin de journée
-                          <span class="tag">Feuille : Fiche_chauffeur</span>
-                        </div>
+                        <div class="card-title">Fiche de fin de journée</div>
                         <div class="card-subtitle">
-                          Ces données sont prêtes à être poussées dans Google Sheets via Make.
+                          Ligne prête à être envoyée dans Google Sheets par un scénario Make.
                         </div>
                       </div>
+                      <span class="tag">Feuille : Fiche_chauffeur</span>
                     </div>
                     <div class="driver-daily-form">
                       <div class="form-field">
                         abel class="form-label">Camion</label>
-                        <select class="select" id="dailyTruckSelect">
-                          <!-- Filled by JS -->
-                        </select>
+                        <select class="select" id="dailyTruckSelect"></select>
                       </div>
                       <div class="form-field" style="margin-top:6px;">
                         abel class="form-label">Kilométrage fin de journée</label>
@@ -1946,7 +1732,7 @@
                           placeholder="Ex. 1,75"
                         />
                       </div>
-                      <div class="inline-actions" style="margin-top:10px;">
+                      <div class="inline-actions" style="margin-top:8px;">
                         <button class="btn-secondary" id="btnResetDaily">
                           <span class="icon">↺</span> Réinitialiser
                         </button>
@@ -1954,7 +1740,7 @@
                           <span class="icon">✉</span> Envoyer ma fiche
                         </button>
                       </div>
-                      <div id="dailyMessage" style="margin-top:8px;font-size:11px;color:#9ca3af;"></div>
+                      <div id="dailyMessage" style="margin-top:6px;font-size:11px;color:var(--text-soft);"></div>
                     </div>
                   </div>
                 </div>
@@ -1964,7 +1750,7 @@
               <section id="view-margin" class="view-section" style="display:none;">
                 <div class="role-note">
                   <div>
-                    <strong>Vue marge mensuelle</strong> – Tableau 12 mois, par catégories de coûts, avec mise en évidence du mois en cours.
+                    <strong>Marge brute mensuelle</strong> – Tableau 12 mois, par catégories de coûts.
                   </div>
                   <span class="tag">Feuille : Marges_mensuelles</span>
                 </div>
@@ -1972,28 +1758,19 @@
                 <div class="card" style="margin-top:8px;">
                   <div class="card-header">
                     <div>
-                      <div class="card-title">
-                        Marge brute par mois
-                        <span class="tag">CA, carburant, vidange, réparations, pneus, assurances</span>
-                      </div>
+                      <div class="card-title">Marge brute par mois</div>
                       <div class="card-subtitle">
-                        Chaque ligne représente une catégorie. Les colonnes sont les 12 mois de l’année en cours (Janv., Fév., Mars, …).
+                        CA, carburant, vidange, réparations, pneus, assurance et marge brute.
                       </div>
                     </div>
-                    <div class="card-header-right">
-                      <button class="btn-ghost" id="btnRecalcMargins">
-                        <span class="icon">↻</span> Recalculer la marge (démo)
-                      </button>
-                    </div>
+                    <button class="btn-secondary" id="btnRecalcMargins">
+                      <span class="icon">↻</span> Recalculer (démo)
+                    </button>
                   </div>
                   <div class="margin-table-wrapper">
                     <table class="margin-table" id="marginTable">
-                      <thead>
-                        <!-- Filled by JS -->
-                      </thead>
-                      <tbody>
-                        <!-- Filled by JS -->
-                      </tbody>
+                      <thead></thead>
+                      <tbody></tbody>
                     </table>
                   </div>
                 </div>
@@ -2005,12 +1782,12 @@
     </div>
   </div>
 
-  <!-- TRANSPORT MODAL -->
+  <!-- MODAL TRANSPORT -->
   <div id="transportModalBackdrop" class="modal-backdrop" style="display:none;">
     <div class="modal">
       <div class="modal-header">
         <div class="modal-title" id="transportModalTitle">Transport</div>
-        <button id="closeTransportModal">×</button>
+        <button class="modal-close-btn" id="closeTransportModal">×</button>
       </div>
       <div class="modal-body">
         <div class="form-grid">
@@ -2051,23 +1828,21 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn-secondary" id="btnCancelTransport">
-          Annuler
-        </button>
+        <button class="btn-secondary" id="btnCancelTransport">Annuler</button>
         <button class="btn-primary" id="btnConfirmTransport">
-          Valider la réception
+          <span class="icon">✓</span> Valider la réception
         </button>
       </div>
     </div>
   </div>
 
   <script>
-    // ------------ DEMO DATA ------------
+    // --------- DEMO STATE ---------
     const state = {
       role: "manager", // 'manager' or 'driver'
       pinManager: "123456",
       pinDriver: "654321",
-      currentMonthIndex: new Date().getMonth(), // 0-11
+      currentMonthIndex: new Date().getMonth(),
       currentYear: new Date().getFullYear(),
       clients: [
         {
@@ -2145,27 +1920,12 @@
         },
       ],
       materials: [
-        {
-          id: 1,
-          nom: "Sable 0/4",
-          tarifParTonne: 19.5,
-          famille: "Matériaux",
-        },
-        {
-          id: 2,
-          nom: "Gravier 4/6",
-          tarifParTonne: 25.8,
-          famille: "Matériaux",
-        },
-        {
-          id: 3,
-          nom: "Remblai",
-          tarifParTonne: 14.3,
-          famille: "Matériaux",
-        },
+        { id: 1, nom: "Sable 0/4", tarifParTonne: 19.5, famille: "Matériaux" },
+        { id: 2, nom: "Gravier 4/6", tarifParTonne: 25.8, famille: "Matériaux" },
+        { id: 3, nom: "Remblai", tarifParTonne: 14.3, famille: "Matériaux" },
       ],
       tarifs: {
-        journee: 520, // € / jour
+        journee: 520,
       },
       orders: [
         {
@@ -2284,7 +2044,7 @@
           },
         },
       ],
-      margins: null, // filled below
+      margins: null,
       modal: {
         transportId: null,
       },
@@ -2320,21 +2080,14 @@
       categories.forEach((cat) => {
         margins[cat] = Array.from({ length: 12 }, (_, i) => {
           if (cat === "Chiffre d'affaires") {
-            const seasonalFactor = i === 0 || i === 1 ? 0.85 : i === 6 || i === 7 ? 1.15 : 1;
+            const seasonalFactor =
+              i === 0 || i === 1 ? 0.85 : i === 6 || i === 7 ? 1.15 : 1;
             return Math.round((baseCA + (i - 5) * 1200) * seasonalFactor);
-          }
-          if (["Carburant", "Vidange", "Réparations", "Pneus", "Assurance"].includes(cat)) {
-            // placeholder, recomputed after
-            return 0;
-          }
-          if (cat === "Marge brute") {
-            return 0;
           }
           return 0;
         });
       });
 
-      // approximate costs based on trucks expenses
       const avgFuelMonth =
         state.trucks.reduce((sum, t) => sum + t.fraisMensuels.carburant, 0) *
         (12 / state.trucks.length / 12);
@@ -2356,9 +2109,13 @@
           i === 0 || i === 1 ? 0.9 : i === 6 || i === 7 ? 1.1 : i === 11 ? 1.05 : 1;
         margins["Carburant"][i] = Math.round(avgFuelMonth * factor * 1.15 * 2);
         margins["Vidange"][i] = Math.round(avgVidangeMonth * factor * 1.4 * 2);
-        margins["Réparations"][i] = Math.round(avgReparationsMonth * factor * 1.3 * 2);
+        margins["Réparations"][i] = Math.round(
+          avgReparationsMonth * factor * 1.3 * 2
+        );
         margins["Pneus"][i] = Math.round(avgPneusMonth * factor * 1.5 * 2);
-        margins["Assurance"][i] = Math.round(avgAssuranceMonth * factor * 1.05 * 2);
+        margins["Assurance"][i] = Math.round(
+          avgAssuranceMonth * factor * 1.05 * 2
+        );
       }
 
       for (let i = 0; i < 12; i++) {
@@ -2376,7 +2133,7 @@
 
     generateInitialMargins();
 
-    // ------------ HELPERS ------------
+    // Helpers
     function formatAmount(value) {
       return value.toLocaleString("fr-FR", {
         minimumFractionDigits: 0,
@@ -2426,10 +2183,11 @@
       return m ? m.nom : "";
     }
 
-    // ------------ LOGIN LOGIC ------------
+    // LOGIN
     const loginLayer = document.getElementById("loginLayer");
     const dashboardLayer = document.getElementById("dashboardLayer");
     const pinInput = document.getElementById("pinInput");
+    const roleSelect = document.getElementById("roleSelect");
     const btnLogin = document.getElementById("btnLogin");
     const loginError = document.getElementById("loginError");
     const btnLogout = document.getElementById("btnLogout");
@@ -2443,25 +2201,21 @@
       const mainSubtitle = document.getElementById("mainSubtitle");
       const userLabelShort = document.getElementById("userLabelShort");
       const userDescription = document.getElementById("userDescription");
-      const sidebarRolePill = document.getElementById("sidebarRolePill");
-      const kpiRow = document.getElementById("kpiRow");
 
       if (isManager) {
         roleLabel.textContent = "Gérant flotte";
         mainTitle.textContent = "Vue gérant – Suivi global flotte";
         mainSubtitle.textContent =
-          "Données synchronisées avec Google Sheets (commandes du jour, coûts véhicules, carburant, marge brute).";
+          "Commandes, transports, coûts véhicules et marge brute à partir de vos Google Sheets.";
         userLabelShort.textContent = "Gérant";
-        userDescription.textContent = "Code PIN 123456";
-        sidebarRolePill.style.background = "rgba(15,23,42,0.85)";
+        userDescription.textContent = "PIN 123456";
       } else {
         roleLabel.textContent = "Chauffeur";
         mainTitle.textContent = "Vue chauffeur – Tournées & carburant";
         mainSubtitle.textContent =
-          "Liste des transports du jour, tonnage réceptionné et fiche de fin de journée prête à envoyer vers Google Sheets.";
+          "Transports du jour, tonnage réceptionné et fiche de fin de journée prête pour Google Sheets.";
         userLabelShort.textContent = "Chauffeur";
-        userDescription.textContent = "Code PIN 654321";
-        sidebarRolePill.style.background = "rgba(8,47,73,0.9)";
+        userDescription.textContent = "PIN 654321";
       }
 
       renderKPIs();
@@ -2470,18 +2224,20 @@
 
     function handleLogin() {
       const pin = pinInput.value.trim();
+      const selectedRole = roleSelect.value;
       if (pin.length !== 6) {
-        loginError.textContent = "Merci de saisir un code PIN à 6 chiffres.";
+        loginError.textContent = "Saisir un code PIN à 6 chiffres.";
         return;
       }
-      if (pin === state.pinManager) {
+      if (selectedRole === "manager" && pin === state.pinManager) {
         loginError.textContent = "";
         transitionToDashboard("manager");
-      } else if (pin === state.pinDriver) {
+      } else if (selectedRole === "driver" && pin === state.pinDriver) {
         loginError.textContent = "";
         transitionToDashboard("driver");
       } else {
-        loginError.textContent = "Code PIN incorrect (démo : 123456 ou 654321).";
+        loginError.textContent =
+          "PIN incorrect pour le rôle choisi (démo : 123456 gérant, 654321 chauffeur).";
       }
     }
 
@@ -2493,10 +2249,9 @@
 
     btnLogin.addEventListener("click", handleLogin);
     pinInput.addEventListener("keyup", (e) => {
-      if (e.key === "Enter") {
-        handleLogin();
-      }
+      if (e.key === "Enter") handleLogin();
     });
+
     btnLogout.addEventListener("click", () => {
       dashboardLayer.classList.add("hidden");
       loginLayer.classList.remove("hidden");
@@ -2504,47 +2259,43 @@
       loginError.textContent = "";
     });
 
-    // ------------ NAVIGATION ------------
+    // NAVIGATION
     const navList = document.getElementById("navList");
-    const mainTitle = document.getElementById("mainTitle");
-    const mainSubtitle = document.getElementById("mainSubtitle");
+    const mainTitleEl = document.getElementById("mainTitle");
+    const mainSubtitleEl = document.getElementById("mainSubtitle");
 
     function showView(viewName) {
       document.querySelectorAll(".view-section").forEach((section) => {
         section.style.display = "none";
       });
-      const viewEl = document.getElementById(`view-${viewName}`);
-      if (viewEl) {
-        viewEl.style.display = "block";
-      }
+      const viewEl = document.getElementById("view-" + viewName);
+      if (viewEl) viewEl.style.display = "block";
 
       navList.querySelectorAll(".nav-item").forEach((item) => {
-        if (item.dataset.view === viewName) {
-          item.classList.add("active");
-        } else {
-          item.classList.remove("active");
-        }
+        if (item.dataset.view === viewName) item.classList.add("active");
+        else item.classList.remove("active");
       });
 
       if (viewName === "manager-dashboard") {
-        mainTitle.textContent =
+        mainTitleEl.textContent =
           state.role === "manager"
             ? "Vue gérant – Suivi global flotte"
             : "Vue chauffeur – Tournées & carburant";
-        mainSubtitle.textContent =
-          "Données synchronisées avec Google Sheets (commandes du jour, coûts véhicules, carburant, marge brute).";
+        mainSubtitleEl.textContent =
+          "Commandes, transports, coûts véhicules et marge brute à partir de vos Google Sheets.";
       } else if (viewName === "manager-config") {
-        mainTitle.textContent = "Paramétrages – Chauffeurs, camions, clients, matériaux";
-        mainSubtitle.textContent =
-          "Chaque liste ici correspond à une feuille Google Sheets gérée par vos scénarios Make.";
+        mainTitleEl.textContent =
+          "Paramétrages – Chauffeurs, camions, clients, matériaux";
+        mainSubtitleEl.textContent =
+          "Chaque liste correspond à une feuille Google Sheets mise à jour par Make.";
       } else if (viewName === "driver-dashboard") {
-        mainTitle.textContent = "Vue chauffeur – Tournées & carburant";
-        mainSubtitle.textContent =
-          "Consultez vos transports du jour et envoyez votre fiche de fin de journée vers Google Sheets.";
+        mainTitleEl.textContent = "Vue chauffeur – Tournées & carburant";
+        mainSubtitleEl.textContent =
+          "Transports du jour, tonnage et fiche carburant synchronisables avec Google Sheets.";
       } else if (viewName === "margin") {
-        mainTitle.textContent = "Marge brute – Vision annuelle";
-        mainSubtitle.textContent =
-          "Chiffre d’affaires et principaux postes de coûts par mois, avec calcul automatique de la marge brute.";
+        mainTitleEl.textContent = "Marge brute – Vision annuelle";
+        mainSubtitleEl.textContent =
+          "CA et principaux postes de coûts par mois (12 colonnes Janv. à Déc.).";
       }
     }
 
@@ -2552,16 +2303,16 @@
       const item = e.target.closest(".nav-item");
       if (!item) return;
       const view = item.dataset.view;
-      if (view) {
-        showView(view);
-      }
+      if (view) showView(view);
     });
 
-    document.getElementById("switchRoleBtn").addEventListener("click", () => {
-      applyRole(state.role === "manager" ? "driver" : "manager");
-    });
+    document
+      .getElementById("switchRoleBtn")
+      .addEventListener("click", () => {
+        applyRole(state.role === "manager" ? "driver" : "manager");
+      });
 
-    // ------------ KPIs RENDERING ------------
+    // KPIs
     function computeKPIs() {
       const currentMonth = state.currentMonthIndex;
       const caMonth = state.margins["Chiffre d'affaires"][currentMonth];
@@ -2573,9 +2324,6 @@
       const totalAFacturer = state.orders.filter((o) => o.aFacturer).length;
 
       const driverId = state.role === "driver" ? state.drivers[0].id : null;
-      const transportsToday = state.transports.filter(
-        (t) => state.role === "manager" || t.driverId === driverId
-      ).length;
       const transportsRemaining = state.transports.filter(
         (t) =>
           (state.role === "manager" || t.driverId === driverId) &&
@@ -2593,7 +2341,6 @@
         marginRate,
         totalActiveOrders,
         totalAFacturer,
-        transportsToday,
         transportsRemaining,
         avgConsumption,
       };
@@ -2617,92 +2364,74 @@
 
       const cards = [
         {
-          id: "ca",
           label: "Chiffre d'affaires",
-          value: `${formatAmount(stats.caMonth)} €`,
+          value: formatAmount(stats.caMonth),
+          unit: "€",
           sub: `Mois : ${monthLabel}`,
           trend: "+4,2 % vs N-1",
           trendType: "good",
-          badge: {
-            label: monthLabel,
-            current: true,
-          },
+          monthChip: monthLabel,
           highlight: true,
         },
         {
-          id: "margin",
           label: "Marge brute",
-          value: `${formatAmount(stats.marginMonth)} €`,
+          value: formatAmount(stats.marginMonth),
+          unit: "€",
           sub: `Taux marge : ${stats.marginRate.toFixed(1)} %`,
           trend:
-            stats.marginRate >= 20
-              ? "Marge confortable"
-              : "Marge à surveiller",
+            stats.marginRate >= 20 ? "Marge confortable" : "Marge à surveiller",
           trendType: stats.marginRate >= 20 ? "good" : "warn",
-          badge: {
-            label: "Objectif ≥ 22 %",
-            current: false,
-          },
+          monthChip: "Objectif ≥ 22 %",
           highlight: stats.marginRate >= 20,
         },
         {
-          id: "orders",
           label: "Commandes",
-          value: `${stats.totalActiveOrders} actives`,
+          value: stats.totalActiveOrders,
+          unit: "actives",
           sub: `${stats.totalAFacturer} à facturer`,
           trend: `${stats.transportsRemaining} transports restants`,
           trendType: stats.transportsRemaining > 0 ? "warn" : "good",
-          badge: {
-            label: "Suivi quotidien",
-            current: false,
-          },
+          monthChip: "Suivi quotidien",
           highlight: false,
         },
         {
-          id: "fuel",
           label: "Consommation flotte",
-          value: `${formatAmount2(stats.avgConsumption)} L/100`,
+          value: formatAmount2(stats.avgConsumption),
+          unit: "L/100",
           sub: `Carburant moyen / camion`,
-          trend: "Calcul basé sur frais véhicules",
+          trend: "Basé sur les frais véhicules",
           trendType: "good",
-          badge: {
-            label: "Carburant",
-            current: false,
-          },
+          monthChip: "Carburant",
           highlight: false,
         },
       ];
 
-      cards.forEach((card) => {
+      cards.forEach((c) => {
         const div = document.createElement("div");
-        div.className = "kpi-card" + (card.highlight ? " highlight" : "");
+        div.className = "kpi-card" + (c.highlight ? " highlight" : "");
         div.innerHTML = `
-          <div class="kpi-meta">
-            <span>${card.label}</span>
-            <span class="month-chip ${
-              card.badge.current ? "current" : ""
-            }">${card.badge.label}</span>
+          <div class="kpi-label-row">
+            <span>${c.label}</span>
+            <span class="chip-month">${c.monthChip}</span>
           </div>
           <div class="kpi-value-row">
-            <div class="kpi-value">${card.value}</div>
-            <div class="kpi-trend ${
-              card.trendType === "warn" ? "danger" : ""
-            }">${card.trend}</div>
+            <div class="kpi-value">
+              ${c.value}<span class="unit">${c.unit}</span>
+            </div>
+            <div class="kpi-trend ${c.trendType === "warn" ? "warn" : ""}">
+              ${c.trend}
+            </div>
           </div>
           <div class="kpi-footer">
-            <span>${card.sub}</span>
-            <div class="kpi-dot-strip">
-              <span class="kpi-dot"></span>
-              <span class="kpi-dot accent"></span>
-              <span class="kpi-dot"></span>
-            </div>
+            <span>${c.sub}</span>
+            <span></span>
           </div>
         `;
         kpiRow.appendChild(div);
       });
     }
 
-    // ------------ ORDER FORM & TABLE ------------
+    // ORDER FORM + TABLE
     const orderClient = document.getElementById("orderClient");
     const orderAddress = document.getElementById("orderAddress");
     const orderDate = document.getElementById("orderDate");
@@ -2758,18 +2487,8 @@
         .join("");
     }
 
-    orderMode.addEventListener("change", () => {
-      if (orderMode.value === "materiaux") {
-        orderMaterialField.style.display = "block";
-      } else {
-        orderMaterialField.style.display = "none";
-      }
-    });
-
     function resetOrderForm() {
-      if (state.clients.length) {
-        orderClient.value = state.clients[0].id;
-      }
+      if (state.clients.length) orderClient.value = state.clients[0].id;
       orderAddress.value = "";
       orderDate.valueAsDate = new Date();
       orderEstimatedTrips.value = "";
@@ -2777,10 +2496,13 @@
       orderDriver.value = "";
       orderMode.value = "materiaux";
       orderMaterialField.style.display = "block";
-      if (state.materials.length) {
-        orderMaterial.value = state.materials[0].id;
-      }
+      if (state.materials.length) orderMaterial.value = state.materials[0].id;
     }
+
+    orderMode.addEventListener("change", () => {
+      orderMaterialField.style.display =
+        orderMode.value === "materiaux" ? "block" : "none";
+    });
 
     function renderOrdersTable() {
       ordersTableBody.innerHTML = "";
@@ -2804,17 +2526,17 @@
         tr.innerHTML = `
           <td>
             <div style="font-size:12px;font-weight:500;">${o.code}</div>
-            <div style="font-size:11px;color:#9ca3af;">${formatDateFR(
+            <div style="font-size:11px;color:#6b7280;">${formatDateFR(
               o.dateChantier
             )}</div>
           </td>
           <td>
             <div style="font-size:12px;">${getClientLabel(o.clientId)}</div>
-            <div style="font-size:11px;color:#9ca3af;">${o.adresse}</div>
+            <div style="font-size:11px;color:#6b7280;">${o.adresse}</div>
           </td>
           <td>
             <div style="font-size:12px;">${getTruckLabel(o.truckId)}</div>
-            <div style="font-size:11px;color:#9ca3af;">${getDriverLabel(
+            <div style="font-size:11px;color:#6b7280;">${getDriverLabel(
               o.driverId
             )}</div>
           </td>
@@ -2849,7 +2571,7 @@
         const nbTransportsEstimes = parseInt(orderEstimatedTrips.value, 10);
         if (!clientId || !adresse || !dateChantier || !nbTransportsEstimes) {
           alert(
-            "Merci de renseigner au minimum le client, l’adresse, la date et le nombre de transports estimés."
+            "Client, adresse, date et nombre de transports estimés sont obligatoires."
           );
           return;
         }
@@ -2883,7 +2605,7 @@
         };
         state.orders.push(newOrder);
 
-        // simulate generating transports for driver
+        // Transports générés (pour la vue chauffeur)
         for (let i = 0; i < nbTransportsEstimes; i++) {
           const transportId =
             state.transports.reduce((max, t) => Math.max(max, t.id), 0) + 1;
@@ -2907,7 +2629,7 @@
         renderDriverTransportList();
 
         alert(
-          "Commande ajoutée (démo) : dans la réalité, ces données seraient envoyées dans votre feuille Google Sheets 'Commandes'."
+          "Commande ajoutée (démo). En réel, Make écrirait la ligne dans la feuille 'Commandes'."
         );
       });
 
@@ -2937,7 +2659,7 @@
       renderKPIs();
     });
 
-    // ------------ CONFIG FORMS (CHAUFFEURS / CAMIONS / MATÉRIAUX) ------------
+    // CONFIG RAPIDE (chauffeurs/camions/matériaux)
     const configSegmented = document.getElementById("configSegmented");
     const configFormsContainer = document.getElementById(
       "configFormsContainer"
@@ -3023,73 +2745,67 @@
       configFormsContainer.innerHTML = formHtml;
 
       if (type === "chauffeurs") {
-        document
-          .getElementById("btnAddDriver")
-          .addEventListener("click", () => {
-            const name = document
-              .getElementById("cfgDriverName")
-              .value.trim();
-            if (!name) {
-              alert("Merci de saisir au moins le nom du chauffeur.");
-              return;
-            }
-            const nextId =
-              state.drivers.reduce((max, d) => Math.max(max, d.id), 0) + 1;
-            state.drivers.push({
-              id: nextId,
-              nom: name,
-              dateNaissance: "",
-              telephone: document
-                .getElementById("cfgDriverPhone")
-                .value.trim(),
-              mail: document.getElementById("cfgDriverMail").value.trim(),
-              permis: document
-                .getElementById("cfgDriverLicense")
-                .value.trim(),
-              documents: [],
-            });
-            populateSelects();
-            renderDriversTable();
-            alert(
-              "Chauffeur ajouté (démo). Dans la vraie app, Make écrira la ligne dans la feuille 'Chauffeurs'."
-            );
+        document.getElementById("btnAddDriver").addEventListener("click", () => {
+          const name = document.getElementById("cfgDriverName").value.trim();
+          if (!name) {
+            alert("Merci de saisir au moins le nom du chauffeur.");
+            return;
+          }
+          const nextId =
+            state.drivers.reduce((max, d) => Math.max(max, d.id), 0) + 1;
+          state.drivers.push({
+            id: nextId,
+            nom: name,
+            dateNaissance: "",
+            telephone: document
+              .getElementById("cfgDriverPhone")
+              .value.trim(),
+            mail: document.getElementById("cfgDriverMail").value.trim(),
+            permis: document
+              .getElementById("cfgDriverLicense")
+              .value.trim(),
+            documents: [],
           });
+          populateSelects();
+          renderDriversTable();
+          alert(
+            "Chauffeur ajouté (démo). En réel, Make écrirait la ligne dans la feuille 'Chauffeurs'."
+          );
+        });
       } else if (type === "camions") {
-        document
-          .getElementById("btnAddTruck")
-          .addEventListener("click", () => {
-            const imm = document.getElementById("cfgTruckImm").value.trim();
-            if (!imm) {
-              alert("Merci de saisir l'immatriculation du camion.");
-              return;
-            }
-            const nextId =
-              state.trucks.reduce((max, t) => Math.max(max, t.id), 0) + 1;
-            state.trucks.push({
-              id: nextId,
-              immatriculation: imm,
-              type: document.getElementById("cfgTruckType").value.trim(),
-              kilometrage: parseInt(
-                document.getElementById("cfgTruckKm").value || "0",
-                10
-              ),
-              dateCT: document.getElementById("cfgTruckCT").value,
-              documents: [],
-              fraisMensuels: {
-                carburant: 0,
-                vidange: 0,
-                reparations: 0,
-                pneus: 0,
-                assurance: 0,
-              },
-            });
-            populateSelects();
-            renderTrucksTable();
-            renderKPIs();
-            alert(
-              "Camion ajouté (démo). Make pourra créer la ligne dans la feuille 'Camions'."
-            );
+        document.getElementById("btnAddTruck").addEventListener("click", () => {
+          const imm = document.getElementById("cfgTruckImm").value.trim();
+          if (!imm) {
+            alert("Merci de saisir l'immatriculation du camion.");
+            return;
+          }
+          const nextId =
+            state.trucks.reduce((max, t) => Math.max(max, t.id), 0) + 1;
+          state.trucks.push({
+            id: nextId,
+            immatriculation: imm,
+            type: document.getElementById("cfgTruckType").value.trim(),
+            kilometrage: parseInt(
+              document.getElementById("cfgTruckKm").value || "0",
+              10
+            ),
+            dateCT: document.getElementById("cfgTruckCT").value,
+            documents: [],
+            fraisMensuels: {
+              carburant: 0,
+              vidange: 0,
+              reparations: 0,
+              pneus: 0,
+              assurance: 0,
+            },
           });
+          populateSelects();
+          renderTrucksTable();
+          renderKPIs();
+          alert(
+            "Camion ajouté (démo). Make pourra créer la ligne dans la feuille 'Camions'."
+          );
+        });
       } else if (type === "materiaux") {
         document
           .getElementById("btnAddMaterial")
@@ -3102,9 +2818,9 @@
             const price = parseFloat(
               document.getElementById("cfgMatPrice").value || "0"
             );
-            const family = document
-              .getElementById("cfgMatFamily")
-              .value.trim() || "Matériaux";
+            const family =
+              document.getElementById("cfgMatFamily").value.trim() ||
+              "Matériaux";
             const nextId =
               state.materials.reduce((max, m) => Math.max(max, m.id), 0) + 1;
             state.materials.push({
@@ -3132,7 +2848,7 @@
       renderConfigPanel(btn.dataset.config);
     });
 
-    // ------------ MANAGER CONFIG TABLES ------------
+    // TABLES PARAMÉTRAGES COMPLETS
     const driversTableBody = document.querySelector("#driversTable tbody");
     const trucksTableBody = document.querySelector("#trucksTable tbody");
     const clientsTableBody = document.querySelector("#clientsTable tbody");
@@ -3280,7 +2996,7 @@
       });
     }
 
-    // ------------ DRIVER TRANSPORT LIST & MODAL ------------
+    // DRIVER TRANSPORT LIST + MODAL
     const driverTransportList = document.getElementById("driverTransportList");
     const transportModalBackdrop = document.getElementById(
       "transportModalBackdrop"
@@ -3290,9 +3006,6 @@
     const modalReceiverName = document.getElementById("modalReceiverName");
     const modalReceiverRole = document.getElementById("modalReceiverRole");
     const signatureBox = document.getElementById("signatureBox");
-    const btnConfirmTransport = document.getElementById("btnConfirmTransport");
-    const btnCancelTransport = document.getElementById("btnCancelTransport");
-    const closeTransportModal = document.getElementById("closeTransportModal");
 
     function renderDriverTransportList() {
       if (!driverTransportList) return;
@@ -3302,7 +3015,7 @@
       const list = state.transports.filter((t) => t.driverId === activeDriver.id);
       if (!list.length) {
         driverTransportList.innerHTML =
-          '<div style="padding:10px;font-size:12px;color:#9ca3af;">Aucun transport assigné pour aujourd’hui.</div>';
+          '<div style="padding:10px;font-size:12px;color:#6b7280;">Aucun transport assigné pour aujourd’hui.</div>';
         return;
       }
       list.forEach((t) => {
@@ -3313,11 +3026,9 @@
         item.innerHTML = `
           <div class="driver-transport-item-header">
             <div>${t.code} – ${t.clientLabel}</div>
-            <div>
-              <span class="pill-small ${
-                delivered ? "accent" : ""
-              }">${delivered ? "Livré" : "A livrer"}</span>
-            </div>
+            <div><span class="pill-small ${
+              delivered ? "accent" : ""
+            }">${delivered ? "Livré" : "A livrer"}</span></div>
           </div>
           <div class="driver-transport-item-meta">
             <span>${t.chantier}</span>
@@ -3357,63 +3068,64 @@
       state.modal.transportId = null;
     }
 
-    closeTransportModal.addEventListener("click", closeModal);
-    btnCancelTransport.addEventListener("click", closeModal);
+    document
+      .getElementById("closeTransportModal")
+      .addEventListener("click", closeModal);
+    document
+      .getElementById("btnCancelTransport")
+      .addEventListener("click", closeModal);
     transportModalBackdrop.addEventListener("click", (e) => {
-      if (e.target === transportModalBackdrop) {
-        closeModal();
-      }
+      if (e.target === transportModalBackdrop) closeModal();
     });
 
     signatureBox.addEventListener("click", () => {
-      signatureBox.querySelector(
-        ".signature-placeholder"
-      ).style.background =
-        "radial-gradient(circle at 20% 0, rgba(34,197,94,0.4), transparent 60%)";
+      signatureBox.querySelector(".signature-placeholder").style.background =
+        "#bfdbfe";
     });
 
-    btnConfirmTransport.addEventListener("click", () => {
-      const id = state.modal.transportId;
-      const t = findById(state.transports, id);
-      if (!t) return;
-      const tonnage = parseFloat(modalTonnage.value || "0");
-      if (!tonnage) {
-        alert("Merci de saisir le tonnage réceptionné.");
-        return;
-      }
-      const receiverName = modalReceiverName.value.trim() || "Non précisé";
-      const receiverRole = modalReceiverRole.value;
-
-      t.tonnage = tonnage;
-      t.receptionnaire = {
-        nom: receiverName,
-        role: receiverRole,
-      };
-      t.statut = "Livré";
-
-      // Update related order
-      const order = findById(state.orders, t.orderId);
-      if (order) {
-        const totalDelivered = state.transports.filter(
-          (tr) => tr.orderId === order.id && tr.statut === "Livré"
-        ).length;
-        order.nbTransportsEffectues = totalDelivered;
-        if (totalDelivered >= order.nbTransportsEstimes) {
-          order.statut = "Terminée";
+    document
+      .getElementById("btnConfirmTransport")
+      .addEventListener("click", () => {
+        const id = state.modal.transportId;
+        const t = findById(state.transports, id);
+        if (!t) return;
+        const tonnage = parseFloat(modalTonnage.value || "0");
+        if (!tonnage) {
+          alert("Merci de saisir le tonnage réceptionné.");
+          return;
         }
-      }
+        const receiverName = modalReceiverName.value.trim() || "Non précisé";
+        const receiverRole = modalReceiverRole.value;
 
-      renderDriverTransportList();
-      renderOrdersTable();
-      renderKPIs();
-      closeModal();
+        t.tonnage = tonnage;
+        t.receptionnaire = {
+          nom: receiverName,
+          role: receiverRole,
+        };
+        t.statut = "Livré";
 
-      alert(
-        "Transport marqué comme livré (démo). Dans la vraie app, Make mettrait à jour les feuilles 'Transports' et 'Commandes'."
-      );
-    });
+        const order = findById(state.orders, t.orderId);
+        if (order) {
+          const totalDelivered = state.transports.filter(
+            (tr) => tr.orderId === order.id && tr.statut === "Livré"
+          ).length;
+          order.nbTransportsEffectues = totalDelivered;
+          if (totalDelivered >= order.nbTransportsEstimes) {
+            order.statut = "Terminée";
+          }
+        }
 
-    // ------------ DAILY DRIVER FORM ------------
+        renderDriverTransportList();
+        renderOrdersTable();
+        renderKPIs();
+        closeModal();
+
+        alert(
+          "Transport livré (démo). En réel, Make mettrait à jour les feuilles 'Transports' et 'Commandes'."
+        );
+      });
+
+    // DAILY DRIVER FORM
     const dailyKm = document.getElementById("dailyKm");
     const dailyFuelQty = document.getElementById("dailyFuelQty");
     const dailyFuelPrice = document.getElementById("dailyFuelPrice");
@@ -3436,16 +3148,16 @@
       const price = parseFloat(dailyFuelPrice.value || "0");
       if (!truckId || !km || !qty || !price) {
         alert(
-          "Merci de renseigner le camion, le kilométrage, la quantité et le tarif carburant."
+          "Camion, kilométrage, quantité et tarif carburant sont obligatoires."
         );
         return;
       }
       const cost = qty * price;
       dailyMessage.textContent =
-        "Fiche enregistrée (démo). Dans la réalité, Make pousserait ces données dans la feuille 'Fiche_chauffeur' (camion, date, km, litres, coût).";
+        "Fiche enregistrée (démo). En réel, Make pousserait ces données dans la feuille 'Fiche_chauffeur'.";
     });
 
-    // ------------ MARGES TABLE ------------
+    // TABLE MARQUES
     const marginTableHead = document.querySelector("#marginTable thead");
     const marginTableBody = document.querySelector("#marginTable tbody");
 
@@ -3456,7 +3168,7 @@
 
       const trHead = document.createElement("tr");
       trHead.innerHTML =
-        '<th>Catégorie</th>' +
+        "<th>Catégorie</th>" +
         monthLabelsShort
           .map((label, idx) => {
             const currentClass =
@@ -3512,7 +3224,7 @@
         renderKPIs();
       });
 
-    // ------------ MONTH PILL ------------
+    // MONTH PILL
     const pillMonth = document.getElementById("pillMonth");
     const currentMonthLabel = document.getElementById("currentMonthLabel");
     const currentYearLabel = document.getElementById("currentYearLabel");
@@ -3531,7 +3243,7 @@
       renderKPIs();
     });
 
-    // ------------ INIT ------------
+    // INIT
     function init() {
       updateMonthPill();
       populateSelects();
