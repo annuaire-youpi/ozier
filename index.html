@@ -3,207 +3,599 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0f172a" />
   <title>SOTRANSNORD</title>
   <style>
-    :root{--bg:#f7fafc;--panel:#ffffff;--panel2:#eef4ff;--text:#0f172a;--muted:#64748b;--line:#dbe4f0;--primary:#2563eb;--primary2:#1d4ed8;--success:#16a34a;--warn:#f59e0b;--danger:#dc2626;--shadow:0 10px 30px rgba(15,23,42,.08);--radius:18px}
-    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#f8fbff 0%,#eef4fb 100%);color:var(--text)}
-    .app{min-height:100vh;display:grid;grid-template-rows:auto 1fr}
-    .topbar{position:sticky;top:0;z-index:20;background:rgba(247,250,252,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-    .topbar-inner{max-width:1440px;margin:auto;padding:14px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between}
-    .brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--primary),#60a5fa);box-shadow:var(--shadow)}
-    .brand h1{font-size:18px;line-height:1;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}
-    .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-end}
-    .switch,.btn{border:0;border-radius:999px;padding:12px 16px;font-weight:700;cursor:pointer;transition:.2s;box-shadow:var(--shadow)}
-    .switch{background:#e2e8f0;color:var(--text)} .switch.reel{background:linear-gradient(135deg,#0f766e,#14b8a6);color:#fff}
-    .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}.btn-soft{background:#eaf2ff;color:#1d4ed8}
-    .layout{max-width:1440px;margin:auto;width:100%;display:grid;grid-template-columns:280px 1fr;gap:16px;padding:16px}
-    .sidebar,.card,.panel{background:var(--panel);border:1px solid rgba(219,228,240,.9);border-radius:var(--radius);box-shadow:var(--shadow)}
-    .sidebar{padding:14px;position:sticky;top:86px;height:fit-content}.nav-title{font-size:12px;text-transform:uppercase;color:var(--muted);margin:10px 10px 8px}
-    .nav button{width:100%;text-align:left;border:0;background:#f8fbff;color:var(--text);padding:14px 14px;border-radius:14px;margin:6px 0;font-weight:700;cursor:pointer}.nav button.active{background:linear-gradient(135deg,#dbeafe,#eff6ff);color:#1d4ed8}
-    .content{display:grid;gap:16px}.hero{padding:18px;background:linear-gradient(135deg,#ffffff,#edf4ff);border:1px solid var(--line);border-radius:var(--radius)}
-    .hero h2{margin:0 0 6px;font-size:22px}.hero p{margin:0;color:var(--muted)}
-    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-6{grid-column:span 6}.span-4{grid-column:span 4}
-    .card{padding:16px}.card h3,.panel h3{margin:0 0 12px;font-size:16px}.muted{color:var(--muted)}
-    .tabs,.segmented{display:flex;gap:8px;flex-wrap:wrap}.chip{padding:10px 14px;border-radius:999px;background:#f1f5f9;font-weight:700}.chip.active{background:#dbeafe;color:#1d4ed8}
-    .field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:grid;gap:6px}.field label{font-size:13px;font-weight:700}.field input,.field select,.field textarea{width:100%;border:1px solid #d6deea;border-radius:14px;padding:13px 14px;font:inherit;background:#fff}
-    .table-wrap{overflow:auto;border-radius:16px;border:1px solid var(--line)} table{width:100%;border-collapse:collapse;min-width:860px;background:#fff} th,td{padding:14px 12px;border-bottom:1px solid #e8eef6;text-align:left;font-size:14px} th{background:#f8fbff}
-    .badge{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border-radius:999px;font-size:12px;font-weight:800}.ok{background:#dcfce7;color:#166534}.wait{background:#fef3c7;color:#92400e}.live{background:#dbeafe;color:#1d4ed8}
-    .month-current{outline:3px solid #60a5fa;outline-offset:-3px;background:#eff6ff}
-    .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.kpi .card{background:linear-gradient(180deg,#fff,#f8fbff)}
-    .big-btn{width:100%;padding:16px 18px;border-radius:16px;border:0;font-weight:800;font-size:16px}.danger{background:#fee2e2;color:#991b1b}
-    .pin{max-width:420px;margin:auto;padding:18px}.pin-display{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:10px 0 16px}.pin-display div{height:58px;border-radius:14px;background:#f8fbff;border:1px solid var(--line);display:grid;place-items:center;font-size:22px;font-weight:900}
-    .num-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.num-grid button{padding:18px 0;border:0;border-radius:16px;background:#eff6ff;font-size:20px;font-weight:800}
-    .modal,.overlay{display:none;position:fixed;inset:0;z-index:50}.overlay{background:rgba(15,23,42,.45)}.modal{place-items:center;padding:18px}.modal-card{width:min(860px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:24px;padding:18px;box-shadow:var(--shadow)}
-    .show{display:grid}.loading{padding:16px;border-radius:16px;background:#eef4ff;color:#1d4ed8;font-weight:800}
-    @media (max-width:1100px){.layout{grid-template-columns:1fr}.sidebar{position:relative;top:0}.kpi,.grid,.field-grid{grid-template-columns:1fr 1fr}.span-8,.span-6,.span-4{grid-column:span 12}}
-    @media (max-width:720px){.topbar-inner,.actions{gap:8px}.brand h1{font-size:16px}.layout{padding:10px}.kpi,.field-grid,.grid{grid-template-columns:1fr}.topbar-inner{flex-direction:column;align-items:flex-start}.actions{width:100%;justify-content:space-between}.switch,.btn{width:100%}}
+    :root{
+      --bg:#f4f7fb; --card:#ffffff; --text:#102033; --muted:#64748b; --line:#e6edf5;
+      --primary:#2563eb; --primary2:#1d4ed8; --success:#16a34a; --warning:#f59e0b;
+      --danger:#dc2626; --shadow:0 10px 30px rgba(15,23,42,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg); color:var(--text);
+    }
+    button,input,select,textarea{font:inherit}
+    .app{min-height:100vh; display:flex; flex-direction:column}
+    .hidden{display:none !important}
+    .auth-wrap{
+      min-height:100vh; display:grid; place-items:center; padding:20px;
+      background:linear-gradient(135deg,#eef4ff 0%, #f8fbff 45%, #eef2f7 100%);
+    }
+    .auth-card{
+      width:min(980px,100%); display:grid; grid-template-columns:1.1fr .9fr; overflow:hidden;
+      border:1px solid var(--line); border-radius:28px; background:rgba(255,255,255,.88); box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .auth-hero{
+      padding:36px; background:linear-gradient(160deg,#0f172a,#1d4ed8); color:#fff; display:flex; flex-direction:column; justify-content:space-between;
+      min-height:520px;
+    }
+    .brand{display:flex; align-items:center; gap:14px}
+    .brand-badge{
+      width:54px;height:54px;border-radius:16px;background:rgba(255,255,255,.14);display:grid;place-items:center;
+      font-weight:800;font-size:22px;border:1px solid rgba(255,255,255,.18)
+    }
+    .brand h1{margin:0;font-size:32px;letter-spacing:.4px}
+    .brand p,.auth-hero p{color:rgba(255,255,255,.82); line-height:1.6}
+    .hero-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:18px}
+    .mini{
+      background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.16); border-radius:18px; padding:14px
+    }
+    .mini b{display:block; font-size:20px}
+    .auth-panel{padding:28px; display:flex; flex-direction:column; justify-content:center}
+    .panel-box{background:#fff;border:1px solid var(--line); border-radius:24px; padding:24px; box-shadow:0 8px 24px rgba(15,23,42,.05)}
+    .switch-row{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:18px}
+    .switch{
+      display:flex; align-items:center; gap:10px; padding:8px; background:#f8fafc; border:1px solid var(--line); border-radius:999px;
+    }
+    .switch button{
+      border:0; background:transparent; padding:10px 14px; border-radius:999px; cursor:pointer; color:var(--muted)
+    }
+    .switch button.active{background:var(--primary); color:#fff}
+    .pin-display{
+      display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin:18px 0 14px;
+    }
+    .pin-box{
+      height:52px; border-radius:14px; border:1px solid var(--line); background:#f8fafc; display:grid; place-items:center;
+      font-size:24px; font-weight:700;
+    }
+    .keypad{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px}
+    .keypad button, .primary-btn, .ghost-btn, .danger-btn, .small-btn, .tab-btn{
+      border:0; cursor:pointer; border-radius:14px; transition:.2s ease; font-weight:700;
+    }
+    .keypad button{
+      height:56px; background:#eef2ff; color:#1e293b; font-size:18px
+    }
+    .keypad button:hover,.primary-btn:hover,.ghost-btn:hover,.danger-btn:hover,.small-btn:hover,.tab-btn:hover{transform:translateY(-1px)}
+    .actions{display:flex; gap:10px; margin-top:14px}
+    .primary-btn{background:var(--primary); color:#fff; padding:14px 18px}
+    .ghost-btn{background:#eff6ff; color:var(--primary); padding:14px 18px; border:1px solid #dbeafe}
+    .danger-btn{background:#fee2e2; color:#b91c1c; padding:10px 14px}
+    .note{margin-top:14px; color:var(--muted); font-size:14px; line-height:1.5}
+    .layout{display:grid; grid-template-columns:270px 1fr; min-height:100vh}
+    .sidebar{
+      background:#0f172a; color:#fff; padding:22px 16px; position:sticky; top:0; height:100vh; overflow:auto;
+    }
+    .sidebar .brand h1{font-size:22px}
+    .nav{margin-top:24px; display:flex; flex-direction:column; gap:8px}
+    .nav button{
+      width:100%; text-align:left; padding:13px 14px; background:transparent; color:#cbd5e1; border:1px solid transparent;
+      border-radius:14px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+    }
+    .nav button.active{background:rgba(37,99,235,.16); color:#fff; border-color:rgba(59,130,246,.25)}
+    .nav button span{opacity:.75}
+    .sidebar-card{
+      margin-top:18px; padding:16px; border-radius:18px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1)
+    }
+    .main{padding:20px; overflow:hidden}
+    .topbar{
+      display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:18px; flex-wrap:wrap;
+    }
+    .topbar h2{margin:0; font-size:26px}
+    .topbar .meta{color:var(--muted); font-size:14px}
+    .grid{
+      display:grid; gap:16px;
+    }
+    .cards-4{grid-template-columns:repeat(4,1fr)}
+    .cards-3{grid-template-columns:repeat(3,1fr)}
+    .cards-2{grid-template-columns:repeat(2,1fr)}
+    .card{
+      background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px;
+    }
+    .stat{display:flex; justify-content:space-between; gap:10px; align-items:flex-start}
+    .stat b{display:block; font-size:26px; margin-top:8px}
+    .stat small{color:var(--muted)}
+    .pill{
+      display:inline-flex; align-items:center; gap:6px; padding:7px 10px; border-radius:999px; background:#eef2ff; color:#1d4ed8; font-size:12px; font-weight:700
+    }
+    .section-head{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap}
+    .section-head h3{margin:0}
+    .toolbar{display:flex; gap:8px; flex-wrap:wrap}
+    .toolbar input,.toolbar select,.form-grid input,.form-grid select,.form-grid textarea{
+      width:100%; border:1px solid var(--line); background:#fff; border-radius:12px; padding:12px 13px; outline:none;
+    }
+    .form-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px}
+    .form-grid .full{grid-column:1/-1}
+    .list,.table-wrap{overflow:auto}
+    table{width:100%; border-collapse:collapse; min-width:760px}
+    th,td{padding:12px 10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top}
+    th{font-size:13px; color:#475569; background:#f8fafc; position:sticky; top:0}
+    .row-actions{display:flex; gap:8px; flex-wrap:wrap}
+    .small-btn{padding:8px 10px; background:#eff6ff; color:#1d4ed8}
+    .small-btn.gray{background:#f1f5f9; color:#334155}
+    .small-btn.green{background:#dcfce7; color:#166534}
+    .small-btn.orange{background:#ffedd5; color:#9a3412}
+    .small-btn.red{background:#fee2e2; color:#991b1b}
+    .two-col{display:grid; grid-template-columns:1.2fr .8fr; gap:16px}
+    .badge{display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:700}
+    .b-green{background:#dcfce7; color:#166534}
+    .b-yellow{background:#fef3c7; color:#92400e}
+    .b-blue{background:#dbeafe; color:#1d4ed8}
+    .b-red{background:#fee2e2; color:#991b1b}
+    .progress{
+      height:10px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin-top:8px
+    }
+    .progress > div{height:100%; background:linear-gradient(90deg,var(--primary),#22c55e)}
+    .kpi{
+      display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
+    }
+    .kpi .card{padding:16px}
+    .driver-task{
+      border:1px solid var(--line); border-radius:16px; padding:14px; background:#fff
+    }
+    .driver-task + .driver-task{margin-top:10px}
+    .task-top{display:flex; justify-content:space-between; gap:10px; align-items:center}
+    .task-top h4{margin:0}
+    .signature{
+      border:1px dashed #cbd5e1; border-radius:14px; background:#fff; touch-action:none;
+    }
+    .footer-note{color:var(--muted); font-size:13px; margin-top:8px}
+    .mobile-nav{
+      display:none; position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--line); z-index:30;
+      padding:8px; gap:8px; overflow:auto;
+    }
+    .mobile-nav button{flex:1; min-width:110px; padding:11px 12px; border:1px solid var(--line); background:#f8fafc; border-radius:12px}
+    @media (max-width: 1024px){
+      .cards-4,.kpi,.cards-3{grid-template-columns:repeat(2,1fr)}
+      .two-col,.layout,.auth-card{grid-template-columns:1fr}
+      .sidebar{height:auto; position:relative}
+    }
+    @media (max-width: 700px){
+      .cards-4,.cards-3,.cards-2,.kpi,.form-grid{grid-template-columns:1fr}
+      .auth-hero{min-height:auto}
+      .main{padding:14px 14px 90px}
+      .sidebar{display:none}
+      .mobile-nav{display:flex}
+      .topbar h2{font-size:22px}
+      .pin-box{height:46px; font-size:20px}
+    }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="brand">
-          <div class="logo" aria-hidden="true"></div>
-          <div>
-            <h1>SOTRANSNORD</h1>
-            <p>Gestion transport BTP • Gérant / Chauffeur</p>
+<div class="app" id="app">
+  <div class="auth-wrap" id="authView">
+    <div class="auth-card">
+      <div class="auth-hero">
+        <div>
+          <div class="brand">
+            <div class="brand-badge">S</div>
+            <div>
+              <h1>SOTRANSNORD</h1>
+              <p>Base de démonstration pour la gestion d'une flotte de camions de Gabriel OZIER.</p>
+            </div>
+          </div>
+          <p>Connexion par PIN, dashboard gérant, commandes, suivi chauffeur, dépenses véhicules et préparation à l'intégration Google Sheet + Make.com.</p>
+          <div class="hero-stats">
+            <div class="mini"><b id="demoOrders">12</b><small>Commandes démo</small></div>
+            <div class="mini"><b id="demoTrucks">6</b><small>Camions</small></div>
+            <div class="mini"><b id="demoDrivers">4</b><small>Chauffeurs</small></div>
           </div>
         </div>
-        <div class="actions">
-          <button class="switch" id="modeSwitch" type="button" aria-pressed="false">Mode Démo</button>
-          <button class="btn btn-soft" type="button">Synchronisation Sheets</button>
-          <button class="btn btn-primary" type="button">Déconnexion</button>
-        </div>
+        <div class="note">Les données affichées sont simulées côté front pour démontrer les interactions entre les menus.</div>
       </div>
-    </header>
-
-    <main class="layout">
-      <aside class="sidebar" aria-label="Navigation principale">
-        <div class="nav-title">Accès rapide</div>
-        <nav class="nav">
-          <button class="active" type="button">Connexion PIN</button>
-          <button type="button">Espace Gérant</button>
-          <button type="button">Espace Chauffeur</button>
-          <button type="button">Audit & historique</button>
-          <button type="button">Google Sheets / Make</button>
-        </nav>
-      </aside>
-
-      <section class="content">
-        <section class="hero">
-          <h2>Application terrain pour transport de matériaux</h2>
-          <p>Interface rapide, lisible, mobile-first, avec séparation des rôles, traçabilité complète et intégration prête pour Google Sheets et Make.</p>
-        </section>
-
-        <section class="card pin" id="pinScreen">
-          <h3>Connexion sécurisée PIN 6 chiffres</h3>
-          <p class="muted">Saisissez le code du chauffeur ou du gérant. Verrouillage après plusieurs tentatives.</p>
-          <div class="segmented">
-            <span class="chip active">Chauffeur</span>
-            <span class="chip">Gérant</span>
+      <div class="auth-panel">
+        <div class="panel-box">
+          <div class="switch-row">
+            <div>
+              <h2 style="margin:0 0 6px">Connexion</h2>
+              <div style="color:var(--muted);font-size:14px">Choisissez votre profil puis saisissez votre code PIN.</div>
+            </div>
+            <div class="switch">
+              <button id="modeManager" class="active">Connexion gérant</button>
+              <button id="modeDriver">Connexion chauffeur</button>
+            </div>
           </div>
-          <div class="pin-display" aria-label="Saisie du PIN">
-            <div></div><div></div><div></div><div></div><div></div><div></div>
+          <div class="pin-display" id="pinDisplay"></div>
+          <div class="keypad" id="keypad"></div>
+          <div class="actions">
+            <button class="primary-btn" id="enterBtn">Entrer</button>
+            <button class="ghost-btn" id="clearBtn">Effacer</button>
           </div>
-          <div class="num-grid" aria-label="Clavier numérique">
-            <button type="button">1</button><button type="button">2</button><button type="button">3</button>
-            <button type="button">4</button><button type="button">5</button><button type="button">6</button>
-            <button type="button">7</button><button type="button">8</button><button type="button">9</button>
-            <button type="button">Effacer</button><button type="button">0</button><button type="button">Valider</button>
+          <div class="note">
+            PIN gérant : 123456. PIN chauffeur : 246810, 135790, 112233, 445566.
           </div>
-          <div class="loading" style="margin-top:14px;">États prévus : vérification PIN, erreur, verrouillage, session active.</div>
-        </section>
-
-        <section class="grid">
-          <article class="card span-12">
-            <h3>Tableau de bord gérant</h3>
-            <div class="tabs">
-              <span class="chip active">Paramétrages CRUD</span><span class="chip">Commandes</span><span class="chip">Rapports</span><span class="chip">Marge mensuelle</span>
-            </div>
-          </article>
-
-          <article class="card span-8">
-            <h3>CRUD paramétrages</h3>
-            <div class="field-grid">
-              <div class="field"><label>Chauffeurs</label><input type="text" placeholder="Nom complet"></div>
-              <div class="field"><label>Téléphone</label><input type="tel" placeholder="06..."></div>
-              <div class="field"><label>Camions</label><input type="text" placeholder="Immatriculation"></div>
-              <div class="field"><label>Clients</label><input type="text" placeholder="Nom entreprise"></div>
-              <div class="field"><label>Matériaux</label><input type="text" placeholder="sable 0/4"></div>
-              <div class="field"><label>Tarifs</label><input type="text" placeholder="Tonne / jour"></div>
-            </div>
-          </article>
-
-          <article class="card span-4">
-            <h3>Statut d’intégration</h3>
-            <p class="muted">En mode réel, chaque action peut envoyer un événement structuré vers Make pour créer, mettre à jour, notifier ou consolider les rapports.</p>
-            <div class="badge live">Webhook prêt</div>
-            <div style="height:12px"></div>
-            <button class="big-btn btn-primary" type="button">Envoyer événement Make</button>
-          </article>
-
-          <article class="card span-12">
-            <h3>Gestion des commandes</h3>
-            <div class="field-grid">
-              <div class="field"><label>Client</label><select><option>Sélectionner</option></select></div>
-              <div class="field"><label>Adresse de livraison</label><input type="text"></div>
-              <div class="field"><label>Nombre de transports estimés</label><input type="number"></div>
-              <div class="field"><label>Date du chantier</label><input type="date"></div>
-              <div class="field"><label>Camion</label><select><option>Choisir</option></select></div>
-              <div class="field"><label>Chauffeur</label><select><option>Choisir</option></select></div>
-              <div class="field"><label>Type</label><select><option>Matériaux</option><option>Journée</option></select></div>
-              <div class="field"><label>Matériau</label><select><option>Liste matériaux</option></select></div>
-            </div>
-          </article>
-
-          <article class="card span-12">
-            <h3>Suivi des transports</h3>
-            <div class="table-wrap">
-              <table>
-                <thead><tr><th>Commande</th><th>Statut</th><th>Réalisés / Estimés</th><th>Facturation</th><th>Actions</th></tr></thead>
-                <tbody>
-                  <tr><td>CMD-001</td><td><span class="badge wait">En cours</span></td><td>2 / 3</td><td>—</td><td><button class="btn btn-soft" type="button">Voir</button></td></tr>
-                  <tr><td>CMD-002</td><td><span class="badge ok">Terminé</span></td><td>5 / 5</td><td><span class="badge ok">À facturer</span></td><td><button class="btn btn-primary" type="button">Facturer</button></td></tr>
-                </tbody>
-              </table>
-            </div>
-          </article>
-
-          <article class="card span-12">
-            <h3>Rapports & marge</h3>
-            <div class="table-wrap">
-              <table>
-                <thead><tr><th>Mois</th><th>CA</th><th>Carburant</th><th>Vidange</th><th>Réparations</th><th>Pneus</th><th>Assurance</th><th>Marge brute</th></tr></thead>
-                <tbody>
-                  <tr><td>Janv.</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
-                  <tr class="month-current"><td>Mai</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </article>
-
-          <article class="card span-12">
-            <h3>Tableau de bord chauffeur</h3>
-            <div class="grid">
-              <div class="card span-6" style="background:#f8fbff">
-                <h3>Transports du jour</h3>
-                <p class="muted">Chaque transport s’ouvre en popup pour saisir tonnage, réceptionnaire, fonction et signature électronique.</p>
-                <div class="table-wrap">
-                  <table style="min-width:520px"><thead><tr><th>Réf</th><th>Client</th><th>Statut</th></tr></thead><tbody><tr><td>TR-01</td><td>Client A</td><td><button class="btn btn-soft" type="button">Ouvrir</button></td></tr></tbody></table>
-                </div>
-              </div>
-              <div class="card span-6" style="background:#f8fbff">
-                <h3>Fiche de fin de journée</h3>
-                <div class="field-grid">
-                  <div class="field"><label>Kilométrage</label><input type="number"></div>
-                  <div class="field"><label>Carburant quantité</label><input type="number"></div>
-                  <div class="field"><label>Carburant prix</label><input type="number"></div>
-                </div>
-                <div style="height:12px"></div>
-                <button class="big-btn btn-primary" type="button">Envoyer ma fiche</button>
-              </div>
-            </div>
-          </article>
-        </section>
-      </section>
-    </main>
-
-    <div class="overlay" id="overlay"></div>
-    <div class="modal" id="transportModal" aria-hidden="true">
-      <div class="modal-card">
-        <h3>Popup transport</h3>
-        <div class="field-grid">
-          <div class="field"><label>Tonnage réceptionné</label><input type="number"></div>
-          <div class="field"><label>Nom du réceptionnaire</label><input type="text"></div>
-          <div class="field"><label>Fonction du réceptionnaire</label><input type="text"></div>
-          <div class="field"><label>Signature électronique</label><textarea rows="4" placeholder="Zone de signature"></textarea></div>
+          <div id="authMsg" class="note"></div>
         </div>
-        <div style="height:14px"></div>
-        <button class="btn btn-primary" type="button">Valider transport</button>
       </div>
     </div>
   </div>
+
+  <div class="layout hidden" id="managerView">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">S</div>
+        <div>
+          <h1>SOTRANSNORD</h1>
+          <p style="margin:4px 0 0">Espace gérant</p>
+        </div>
+      </div>
+      <div class="nav" id="sideNav"></div>
+      <div class="sidebar-card">
+        <div class="pill">Connexion simulée</div>
+        <div style="margin-top:10px;font-weight:700" id="currentUser">Gabriel OZIER</div>
+        <div style="color:#cbd5e1;font-size:14px;margin-top:4px">Gestion flotte / commandes / marges</div>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h2 id="viewTitle">Dashboard</h2>
+          <div class="meta" id="viewSubtitle">Vue de pilotage globale de la flotte</div>
+        </div>
+        <div class="toolbar">
+          <button class="ghost-btn" id="syncBtn">Préparer sync Make</button>
+          <button class="danger-btn" id="logoutBtn">Déconnexion</button>
+        </div>
+      </div>
+      <div id="content"></div>
+    </main>
+    <div class="mobile-nav" id="mobileNav"></div>
+  </div>
+</div>
+
+<script>
+const state = {
+  mode: "manager",
+  pin: "",
+  user: null,
+  view: "dashboard",
+  selectedDriver: "Tous",
+  db: {
+    drivers: [
+      {id:1, nom:"Jean Pierre Louis", dob:"1988-02-14", tel:"0696 11 22 33", mail:"jean.louis@sotransnord.fr", permis:"C", pin:"246810"},
+      {id:2, nom:"Mickaël Sulpice", dob:"1991-06-03", tel:"0696 44 55 66", mail:"m.sulpice@sotransnord.fr", permis:"C", pin:"135790"},
+      {id:3, nom:"Nicolas Ozier", dob:"1987-11-22", tel:"0696 77 88 99", mail:"n.ozier@sotransnord.fr", permis:"CE", pin:"112233"},
+      {id:4, nom:"Fabrice René", dob:"1993-09-18", tel:"0696 00 12 34", mail:"f.rene@sotransnord.fr", permis:"C", pin:"445566"}
+    ],
+    trucks: [
+      {id:1, imm:"AB-123-CD", km:126540, type:"Benne", ct:"2026-09-12"},
+      {id:2, imm:"EF-456-GH", km:96420, type:"Toupie", ct:"2026-05-22"},
+      {id:3, imm:"JK-789-LM", km:143200, type:"Benne", ct:"2026-11-03"},
+      {id:4, imm:"NP-321-RS", km:78410, type:"Plateau", ct:"2026-08-01"},
+      {id:5, imm:"TU-654-VW", km:112980, type:"Toupie", ct:"2026-07-15"},
+      {id:6, imm:"XY-987-ZA", km:150440, type:"Benne", ct:"2026-12-20"}
+    ],
+    clients: [
+      {id:1, entreprise:"BTP Nord Caraïbes", gerant:"Mme L. Valere", tel:"0696 10 10 10", mail:"contact@btpnord.com", adresse:"Fort-de-France"},
+      {id:2, entreprise:"Tropic Chantier", gerant:"M. A. Ozier", tel:"0696 20 20 20", mail:"chantier@tropic.fr", adresse:"Le Lamentin"},
+      {id:3, entreprise:"Caraïbes Routes", gerant:"M. D. Pierre", tel:"0696 30 30 30", mail:"info@caraibesroutes.com", adresse:"Schoelcher"}
+    ],
+    materials: [
+      {id:1, nom:"Sable 0/4"},
+      {id:2, nom:"Gravier 4/6"},
+      {id:3, nom:"Remblais"},
+      {id:4, nom:"Tout-venant"}
+    ],
+    tariffs: {
+      materialsPerTon: {"Sable 0/4":28,"Gravier 4/6":35,"Remblais":19,"Tout-venant":24},
+      dayRate: 420
+    },
+    vehicleExpenses: [
+      {id:1, truckId:1, type:"Carburant", montant:180, date:"2026-05-03", mois:"2026-05"},
+      {id:2, truckId:1, type:"Vidange", montant:260, date:"2026-05-04", mois:"2026-05"},
+      {id:3, truckId:2, type:"Pneus", montant:540, date:"2026-05-08", mois:"2026-05"},
+      {id:4, truckId:3, type:"Réparations", montant:690, date:"2026-05-12", mois:"2026-05"},
+      {id:5, truckId:4, type:"Assurance", montant:320, date:"2026-05-01", mois:"2026-05"}
+    ],
+    orders: [
+      {id:1, clientId:1, adresse:"Zone de la Jambette", date:"2026-05-02", estime:3, fait:2, camionId:1, chauffeurId:1, type:"Materiaux", materiau:"Sable 0/4", etat:"En cours", facture:false},
+      {id:2, clientId:2, adresse:"Dillon chantier B", date:"2026-05-04", estime:2, fait:2, camionId:2, chauffeurId:2, type:"Journée", materiau:"", etat:"A facturer", facture:true},
+      {id:3, clientId:3, adresse:"Rivière-Salée", date:"2026-05-06", estime:4, fait:1, camionId:3, chauffeurId:3, type:"Materiaux", materiau:"Gravier 4/6", etat:"En cours", facture:false}
+    ],
+    driverTrips: [
+      {id:1, driverId:1, orderId:1, chantier:"Zone de la Jambette", date:"2026-05-05", status:"À faire", tonnage:null, receiver:"", receiverRole:"", signature:""},
+      {id:2, driverId:1, orderId:1, chantier:"Zone de la Jambette", date:"2026-05-05", status:"À faire", tonnage:null, receiver:"", receiverRole:"", signature:""},
+      {id:3, driverId:1, orderId:1, chantier:"Zone de la Jambette", date:"2026-05-05", status:"À faire", tonnage:null, receiver:"", receiverRole:"", signature:""},
+      {id:4, driverId:2, orderId:2, chantier:"Dillon chantier B", date:"2026-05-05", status:"Réceptionné", tonnage:18.5, receiver:"Chef de chantier", receiverRole:"Chef de chantier", signature:"ok"},
+      {id:5, driverId:2, orderId:2, chantier:"Dillon chantier B", date:"2026-05-05", status:"Réceptionné", tonnage:19.2, receiver:"Chef de chantier", receiverRole:"Chef de chantier", signature:"ok"}
+    ],
+    endDayReports: [
+      {id:1, driverId:1, date:"2026-05-05", km:312, fuelQty:52, fuelPrice:1.92},
+      {id:2, driverId:2, date:"2026-05-05", km:287, fuelQty:49, fuelPrice:1.88}
+    ]
+  }
+};
+
+const views = [
+  {id:"dashboard", label:"Dashboard"},
+  {id:"orders", label:"Commandes"},
+  {id:"settings", label:"Paramétrages"},
+  {id:"reports", label:"Rapports"},
+  {id:"marge", label:"Marge"},
+  {id:"driver", label:"Espace chauffeur"}
+];
+
+const $ = s => document.querySelector(s);
+const content = $("#content");
+
+function renderPin(){
+  $("#pinDisplay").innerHTML = Array.from({length:6}, (_,i)=>`<div class="pin-box">${state.pin[i] ? "•" : ""}</div>`).join("");
+}
+function renderKeypad(){
+  const keys = ["1","2","3","4","5","6","7","8","9","","0","⌫"];
+  $("#keypad").innerHTML = keys.map(k=>`<button data-k="${k}">${k||"&nbsp;"}</button>`).join("");
+}
+function setMode(m){
+  state.mode = m;
+  $("#modeManager").classList.toggle("active", m==="manager");
+  $("#modeDriver").classList.toggle("active", m==="driver");
+  $("#authMsg").textContent = m==="manager" ? "Mode gérant prêt." : "Mode chauffeur prêt.";
+}
+function login(){
+  const pin = state.pin;
+  if(state.mode==="manager" && pin==="123456"){ state.user={role:"manager", name:"Gabriel OZIER"}; openManager(); return; }
+  const drv = state.db.drivers.find(d=>d.pin===pin);
+  if(state.mode==="driver" && drv){ state.user={role:"driver", name:drv.nom, driverId:drv.id}; openManager(); state.view="driver"; render(); return; }
+  $("#authMsg").textContent = "PIN incorrect.";
+}
+function openManager(){ $("#authView").classList.add("hidden"); $("#managerView").classList.remove("hidden"); renderNav(); render(); }
+function logout(){ state.user=null; state.pin=""; $("#authView").classList.remove("hidden"); $("#managerView").classList.add("hidden"); renderPin(); }
+function navButtons(target){
+  return views.map(v=>`<button class="${state.view===v.id?'active':''}" data-view="${v.id}">${v.label}<span>›</span></button>`).join("");
+}
+function renderNav(){
+  $("#sideNav").innerHTML = navButtons();
+  $("#mobileNav").innerHTML = views.map(v=>`<button data-view="${v.id}">${v.label}</button>`).join("");
+}
+function badgeForOrder(o){ return o.facture ? '<span class="badge b-yellow">A facturer</span>' : `<span class="badge ${o.fait>=o.estime?'b-green':'b-blue'}">${o.fait}/${o.estime}</span>`; }
+
+function dashboardHTML(){
+  const monthlyCa = 18450, fuel=3260, vid=540, rep=690, pneus=540, ass=320, marge = monthlyCa-(fuel+vid+rep+pneus+ass);
+  return `
+    <div class="grid cards-4">
+      <div class="card stat"><div><small>Chiffre d'affaires mensuel</small><b>${monthlyCa.toLocaleString("fr-FR")} €</b></div><div class="pill">CA</div></div>
+      <div class="card stat"><div><small>Commandes en cours</small><b>${state.db.orders.filter(o=>!o.facture && o.fait<o.estime).length}</b></div><div class="pill">Suivi</div></div>
+      <div class="card stat"><div><small>Frais véhicules</small><b>${(fuel+vid+rep+pneus+ass).toLocaleString("fr-FR")} €</b></div><div class="pill">Dépenses</div></div>
+      <div class="card stat"><div><small>Marge brute</small><b>${marge.toLocaleString("fr-FR")} €</b></div><div class="pill">Marge</div></div>
+    </div>
+    <div style="height:16px"></div>
+    <div class="two-col">
+      <div class="card">
+        <div class="section-head"><h3>Suivi des commandes</h3><div class="toolbar"><button class="small-btn" onclick="setView('orders')">Ouvrir</button></div></div>
+        <div class="table-wrap"><table><thead><tr><th>Client</th><th>Camion</th><th>Avancement</th><th>État</th></tr></thead><tbody>
+          ${state.db.orders.map(o=>{
+            const c=state.db.clients.find(x=>x.id===o.clientId), t=state.db.trucks.find(x=>x.id===o.camionId);
+            return `<tr><td>${c.entreprise}</td><td>${t.imm}</td><td>${o.fait}/${o.estime}<div class="progress"><div style="width:${Math.min(100,o.fait/o.estime*100)}%"></div></div></td><td>${badgeForOrder(o)}</td></tr>`;
+          }).join("")}
+        </tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="section-head"><h3>Notifications démo</h3></div>
+        <div class="driver-task"><b>Make.com</b><div class="footer-note">Nouvelle commande → webhook → Google Sheet + email.</div></div>
+        <div class="driver-task"><b>Chauffeur</b><div class="footer-note">Fiche fin de journée → stockage dans la feuille dédiée.</div></div>
+        <div class="driver-task"><b>Facturation</b><div class="footer-note">Lorsque tous les transports sont réalisés, le statut passe à “A facturer”.</div></div>
+      </div>
+    </div>`;
+}
+
+function ordersHTML(){
+  return `
+  <div class="grid cards-2">
+    <div class="card">
+      <div class="section-head"><h3>Ajouter une commande</h3></div>
+      <div class="form-grid">
+        <input id="oClient" placeholder="Nom du client / entreprise">
+        <input id="oAddress" placeholder="Adresse de livraison">
+        <input id="oEstime" type="number" placeholder="Nombre de transports estimés">
+        <input id="oDate" type="date">
+        <select id="oTruck">${state.db.trucks.map(t=>`<option value="${t.id}">${t.imm} - ${t.type}</option>`).join("")}</select>
+        <select id="oDriver">${state.db.drivers.map(d=>`<option value="${d.id}">${d.nom}</option>`).join("")}</select>
+        <select id="oType"><option>Materiaux</option><option>Journée</option></select>
+        <select id="oMaterial">${state.db.materials.map(m=>`<option>${m.nom}</option>`).join("")}</select>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+        <button class="primary-btn" onclick="addOrder()">Créer la commande</button>
+        <button class="ghost-btn" onclick="seedTripLines()">Créer lignes chauffeur</button>
+      </div>
+      <div class="footer-note">Les données sont simulées côté front, prêtes à être envoyées vers Google Sheets via Make.com.</div>
+    </div>
+    <div class="card">
+      <div class="section-head"><h3>Indicateur facture</h3></div>
+      <div id="invoiceHint"></div>
+    </div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="card">
+    <div class="section-head"><h3>Tableau de suivi</h3><div class="toolbar"><input id="orderSearch" placeholder="Recherche..." oninput="render()"></div></div>
+    <div class="table-wrap"><table><thead><tr><th>Client</th><th>Chantier</th><th>Date</th><th>Camion</th><th>Chauffeur</th><th>Type</th><th>Suivi</th><th>Actions</th></tr></thead><tbody>
+      ${state.db.orders.filter(o=>JSON.stringify(o).toLowerCase().includes(($("#orderSearch")?.value||"").toLowerCase())).map(o=>{
+        const c=state.db.clients.find(x=>x.id===o.clientId), t=state.db.trucks.find(x=>x.id===o.camionId), d=state.db.drivers.find(x=>x.id===o.chauffeurId);
+        return `<tr>
+          <td>${c.entreprise}</td><td>${o.adresse}</td><td>${o.date}</td><td>${t.imm}</td><td>${d.nom}</td><td>${o.type}${o.materiau?`<div class="footer-note">${o.materiau}</div>`:""}</td>
+          <td>${o.fait}/${o.estime}<div class="progress"><div style="width:${Math.min(100,o.fait/o.estime*100)}%"></div></div>${o.fait>=o.estime?'<div class="badge b-yellow" style="margin-top:8px">A facturer</div>':''}</td>
+          <td><div class="row-actions">
+            <button class="small-btn green" onclick="markInvoiced(${o.id})">A facturer</button>
+            <button class="small-btn orange" onclick="incDone(${o.id})">+ Transport</button>
+            <button class="small-btn red" onclick="delOrder(${o.id})">Supprimer</button>
+          </div></td>
+        </tr>`;
+      }).join("")}
+    </tbody></table></div>
+  </div>`;
+}
+
+function settingsHTML(){
+  const sect=(title, rows, addFn, type)=>`
+    <div class="card">
+      <div class="section-head"><h3>${title}</h3><button class="small-btn" onclick="${addFn}()">Ajouter</button></div>
+      <div class="table-wrap"><table><thead><tr>${rows.headers.map(h=>`<th>${h}</th>`).join("")}<th>Actions</th></tr></thead><tbody>
+      ${rows.data.map(r=>`<tr>${rows.row(r)}<td><div class="row-actions"><button class="small-btn gray" onclick="editItem('${type}',${r.id})">Modifier</button><button class="small-btn red" onclick="deleteItem('${type}',${r.id})">Supprimer</button></div></td></tr>`).join("")}
+      </tbody></table></div>
+    </div>`;
+  return `
+  <div class="grid cards-2">
+    ${sect("Chauffeurs",{headers:["Nom","Naissance","Téléphone","Mail","Permis"],data:state.db.drivers,row:r=>`<td>${r.nom}</td><td>${r.dob}</td><td>${r.tel}</td><td>${r.mail}</td><td>${r.permis}</td>`},"addDriver","drivers")}
+    ${sect("Camions",{headers:["Immatriculation","Kilométrage","Type","CT"],data:state.db.trucks,row:r=>`<td>${r.imm}</td><td>${r.km}</td><td>${r.type}</td><td>${r.ct}</td>`},"addTruck","trucks")}
+    ${sect("Clients",{headers:["Entreprise","Gérant","Téléphone","Mail","Adresse"],data:state.db.clients,row:r=>`<td>${r.entreprise}</td><td>${r.gerant}</td><td>${r.tel}</td><td>${r.mail}</td><td>${r.adresse}</td>`},"addClient","clients")}
+    ${sect("Matériaux",{headers:["Nom"],data:state.db.materials,row:r=>`<td>${r.nom}</td>`},"addMaterial","materials")}
+  </div>
+  <div style="height:16px"></div>
+  <div class="grid cards-2">
+    <div class="card">
+      <div class="section-head"><h3>Tarifs</h3><button class="small-btn" onclick="saveTariffs()">Sauvegarder</button></div>
+      <div class="form-grid">
+        ${Object.keys(state.db.tariffs.materialsPerTon).map(k=>`<input id="tar_${k.replace(/\s/g,'_')}" value="${state.db.tariffs.materialsPerTon[k]}" placeholder="${k} €/tonne">`).join("")}
+        <input id="dayRate" value="${state.db.tariffs.dayRate}" placeholder="Journée €/jour">
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-head"><h3>Frais véhicules</h3><button class="small-btn" onclick="addExpense()">Ajouter</button></div>
+      <div class="table-wrap"><table><thead><tr><th>Camion</th><th>Type</th><th>Montant</th><th>Date</th><th>Actions</th></tr></thead><tbody>
+      ${state.db.vehicleExpenses.map(e=>`<tr><td>${state.db.trucks.find(t=>t.id===e.truckId)?.imm||""}</td><td>${e.type}</td><td>${e.montant} €</td><td>${e.date}</td><td><button class="small-btn red" onclick="deleteItem('expenses',${e.id})">Supprimer</button></td></tr>`).join("")}
+      </tbody></table></div>
+    </div>
+  </div>`;
+}
+
+function reportsHTML(){
+  return `
+  <div class="grid cards-3">
+    <div class="card"><div class="pill">Conso moyenne</div><b style="display:block;margin-top:10px;font-size:30px">24,8 L/100 km</b><div class="footer-note">Exemple calculé à partir des fiches de fin de journée démo.</div></div>
+    <div class="card"><div class="pill">Frais par camion</div><b style="display:block;margin-top:10px;font-size:30px">1 990 €</b><div class="footer-note">Moyenne mensuelle sur la flotte de démonstration.</div></div>
+    <div class="card"><div class="pill">Mois actif</div><b style="display:block;margin-top:10px;font-size:30px">Mai 2026</b><div class="footer-note">Tableaux adaptés pour export Google Sheets.</div></div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="card">
+    <div class="section-head"><h3>Fiches chauffeurs reçues</h3></div>
+    <div class="table-wrap"><table><thead><tr><th>Chauffeur</th><th>Date</th><th>KM</th><th>Carburant</th><th>Tarif</th></tr></thead><tbody>
+      ${state.db.endDayReports.map(r=>`<tr><td>${state.db.drivers.find(d=>d.id===r.driverId).nom}</td><td>${r.date}</td><td>${r.km}</td><td>${r.fuelQty} L</td><td>${r.fuelPrice} €</td></tr>`).join("")}
+    </tbody></table></div>
+  </div>`;
+}
+
+function margeHTML(){
+  const ca = 18450, fuel=3260, vid=540, rep=690, pneus=540, ass=320, brut = ca-(fuel+vid+rep+pneus+ass);
+  return `
+  <div class="card">
+    <div class="section-head"><h3>Tableau mensuel des marges</h3></div>
+    <div class="table-wrap"><table><thead><tr><th>Catégorie</th><th>Montant</th></tr></thead><tbody>
+      <tr><td>Chiffre d'affaire mensuel</td><td>${ca.toLocaleString("fr-FR")} €</td></tr>
+      <tr><td>Carburant</td><td>${fuel.toLocaleString("fr-FR")} €</td></tr>
+      <tr><td>Vidange</td><td>${vid.toLocaleString("fr-FR")} €</td></tr>
+      <tr><td>Réparations</td><td>${rep.toLocaleString("fr-FR")} €</td></tr>
+      <tr><td>Pneus</td><td>${pneus.toLocaleString("fr-FR")} €</td></tr>
+      <tr><td>Assurance</td><td>${ass.toLocaleString("fr-FR")} €</td></tr>
+      <tr><td><b>Marge brute</b></td><td><b>${brut.toLocaleString("fr-FR")} €</b></td></tr>
+    </tbody></table></div>
+  </div>`;
+}
+
+function driverHTML(){
+  const id = state.user?.driverId || 1;
+  const tasks = state.db.driverTrips.filter(t=>t.driverId===id);
+  const rep = state.db.endDayReports.find(r=>r.driverId===id) || {date:"2026-05-05",km:"",fuelQty:"",fuelPrice:""};
+  return `
+  <div class="grid cards-2">
+    <div class="card">
+      <div class="section-head"><h3>Transports du jour</h3></div>
+      ${tasks.map(t=>`
+        <div class="driver-task">
+          <div class="task-top"><div><h4>${t.chantier}</h4><div class="footer-note">${t.status} · ${t.date}</div></div><button class="small-btn" onclick="openDelivery(${t.id})">Ouvrir</button></div>
+          <div class="footer-note">Le chauffeur saisit le tonnage, le réceptionnaire et la signature électronique.</div>
+        </div>`).join("")}
+    </div>
+    <div class="card">
+      <div class="section-head"><h3>Fiche de fin de journée</h3></div>
+      <div class="form-grid">
+        <input id="endKm" placeholder="Kilométrage" value="${rep.km||""}">
+        <input id="endFuelQty" placeholder="Carburant quantité (L)" value="${rep.fuelQty||""}">
+        <input id="endFuelPrice" placeholder="Tarif carburant (€)" value="${rep.fuelPrice||""}">
+        <input type="date" id="endDate" value="${rep.date||"2026-05-05"}">
+      </div>
+      <div style="margin-top:12px">
+        <button class="primary-btn" onclick="sendDayReport()">Envoyer ma fiche</button>
+      </div>
+      <div class="footer-note">Cette fiche est pensée pour un scénario Make.com qui l’enverra dans une Google Sheet.</div>
+    </div>
+  </div>`;
+}
+
+function render(){
+  $("#viewTitle").textContent = views.find(v=>v.id===state.view)?.label || "Dashboard";
+  $("#viewSubtitle").textContent = state.user?.role==="driver" ? "Espace chauffeur" : "Vue de pilotage globale de la flotte";
+  $("#currentUser").textContent = state.user?.name || "Gabriel OZIER";
+  $("#sideNav").querySelectorAll("button").forEach(b=>b.classList.toggle("active", b.dataset.view===state.view));
+  $("#mobileNav").querySelectorAll("button").forEach(b=>b.classList.toggle("active", b.dataset.view===state.view));
+  content.innerHTML = state.view==="dashboard" ? dashboardHTML()
+    : state.view==="orders" ? ordersHTML()
+    : state.view==="settings" ? settingsHTML()
+    : state.view==="reports" ? reportsHTML()
+    : state.view==="marge" ? margeHTML()
+    : driverHTML();
+  $("#invoiceHint") && ($("#invoiceHint").innerHTML = state.db.orders.map(o=>`<div class="driver-task"><b>${state.db.clients.find(c=>c.id===o.clientId).entreprise}</b><div class="footer-note">${o.fait>=o.estime?'Facture à envoyer':'En attente de complétion'} — ${o.fait}/${o.estime}</div></div>`).join(""));
+}
+function setView(v){ state.view=v; render(); }
+function addOrder(){
+  const client = $("#oClient").value.trim() || "Nouveau client";
+  const newClient = {id:Date.now(), entreprise:client, gerant:"À compléter", tel:"", mail:"", adresse:""};
+  state.db.clients.push(newClient);
+  const o = {id:Date.now()+1, clientId:newClient.id, adresse:$("#oAddress").value||"Adresse démo", date:$("#oDate").value||"2026-05-05", estime:+($("#oEstime").value||1), fait:0, camionId:+$("#oTruck").value, chauffeurId:+$("#oDriver").value, type:$("#oType").value, materiau:$("#oMaterial").value, etat:"En cours", facture:false};
+  state.db.orders.unshift(o);
+  const driverId = o.chauffeurId;
+  for(let i=0;i<o.estime;i++) state.db.driverTrips.unshift({id:Date.now()+i+10, driverId, orderId:o.id, chantier:o.adresse, date:o.date, status:"À faire", tonnage:null, receiver:"", receiverRole:"", signature:""});
+  render();
+}
+function seedTripLines(){ alert("Démo : les lignes chauffeur sont générées automatiquement à la création d'une commande."); }
+function markInvoiced(id){ const o=state.db.orders.find(x=>x.id===id); o.facture=true; o.etat="A facturer"; render(); }
+function incDone(id){ const o=state.db.orders.find(x=>x.id===id); if(o.fait<o.estime) o.fait++; if(o.fait>=o.estime){o.facture=true;o.etat="A facturer"} render(); }
+function delOrder(id){ state.db.orders = state.db.orders.filter(o=>o.id!==id); render(); }
+function saveTariffs(){ alert("Tarifs enregistrés côté front. À connecter à Google Sheets via Make.com."); }
+function addDriver(){ state.db.drivers.push({id:Date.now(), nom:"Nouveau chauffeur", dob:"1990-01-01", tel:"", mail:"", permis:"C", pin:String(Math.floor(100000+Math.random()*900000))}); render(); }
+function addTruck(){ state.db.trucks.push({id:Date.now(), imm:"XX-000-XX", km:0, type:"Benne", ct:"2026-12-31"}); render(); }
+function addClient(){ state.db.clients.push({id:Date.now(), entreprise:"Nouvelle entreprise", gerant:"", tel:"", mail:"", adresse:""}); render(); }
+function addMaterial(){ state.db.materials.push({id:Date.now(), nom:"Nouveau matériau"}); render(); }
+function addExpense(){ state.db.vehicleExpenses.unshift({id:Date.now(), truckId:1, type:"Carburant", montant:100, date:"2026-05-05", mois:"2026-05"}); render(); }
+function deleteItem(type,id){
+  if(type==="drivers") state.db.drivers = state.db.drivers.filter(x=>x.id!==id);
+  if(type==="trucks") state.db.trucks = state.db.trucks.filter(x=>x.id!==id);
+  if(type==="clients") state.db.clients = state.db.clients.filter(x=>x.id!==id);
+  if(type==="materials") state.db.materials = state.db.materials.filter(x=>x.id!==id);
+  if(type==="expenses") state.db.vehicleExpenses = state.db.vehicleExpenses.filter(x=>x.id!==id);
+  render();
+}
+function editItem(type,id){ alert(`Édition démo de ${type} #${id} — branchement Google Sheet à prévoir via Make.`); }
+function openDelivery(id){ alert("Popup démo : saisir tonnage, réceptionnaire, rôle et signature électronique."); }
+function sendDayReport(){ alert("Fiche envoyée (simulation). À relier à un webhook Make.com puis Google Sheets."); }
+
+document.addEventListener("click", e=>{
+  const v = e.target.closest("[data-view]")?.dataset.view;
+  if(v) setView(v);
+  const k = e.target.closest("[data-k]")?.dataset.k;
+  if(k!==undefined){
+    if(k==="⌫") state.pin = state.pin.slice(0,-1);
+    else if(state.pin.length<6 && /\d/.test(k)) state.pin += k;
+    renderPin();
+  }
+});
+$("#modeManager").onclick = ()=>setMode("manager");
+$("#modeDriver").onclick = ()=>setMode("driver");
+$("#enterBtn").onclick = login;
+$("#clearBtn").onclick = ()=>{state.pin=""; renderPin()};
+$("#logoutBtn").onclick = logout;
+$("#syncBtn").onclick = ()=>alert("Préparation liaison Make.com + Google Sheets : webhook, append, update, notifications email.");
+renderKeypad(); renderPin(); setMode("manager"); renderNav();
+</script>
 </body>
 </html>
