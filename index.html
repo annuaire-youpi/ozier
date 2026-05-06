@@ -2,1126 +2,3429 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>SOTRANSNORD</title>
+  <title>SOTRANSNORD - Gestion de flotte</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    :root{
-      --bg:#f3f7fb;
-      --panel:#ffffff;
-      --panel2:#f8fbff;
-      --text:#152033;
-      --muted:#66758a;
-      --line:#e6ebf3;
-      --primary:#2563eb;
-      --primary2:#1d4ed8;
-      --success:#16a34a;
-      --warning:#f59e0b;
-      --danger:#ef4444;
-      --shadow:0 10px 30px rgba(15,23,42,.08);
-      --shadow2:0 8px 18px rgba(15,23,42,.06);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(37,99,235,.08), transparent 28%),
-        radial-gradient(circle at bottom right, rgba(22,163,74,.06), transparent 26%),
-        linear-gradient(180deg,#f8fbff 0%, #eef3f9 100%);
-    }
-    button,input,select,textarea{font:inherit}
-    .hidden{display:none !important}
-    .app{min-height:100vh}
-
-    .auth{
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      padding:20px;
-    }
-    .auth-card{
-      width:min(1040px,100%);
-      background:rgba(255,255,255,.92);
-      backdrop-filter:blur(12px);
-      border:1px solid rgba(255,255,255,.85);
-      border-radius:28px;
-      overflow:hidden;
-      box-shadow:var(--shadow);
-      display:grid;
-      grid-template-columns:1.05fr .95fr;
-    }
-    .auth-left{
-      background:linear-gradient(135deg,#1d4ed8,#2563eb 48%,#1e40af);
-      color:#fff;
-      padding:34px;
-      min-height:440px;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-    }
-    .auth-left h1{margin:0 0 12px; font-size:clamp(32px,4vw,52px); line-height:1.05}
-    .auth-left p{margin:0; max-width:560px; line-height:1.65; opacity:.94}
-    .pill-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:24px}
-    .pill{
-      padding:10px 14px;
-      border-radius:999px;
-      background:rgba(255,255,255,.14);
-      border:1px solid rgba(255,255,255,.18);
-      font-size:13px;
-      font-weight:700;
-    }
-    .auth-right{padding:30px; background:#fff}
-    .brand{display:flex; align-items:center; gap:12px; margin-bottom:18px}
-    .logo{
-      width:48px; height:48px; border-radius:14px;
-      display:grid; place-items:center;
-      background:linear-gradient(135deg,var(--primary),#7c3aed);
-      color:#fff; font-weight:900;
-      box-shadow:0 12px 24px rgba(37,99,235,.22);
-    }
-    .brand h2{margin:0; font-size:22px}
-    .sub{margin-top:4px; color:var(--muted); font-size:14px}
-    .switch{
-      display:flex;
-      background:#eef3fb;
-      padding:6px;
-      border-radius:16px;
-      gap:6px;
-      margin:18px 0 16px;
-    }
-    .switch button{
-      flex:1;
-      border:0;
-      padding:12px 14px;
-      border-radius:12px;
-      background:transparent;
-      cursor:pointer;
-      font-weight:800;
-      color:var(--muted);
-    }
-    .switch button.active{
-      background:#fff;
-      color:var(--primary);
-      box-shadow:var(--shadow2);
-    }
-    .pin-display{
-      height:66px;
-      border:1px solid var(--line);
-      border-radius:16px;
-      background:#fbfcfe;
-      display:grid;
-      place-items:center;
-      font-size:28px;
-      letter-spacing:10px;
-      font-weight:800;
-      margin-bottom:14px;
-    }
-    .keypad{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:10px;
-    }
-    .keypad button,.btn,.nav-item,.tab-btn{
-      border:0;
-      cursor:pointer;
-      border-radius:14px;
-    }
-    .keypad button{
-      height:58px;
-      background:#f3f6fb;
-      font-weight:800;
-      font-size:18px;
-      color:var(--text);
-    }
-    .keypad button:hover{background:#e9eff8}
-    .login-actions{display:flex; gap:10px; margin-top:12px}
-    .btn{padding:12px 14px; font-weight:800}
-    .btn.primary{background:var(--primary); color:#fff}
-    .btn.primary:hover{background:var(--primary2)}
-    .btn.ghost{background:#eef3fb; color:var(--text)}
-    .btn.danger{background:#fee2e2; color:#991b1b}
-    .hint{
-      margin-top:14px;
-      padding:12px 14px;
-      border-radius:14px;
-      background:#f8fafc;
-      color:var(--muted);
-      line-height:1.5;
-      font-size:13px;
+    :root {
+      --primary: #2563eb;
+      --primary-soft: #dbeafe;
+      --bg: #f3f4f6;
+      --sidebar-bg: #0f172a;
+      --sidebar-text: #e5e7eb;
+      --card-bg: #ffffff;
+      --border: #e5e7eb;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --warning: #f97316;
+      --text-main: #111827;
+      --text-soft: #6b7280;
+      --radius: 10px;
+      --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
     }
 
-    .shell{min-height:100vh; display:flex}
-    .sidebar{
-      width:286px;
-      background:linear-gradient(180deg,#0f172a,#172554);
-      color:#fff;
-      padding:18px;
-      position:sticky;
-      top:0;
-      height:100vh;
-      overflow:auto;
-    }
-    .sidebar .sub{color:rgba(255,255,255,.72)}
-    .nav{display:flex; flex-direction:column; gap:8px; margin-top:16px}
-    .nav-item{
-      width:100%;
-      text-align:left;
-      padding:13px 14px;
-      background:transparent;
-      color:#e8effc;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      font-weight:800;
-    }
-    .nav-item:hover,.nav-item.active{background:rgba(255,255,255,.12)}
-    .content{flex:1; padding:18px; min-width:0}
-    .topbar{
-      background:rgba(255,255,255,.72);
-      backdrop-filter:blur(10px);
-      border:1px solid rgba(255,255,255,.75);
-      border-radius:24px;
-      box-shadow:var(--shadow2);
-      padding:16px 18px;
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .topbar h3{margin:0; font-size:20px}
-    .meta{color:var(--muted); font-size:13px}
-    .actions{display:flex; gap:10px; flex-wrap:wrap}
-    .section{display:none}
-    .section.active{display:block}
-    .grid-4{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:16px}
-    .card{
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:20px;
-      padding:16px;
-      box-shadow:var(--shadow2);
-    }
-    .stat{display:flex; justify-content:space-between; gap:10px; align-items:flex-start}
-    .label{color:var(--muted); font-size:13px}
-    .value{font-size:28px; font-weight:900; margin-top:8px}
-    .badge{padding:7px 10px; border-radius:999px; font-size:12px; font-weight:800}
-    .b-blue{background:#dbeafe; color:#1d4ed8}
-    .b-green{background:#dcfce7; color:#166534}
-    .b-amber{background:#fef3c7; color:#92400e}
-    .main-grid{display:grid; grid-template-columns:1.25fr .75fr; gap:14px; margin-top:14px}
-    .two-col{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px}
-    .section-head{display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:12px}
-    .section-head h4{margin:0; font-size:17px}
-    .section-head .muted{color:var(--muted); font-size:13px}
-    .table-wrap{overflow:auto; border:1px solid var(--line); border-radius:16px; background:#fff}
-    table{width:100%; border-collapse:collapse; min-width:760px}
-    th,td{
-      padding:12px;
-      border-bottom:1px solid #edf1f7;
-      text-align:left;
-      white-space:nowrap;
-      font-size:14px;
-    }
-    th{
-      background:#f8fbff;
-      color:#526173;
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:.03em;
-    }
-    tr:hover td{background:#fbfdff}
-    .status{
-      padding:7px 10px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:800;
-      display:inline-flex;
-    }
-    .s-open{background:#e0f2fe; color:#0369a1}
-    .s-done{background:#dcfce7; color:#166534}
-    .s-bill{background:#ede9fe; color:#6d28d9}
-    .list{display:flex; flex-direction:column; gap:10px}
-    .list-item{
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:12px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-    }
-    .title{font-weight:800}
-    .subt{font-size:13px; color:var(--muted); margin-top:4px}
-    .form-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px}
-    .field{display:flex; flex-direction:column; gap:6px}
-    .field label{font-size:13px; font-weight:800; color:#455468}
-    .field input,.field select,.field textarea{
-      width:100%;
-      border:1px solid #d9e1ec;
-      border-radius:12px;
-      padding:12px;
-      background:#fff;
-      outline:none;
-    }
-    .field textarea{min-height:88px; resize:vertical}
-    .field input:focus,.field select:focus,.field textarea:focus{
-      border-color:#93c5fd;
-      box-shadow:0 0 0 3px rgba(59,130,246,.12);
-    }
-    .form-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
-    .small{padding:9px 12px; font-size:13px}
-    .month-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
-    .month{
-      padding:14px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background:#fff;
-    }
-    .month.current{
-      background:#f8fbff;
-      outline:3px solid rgba(37,99,235,.16);
-    }
-    .month .m{font-weight:900}
-    .month .k{margin-top:10px; font-size:24px; font-weight:900}
-    .kpi-row{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
-    .kpi{
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:14px;
-    }
-    .kpi .n{font-size:24px; font-weight:900; margin-top:8px}
-
-    .driver-screen{
-      min-height:100vh;
-      padding:18px;
-      display:none;
-    }
-    .driver-top,.driver-grid{
-      max-width:1100px;
-      margin:0 auto;
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:14px;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    .mobile-bar{
-      display:none;
-      position:fixed;
-      bottom:14px;
-      left:14px;
-      right:14px;
-      z-index:20;
-      background:rgba(15,23,42,.96);
-      border-radius:18px;
-      padding:10px;
-      box-shadow:var(--shadow);
+    body {
+      background: radial-gradient(circle at top left, #e0f2fe 0, #f9fafb 40%, #e5e7eb 100%);
+      min-height: 100vh;
+      color: var(--text-main);
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
     }
 
-    .backdrop{
-      position:fixed;
-      inset:0;
-      background:rgba(15,23,42,.55);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index:50;
-      padding:16px;
-    }
-    .backdrop.open{display:flex}
-    .modal{
-      width:min(760px,100%);
-      max-height:90vh;
-      overflow:auto;
-      background:#fff;
-      border-radius:22px;
-      box-shadow:var(--shadow);
-      padding:18px;
-    }
-    .canvas-wrap{
-      border:1px solid var(--line);
-      border-radius:16px;
-      overflow:hidden;
-      background:#fbfdff;
-    }
-    canvas{
-      display:block;
-      width:100%;
-      height:190px;
-      touch-action:none;
-      cursor:crosshair;
+    /* Wrapper pour page unique */
+    .app-root {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
     }
 
-    .toast{
-      position:fixed;
-      right:16px;
-      bottom:16px;
-      background:#111827;
-      color:#fff;
-      padding:12px 14px;
-      border-radius:14px;
-      box-shadow:var(--shadow);
-      opacity:0;
-      transform:translateY(10px);
-      transition:.22s;
-      z-index:60;
-      pointer-events:none;
+    /* ----------- ECRAN LOGIN ----------- */
+    .login-screen {
+      width: 100%;
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 32px 16px;
     }
-    .toast.show{opacity:1; transform:translateY(0)}
 
-    @media (max-width:1100px){
-      .auth-card,.main-grid,.two-col,.driver-grid,.driver-top{grid-template-columns:1fr}
-      .grid-4,.month-grid{grid-template-columns:repeat(2,1fr)}
-      .sidebar{width:242px}
+    .login-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      border-radius: 24px;
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      width: 100%;
+      overflow: hidden;
     }
-    @media (max-width:820px){
-      .sidebar{display:none}
-      .content{padding-bottom:94px}
-      .mobile-bar{display:block}
-      .grid-4,.form-grid,.kpi-row,.month-grid,.driver-grid,.driver-top{grid-template-columns:1fr}
-      .auth-left{min-height:auto}
-      .auth-card{grid-template-columns:1fr}
-      .auth-right,.auth-left{padding:22px}
+
+    .login-left {
+      padding: 32px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .login-badge {
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .login-badge span.dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.2);
+    }
+
+    .login-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .login-subtitle {
+      font-size: 14px;
+      color: var(--text-soft);
+      max-width: 440px;
+      line-height: 1.5;
+    }
+
+    .login-switch {
+      display: inline-flex;
+      padding: 4px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      position: relative;
+    }
+
+    .login-switch button {
+      border: none;
+      background: transparent;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+      color: #4b5563;
+      transition: color .2s ease;
+      white-space: nowrap;
+    }
+
+    .login-switch button.active {
+      color: #111827;
+      font-weight: 600;
+    }
+
+    .login-switch-thumb {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      width: 50%;
+      border-radius: 999px;
+      background: #ffffff;
+      box-shadow: 0 4px 10px rgba(148, 163, 184, 0.7);
+      transition: transform .2s ease;
+    }
+
+    .login-switch-thumb.manager {
+      transform: translateX(0);
+    }
+
+    .login-switch-thumb.driver {
+      transform: translateX(100%);
+    }
+
+    .pin-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .pin-input {
+      width: 100%;
+      aspect-ratio: 3/4;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      text-align: center;
+      font-size: 20px;
+      font-weight: 600;
+      outline: none;
+      background: #f9fafb;
+      transition: border .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+
+    .pin-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.4);
+      background: #ffffff;
+    }
+
+    .login-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 10px 18px;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background .15s ease, box-shadow .15s ease, transform .05s ease, color .15s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #f9fafb;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-primary:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: #ffffff;
+      color: #374151;
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      background: #f9fafb;
+    }
+
+    .login-hint {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    .login-hint code {
+      background: #111827;
+      color: #e5e7eb;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    .login-alert {
+      font-size: 13px;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #fecaca;
+      background: #fef2f2;
+      color: #b91c1c;
+      display: none;
+    }
+
+    .login-right {
+      background: radial-gradient(circle at top left, #1d4ed8, #0f172a);
+      color: #e5e7eb;
+      padding: 24px 24px 24px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .logo-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #f97316, #facc15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 14px;
+      box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.7);
+    }
+
+    .login-right-main {
+      margin-top: 16px;
+    }
+
+    .login-right-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .login-right-text {
+      font-size: 13px;
+      color: #cbd5f5;
+      max-width: 260px;
+      line-height: 1.6;
+    }
+
+    .login-pill {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      background: rgba(15, 23, 42, 0.7);
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .login-pill span {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    .login-badges {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .login-badge-pill {
+      font-size: 11px;
+      background: rgba(15, 23, 42, 0.7);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .login-badge-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 999px;
+      background: #60a5fa;
+    }
+
+    .login-footer {
+      margin-top: auto;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .login-footer strong {
+      color: #e5e7eb;
+    }
+
+    /* ----------- LAYOUT GESTIONNAIRE ----------- */
+    .app-shell {
+      display: none;
+      width: 100%;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text-main);
+    }
+
+    .app-shell-inner {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: var(--sidebar-bg);
+      color: var(--sidebar-text);
+      display: flex;
+      flex-direction: column;
+      padding: 18px 16px;
+      gap: 18px;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px 14px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .sidebar-title {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-title span:first-child {
+      font-size: 12px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: #9ca3af;
+    }
+
+    .sidebar-title span:last-child {
+      font-size: 16px;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+      flex: 1;
+    }
+
+    .sidebar-section-label {
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #6b7280;
+      padding: 10px 10px 4px;
+    }
+
+    .nav-item {
+      padding: 9px 10px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      cursor: pointer;
+      color: #e5e7eb;
+      border: 1px solid transparent;
+      transition: background .15s ease, border .15s ease, transform .05s ease;
+    }
+
+    .nav-item span.icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 8px;
+      background: rgba(148, 163, 184, 0.16);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .nav-item.active {
+      background: rgba(37, 99, 235, 0.22);
+      border-color: rgba(59, 130, 246, 0.7);
+      transform: translateY(-1px);
+    }
+
+    .nav-item:hover:not(.active) {
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .sidebar-footer {
+      font-size: 11px;
+      color: #6b7280;
+      padding-top: 10px;
+      border-top: 1px solid rgba(55, 65, 81, 0.9);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sidebar-footer button {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: transparent;
+      color: #e5e7eb;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .sidebar-footer button:hover {
+      background: rgba(31, 41, 55, 0.9);
+    }
+
+    /* Topbar & main */
+    .app-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      height: 60px;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .topbar-page-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .topbar-page-sub {
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chip {
+      font-size: 11px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      padding: 4px 9px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    .topbar-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      color: #f9fafb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .app-content {
+      padding: 16px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-height: 0;
+    }
+
+    /* ----------- CARDS & TABLES ----------- */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px 14px 16px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .card-subtitle {
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .pill {
+      font-size: 11px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .metric-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .metric-main {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .badge {
+      font-size: 11px;
+      border-radius: 999px;
+      padding: 2px 7px;
+    }
+
+    .badge-success {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .badge-danger {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .badge-warning {
+      background: #ffedd5;
+      color: #c2410c;
+    }
+
+    .scroll-x {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      min-width: 520px;
+    }
+
+    thead {
+      background: #f3f4f6;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 8px 6px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #6b7280;
+    }
+
+    tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    .status-pill {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-pill span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+    }
+
+    .status-en-cours {
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .status-en-cours span.dot {
+      background: #3b82f6;
+    }
+
+    .status-termine {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .status-termine span.dot {
+      background: #16a34a;
+    }
+
+    .status-a-facturer {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-a-facturer span.dot {
+      background: #f59e0b;
+    }
+
+    .table-actions button {
+      font-size: 11px;
+      padding: 4px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #f9fafb;
+      cursor: pointer;
+    }
+
+    .table-actions button:hover {
+      background: #e5e7eb;
+    }
+
+    /* ----------- FORMULAIRES CRUD ----------- */
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-field label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      padding: 7px 9px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      outline: none;
+      background: #f9fafb;
+    }
+
+    .form-field input:focus,
+    .form-field select:focus,
+    .form-field textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3);
+      background: #ffffff;
+    }
+
+    .form-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px dashed #cbd5f5;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    /* ----------- RAPPORTS / MARGE ----------- */
+    .margin-table {
+      min-width: 720px;
+    }
+
+    .month-current {
+      background: #eff6ff !important;
+    }
+
+    /* ----------- VUE CHAUFFEUR ----------- */
+    .driver-shell {
+      display: none;
+      width: 100%;
+      min-height: 100vh;
+      background: var(--bg);
+      padding: 16px 12px 26px;
+    }
+
+    .driver-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .driver-identity {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .driver-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .driver-sub {
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    .driver-block-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .driver-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .transport-item {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 10px 10px;
+      border: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .transport-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 13px;
+    }
+
+    .transport-meta {
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .transport-status {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .transport-status.done {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .transport-status.pending {
+      background: #f3f4f6;
+      color: #4b5563;
+    }
+
+    .driver-footer {
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    /* ----------- MODAL GENERIQUE ----------- */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 40;
+      padding: 16px;
+    }
+
+    .modal {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.5);
+      max-width: 480px;
+      width: 100%;
+      padding: 18px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .modal-close-btn {
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .modal-footer {
+      margin-top: 6px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* ----------- ALERTE "API" (Sheets / Make) ----------- */
+    .api-hint {
+      font-size: 11px;
+      color: #6b7280;
+      padding: 8px 9px;
+      border-radius: 10px;
+      background: #f9fafb;
+      border: 1px dashed #cbd5f5;
+      margin-top: 4px;
+    }
+
+    .api-hint code {
+      font-size: 11px;
+      background: #111827;
+      color: #e5e7eb;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    /* ----------- RESPONSIVE ----------- */
+    @media (max-width: 900px) {
+      .login-card {
+        grid-template-columns: 1fr;
+      }
+      .login-right {
+        display: none;
+      }
+      .sidebar {
+        display: none;
+      }
+      .app-shell-inner {
+        flex-direction: column;
+      }
+      .topbar {
+        position: static;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+      .form-grid-2,
+      .form-grid-3 {
+        grid-template-columns: 1fr;
+      }
+      .app-content {
+        padding: 14px 12px 20px;
+      }
+      .topbar {
+        padding: 10px 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-left {
+        padding: 22px 18px 18px;
+      }
+      .login-title {
+        font-size: 22px;
+      }
+      .pin-grid {
+        gap: 6px;
+      }
+      .pin-input {
+        font-size: 16px;
+      }
+      .driver-shell {
+        padding: 12px 10px 18px;
+      }
     }
   </style>
 </head>
 <body>
-<div class="app">
-  <section id="authScreen" class="auth">
-    <div class="auth-card">
-      <div class="auth-left">
-        <h1>SOTRANSNORD</h1>
-        <p>Base de démonstration pour la gestion d’une flotte de camions de Gabriel OZIER, avec accès séparé gérant / chauffeur, commandes, dépenses, rapports, facturation et liaison prévue Google Sheets + Make.com.</p>
-        <div class="pill-row">
-          <div class="pill">Connexion PIN</div>
-          <div class="pill">Vue gérant / chauffeur</div>
-          <div class="pill">CRUD démo</div>
-          <div class="pill">Mobile & desktop</div>
+<div class="app-root">
+  <!-- ECRAN DE CONNEXION -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div class="login-left">
+        <div class="login-badge">
+          <span class="dot"></span>
+          DEMO FLOTTE POIDS LOURDS
         </div>
-      </div>
-      <div class="auth-right">
-        <div class="brand">
-          <div class="logo">SN</div>
-          <div>
-            <h2>Connexion</h2>
-            <div class="sub">Démo front uniquement</div>
-          </div>
-        </div>
-
-        <div class="switch">
-          <button id="btnManager" class="active" type="button">Connexion gérant</button>
-          <button id="btnDriver" type="button">Connexion chauffeur</button>
-        </div>
-
-        <div class="pin-display" id="pinDisplay">••••••</div>
-
-        <div class="keypad">
-          <button data-key="1" type="button">1</button>
-          <button data-key="2" type="button">2</button>
-          <button data-key="3" type="button">3</button>
-          <button data-key="4" type="button">4</button>
-          <button data-key="5" type="button">5</button>
-          <button data-key="6" type="button">6</button>
-          <button data-key="7" type="button">7</button>
-          <button data-key="8" type="button">8</button>
-          <button data-key="9" type="button">9</button>
-          <button data-key="clear" type="button" class="btn ghost">Effacer</button>
-          <button data-key="0" type="button">0</button>
-          <button data-key="enter" type="button" class="btn primary">Entrer</button>
-        </div>
-
-        <div class="login-actions">
-          <button id="loginEnter" class="btn primary" type="button" style="flex:1">Entrer</button>
-          <button id="loginClear" class="btn ghost" type="button" style="flex:1">Effacer</button>
-        </div>
-
-        <div class="hint">
-          PIN gérant : <strong>123456</strong>. PIN chauffeur : <strong>654321</strong> ou <strong>111111</strong>.
-          Le chauffeur n’aura jamais le menu.
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="managerApp" class="shell hidden">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="logo">SN</div>
         <div>
-          <h2 style="margin:0">SOTRANSNORD</h2>
-          <div class="sub">Interface gérant</div>
+          <div class="login-title">SOTRANSNORD – Espace de gestion</div>
+          <p class="login-subtitle">
+            Base de démonstration pour la gestion de flotte de camions (Gabriel OZIER). 
+            Connexion simple par code PIN, sans mot de passe.
+          </p>
         </div>
-      </div>
-      <div class="sub" style="font-size:13px">Gabriel OZIER</div>
-      <div class="nav">
-        <button class="nav-item active" data-view="dashboard">Dashboard <span>›</span></button>
-        <button class="nav-item" data-view="commandes">Commandes <span>›</span></button>
-        <button class="nav-item" data-view="parametres">Paramétrages <span>›</span></button>
-        <button class="nav-item" data-view="rapports">Rapports <span>›</span></button>
-        <button class="nav-item" data-view="marge">Marge <span>›</span></button>
-        <button class="nav-item" data-view="chauffeur">Vue chauffeur <span>›</span></button>
-      </div>
-    </aside>
 
-    <main class="content">
-      <div class="topbar">
+        <!-- Switch manager / driver -->
         <div>
-          <h3 id="pageTitle">Dashboard</h3>
-          <div class="meta">Pilotage complet de la flotte, commandes, dépenses et marges mensuelles.</div>
+          <div style="font-size:12px;font-weight:500;margin-bottom:6px;">Type de connexion</div>
+          <div class="login-switch" id="roleSwitch">
+            <div class="login-switch-thumb manager" id="switchThumb"></div>
+            <button type="button" data-role="manager" class="active" id="switchManager">Connexion gérant</button>
+            <button type="button" data-role="driver" id="switchDriver">Connexion chauffeur</button>
+          </div>
         </div>
-        <div class="actions">
-          <button class="btn ghost small" id="syncBtn" type="button">Simuler sync Sheets</button>
-          <button class="btn danger small" id="logoutBtn" type="button">Déconnexion</button>
+
+        <!-- Zone PIN -->
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;margin-bottom:4px;">
+            <span style="font-size:12px;font-weight:500;">Code PIN (6 chiffres)</span>
+          </div>
+          <div class="pin-grid">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-input" />
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-input" />
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-input" />
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-input" />
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-input" />
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-input" />
+          </div>
+          <div class="login-actions">
+            <button id="btnLogin" class="btn btn-primary">
+              <span>Entrer</span>
+            </button>
+            <button id="btnClearPin" class="btn btn-outline">Effacer</button>
+          </div>
+          <div class="login-hint">
+            Pour la démo : gérant <code>123456</code> – chauffeurs 
+            <code>654321</code>, <code>111111</code>.
+          </div>
+          <div id="loginAlert" class="login-alert"></div>
+        </div>
+
+        <div style="font-size:11px;color:#6b7280;margin-top:18px;">
+          Cette démonstration utilise des données fictives pour illustrer : paramétrages, commandes, frais véhicules, marge mensuelle et interface chauffeur.
         </div>
       </div>
 
-      <div id="view-dashboard" class="section active">
-        <div class="grid-4">
-          <div class="card stat"><div><div class="label">Commandes actives</div><div class="value" id="statOrders">0</div></div><span class="badge b-blue">Aujourd’hui</span></div>
-          <div class="card stat"><div><div class="label">Transports réalisés</div><div class="value" id="statTrips">0</div></div><span class="badge b-green">Suivi</span></div>
-          <div class="card stat"><div><div class="label">Dépenses mois</div><div class="value" id="statExpenses">0 €</div></div><span class="badge b-amber">Véhicules</span></div>
-          <div class="card stat"><div><div class="label">Marge brute</div><div class="value" id="statMargin">0 €</div></div><span class="badge b-blue">Mensuel</span></div>
+      <div class="login-right">
+        <div class="login-logo">
+          <div class="logo-circle">ST</div>
+          <div>SOTRANSNORD • FLOTTE</div>
         </div>
-
-        <div class="main-grid">
-          <div class="card">
-            <div class="section-head">
-              <h4>Commandes en cours</h4>
-              <div class="muted">Statut automatique selon transports réalisés</div>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Client</th><th>Adresse</th><th>Type</th><th>Camion</th><th>Chauffeur</th><th>Transports</th><th>Statut</th><th>Action</th>
-                  </tr>
-                </thead>
-                <tbody id="ordersTbody"></tbody>
-              </table>
-            </div>
+        <div class="login-right-main">
+          <div class="login-right-title">Pilotage temps réel</div>
+          <p class="login-right-text">
+            Suivi des commandes, transports réalisés, frais de véhicules et calcul de marge par mois. 
+            Prévu pour une connexion automatique avec Google Sheets et Make.com.
+          </p>
+          <div class="login-pill">
+            <span></span>
+            Web + Google Sheets + Make.com
           </div>
-
-          <div class="card">
-            <div class="section-head">
-              <h4>Activité récente</h4>
-              <div class="muted">Flux démo</div>
+          <div class="login-badges">
+            <div class="login-badge-pill">
+              <span class="login-badge-dot"></span>
+              CRUD Chauffeurs & Camions
             </div>
-            <div id="activityList" class="list"></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="view-commandes" class="section">
-        <div class="two-col">
-          <div class="card">
-            <div class="section-head">
-              <h4>Créer une commande</h4>
-              <div class="muted">Génère les transports chauffeur</div>
+            <div class="login-badge-pill">
+              <span class="login-badge-dot"></span>
+              Commandes & facturation
             </div>
-            <div class="form-grid">
-              <div class="field">abel>Client</label><select id="orderClient"></select></div>
-              <div class="field">abel>Adresse de livraison</label><input id="orderAddress" placeholder="Route du chantier..." /></div>
-              <div class="field">abel>Nombre de transports estimés</label><input id="orderTrips" type="number" min="1" value="3" /></div>
-              <div class="field">abel>Date du chantier</label><input id="orderDate" type="date" /></div>
-              <div class="field">abel>Camion</label><select id="orderTruck"></select></div>
-              <div class="field">abel>Chauffeur</label><select id="orderDriver"></select></div>
-              <div class="field">abel>Type</label><select id="orderType"><option>Matériaux</option><option>Journée</option></select></div>
-              <div class="field">abel>Matériau</label><select id="orderMaterial"></select></div>
+            <div class="login-badge-pill">
+              <span class="login-badge-dot"></span>
+              Interface chauffeur mobile
             </div>
-            <div class="form-actions">
-              <button class="btn primary" id="addOrderBtn" type="button">Créer la commande</button>
-              <button class="btn ghost" id="resetOrderBtn" type="button">Réinitialiser</button>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="section-head">
-              <h4>Suivi et facturation</h4>
-              <div class="muted">Bouton “À facturer” dès complétion</div>
-            </div>
-            <div class="kpi-row">
-              <div class="kpi"><div class="label">En cours</div><div class="n" id="kpiOpen">0</div></div>
-              <div class="kpi"><div class="label">Terminées</div><div class="n" id="kpiDone">0</div></div>
-              <div class="kpi"><div class="label">À facturer</div><div class="n" id="kpiBill">0</div></div>
-            </div>
-            <div style="margin-top:14px" class="table-wrap">
-              <table>
-                <thead>
-                  <tr><th>Commande</th><th>Réalisés / Estimés</th><th>Statut</th><th>Facture</th></tr>
-                </thead>
-                <tbody id="trackingTbody"></tbody>
-              </table>
+            <div class="login-badge-pill">
+              <span class="login-badge-dot"></span>
+              Calcul marge mensuelle
             </div>
           </div>
         </div>
-      </div>
-
-      <div id="view-parametres" class="section">
-        <div class="card">
-          <div class="section-head">
-            <h4>Paramétrages CRUD</h4>
-            <div class="muted">Ajout, modification, suppression</div>
-          </div>
-
-          <div class="switch" style="max-width:860px; margin-top:0">
-            <button class="tab-btn active" data-tab="drivers" type="button">Chauffeurs</button>
-            <button class="tab-btn" data-tab="trucks" type="button">Camions</button>
-            <button class="tab-btn" data-tab="clients" type="button">Clients</button>
-            <button class="tab-btn" data-tab="materials" type="button">Matériaux</button>
-            <button class="tab-btn" data-tab="tarifs" type="button">Tarifs</button>
-            <button class="tab-btn" data-tab="expenses" type="button">Frais véhicules</button>
-          </div>
-
-          <div id="paramTab"></div>
+        <div class="login-footer">
+          Démonstration interne – <strong>SOTRANSNORD</strong> – Données fictives uniquement.
         </div>
-      </div>
-
-      <div id="view-rapports" class="section">
-        <div class="grid-4">
-          <div class="card"><div class="label">Conso moyenne camion 1</div><div class="value" style="font-size:24px">28,4 L/100</div></div>
-          <div class="card"><div class="label">Conso moyenne camion 2</div><div class="value" style="font-size:24px">31,1 L/100</div></div>
-          <div class="card"><div class="label">Coût moyen km</div><div class="value" style="font-size:24px">2,85 €</div></div>
-          <div class="card"><div class="label">Frais moyens/mois</div><div class="value" style="font-size:24px">4 120 €</div></div>
-        </div>
-        <div class="two-col">
-          <div class="card">
-            <div class="section-head">
-              <h4>Dépenses par camion</h4>
-              <div class="muted">Mensuel</div>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead><tr><th>Camion</th><th>Carburant</th><th>Vidange</th><th>Réparations</th><th>Assurance</th><th>Pneus</th></tr></thead>
-                <tbody id="truckExpenseTbody"></tbody>
-              </table>
-            </div>
-          </div>
-          <div class="card">
-            <div class="section-head">
-              <h4>Intégration Make.com</h4>
-              <div class="muted">Prévue dès le départ</div>
-            </div>
-            <div class="list">
-              <div class="list-item"><div><div class="title">Nouvelle commande</div><div class="subt">Webhook vers Google Sheets + emails</div></div><span class="badge b-blue">Webhook</span></div>
-              <div class="list-item"><div><div class="title">Action chauffeur</div><div class="subt">Update transport + signature</div></div><span class="badge b-green">Update</span></div>
-              <div class="list-item"><div><div class="title">Fiche fin journée</div><div class="subt">Kilométrage et carburant envoyés</div></div><span class="badge b-amber">Mail</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="view-marge" class="section">
-        <div class="card">
-          <div class="section-head">
-            <h4>Calcul de marge mensuelle</h4>
-            <div class="muted">Mois en cours mis en évidence</div>
-          </div>
-          <div class="month-grid" id="monthGrid"></div>
-        </div>
-      </div>
-
-      <div id="view-chauffeur" class="section">
-        <div class="two-col">
-          <div class="card">
-            <div class="section-head">
-              <h4>Transports du jour</h4>
-              <div class="muted">Popup avec signature</div>
-            </div>
-            <div id="driverTrips" class="list"></div>
-          </div>
-          <div class="card">
-            <div class="section-head">
-              <h4>Fiche de fin de journée</h4>
-              <div class="muted">Envoi gérant / Sheets</div>
-            </div>
-            <div class="form-grid">
-              <div class="field">abel>Kilométrage</label><input id="dayKm" type="number" value="2640" /></div>
-              <div class="field">abel>Carburant quantité (L)</label><input id="dayFuelQty" type="number" value="54" /></div>
-              <div class="field">abel>Carburant prix (€)</label><input id="dayFuelPrice" type="number" value="112" /></div>
-            </div>
-            <div class="form-actions">
-              <button class="btn primary" id="sendSheetBtn" type="button">Envoyer ma fiche</button>
-            </div>
-            <div class="hint">Cette fiche simule l’update côté gérant et la transmission aux Google Sheets via Make.com.</div>
-          </div>
-        </div>
-      </div>
-    </main>
-  </section>
-
-  <section id="driverScreen" class="driver-screen">
-    <div class="driver-top">
-      <div class="card">
-        <div class="brand" style="margin:0">
-          <div class="logo">SN</div>
-          <div>
-            <h2 style="margin:0">SOTRANSNORD</h2>
-            <div class="sub">Interface chauffeur</div>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="label">Chauffeur connecté</div>
-        <div class="value" id="driverName">Chauffeur</div>
-      </div>
-    </div>
-
-    <div class="driver-grid">
-      <div class="card">
-        <div class="section-head">
-          <h4>Transports du jour</h4>
-          <div class="muted">Cliquer pour saisir le bon de livraison</div>
-        </div>
-        <div id="driverTripsOnly" class="list"></div>
-      </div>
-
-      <div class="card">
-        <div class="section-head">
-          <h4>Fiche de fin de journée</h4>
-          <div class="muted">Envoi direct au gérant</div>
-        </div>
-        <div class="form-grid">
-          <div class="field">abel>Kilométrage</label><input id="driverKm" type="number" value="2640" /></div>
-          <div class="field">abel>Carburant quantité (L)</label><input id="driverFuelQty" type="number" value="54" /></div>
-          <div class="field">abel>Carburant prix (€)</label><input id="driverFuelPrice" type="number" value="112" /></div>
-        </div>
-        <div class="form-actions">
-          <button class="btn primary" id="driverSendBtn" type="button">Envoyer ma fiche</button>
-          <button class="btn ghost" id="driverLogoutBtn" type="button">Déconnexion</button>
-        </div>
-        <div class="hint">Aucun menu n’est affiché ici. Le chauffeur ne voit que ses tâches et sa fiche de journée.</div>
-      </div>
-    </div>
-  </section>
-
-  <div class="mobile-bar" id="mobileBar">
-    <div class="nav" id="mobileNav" style="flex-direction:row; margin:0; overflow:auto">
-      <button class="nav-item active" data-view="dashboard" type="button">Dashboard</button>
-      <button class="nav-item" data-view="commandes" type="button">Commandes</button>
-      <button class="nav-item" data-view="parametres" type="button">Paramétrages</button>
-      <button class="nav-item" data-view="rapports" type="button">Rapports</button>
-      <button class="nav-item" data-view="marge" type="button">Marge</button>
-      <button class="nav-item" data-view="chauffeur" type="button">Chauffeur</button>
-    </div>
-  </div>
-
-  <div id="tripModal" class="backdrop">
-    <div class="modal">
-      <h3 style="margin:0 0 10px">Transport — réception et signature</h3>
-      <div class="form-grid">
-        <div class="field">abel>Tonnage réceptionné</label><input id="mTonnage" type="number" step="0.1" /></div>
-        <div class="field">abel>Nom du réceptionnaire</label><input id="mReceiver" /></div>
-        <div class="field">abel>Fonction</label><input id="mFunction" placeholder="Chef de chantier" /></div>
-      </div>
-      <div style="margin-top:12px" class="canvas-wrap">
-        anvas id="signCanvas"></canvas>
-      </div>
-      <div class="form-actions">
-        <button class="btn ghost small" id="clearSignBtn" type="button">Effacer signature</button>
-        <button class="btn primary small" id="saveTripBtn" type="button">Valider transport</button>
-        <button class="btn danger small" id="closeTripBtn" type="button">Fermer</button>
       </div>
     </div>
   </div>
 
-  <div id="toast" class="toast">OK</div>
+  <!-- APP GESTIONNAIRE -->
+  <div id="managerApp" class="app-shell">
+    <div class="app-shell-inner">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="logo-circle">ST</div>
+          <div class="sidebar-title">
+            <span>Gérant</span>
+            <span>SOTRANSNORD</span>
+          </div>
+        </div>
+        <div class="sidebar-nav">
+          <div class="sidebar-section-label">Navigation</div>
+          <div class="nav-item active" data-view="dashboard">
+            <span class="icon">📊</span>
+            <span>Dashboard</span>
+          </div>
+          <div class="nav-item" data-view="orders">
+            <span class="icon">📦</span>
+            <span>Commandes</span>
+          </div>
+          <div class="nav-item" data-view="settings">
+            <span class="icon">⚙️</span>
+            <span>Paramétrages</span>
+          </div>
+          <div class="nav-item" data-view="reports">
+            <span class="icon">📈</span>
+            <span>Rapports</span>
+          </div>
+          <div class="nav-item" data-view="margin">
+            <span class="icon">💰</span>
+            <span>Calcul de marge</span>
+          </div>
+
+          <div class="sidebar-section-label">Connexion</div>
+          <div class="nav-item" id="btnOpenIntegration">
+            <span class="icon">🔌</span>
+            <span>Google Sheets &amp; Make</span>
+          </div>
+        </div>
+        <div class="sidebar-footer">
+          <span>Démonstration</span>
+          <button id="btnLogoutManager">Quitter</button>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <main class="app-main">
+        <header class="topbar">
+          <div class="topbar-left">
+            <div>
+              <div id="topbarTitle" class="topbar-page-title">Dashboard gérant</div>
+              <div id="topbarSubtitle" class="topbar-page-sub">
+                Vue synthétique des commandes et de la flotte.
+              </div>
+            </div>
+          </div>
+          <div class="topbar-actions">
+            <div class="chip">
+              <span class="chip-dot"></span>
+              Données de démonstration
+            </div>
+            <div class="topbar-user">
+              <div class="avatar">GO</div>
+              <div>
+                <div style="font-weight:500;">Gérant</div>
+                <div style="font-size:11px;">SOTRANSNORD</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="app-content">
+          <!-- Vue DASHBOARD -->
+          <div id="viewDashboard">
+            <div class="grid-3">
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Commandes actives</div>
+                    <div class="card-subtitle">Nombre de chantiers en cours</div>
+                  </div>
+                  <span class="pill">Aujourd'hui</span>
+                </div>
+                <div class="metric-row">
+                  <div class="metric-main" id="metricActiveOrders">0</div>
+                  <div class="badge badge-success" id="metricActivePercent">+0% vs hier</div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Transports du jour</div>
+                    <div class="card-subtitle">Réalisation vs estimé</div>
+                  </div>
+                </div>
+                <div class="metric-row">
+                  <div>
+                    <div class="metric-main" id="metricTransportsToday">0/0</div>
+                    <div class="metric-label">Terminé / Estimé</div>
+                  </div>
+                  <div class="badge badge-warning" id="metricTransportsProgress">0% complété</div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Dépenses véhicules (mois)</div>
+                    <div class="card-subtitle">Carburant + entretien</div>
+                  </div>
+                </div>
+                <div class="metric-row">
+                  <div class="metric-main" id="metricVehicleCosts">0 €</div>
+                  <div class="metric-label" id="metricVehicleCostsDetail">Carburant / Vidange / Pneus</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-2" style="margin-top:10px;">
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Commandes récentes</div>
+                    <div class="card-subtitle">Les 5 dernières commandes créées</div>
+                  </div>
+                </div>
+                <div class="scroll-x">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Client</th>
+                        <th>Chantier</th>
+                        <th>Date</th>
+                        <th>Chauffeur</th>
+                        <th>Statut</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableRecentOrders"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Consommation carburant</div>
+                    <div class="card-subtitle">Moyenne par camion (mois en cours)</div>
+                  </div>
+                </div>
+                <div class="scroll-x">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Camion</th>
+                        <th>Km</th>
+                        <th>Litres</th>
+                        <th>Moyenne (L/100)</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableFuelPerTruck"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vue COMMANDES -->
+          <div id="viewOrders" style="display:none;">
+            <div class="grid-2">
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Créer une commande</div>
+                    <div class="card-subtitle">Saisie rapide client / chantier / planning</div>
+                  </div>
+                </div>
+                <form id="formOrder">
+                  <div class="form-grid-2">
+                    <div class="form-field">
+                      <label>Client</label>
+                      <select id="orderClient"></select>
+                    </div>
+                    <div class="form-field">
+                      <label>Adresse de livraison</label>
+                      <input id="orderAddress" type="text" placeholder="Zone Industrielle Nord..." />
+                    </div>
+                  </div>
+                  <div class="form-grid-3">
+                    <div class="form-field">
+                      <label>Nombre de transports estimés</label>
+                      <input id="orderTransportsEstimated" type="number" min="1" value="3" />
+                    </div>
+                    <div class="form-field">
+                      <label>Date du chantier</label>
+                      <input id="orderDate" type="date" />
+                    </div>
+                    <div class="form-field">
+                      <label>Statut</label>
+                      <select id="orderStatus">
+                        <option value="en_cours">En cours</option>
+                        <option value="termine">Terminé</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-grid-3">
+                    <div class="form-field">
+                      <label>Camion</label>
+                      <select id="orderTruck"></select>
+                    </div>
+                    <div class="form-field">
+                      <label>Chauffeur</label>
+                      <select id="orderDriver"></select>
+                    </div>
+                    <div class="form-field">
+                      <label>Type de commande</label>
+                      <select id="orderType">
+                        <option value="materiaux">Matériaux</option>
+                        <option value="journee">Journée</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-field" id="orderMaterialField">
+                    <label>Matériau</label>
+                    <select id="orderMaterial"></select>
+                  </div>
+                  <div class="api-hint">
+                    Lorsque vous validez, cette commande peut être envoyée vers un <code>webhook Make</code> 
+                    et insérée dans un Google Sheet (onglet COMMANDES).
+                  </div>
+                  <div class="form-footer" style="margin-top:10px;">
+                    <button type="button" class="btn btn-outline" id="btnResetOrder">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer la commande</button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Tableau de suivi</div>
+                    <div class="card-subtitle">Mise à jour par les actions des chauffeurs</div>
+                  </div>
+                </div>
+                <div class="scroll-x">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Client</th>
+                        <th>Date</th>
+                        <th>Camion</th>
+                        <th>Chauffeur</th>
+                        <th>Transports</th>
+                        <th>Statut</th>
+                        <th>Facturation</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableOrders"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vue PARAMETRAGES (CRUD) -->
+          <div id="viewSettings" style="display:none;">
+            <div class="grid-2">
+              <!-- Chauffeurs -->
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Chauffeurs</div>
+                    <div class="card-subtitle">Création, modification, suppression</div>
+                  </div>
+                  <button class="btn btn-outline" id="btnAddDriver">Ajouter</button>
+                </div>
+                <div class="scroll-x">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Nom</th>
+                        <th>Téléphone</th>
+                        <th>Permis</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableDrivers"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Camions -->
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Camions</div>
+                    <div class="card-subtitle">Suivi kilométrage et CT</div>
+                  </div>
+                  <button class="btn btn-outline" id="btnAddTruck">Ajouter</button>
+                </div>
+                <div class="scroll-x">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Immat.</th>
+                        <th>Kilométrage</th>
+                        <th>Type</th>
+                        <th>CT</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableTrucks"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-3" style="margin-top:10px;">
+              <!-- Clients -->
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Clients</div>
+                    <div class="card-subtitle">Entreprises et contacts</div>
+                  </div>
+                  <button class="btn btn-outline" id="btnAddClient">Ajouter</button>
+                </div>
+                <div class="scroll-x">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Entreprise</th>
+                        <th>Gérant</th>
+                        <th>Téléphone</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableClients"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Matériaux -->
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Matériaux</div>
+                    <div class="card-subtitle">Typologie des matériaux</div>
+                  </div>
+                  <button class="btn btn-outline" id="btnAddMaterial">Ajouter</button>
+                </div>
+                <div class="scroll-x">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Nom</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableMaterials"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Tarifs -->
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Tarifs</div>
+                    <div class="card-subtitle">Matériaux / Journée</div>
+                  </div>
+                  <button class="btn btn-outline" id="btnAddTariff">Ajouter</button>
+                </div>
+                <div class="scroll-x">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Tarif</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableTariffs"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:10px;">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Frais véhicules</div>
+                  <div class="card-subtitle">Carburant, vidange, réparations, assurance, pneus…</div>
+                </div>
+                <button class="btn btn-outline" id="btnAddVehicleExpense">Ajouter</button>
+              </div>
+              <div class="scroll-x">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Camion</th>
+                      <th>Type de frais</th>
+                      <th>Montant</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableVehicleExpenses"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vue RAPPORTS -->
+          <div id="viewReports" style="display:none;">
+            <div class="grid-2">
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Consommation moyenne carburant</div>
+                    <div class="card-subtitle">Par camion et par mois</div>
+                  </div>
+                </div>
+                <div class="scroll-x">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Camion</th>
+                        <th>Mois</th>
+                        <th>Km</th>
+                        <th>Litres</th>
+                        <th>Moyenne L/100</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableReportFuel"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Frais par camion</div>
+                    <div class="card-subtitle">Détail mensuel des dépenses</div>
+                  </div>
+                </div>
+                <div class="scroll-x">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Camion</th>
+                        <th>Mois</th>
+                        <th>Carburant</th>
+                        <th>Vidange</th>
+                        <th>Réparations</th>
+                        <th>Pneus</th>
+                        <th>Assurance</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableReportCosts"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vue MARGE -->
+          <div id="viewMargin" style="display:none;">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Marge mensuelle</div>
+                  <div class="card-subtitle">Chiffre d’affaires, dépenses et marge brute</div>
+                </div>
+              </div>
+              <div class="scroll-x">
+                <table class="margin-table">
+                  <thead>
+                    <tr>
+                      <th>Mois</th>
+                      <th>CA</th>
+                      <th>Carburant</th>
+                      <th>Vidange</th>
+                      <th>Réparations</th>
+                      <th>Pneus</th>
+                      <th>Assurance</th>
+                      <th>Total dépenses</th>
+                      <th>Marge brute</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableMargin"></tbody>
+                </table>
+              </div>
+              <div class="api-hint" style="margin-top:10px;">
+                Chaque ligne peut correspondre à une ligne dans un <code>Google Sheet MARGE_MENSUELLE</code>. 
+                Les données peuvent être alimentées par Make à partir des commandes et des frais véhicules.
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- APP CHAUFFEUR -->
+  <div id="driverApp" class="driver-shell">
+    <div class="driver-header">
+      <div class="driver-identity">
+        <div class="avatar" id="driverAvatar">CH</div>
+        <div>
+          <div class="driver-title" id="driverNameTitle">Chauffeur</div>
+          <div class="driver-sub" id="driverSubTitle">Transports et fiche de fin de journée</div>
+        </div>
+      </div>
+      <button class="btn btn-outline" id="btnLogoutDriver">Quitter</button>
+    </div>
+
+    <div class="card">
+      <div class="driver-block-title">Transports du jour</div>
+      <div class="driver-sub">
+        Liste générée automatiquement à partir des commandes assignées par le gérant.
+      </div>
+      <div class="driver-list" id="driverTransportsList" style="margin-top:8px;"></div>
+      <div class="driver-footer">
+        Clic sur un transport pour saisir tonnage, réceptionnaire et signature électronique.
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:10px;">
+      <div class="driver-block-title">Fiche de fin de journée</div>
+      <form id="formDriverEndOfDay">
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label>Kilométrage (fin de journée)</label>
+            <input id="driverKm" type="number" placeholder="Ex : 128 450" />
+          </div>
+          <div class="form-field">
+            <label>Carburant – Quantité (L)</label>
+            <input id="driverFuelQty" type="number" placeholder="Ex : 120" />
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label>Carburant – Montant (€)</label>
+            <input id="driverFuelAmount" type="number" placeholder="Ex : 210" />
+          </div>
+        </div>
+        <div class="api-hint">
+          Au clic sur “Envoyer ma fiche”, les données peuvent être envoyées vers un 
+          <code>webhook Make</code> pour alimenter un Google Sheet <code>FIN_DE_JOURNEE</code> et notifier le gérant.
+        </div>
+        <div class="form-footer" style="margin-top:10px;">
+          <button type="submit" class="btn btn-primary">Envoyer ma fiche</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal générique CRUD / Forms -->
+<div id="modalBackdrop" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Titre du formulaire</div>
+      <button class="modal-close-btn" id="modalCloseBtn">&times;</button>
+    </div>
+    <div id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<!-- Modal Transport chauffeur -->
+<div id="transportModalBackdrop" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Détail du transport</div>
+      <button class="modal-close-btn" id="transportModalCloseBtn">&times;</button>
+    </div>
+    <div id="transportModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" id="transportModalCancel">Fermer</button>
+      <button class="btn btn-primary" id="transportModalSave">Valider le transport</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Intégration Make / Sheets -->
+<div id="integrationModalBackdrop" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Connexion Google Sheets &amp; Make.com</div>
+      <button class="modal-close-btn" id="integrationModalCloseBtn">&times;</button>
+    </div>
+    <div id="integrationModalBody">
+      <p style="font-size:13px;color:#4b5563;margin-bottom:8px;">
+        Cette démo ne déclenche pas réellement d’appels API, mais les hooks sont prévus pour connecter facilement 
+        l’interface à Google Sheets et Make.com.
+      </p>
+      <ul style="font-size:12px;color:#4b5563;margin-left:16px;margin-bottom:10px;">
+        <li>Création / édition / suppression dans les modules : envoi vers un <strong>webhook Make</strong>.</li>
+        <li>Make écrit les données dans les bons onglets de vos <strong>Google Sheets</strong>.</li>
+        <li>Notifications email automatiques pour gérant, chauffeurs et clients.</li>
+      </ul>
+      <div class="api-hint">
+        Les fonctions JavaScript <code>sendToMake(eventType, payload)</code> et 
+        <code>syncWithGoogleSheets(resource, payload)</code> sont appelées à chaque action clé (CRUD, commande, fiche chauffeur).
+        À connecter directement à vos scénarios.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" id="integrationModalOk">J'ai compris</button>
+    </div>
+  </div>
 </div>
 
 <script>
-const state = {
-  loginMode: 'manager',
-  pin: '',
-  view: 'dashboard',
-  currentTrip: null,
-  paramTab: 'drivers',
-  orders: [
-    {id:1, client:'SARL BTP Nord', address:'Ducos - Chantier Lot A', trips:3, done:2, date:'2026-05-05', truck:'CAM-001', driver:'Gabriel OZIER', type:'Matériaux', material:'Sable 0/4'},
-    {id:2, client:'Martiniquaise Travaux', address:'Le Lamentin - Zone industrielle', trips:5, done:5, date:'2026-05-05', truck:'CAM-002', driver:'Jean-Philippe', type:'Journée', material:''},
-    {id:3, client:'Rivière Conseil', address:'Fort-de-France - Centre-ville', trips:2, done:1, date:'2026-05-05', truck:'CAM-003', driver:'Kevin', type:'Matériaux', material:'Gravier 4/6'}
-  ],
-  data:{
-    drivers:[
-      {id:1, name:'Gabriel OZIER', dob:'1988-04-12', phone:'0696 11 22 33', email:'gabriel@sotransnord.fr', permit:'C / EC', docs:'Permis.pdf'},
-      {id:2, name:'Kevin', dob:'1994-09-03', phone:'0696 44 55 66', email:'kevin@sotransnord.fr', permit:'C', docs:'ID.pdf'}
-    ],
-    trucks:[
-      {id:1, reg:'CAM-001', km:143200, type:'Volvo FM', ct:'2026-10-15', docs:'Carte grise.pdf'},
-      {id:2, reg:'CAM-002', km:189500, type:'Renault Trucks', ct:'2026-08-20', docs:'CT.pdf'},
-      {id:3, reg:'CAM-003', km:96200, type:'MAN TGS', ct:'2026-12-02', docs:'Assurance.pdf'}
-    ],
-    clients:[
-      {id:1, company:'SARL BTP Nord', manager:'M. Ozier', phone:'0696 55 10 10', email:'btpnord@client.fr'},
-      {id:2, company:'Martiniquaise Travaux', manager:'Mme Louis', phone:'0696 66 20 20', email:'travaux@client.fr'},
-      {id:3, company:'Rivière Conseil', manager:'M. Bernard', phone:'0696 77 30 30', email:'contact@riviere.fr'}
-    ],
-    materials:['Sable 0/4','Gravier 4/6','Remblais','Cailloux 20/40'],
-    tariffs:{materials:42, day:520},
-    expenses:[
-      {id:1, truck:'CAM-001', fuel:1450, oil:210, repair:340, insurance:180, tires:120},
-      {id:2, truck:'CAM-002', fuel:1680, oil:180, repair:260, insurance:190, tires:90},
-      {id:3, truck:'CAM-003', fuel:1210, oil:220, repair:145, insurance:180, tires:130}
-    ]
-  },
-  activities:[
-    'Commande #1 créée puis synchronisée vers Google Sheets.',
-    'Transport #1 validé par signature électronique.',
-    'Fiche fin de journée envoyée pour Gabriel OZIER.',
-    'Alerte facture prête pour la commande #2.'
-  ],
-  months:['Janv.','Fév.','Mars','Avr.','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.']
-};
+  // -----------------------
+  // Données de démonstration
+  // -----------------------
 
-const $ = s => document.querySelector(s);
-const $$ = s => document.querySelectorAll(s);
+  const demoDrivers = [
+    {
+      id: 1,
+      nom: "Jean Dupont",
+      dateNaissance: "1985-02-14",
+      telephone: "06 01 02 03 04",
+      email: "jean.dupont@sotransnord.fr",
+      permis: "C heavy",
+      documents: ["permis_jean.pdf"]
+    },
+    {
+      id: 2,
+      nom: "Sarah Martin",
+      dateNaissance: "1990-07-09",
+      telephone: "06 11 22 33 44",
+      email: "sarah.martin@sotransnord.fr",
+      permis: "CE",
+      documents: ["permis_sarah.pdf", "fco_sarah.pdf"]
+    }
+  ];
 
-function toast(msg){
-  const t = $('#toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),1800);
-}
-function updatePinDisplay(){ $('#pinDisplay').textContent = state.pin.length ? '●'.repeat(state.pin.length).padEnd(6,'•') : '••••••'; }
-function setLoginMode(mode){
-  state.loginMode = mode;
-  $('#btnManager').classList.toggle('active', mode === 'manager');
-  $('#btnDriver').classList.toggle('active', mode === 'driver');
-}
-function setRoleLabel(role){ $('#roleLabel').textContent = role === 'manager' ? 'Gérant' : 'Chauffeur'; }
-function ensureDateValue(){ $('#orderDate').value = new Date().toISOString().slice(0,10); }
-function calculateMargin(){
-  const revenue = 48250;
-  const expenses = state.data.expenses.reduce((a,e)=>a+e.fuel+e.oil+e.repair+e.insurance+e.tires,0);
-  return revenue - expenses;
-}
+  const demoTrucks = [
+    {
+      id: 1,
+      immat: "FR-907-GO",
+      km: 128450,
+      type: "Semi-benne 26T",
+      ct: "2026-03-10",
+      documents: ["carte_grise_fr907go.pdf"]
+    },
+    {
+      id: 2,
+      immat: "FR-325-SN",
+      km: 98540,
+      type: "Benner 19T",
+      ct: "2025-11-02",
+      documents: []
+    }
+  ];
 
-function login(){
-  const ok = state.loginMode === 'manager'
-    ? state.pin === '123456'
-    : ['654321','111111'].includes(state.pin);
+  const demoClients = [
+    {
+      id: 1,
+      entreprise: "Chantier Nord Travaux",
+      gerant: "Luc Leroy",
+      telephone: "03 20 11 22 33",
+      email: "luc.leroy@cnt.fr"
+    },
+    {
+      id: 2,
+      entreprise: "Graviers & Terrains",
+      gerant: "Nadia Costa",
+      telephone: "03 21 44 55 66",
+      email: "nadia.costa@gtp.fr"
+    }
+  ];
 
-  if(!ok){
-    toast('PIN incorrect');
-    state.pin = '';
-    updatePinDisplay();
-    return;
-  }
+  const demoMaterials = [
+    { id: 1, nom: "Sable 0/4" },
+    { id: 2, nom: "Gravier 4/6" },
+    { id: 3, nom: "Remblais carrière" }
+  ];
 
-  if(state.loginMode === 'manager'){
-    $('#authScreen').classList.add('hidden');
-    $('#driverScreen').style.display = 'none';
-    $('#managerApp').classList.remove('hidden');
-    $('#mobileBar').style.display = window.innerWidth <= 820 ? 'block' : 'none';
-    setRoleLabel('manager');
-    state.view = 'dashboard';
-    showManagerView('dashboard');
-    renderAllManager();
-    toast('Connexion gérant réussie');
-  }else{
-    $('#authScreen').classList.add('hidden');
-    $('#managerApp').classList.add('hidden');
-    $('#mobileBar').style.display = 'none';
-    $('#driverScreen').style.display = 'block';
-    setRoleLabel('driver');
-    renderDriverOnly();
-    toast('Connexion chauffeur réussie');
-  }
+  const demoTariffs = [
+    { id: 1, type: "materiaux", description: "Sable 0/4 – €/tonne", prix: 17.5 },
+    { id: 2, type: "materiaux", description: "Gravier 4/6 – €/tonne", prix: 22.0 },
+    { id: 3, type: "journee", description: "Camion + chauffeur – €/jour", prix: 680 }
+  ];
 
-  state.pin = '';
-  updatePinDisplay();
-}
-function logout(){
-  $('#managerApp').classList.add('hidden');
-  $('#driverScreen').style.display = 'none';
-  $('#authScreen').classList.remove('hidden');
-  $('#mobileBar').style.display = 'none';
-  state.pin = '';
-  updatePinDisplay();
-}
-function driverLogout(){ logout(); }
+  const demoVehicleExpenses = [
+    {
+      id: 1,
+      date: "2026-05-02",
+      truckId: 1,
+      type: "Carburant",
+      montant: 320
+    },
+    {
+      id: 2,
+      date: "2026-05-03",
+      truckId: 2,
+      type: "Pneus",
+      montant: 780
+    }
+  ];
 
-function showManagerView(view){
-  state.view = view;
-  $$('.section').forEach(s=>s.classList.remove('active'));
-  $('#view-' + view).classList.add('active');
-  const titles = { dashboard:'Dashboard', commandes:'Commandes', parametres:'Paramétrages', rapports:'Rapports', marge:'Marge mensuelle', chauffeur:'Vue chauffeur' };
-  $('#pageTitle').textContent = titles[view];
-  $$('.nav-item').forEach(b=>b.classList.toggle('active', b.dataset.view === view));
-  if(view === 'parametres') renderParams();
-}
-function renderSelects(){
-  $('#orderClient').innerHTML = state.data.clients.map(c=>`<option>${c.company}</option>`).join('');
-  $('#orderTruck').innerHTML = state.data.trucks.map(t=>`<option>${t.reg}</option>`).join('');
-  $('#orderDriver').innerHTML = state.data.drivers.map(d=>`<option>${d.name}</option>`).join('');
-  $('#orderMaterial').innerHTML = state.data.materials.map(m=>`<option>${m}</option>`).join('');
-}
-function renderDashboard(){
-  $('#statOrders').textContent = state.orders.filter(o=>o.done < o.trips).length;
-  $('#statTrips').textContent = state.orders.reduce((a,o)=>a + o.done, 0);
-  $('#statExpenses').textContent = state.data.expenses.reduce((a,e)=>a+e.fuel+e.oil+e.repair+e.insurance+e.tires,0).toLocaleString('fr-FR') + ' €';
-  $('#statMargin').textContent = calculateMargin().toLocaleString('fr-FR') + ' €';
-  $('#ordersTbody').innerHTML = state.orders.map(o=>`
-    <tr>
-      <td>${o.client}</td>
-      <td>${o.address}</td>
-      <td>${o.type}${o.material ? ' / ' + o.material : ''}</td>
-      <td>${o.truck}</td>
-      <td>${o.driver}</td>
-      <td>${o.done}/${o.trips}</td>
-      <td><span class="status ${o.done >= o.trips ? 's-done' : 's-open'}">${o.done >= o.trips ? 'Terminé' : 'En cours'}</span></td>
-      <td><button class="btn ghost small" type="button" onclick="goToOrder(${o.id})">Voir</button></td>
-    </tr>
-  `).join('');
-  $('#activityList').innerHTML = state.activities.map(a=>`
-    <div class="list-item">
-      <div>
-        <div class="title">${a}</div>
-        <div class="subt">Démo front</div>
-      </div>
-      <span class="badge b-blue">OK</span>
-    </div>
-  `).join('');
-}
-function renderTracking(){
-  $('#kpiOpen').textContent = state.orders.filter(o=>o.done < o.trips).length;
-  $('#kpiDone').textContent = state.orders.filter(o=>o.done >= o.trips).length;
-  $('#kpiBill').textContent = state.orders.filter(o=>o.done >= o.trips).length;
-  $('#trackingTbody').innerHTML = state.orders.map(o=>`
-    <tr>
-      <td>#${o.id} ${o.client}</td>
-      <td>${o.done} / ${o.trips}</td>
-      <td><span class="status ${o.done >= o.trips ? 's-done' : 's-open'}">${o.done >= o.trips ? 'Terminé' : 'En cours'}</span></td>
-      <td>${o.done >= o.trips ? '<span class="status s-bill">À facturer</span>' : '-'}</td>
-    </tr>
-  `).join('');
-}
-function renderReports(){
-  $('#truckExpenseTbody').innerHTML = state.data.expenses.map(e=>`
-    <tr>
-      <td>${e.truck}</td><td>${e.fuel}€</td><td>${e.oil}€</td><td>${e.repair}€</td><td>${e.insurance}€</td><td>${e.tires}€</td>
-    </tr>
-  `).join('');
-}
-function renderMargin(){
-  const current = new Date().getMonth();
-  $('#monthGrid').innerHTML = state.months.map((m,i)=>`
-    <div class="month ${i === current ? 'current' : ''}">
-      <div class="m">${m}</div>
-      <div class="k">${(38000 + i * 900).toLocaleString('fr-FR')} €</div>
-      <div class="subt">Marge brute</div>
-    </div>
-  `).join('');
-}
-function buildTripsHTML(){
-  return state.orders.flatMap(o=>Array.from({length:o.trips}, (_,i)=>({order:o, n:i+1}))).map(t=>`
-    <div class="list-item">
-      <div>
-        <div class="title">${t.order.client} — Transport ${t.n}/${t.order.trips}</div>
-        <div class="subt">${t.order.address} • ${t.order.truck} • ${t.order.material || 'Journée'}</div>
-      </div>
-      <button class="btn primary small" type="button" onclick="openTrip(${t.order.id}, ${t.n})">Ouvrir</button>
-    </div>
-  `).join('');
-}
-function renderDriverManagerPreview(){ $('#driverTrips').innerHTML = buildTripsHTML(); }
-function renderDriverOnly(){
-  $('#driverName').textContent = 'Chauffeur démo';
-  $('#driverTripsOnly').innerHTML = buildTripsHTML();
-}
-function renderParams(){
-  const tab = state.paramTab;
-  const html = {
-    drivers: `<div class="two-col"><div><div class="form-grid"><div class="field">abel>Nom complet</label><input id="p1" /></div><div class="field">abel>Date de naissance</label><input id="p2" type="date" /></div><div class="field">abel>Téléphone</label><input id="p3" /></div><div class="field">abel>Email</label><input id="p4" type="email" /></div><div class="field">abel>Type de permis</label><input id="p5" placeholder="C / EC" /></div><div class="field">abel>Documents</label><input id="p6" type="file" multiple /></div></div></div><div>${crudTable('drivers',['Nom','Naissance','Téléphone','Email','Permis','Docs'])}</div></div>`,
-    trucks: `<div class="two-col"><div><div class="form-grid"><div class="field">abel>Immatriculation</label><input id="p1" /></div><div class="field">abel>Kilométrage</label><input id="p2" type="number" /></div><div class="field">abel>Type</label><input id="p3" /></div><div class="field">abel>Date du contrôle technique</label><input id="p4" type="date" /></div><div class="field">abel>Documents</label><input id="p5" type="file" multiple /></div></div></div><div>${crudTable('trucks',['Immat.','KM','Type','CT','Docs'])}</div></div>`,
-    clients: `<div class="two-col"><div><div class="form-grid"><div class="field">abel>Nom de l’entreprise</label><input id="p1" /></div><div class="field">abel>Nom du gérant</label><input id="p2" /></div><div class="field">abel>Téléphone</label><input id="p3" /></div><div class="field">abel>Email</label><input id="p4" /></div></div></div><div>${crudTable('clients',['Entreprise','Gérant','Téléphone','Email'])}</div></div>`,
-    materials: `<div class="two-col"><div><div class="form-grid"><div class="field">abel>Matériau</label><input id="p1" placeholder="ex : sable 0/4" /></div></div></div><div>${crudTable('materials',['Matériau'])}</div></div>`,
-    tarifs: `<div class="two-col"><div><div class="form-grid"><div class="field">abel>Tarif matériaux (€/tonne)</label><input id="p1" type="number" value="${state.data.tariffs.materials}" /></div><div class="field">abel>Tarif journée (€/jour)</label><input id="p2" type="number" value="${state.data.tariffs.day}" /></div></div></div><div>${tarifTable()}</div></div>`,
-    expenses: `<div class="two-col"><div><div class="form-grid"><div class="field">abel>Camion</label><select id="p1">${state.data.trucks.map(t=>`<option>${t.reg}</option>`).join('')}</select></div><div class="field">abel>Carburant</label><input id="p2" type="number" /></div><div class="field">abel>Vidange</label><input id="p3" type="number" /></div><div class="field">abel>Réparations</label><input id="p4" type="number" /></div><div class="field">abel>Assurance</label><input id="p5" type="number" /></div><div class="field">abel>Pneus</label><input id="p6" type="number" /></div></div></div><div>${expenseTable()}</div></div>`
+  const demoOrders = [
+    {
+      id: 1,
+      clientId: 1,
+      address: "Chantier ZAC Nord",
+      transportsEstimated: 5,
+      transportsDone: 3,
+      date: "2026-05-05",
+      truckId: 1,
+      driverId: 1,
+      type: "materiaux",
+      materialId: 1,
+      statut: "en_cours",
+      aFacturer: false
+    },
+    {
+      id: 2,
+      clientId: 2,
+      address: "Zone portuaire Ouest",
+      transportsEstimated: 3,
+      transportsDone: 3,
+      date: "2026-05-04",
+      truckId: 2,
+      driverId: 2,
+      type: "journee",
+      materialId: null,
+      statut: "termine",
+      aFacturer: true
+    }
+  ];
+
+  const demoFuelReports = [
+    { truckId: 1, mois: "Mai 2026", km: 2500, litres: 620 },
+    { truckId: 2, mois: "Mai 2026", km: 1980, litres: 480 }
+  ];
+
+  const demoCostReports = [
+    {
+      truckId: 1,
+      mois: "Mai 2026",
+      carburant: 1200,
+      vidange: 180,
+      reparations: 0,
+      pneus: 0,
+      assurance: 220
+    },
+    {
+      truckId: 2,
+      mois: "Mai 2026",
+      carburant: 980,
+      vidange: 0,
+      reparations: 150,
+      pneus: 780,
+      assurance: 220
+    }
+  ];
+
+  const demoMargins = [
+    {
+      mois: "Janv.",
+      ca: 42000,
+      carburant: 6500,
+      vidange: 800,
+      reparations: 1200,
+      pneus: 900,
+      assurance: 2200
+    },
+    {
+      mois: "Fév.",
+      ca: 38500,
+      carburant: 6100,
+      vidange: 0,
+      reparations: 600,
+      pneus: 0,
+      assurance: 2200
+    },
+    {
+      mois: "Mars",
+      ca: 44800,
+      carburant: 6900,
+      vidange: 1200,
+      reparations: 450,
+      pneus: 0,
+      assurance: 2200
+    },
+    {
+      mois: "Avr.",
+      ca: 46200,
+      carburant: 7200,
+      vidange: 0,
+      reparations: 1100,
+      pneus: 0,
+      assurance: 2200
+    },
+    {
+      mois: "Mai",
+      ca: 49800,
+      carburant: 7500,
+      vidange: 0,
+      reparations: 700,
+      pneus: 900,
+      assurance: 2200
+    },
+    {
+      mois: "Juin",
+      ca: 0,
+      carburant: 0,
+      vidange: 0,
+      reparations: 0,
+      pneus: 0,
+      assurance: 0
+    },
+    {
+      mois: "Juil.",
+      ca: 0,
+      carburant: 0,
+      vidange: 0,
+      reparations: 0,
+      pneus: 0,
+      assurance: 0
+    },
+    {
+      mois: "Août",
+      ca: 0,
+      carburant: 0,
+      vidange: 0,
+      reparations: 0,
+      pneus: 0,
+      assurance: 0
+    },
+    {
+      mois: "Sept.",
+      ca: 0,
+      carburant: 0,
+      vidange: 0,
+      reparations: 0,
+      pneus: 0,
+      assurance: 0
+    },
+    {
+      mois: "Oct.",
+      ca: 0,
+      carburant: 0,
+      vidange: 0,
+      reparations: 0,
+      pneus: 0,
+      assurance: 0
+    },
+    {
+      mois: "Nov.",
+      ca: 0,
+      carburant: 0,
+      vidange: 0,
+      reparations: 0,
+      pneus: 0,
+      assurance: 0
+    },
+    {
+      mois: "Déc.",
+      ca: 0,
+      carburant: 0,
+      vidange: 0,
+      reparations: 0,
+      pneus: 0,
+      assurance: 0
+    }
+  ];
+
+  // PIN démos
+  const MANAGER_PIN = "123456";
+  const DRIVER_PINS = {
+    "654321": demoDrivers[0],
+    "111111": demoDrivers[1]
   };
-  $('#paramTab').innerHTML = `<div class="form-actions"><button class="btn primary" type="button" onclick="addParam()">Ajouter / Enregistrer</button><button class="btn ghost" type="button" onclick="seedDemo()">Remplir démo</button></div>${html[tab]}`;
-  if(tab === 'tarifs'){ $('#p1').value = state.data.tariffs.materials; $('#p2').value = state.data.tariffs.day; }
-}
-function crudTable(type, headers){
-  const rows = state.data[type].map((r, i)=>{
-    if(type === 'drivers') return `<tr><td>${r.name}</td><td>${r.dob}</td><td>${r.phone}</td><td>${r.email}</td><td>${r.permit}</td><td>${r.docs}</td><td><button class="btn ghost small" onclick="delParam('${type}',${i})" type="button">Supprimer</button></td></tr>`;
-    if(type === 'trucks') return `<tr><td>${r.reg}</td><td>${r.km}</td><td>${r.type}</td><td>${r.ct}</td><td>${r.docs}</td><td><button class="btn ghost small" onclick="delParam('${type}',${i})" type="button">Supprimer</button></td></tr>`;
-    if(type === 'clients') return `<tr><td>${r.company}</td><td>${r.manager}</td><td>${r.phone}</td><td>${r.email}</td><td><button class="btn ghost small" onclick="delParam('${type}',${i})" type="button">Supprimer</button></td></tr>`;
-    return `<tr><td>${r}</td><td><button class="btn ghost small" onclick="delParam('${type}',${i})" type="button">Supprimer</button></td></tr>`;
-  }).join('');
-  return `<div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}<th>Action</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-}
-function tarifTable(){
-  return `<div class="list"><div class="list-item"><div><div class="title">Matériaux</div><div class="subt">${state.data.tariffs.materials} €/tonne</div></div></div><div class="list-item"><div><div class="title">Journée</div><div class="subt">${state.data.tariffs.day} €/jour</div></div></div></div>`;
-}
-function expenseTable(){
-  return `<div class="table-wrap"><table><thead><tr><th>Camion</th><th>Carburant</th><th>Vidange</th><th>Réparations</th><th>Assurance</th><th>Pneus</th></tr></thead><tbody>${state.data.expenses.map(e=>`<tr><td>${e.truck}</td><td>${e.fuel}€</td><td>${e.oil}€</td><td>${e.repair}€</td><td>${e.insurance}€</td><td>${e.tires}€</td></tr>`).join('')}</tbody></table></div>`;
-}
-function renderAllManager(){
-  renderSelects();
-  renderDashboard();
-  renderTracking();
-  renderReports();
-  renderMargin();
-  renderDriverManagerPreview();
-  if(state.view === 'parametres') renderParams();
-  ensureDateValue();
-}
-function goToOrder(id){ showManagerView('commandes'); toast('Commande #' + id + ' ouverte'); }
-function addOrder(){
-  const client = $('#orderClient').value;
-  const address = $('#orderAddress').value || 'Adresse démo';
-  const trips = Math.max(1, +$('#orderTrips').value || 1);
-  const date = $('#orderDate').value || new Date().toISOString().slice(0,10);
-  const truck = $('#orderTruck').value;
-  const driver = $('#orderDriver').value;
-  const type = $('#orderType').value;
-  const material = type === 'Matériaux' ? $('#orderMaterial').value : '';
-  state.orders.unshift({id:Date.now()%100000, client, address, trips, done:0, date, truck, driver, type, material});
-  state.activities.unshift(`Nouvelle commande créée pour ${client}.`);
-  renderAllManager();
-  toast('Commande créée');
-}
-function resetOrder(){ $('#orderAddress').value = ''; $('#orderTrips').value = 3; $('#orderType').value = 'Matériaux'; ensureDateValue(); }
-function delParam(type, index){ state.data[type].splice(index,1); renderAllManager(); toast('Élément supprimé'); }
-function addParam(){
-  const tab = state.paramTab;
-  if(tab === 'drivers') state.data.drivers.unshift({id:Date.now(), name:$('#p1').value || 'Nouveau chauffeur', dob:$('#p2').value || '', phone:$('#p3').value || '', email:$('#p4').value || '', permit:$('#p5').value || '', docs:'Documents'});
-  if(tab === 'trucks') state.data.trucks.unshift({id:Date.now(), reg:$('#p1').value || 'CAM-XXX', km:+$('#p2').value || 0, type:$('#p3').value || '', ct:$('#p4').value || '', docs:'Documents'});
-  if(tab === 'clients') state.data.clients.unshift({id:Date.now(), company:$('#p1').value || 'Entreprise', manager:$('#p2').value || '', phone:$('#p3').value || '', email:$('#p4').value || ''});
-  if(tab === 'materials') state.data.materials.unshift($('#p1').value || 'Matériau');
-  if(tab === 'tarifs'){ state.data.tariffs.materials = +$('#p1').value || 0; state.data.tariffs.day = +$('#p2').value || 0; }
-  if(tab === 'expenses') state.data.expenses.unshift({id:Date.now(), truck:$('#p1').value, fuel:+$('#p2').value || 0, oil:+$('#p3').value || 0, repair:+$('#p4').value || 0, insurance:+$('#p5').value || 0, tires:+$('#p6').value || 0});
-  renderAllManager();
-  toast('Enregistré');
-}
-function seedDemo(){ state.activities.unshift('Données de démonstration rechargées.'); renderAllManager(); toast('Démo rechargée'); }
-function syncSheets(){ state.activities.unshift('Synchronisation simulée vers Google Sheets via Make.com.'); renderAllManager(); toast('Sync simulée'); }
-function sendDaySheet(prefix){
-  const km = document.getElementById(prefix + 'Km').value;
-  const qty = document.getElementById(prefix + 'FuelQty').value;
-  const price = document.getElementById(prefix + 'FuelPrice').value;
-  state.activities.unshift(`Fiche jour envoyée : ${km} km, ${qty} L, ${price} €.`);
-  renderAllManager();
-  toast('Fiche envoyée');
-}
 
-/* Signature */
-let drawing = false;
-let ctx = null;
-let last = {x:0,y:0};
-function resizeCanvas(){
-  const canvas = document.getElementById('signCanvas');
-  if(!canvas) return;
-  const rect = canvas.getBoundingClientRect();
-  const ratio = window.devicePixelRatio || 1;
-  canvas.width = Math.round(rect.width * ratio);
-  canvas.height = Math.round(rect.height * ratio);
-  ctx = canvas.getContext('2d');
-  ctx.setTransform(ratio,0,0,ratio,0,0);
-  ctx.lineWidth = 2.5;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  clearSignature();
-}
-function clearSignature(){
-  const canvas = document.getElementById('signCanvas');
-  if(!canvas) return;
-  const c = canvas.getContext('2d');
-  c.setTransform(1,0,0,1,0,0);
-  c.clearRect(0,0,canvas.width,canvas.height);
-  c.fillStyle = '#fbfdff';
-  c.fillRect(0,0,canvas.width,canvas.height);
-  c.fillStyle = '#94a3b8';
-  c.font = '16px sans-serif';
-  c.fillText('Signer ici', 18, 30);
-}
-function pointFromEvent(e){
-  const canvas = document.getElementById('signCanvas');
-  const rect = canvas.getBoundingClientRect();
-  const p = e.touches ? e.touches[0] : e;
-  return { x: p.clientX - rect.left, y: p.clientY - rect.top };
-}
-function startDraw(e){ e.preventDefault(); drawing = true; last = pointFromEvent(e); }
-function draw(e){
-  if(!drawing) return;
-  e.preventDefault();
-  const p = pointFromEvent(e);
-  ctx.beginPath();
-  ctx.moveTo(last.x, last.y);
-  ctx.lineTo(p.x, p.y);
-  ctx.strokeStyle = '#111827';
-  ctx.stroke();
-  last = p;
-}
-function endDraw(){ drawing = false; }
+  // -----------------------
+  // Helpers généraux
+  // -----------------------
 
-function openTrip(orderId, n){
-  state.currentTrip = {orderId, n};
-  $('#mTonnage').value = 10;
-  $('#mReceiver').value = 'Chef de chantier';
-  $('#mFunction').value = 'Chef de chantier';
-  $('#tripModal').classList.add('open');
-  setTimeout(resizeCanvas, 40);
-}
-function closeTrip(){ $('#tripModal').classList.remove('open'); }
-function saveTrip(){
-  if(!state.currentTrip) return;
-  const order = state.orders.find(o=>o.id === state.currentTrip.orderId);
-  if(order && order.done < order.trips) order.done++;
-  state.activities.unshift(`Transport ${state.currentTrip.n} validé pour ${order ? order.client : 'commande'}.`);
-  renderAllManager();
-  closeTrip();
-  toast('Transport validé');
-}
+  function formatEuro(value) {
+    return new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency: "EUR",
+      maximumFractionDigits: 0
+    }).format(value);
+  }
 
-$('#btnManager').onclick = ()=>setLoginMode('manager');
-$('#btnDriver').onclick = ()=>setLoginMode('driver');
-$('#loginEnter').onclick = login;
-$('#loginClear').onclick = ()=>{ state.pin=''; updatePinDisplay(); };
-$$('.keypad button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const key = btn.dataset.key;
-    if(key === 'clear') state.pin = '';
-    else if(key === 'enter') login();
-    else if(state.pin.length < 6) state.pin += key;
-    updatePinDisplay();
+  function formatDate(value) {
+    if (!value) return "";
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return value;
+    return d.toLocaleDateString("fr-FR");
+  }
+
+  // -----------------------
+  // Gestion du PIN / Login
+  // -----------------------
+
+  const loginScreen = document.getElementById("loginScreen");
+  const managerApp = document.getElementById("managerApp");
+  const driverApp = document.getElementById("driverApp");
+
+  const pinInputs = Array.from(document.querySelectorAll(".pin-input"));
+  const btnLogin = document.getElementById("btnLogin");
+  const btnClearPin = document.getElementById("btnClearPin");
+  const loginAlert = document.getElementById("loginAlert");
+
+  const switchThumb = document.getElementById("switchThumb");
+  const switchManager = document.getElementById("switchManager");
+  const switchDriver = document.getElementById("switchDriver");
+
+  let currentRole = "manager"; // "manager" | "driver"
+  let currentDriver = null;
+
+  // Changement rôle
+  switchManager.addEventListener("click", () => {
+    currentRole = "manager";
+    switchThumb.classList.remove("driver");
+    switchThumb.classList.add("manager");
+    switchManager.classList.add("active");
+    switchDriver.classList.remove("active");
+    loginAlert.style.display = "none";
+    clearPin();
   });
-});
-$('#logoutBtn').onclick = logout;
-$('#driverLogoutBtn').onclick = driverLogout;
-$('#syncBtn').onclick = syncSheets;
-$('#addOrderBtn').onclick = addOrder;
-$('#resetOrderBtn').onclick = resetOrder;
-$('#sendSheetBtn').onclick = ()=>sendDaySheet('day');
-$('#driverSendBtn').onclick = ()=>sendDaySheet('driver');
 
-$$('.nav-item').forEach(btn=>btn.addEventListener('click', ()=>showManagerView(btn.dataset.view)));
-$$('.tab-btn').forEach(btn=>btn.addEventListener('click', ()=>{ state.paramTab = btn.dataset.tab; $$('.tab-btn').forEach(x=>x.classList.toggle('active', x === btn)); renderParams(); }));
+  switchDriver.addEventListener("click", () => {
+    currentRole = "driver";
+    switchThumb.classList.remove("manager");
+    switchThumb.classList.add("driver");
+    switchDriver.classList.add("active");
+    switchManager.classList.remove("active");
+    loginAlert.style.display = "none";
+    clearPin();
+  });
 
-$('#tripModal').addEventListener('click', e=>{ if(e.target.id === 'tripModal') closeTrip(); });
-$('#saveTripBtn').onclick = saveTrip;
-$('#closeTripBtn').onclick = closeTrip;
-$('#clearSignBtn').onclick = clearSignature;
+  function clearPin() {
+    pinInputs.forEach(i => i.value = "");
+    pinInputs[0].focus();
+  }
 
-const canvas = document.getElementById('signCanvas');
-canvas.addEventListener('mousedown', startDraw);
-canvas.addEventListener('mousemove', draw);
-window.addEventListener('mouseup', endDraw);
-canvas.addEventListener('mouseleave', endDraw);
-canvas.addEventListener('touchstart', startDraw, {passive:false});
-canvas.addEventListener('touchmove', draw, {passive:false});
-canvas.addEventListener('touchend', endDraw);
-canvas.addEventListener('touchcancel', endDraw);
+  // Navigation clavier entre les cases PIN
+  pinInputs.forEach((input, index) => {
+    input.addEventListener("input", e => {
+      const value = e.target.value.replace(/\D/g, "");
+      e.target.value = value.slice(0, 1);
+      if (value && index < pinInputs.length - 1) {
+        pinInputs[index + 1].focus();
+      }
+    });
+    input.addEventListener("keydown", e => {
+      if (e.key === "Backspace" && !e.target.value && index > 0) {
+        pinInputs[index - 1].focus();
+      }
+      if (e.key === "Enter") {
+        handleLogin();
+      }
+    });
+  });
 
-window.addEventListener('resize', ()=>{ if($('#tripModal').classList.contains('open')) resizeCanvas(); });
+  btnClearPin.addEventListener("click", () => {
+    clearPin();
+    loginAlert.style.display = "none";
+  });
 
-updatePinDisplay();
-ensureDateValue();
-renderAllManager();
-resizeCanvas();
+  btnLogin.addEventListener("click", handleLogin);
+
+  function getPinValue() {
+    return pinInputs.map(i => i.value).join("");
+  }
+
+  // Validation du PIN (simulé côté front)
+  function handleLogin() {
+    const pin = getPinValue();
+    if (pin.length !== 6) {
+      showLoginError("Merci de saisir les 6 chiffres du code PIN.");
+      return;
+    }
+
+    // Connexion gérant
+    if (currentRole === "manager") {
+      if (pin === MANAGER_PIN) {
+        openManager();
+      } else {
+        showLoginError("Code PIN gérant incorrect (utiliser 123456 pour la démo).");
+      }
+      return;
+    }
+
+    // Connexion chauffeur
+    if (currentRole === "driver") {
+      const driver = DRIVER_PINS[pin];
+      if (driver) {
+        currentDriver = driver;
+        openDriver(driver);
+      } else {
+        showLoginError("Code PIN chauffeur incorrect (ex. 654321 ou 111111).");
+      }
+    }
+  }
+
+  function showLoginError(msg) {
+    loginAlert.textContent = msg;
+    loginAlert.style.display = "block";
+  }
+
+  function openManager() {
+    loginScreen.style.display = "none";
+    managerApp.style.display = "block";
+    driverApp.style.display = "none";
+    initManagerView();
+  }
+
+  function openDriver(driver) {
+    loginScreen.style.display = "none";
+    managerApp.style.display = "none";
+    driverApp.style.display = "block";
+    initDriverView(driver);
+  }
+
+  document.getElementById("btnLogoutManager").addEventListener("click", () => {
+    managerApp.style.display = "none";
+    driverApp.style.display = "none";
+    loginScreen.style.display = "flex";
+    clearPin();
+  });
+
+  document.getElementById("btnLogoutDriver").addEventListener("click", () => {
+    managerApp.style.display = "none";
+    driverApp.style.display = "none";
+    loginScreen.style.display = "flex";
+    currentDriver = null;
+    clearPin();
+  });
+
+  // -----------------------
+  // Navigation Gérant
+  // -----------------------
+
+  const navItems = document.querySelectorAll(".nav-item[data-view]");
+  const views = {
+    dashboard: document.getElementById("viewDashboard"),
+    orders: document.getElementById("viewOrders"),
+    settings: document.getElementById("viewSettings"),
+    reports: document.getElementById("viewReports"),
+    margin: document.getElementById("viewMargin")
+  };
+  const topbarTitle = document.getElementById("topbarTitle");
+  const topbarSubtitle = document.getElementById("topbarSubtitle");
+
+  navItems.forEach(item => {
+    item.addEventListener("click", () => {
+      const view = item.getAttribute("data-view");
+      if (!view) return;
+
+      navItems.forEach(i => i.classList.remove("active"));
+      item.classList.add("active");
+
+      Object.keys(views).forEach(k => {
+        views[k].style.display = (k === view) ? "block" : "none";
+      });
+
+      switch (view) {
+        case "dashboard":
+          topbarTitle.textContent = "Dashboard gérant";
+          topbarSubtitle.textContent = "Vue synthétique des commandes et de la flotte.";
+          break;
+        case "orders":
+          topbarTitle.textContent = "Gestion des commandes";
+          topbarSubtitle.textContent = "Création de commande et suivi des transports.";
+          break;
+        case "settings":
+          topbarTitle.textContent = "Paramétrages";
+          topbarSubtitle.textContent = "Chauffeurs, camions, clients, matériaux, tarifs, frais véhicules.";
+          break;
+        case "reports":
+          topbarTitle.textContent = "Rapports";
+          topbarSubtitle.textContent = "Consommation carburant et frais par camion.";
+          break;
+        case "margin":
+          topbarTitle.textContent = "Calcul de marge";
+          topbarSubtitle.textContent = "Marge brute mensuelle sur 12 mois.";
+          break;
+      }
+    });
+  });
+
+  // -----------------------
+  // Vue gérant – initialisation
+  // -----------------------
+
+  function initManagerView() {
+    renderDashboard();
+    renderSettingsTables();
+    renderOrdersTables();
+    renderReports();
+    renderMargin();
+    populateOrderSelects();
+  }
+
+  // Dashboard
+  function renderDashboard() {
+    const activeOrders = demoOrders.filter(o => o.statut === "en_cours");
+    document.getElementById("metricActiveOrders").textContent = activeOrders.length;
+    document.getElementById("metricActivePercent").textContent = "+12% vs hier";
+
+    const totalEstimated = demoOrders.reduce((sum, o) => sum + o.transportsEstimated, 0);
+    const totalDone = demoOrders.reduce((sum, o) => sum + o.transportsDone, 0);
+    const percent = totalEstimated ? Math.round((totalDone / totalEstimated) * 100) : 0;
+    document.getElementById("metricTransportsToday").textContent = totalDone + "/" + totalEstimated;
+    document.getElementById("metricTransportsProgress").textContent = percent + "% complété";
+
+    const totalVehicleCost = demoVehicleExpenses.reduce((sum, v) => sum + v.montant, 0);
+    document.getElementById("metricVehicleCosts").textContent = formatEuro(totalVehicleCost);
+    document.getElementById("metricVehicleCostsDetail").textContent = "Carburant, pneus, divers";
+
+    // Commandes récentes
+    const recentTbody = document.getElementById("tableRecentOrders");
+    recentTbody.innerHTML = "";
+    demoOrders.slice().sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 5).forEach(order => {
+      const client = demoClients.find(c => c.id === order.clientId);
+      const driver = demoDrivers.find(d => d.id === order.driverId);
+      const tr = document.createElement("tr");
+      const statutLabel = order.statut === "en_cours" ? "En cours" : "Terminé";
+      tr.innerHTML = `
+        <td>${client ? client.entreprise : "-"}</td>
+        <td>${order.address}</td>
+        <td>${formatDate(order.date)}</td>
+        <td>${driver ? driver.nom : "-"}</td>
+        <td>${statutLabel}</td>
+      `;
+      recentTbody.appendChild(tr);
+    });
+
+    // Consommation carburant moyenne
+    const fuelTbody = document.getElementById("tableFuelPerTruck");
+    fuelTbody.innerHTML = "";
+    demoFuelReports.forEach(rep => {
+      const truck = demoTrucks.find(t => t.id === rep.truckId);
+      const avg = rep.km ? (rep.litres / rep.km) * 100 : 0;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${truck ? truck.immat : "-"}</td>
+        <td>${rep.km.toLocaleString("fr-FR")} km</td>
+        <td>${rep.litres.toLocaleString("fr-FR")} L</td>
+        <td>${avg.toFixed(1)} L/100</td>
+      `;
+      fuelTbody.appendChild(tr);
+    });
+  }
+
+  // Paramétrages – rendu tables
+  function renderSettingsTables() {
+    // Chauffeurs
+    const driversTbody = document.getElementById("tableDrivers");
+    driversTbody.innerHTML = "";
+    demoDrivers.forEach(driver => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${driver.nom}</td>
+        <td>${driver.telephone}</td>
+        <td>${driver.permis}</td>
+        <td class="table-actions">
+          <button data-action="edit-driver" data-id="${driver.id}">Modifier</button>
+          <button data-action="delete-driver" data-id="${driver.id}">Supprimer</button>
+        </td>
+      `;
+      driversTbody.appendChild(tr);
+    });
+
+    // Camions
+    const trucksTbody = document.getElementById("tableTrucks");
+    trucksTbody.innerHTML = "";
+    demoTrucks.forEach(truck => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${truck.immat}</td>
+        <td>${truck.km.toLocaleString("fr-FR")} km</td>
+        <td>${truck.type}</td>
+        <td>${formatDate(truck.ct)}</td>
+        <td class="table-actions">
+          <button data-action="edit-truck" data-id="${truck.id}">Modifier</button>
+          <button data-action="delete-truck" data-id="${truck.id}">Supprimer</button>
+        </td>
+      `;
+      trucksTbody.appendChild(tr);
+    });
+
+    // Clients
+    const clientsTbody = document.getElementById("tableClients");
+    clientsTbody.innerHTML = "";
+    demoClients.forEach(client => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${client.entreprise}</td>
+        <td>${client.gerant}</td>
+        <td>${client.telephone}</td>
+        <td class="table-actions">
+          <button data-action="edit-client" data-id="${client.id}">Modifier</button>
+          <button data-action="delete-client" data-id="${client.id}">Supprimer</button>
+        </td>
+      `;
+      clientsTbody.appendChild(tr);
+    });
+
+    // Matériaux
+    const materialsTbody = document.getElementById("tableMaterials");
+    materialsTbody.innerHTML = "";
+    demoMaterials.forEach(mat => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${mat.nom}</td>
+        <td class="table-actions">
+          <button data-action="edit-material" data-id="${mat.id}">Modifier</button>
+          <button data-action="delete-material" data-id="${mat.id}">Supprimer</button>
+        </td>
+      `;
+      materialsTbody.appendChild(tr);
+    });
+
+    // Tarifs
+    const tariffsTbody = document.getElementById("tableTariffs");
+    tariffsTbody.innerHTML = "";
+    demoTariffs.forEach(tariff => {
+      const labelType = tariff.type === "materiaux" ? "Matériaux" : "Journée";
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${labelType}</td>
+        <td>${tariff.description}</td>
+        <td>${tariff.prix.toLocaleString("fr-FR")} €</td>
+        <td class="table-actions">
+          <button data-action="edit-tariff" data-id="${tariff.id}">Modifier</button>
+          <button data-action="delete-tariff" data-id="${tariff.id}">Supprimer</button>
+        </td>
+      `;
+      tariffsTbody.appendChild(tr);
+    });
+
+    // Frais véhicules
+    const expensesTbody = document.getElementById("tableVehicleExpenses");
+    expensesTbody.innerHTML = "";
+    demoVehicleExpenses.forEach(exp => {
+      const truck = demoTrucks.find(t => t.id === exp.truckId);
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${formatDate(exp.date)}</td>
+        <td>${truck ? truck.immat : "-"}</td>
+        <td>${exp.type}</td>
+        <td>${exp.montant.toLocaleString("fr-FR")} €</td>
+        <td class="table-actions">
+          <button data-action="edit-expense" data-id="${exp.id}">Modifier</button>
+          <button data-action="delete-expense" data-id="${exp.id}">Supprimer</button>
+        </td>
+      `;
+      expensesTbody.appendChild(tr);
+    });
+  }
+
+  // Commandes – Selects et tableaux
+  function populateOrderSelects() {
+    const selectClient = document.getElementById("orderClient");
+    const selectTruck = document.getElementById("orderTruck");
+    const selectDriver = document.getElementById("orderDriver");
+    const selectMaterial = document.getElementById("orderMaterial");
+
+    selectClient.innerHTML = demoClients.map(c => `<option value="${c.id}">${c.entreprise}</option>`).join("");
+    selectTruck.innerHTML = demoTrucks.map(t => `<option value="${t.id}">${t.immat} (${t.type})</option>`).join("");
+    selectDriver.innerHTML = demoDrivers.map(d => `<option value="${d.id}">${d.nom}</option>`).join("");
+    selectMaterial.innerHTML = demoMaterials.map(m => `<option value="${m.id}">${m.nom}</option>`).join("");
+  }
+
+  function renderOrdersTables() {
+    const ordersTbody = document.getElementById("tableOrders");
+    ordersTbody.innerHTML = "";
+    demoOrders.forEach(order => {
+      const client = demoClients.find(c => c.id === order.clientId);
+      const driver = demoDrivers.find(d => d.id === order.driverId);
+      const truck = demoTrucks.find(t => t.id === order.truckId);
+
+      const tr = document.createElement("tr");
+      const statutClass =
+        order.statut === "en_cours"
+          ? "status-en-cours"
+          : order.aFacturer
+          ? "status-a-facturer"
+          : "status-termine";
+      const statutLabel =
+        order.statut === "en_cours"
+          ? "En cours"
+          : order.aFacturer
+          ? "À facturer"
+          : "Terminé";
+
+      tr.innerHTML = `
+        <td>${client ? client.entreprise : "-"}</td>
+        <td>${formatDate(order.date)}</td>
+        <td>${truck ? truck.immat : "-"}</td>
+        <td>${driver ? driver.nom : "-"}</td>
+        <td>${order.transportsDone}/${order.transportsEstimated}</td>
+        <td>
+          <span class="status-pill ${statutClass}">
+            <span class="dot"></span>${statutLabel}
+          </span>
+        </td>
+        <td class="table-actions">
+          <button data-action="facturer" data-id="${order.id}">À facturer</button>
+        </td>
+      `;
+      ordersTbody.appendChild(tr);
+    });
+  }
+
+  // Rapports
+  function renderReports() {
+    const fuelTbody = document.getElementById("tableReportFuel");
+    fuelTbody.innerHTML = "";
+    demoFuelReports.forEach(rep => {
+      const truck = demoTrucks.find(t => t.id === rep.truckId);
+      const avg = rep.km ? (rep.litres / rep.km) * 100 : 0;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${truck ? truck.immat : "-"}</td>
+        <td>${rep.mois}</td>
+        <td>${rep.km.toLocaleString("fr-FR")} km</td>
+        <td>${rep.litres.toLocaleString("fr-FR")} L</td>
+        <td>${avg.toFixed(1)} L/100</td>
+      `;
+      fuelTbody.appendChild(tr);
+    });
+
+    const costTbody = document.getElementById("tableReportCosts");
+    costTbody.innerHTML = "";
+    demoCostReports.forEach(rep => {
+      const truck = demoTrucks.find(t => t.id === rep.truckId);
+      const total = rep.carburant + rep.vidange + rep.reparations + rep.pneus + rep.assurance;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${truck ? truck.immat : "-"}</td>
+        <td>${rep.mois}</td>
+        <td>${formatEuro(rep.carburant)}</td>
+        <td>${formatEuro(rep.vidange)}</td>
+        <td>${formatEuro(rep.reparations)}</td>
+        <td>${formatEuro(rep.pneus)}</td>
+        <td>${formatEuro(rep.assurance)}</td>
+        <td>${formatEuro(total)}</td>
+      `;
+      costTbody.appendChild(tr);
+    });
+  }
+
+  // Marge
+  function renderMargin() {
+    const tbody = document.getElementById("tableMargin");
+    tbody.innerHTML = "";
+
+    const now = new Date();
+    const currentMonthIndex = now.getMonth(); // 0-11
+
+    demoMargins.forEach((m, index) => {
+      const totalDepenses = m.carburant + m.vidange + m.reparations + m.pneus + m.assurance;
+      const marge = m.ca - totalDepenses;
+      const tr = document.createElement("tr");
+      if (index === currentMonthIndex) {
+        tr.classList.add("month-current");
+      }
+      tr.innerHTML = `
+        <td>${m.mois}</td>
+        <td>${m.ca ? formatEuro(m.ca) : "-"}</td>
+        <td>${m.carburant ? formatEuro(m.carburant) : "-"}</td>
+        <td>${m.vidange ? formatEuro(m.vidange) : "-"}</td>
+        <td>${m.reparations ? formatEuro(m.reparations) : "-"}</td>
+        <td>${m.pneus ? formatEuro(m.pneus) : "-"}</td>
+        <td>${m.assurance ? formatEuro(m.assurance) : "-"}</td>
+        <td>${totalDepenses ? formatEuro(totalDepenses) : "-"}</td>
+        <td>${marge ? formatEuro(marge) : "-"}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // -----------------------
+  // Formulaire commande
+  // -----------------------
+
+  const formOrder = document.getElementById("formOrder");
+  const btnResetOrder = document.getElementById("btnResetOrder");
+  const orderTypeSelect = document.getElementById("orderType");
+  const orderMaterialField = document.getElementById("orderMaterialField");
+
+  orderTypeSelect.addEventListener("change", () => {
+    if (orderTypeSelect.value === "materiaux") {
+      orderMaterialField.style.display = "block";
+    } else {
+      orderMaterialField.style.display = "none";
+    }
+  });
+
+  btnResetOrder.addEventListener("click", () => {
+    formOrder.reset();
+    populateOrderSelects();
+  });
+
+  formOrder.addEventListener("submit", e => {
+    e.preventDefault();
+    const clientId = parseInt(document.getElementById("orderClient").value, 10);
+    const address = document.getElementById("orderAddress").value || "Adresse à préciser";
+    const transportsEstimated = parseInt(document.getElementById("orderTransportsEstimated").value || "1", 10);
+    const date = document.getElementById("orderDate").value || new Date().toISOString().slice(0, 10);
+    const truckId = parseInt(document.getElementById("orderTruck").value, 10);
+    const driverId = parseInt(document.getElementById("orderDriver").value, 10);
+    const type = document.getElementById("orderType").value;
+    const materialId = type === "materiaux" ? parseInt(document.getElementById("orderMaterial").value, 10) : null;
+    const statut = document.getElementById("orderStatus").value;
+
+    const newOrder = {
+      id: demoOrders.length ? Math.max(...demoOrders.map(o => o.id)) + 1 : 1,
+      clientId,
+      address,
+      transportsEstimated,
+      transportsDone: 0,
+      date,
+      truckId,
+      driverId,
+      type,
+      materialId,
+      statut,
+      aFacturer: false
+    };
+
+    demoOrders.push(newOrder);
+    // Hook vers Make / Google Sheets
+    sendToMake("order_created", newOrder);
+    syncWithGoogleSheets("orders", newOrder);
+
+    renderDashboard();
+    renderOrdersTables();
+    formOrder.reset();
+    populateOrderSelects();
+    alert("Commande créée (données de démo).");
+  });
+
+  // Facturation
+  document.getElementById("tableOrders").addEventListener("click", e => {
+    const btn = e.target.closest("button[data-action='facturer']");
+    if (!btn) return;
+    const id = parseInt(btn.getAttribute("data-id"), 10);
+    const order = demoOrders.find(o => o.id === id);
+    if (!order) return;
+
+    if (order.transportsDone < order.transportsEstimated) {
+      alert("Tous les transports ne sont pas encore réalisés.");
+      return;
+    }
+
+    order.aFacturer = true;
+    sendToMake("order_to_invoice", order);
+    syncWithGoogleSheets("orders", order);
+    renderOrdersTables();
+    alert("Commande marquée 'À facturer' (démo).");
+  });
+
+  // -----------------------
+  // CRUD via modal générique
+  // -----------------------
+
+  const modalBackdrop = document.getElementById("modalBackdrop");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalBody = document.getElementById("modalBody");
+  const modalFooter = document.getElementById("modalFooter");
+  const modalCloseBtn = document.getElementById("modalCloseBtn");
+
+  let currentModalContext = null;
+
+  function openModal(title, bodyHtml, footerButtons) {
+    modalTitle.textContent = title;
+    modalBody.innerHTML = bodyHtml;
+    modalFooter.innerHTML = "";
+    footerButtons.forEach(btnConfig => {
+      const b = document.createElement("button");
+      b.textContent = btnConfig.label;
+      b.className = btnConfig.className;
+      b.addEventListener("click", btnConfig.onClick);
+      modalFooter.appendChild(b);
+    });
+    modalBackdrop.style.display = "flex";
+  }
+
+  function closeModal() {
+    modalBackdrop.style.display = "none";
+    currentModalContext = null;
+  }
+
+  modalCloseBtn.addEventListener("click", closeModal);
+  modalBackdrop.addEventListener("click", e => {
+    if (e.target === modalBackdrop) {
+      closeModal();
+    }
+  });
+
+  // Boutons "Ajouter"
+  document.getElementById("btnAddDriver").addEventListener("click", () => {
+    currentModalContext = { type: "driver", mode: "create" };
+    openModal("Ajouter un chauffeur", getDriverForm(), getDriverFormButtons());
+  });
+
+  document.getElementById("btnAddTruck").addEventListener("click", () => {
+    currentModalContext = { type: "truck", mode: "create" };
+    openModal("Ajouter un camion", getTruckForm(), getTruckFormButtons());
+  });
+
+  document.getElementById("btnAddClient").addEventListener("click", () => {
+    currentModalContext = { type: "client", mode: "create" };
+    openModal("Ajouter un client", getClientForm(), getClientFormButtons());
+  });
+
+  document.getElementById("btnAddMaterial").addEventListener("click", () => {
+    currentModalContext = { type: "material", mode: "create" };
+    openModal("Ajouter un matériau", getMaterialForm(), getMaterialFormButtons());
+  });
+
+  document.getElementById("btnAddTariff").addEventListener("click", () => {
+    currentModalContext = { type: "tariff", mode: "create" };
+    openModal("Ajouter un tarif", getTariffForm(), getTariffFormButtons());
+  });
+
+  document.getElementById("btnAddVehicleExpense").addEventListener("click", () => {
+    currentModalContext = { type: "expense", mode: "create" };
+    openModal("Ajouter un frais véhicule", getExpenseForm(), getExpenseFormButtons());
+  });
+
+  // Délégation pour boutons "Modifier" / "Supprimer"
+  document.getElementById("viewSettings").addEventListener("click", e => {
+    const btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+    const action = btn.getAttribute("data-action");
+    const id = parseInt(btn.getAttribute("data-id"), 10);
+
+    if (action === "edit-driver") {
+      const driver = demoDrivers.find(d => d.id === id);
+      if (!driver) return;
+      currentModalContext = { type: "driver", mode: "edit", id };
+      openModal("Modifier un chauffeur", getDriverForm(driver), getDriverFormButtons());
+    }
+    if (action === "delete-driver") {
+      const idx = demoDrivers.findIndex(d => d.id === id);
+      if (idx >= 0 && confirm("Supprimer ce chauffeur (données de démo) ?")) {
+        demoDrivers.splice(idx, 1);
+        sendToMake("driver_deleted", { id });
+        syncWithGoogleSheets("drivers", { id, deleted: true });
+        renderSettingsTables();
+      }
+    }
+
+    if (action === "edit-truck") {
+      const truck = demoTrucks.find(t => t.id === id);
+      if (!truck) return;
+      currentModalContext = { type: "truck", mode: "edit", id };
+      openModal("Modifier un camion", getTruckForm(truck), getTruckFormButtons());
+    }
+    if (action === "delete-truck") {
+      const idx = demoTrucks.findIndex(t => t.id === id);
+      if (idx >= 0 && confirm("Supprimer ce camion (données de démo) ?")) {
+        demoTrucks.splice(idx, 1);
+        sendToMake("truck_deleted", { id });
+        syncWithGoogleSheets("trucks", { id, deleted: true });
+        renderSettingsTables();
+      }
+    }
+
+    if (action === "edit-client") {
+      const client = demoClients.find(c => c.id === id);
+      if (!client) return;
+      currentModalContext = { type: "client", mode: "edit", id };
+      openModal("Modifier un client", getClientForm(client), getClientFormButtons());
+    }
+    if (action === "delete-client") {
+      const idx = demoClients.findIndex(c => c.id === id);
+      if (idx >= 0 && confirm("Supprimer ce client (données de démo) ?")) {
+        demoClients.splice(idx, 1);
+        sendToMake("client_deleted", { id });
+        syncWithGoogleSheets("clients", { id, deleted: true });
+        renderSettingsTables();
+      }
+    }
+
+    if (action === "edit-material") {
+      const mat = demoMaterials.find(m => m.id === id);
+      if (!mat) return;
+      currentModalContext = { type: "material", mode: "edit", id };
+      openModal("Modifier un matériau", getMaterialForm(mat), getMaterialFormButtons());
+    }
+    if (action === "delete-material") {
+      const idx = demoMaterials.findIndex(m => m.id === id);
+      if (idx >= 0 && confirm("Supprimer ce matériau (données de démo) ?")) {
+        demoMaterials.splice(idx, 1);
+        sendToMake("material_deleted", { id });
+        syncWithGoogleSheets("materials", { id, deleted: true });
+        renderSettingsTables();
+      }
+    }
+
+    if (action === "edit-tariff") {
+      const tariff = demoTariffs.find(t => t.id === id);
+      if (!tariff) return;
+      currentModalContext = { type: "tariff", mode: "edit", id };
+      openModal("Modifier un tarif", getTariffForm(tariff), getTariffFormButtons());
+    }
+    if (action === "delete-tariff") {
+      const idx = demoTariffs.findIndex(t => t.id === id);
+      if (idx >= 0 && confirm("Supprimer ce tarif (données de démo) ?")) {
+        demoTariffs.splice(idx, 1);
+        sendToMake("tariff_deleted", { id });
+        syncWithGoogleSheets("tariffs", { id, deleted: true });
+        renderSettingsTables();
+      }
+    }
+
+    if (action === "edit-expense") {
+      const exp = demoVehicleExpenses.find(ex => ex.id === id);
+      if (!exp) return;
+      currentModalContext = { type: "expense", mode: "edit", id };
+      openModal("Modifier un frais véhicule", getExpenseForm(exp), getExpenseFormButtons());
+    }
+    if (action === "delete-expense") {
+      const idx = demoVehicleExpenses.findIndex(ex => ex.id === id);
+      if (idx >= 0 && confirm("Supprimer ce frais (données de démo) ?")) {
+        demoVehicleExpenses.splice(idx, 1);
+        sendToMake("expense_deleted", { id });
+        syncWithGoogleSheets("vehicle_expenses", { id, deleted: true });
+        renderSettingsTables();
+      }
+    }
+  });
+
+  // Formulaires HTML pour le modal
+  function getDriverForm(driver = {}) {
+    return `
+      <div class="form-grid-2">
+        <div class="form-field">
+          <label>Nom complet</label>
+          <input id="fDriverName" type="text" value="${driver.nom || ""}" placeholder="Ex : Jean Dupont" />
+        </div>
+        <div class="form-field">
+          <label>Date de naissance</label>
+          <input id="fDriverBirth" type="date" value="${driver.dateNaissance || ""}" />
+        </div>
+      </div>
+      <div class="form-grid-2">
+        <div class="form-field">
+          <label>Téléphone</label>
+          <input id="fDriverPhone" type="text" value="${driver.telephone || ""}" placeholder="06 ..." />
+        </div>
+        <div class="form-field">
+          <label>Email</label>
+          <input id="fDriverEmail" type="email" value="${driver.email || ""}" placeholder="prenom.nom@..." />
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Type de permis</label>
+        <input id="fDriverLicense" type="text" value="${driver.permis || ""}" placeholder="Ex : C, CE" />
+      </div>
+      <div class="form-field">
+        <label>Documents (simulation d'upload multiple)</label>
+        <input id="fDriverDocs" type="text" placeholder="permis_jean.pdf; fco_jean.pdf" />
+        <div class="tag-list">
+          <div class="tag">permis.pdf</div>
+          <div class="tag">FCO.pdf</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function getDriverFormButtons() {
+    return [
+      {
+        label: "Annuler",
+        className: "btn btn-outline",
+        onClick: () => closeModal()
+      },
+      {
+        label: "Enregistrer",
+        className: "btn btn-primary",
+        onClick: () => {
+          const name = document.getElementById("fDriverName").value || "Nouveau chauffeur";
+          const birth = document.getElementById("fDriverBirth").value || "";
+          const phone = document.getElementById("fDriverPhone").value || "";
+          const email = document.getElementById("fDriverEmail").value || "";
+          const license = document.getElementById("fDriverLicense").value || "";
+          const docs = (document.getElementById("fDriverDocs").value || "").split(";").map(s => s.trim()).filter(Boolean);
+
+          if (currentModalContext.mode === "create") {
+            const newDriver = {
+              id: demoDrivers.length ? Math.max(...demoDrivers.map(d => d.id)) + 1 : 1,
+              nom: name,
+              dateNaissance: birth,
+              telephone: phone,
+              email: email,
+              permis: license,
+              documents: docs
+            };
+            demoDrivers.push(newDriver);
+            sendToMake("driver_created", newDriver);
+            syncWithGoogleSheets("drivers", newDriver);
+          } else if (currentModalContext.mode === "edit") {
+            const driver = demoDrivers.find(d => d.id === currentModalContext.id);
+            if (driver) {
+              driver.nom = name;
+              driver.dateNaissance = birth;
+              driver.telephone = phone;
+              driver.email = email;
+              driver.permis = license;
+              driver.documents = docs;
+              sendToMake("driver_updated", driver);
+              syncWithGoogleSheets("drivers", driver);
+            }
+          }
+          renderSettingsTables();
+          populateOrderSelects();
+          closeModal();
+        }
+      }
+    ];
+  }
+
+  function getTruckForm(truck = {}) {
+    return `
+      <div class="form-grid-2">
+        <div class="form-field">
+          <label>Immatriculation</label>
+          <input id="fTruckImmat" type="text" value="${truck.immat || ""}" placeholder="Ex : FR-907-GO" />
+        </div>
+        <div class="form-field">
+          <label>Kilométrage</label>
+          <input id="fTruckKm" type="number" value="${truck.km || ""}" />
+        </div>
+      </div>
+      <div class="form-grid-2">
+        <div class="form-field">
+          <label>Type</label>
+          <input id="fTruckType" type="text" value="${truck.type || ""}" placeholder="Semi-benne 26T..." />
+        </div>
+        <div class="form-field">
+          <label>Date du contrôle technique</label>
+          <input id="fTruckCt" type="date" value="${truck.ct || ""}" />
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Documents (simulation d'upload multiple)</label>
+        <input id="fTruckDocs" type="text" placeholder="carte_grise.pdf; assurance.pdf" />
+        <div class="tag-list">
+          <div class="tag">carte_grise.pdf</div>
+          <div class="tag">assurance.pdf</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function getTruckFormButtons() {
+    return [
+      {
+        label: "Annuler",
+        className: "btn btn-outline",
+        onClick: () => closeModal()
+      },
+      {
+        label: "Enregistrer",
+        className: "btn btn-primary",
+        onClick: () => {
+          const immat = document.getElementById("fTruckImmat").value || "Immat à préciser";
+          const km = parseInt(document.getElementById("fTruckKm").value || "0", 10);
+          const type = document.getElementById("fTruckType").value || "Type à préciser";
+          const ct = document.getElementById("fTruckCt").value || "";
+          const docs = (document.getElementById("fTruckDocs").value || "").split(";").map(s => s.trim()).filter(Boolean);
+
+          if (currentModalContext.mode === "create") {
+            const newTruck = {
+              id: demoTrucks.length ? Math.max(...demoTrucks.map(t => t.id)) + 1 : 1,
+              immat,
+              km,
+              type,
+              ct,
+              documents: docs
+            };
+            demoTrucks.push(newTruck);
+            sendToMake("truck_created", newTruck);
+            syncWithGoogleSheets("trucks", newTruck);
+          } else if (currentModalContext.mode === "edit") {
+            const truck = demoTrucks.find(t => t.id === currentModalContext.id);
+            if (truck) {
+              truck.immat = immat;
+              truck.km = km;
+              truck.type = type;
+              truck.ct = ct;
+              truck.documents = docs;
+              sendToMake("truck_updated", truck);
+              syncWithGoogleSheets("trucks", truck);
+            }
+          }
+          renderSettingsTables();
+          populateOrderSelects();
+          closeModal();
+        }
+      }
+    ];
+  }
+
+  function getClientForm(client = {}) {
+    return `
+      <div class="form-field">
+        <label>Nom de l’entreprise</label>
+        <input id="fClientName" type="text" value="${client.entreprise || ""}" placeholder="Ex : Chantier Nord Travaux" />
+      </div>
+      <div class="form-grid-2">
+        <div class="form-field">
+          <label>Nom du gérant</label>
+          <input id="fClientManager" type="text" value="${client.gerant || ""}" />
+        </div>
+        <div class="form-field">
+          <label>Téléphone</label>
+          <input id="fClientPhone" type="text" value="${client.telephone || ""}" />
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Email</label>
+        <input id="fClientEmail" type="email" value="${client.email || ""}" />
+      </div>
+    `;
+  }
+
+  function getClientFormButtons() {
+    return [
+      {
+        label: "Annuler",
+        className: "btn btn-outline",
+        onClick: () => closeModal()
+      },
+      {
+        label: "Enregistrer",
+        className: "btn btn-primary",
+        onClick: () => {
+          const entreprise = document.getElementById("fClientName").value || "Nouvelle entreprise";
+          const gerant = document.getElementById("fClientManager").value || "";
+          const telephone = document.getElementById("fClientPhone").value || "";
+          const email = document.getElementById("fClientEmail").value || "";
+
+          if (currentModalContext.mode === "create") {
+            const newClient = {
+              id: demoClients.length ? Math.max(...demoClients.map(c => c.id)) + 1 : 1,
+              entreprise,
+              gerant,
+              telephone,
+              email
+            };
+            demoClients.push(newClient);
+            sendToMake("client_created", newClient);
+            syncWithGoogleSheets("clients", newClient);
+          } else if (currentModalContext.mode === "edit") {
+            const client = demoClients.find(c => c.id === currentModalContext.id);
+            if (client) {
+              client.entreprise = entreprise;
+              client.gerant = gerant;
+              client.telephone = telephone;
+              client.email = email;
+              sendToMake("client_updated", client);
+              syncWithGoogleSheets("clients", client);
+            }
+          }
+          renderSettingsTables();
+          populateOrderSelects();
+          closeModal();
+        }
+      }
+    ];
+  }
+
+  function getMaterialForm(mat = {}) {
+    return `
+      <div class="form-field">
+        <label>Nom du matériau</label>
+        <input id="fMaterialName" type="text" value="${mat.nom || ""}" placeholder="Ex : Sable 0/4" />
+      </div>
+    `;
+  }
+
+  function getMaterialFormButtons() {
+    return [
+      {
+        label: "Annuler",
+        className: "btn btn-outline",
+        onClick: () => closeModal()
+      },
+      {
+        label: "Enregistrer",
+        className: "btn btn-primary",
+        onClick: () => {
+          const nom = document.getElementById("fMaterialName").value || "Matériau à préciser";
+          if (currentModalContext.mode === "create") {
+            const newMat = {
+              id: demoMaterials.length ? Math.max(...demoMaterials.map(m => m.id)) + 1 : 1,
+              nom
+            };
+            demoMaterials.push(newMat);
+            sendToMake("material_created", newMat);
+            syncWithGoogleSheets("materials", newMat);
+          } else if (currentModalContext.mode === "edit") {
+            const mat = demoMaterials.find(m => m.id === currentModalContext.id);
+            if (mat) {
+              mat.nom = nom;
+              sendToMake("material_updated", mat);
+              syncWithGoogleSheets("materials", mat);
+            }
+          }
+          renderSettingsTables();
+          populateOrderSelects();
+          closeModal();
+        }
+      }
+    ];
+  }
+
+  function getTariffForm(tariff = {}) {
+    return `
+      <div class="form-grid-2">
+        <div class="form-field">
+          <label>Type de tarif</label>
+          <select id="fTariffType">
+            <option value="materiaux" ${tariff.type === "materiaux" ? "selected" : ""}>Matériaux (€/tonne)</option>
+            <option value="journee" ${tariff.type === "journee" ? "selected" : ""}>Journée (€/jour)</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Tarif (€)</label>
+          <input id="fTariffPrice" type="number" value="${tariff.prix || ""}" />
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Description</label>
+        <input id="fTariffDesc" type="text" value="${tariff.description || ""}" placeholder="Ex : Sable 0/4 – €/tonne" />
+      </div>
+    `;
+  }
+
+  function getTariffFormButtons() {
+    return [
+      {
+        label: "Annuler",
+        className: "btn btn-outline",
+        onClick: () => closeModal()
+      },
+      {
+        label: "Enregistrer",
+        className: "btn btn-primary",
+        onClick: () => {
+          const type = document.getElementById("fTariffType").value;
+          const prix = parseFloat(document.getElementById("fTariffPrice").value || "0");
+          const description = document.getElementById("fTariffDesc").value || "";
+
+          if (currentModalContext.mode === "create") {
+            const newTariff = {
+              id: demoTariffs.length ? Math.max(...demoTariffs.map(t => t.id)) + 1 : 1,
+              type,
+              description,
+              prix
+            };
+            demoTariffs.push(newTariff);
+            sendToMake("tariff_created", newTariff);
+            syncWithGoogleSheets("tariffs", newTariff);
+          } else if (currentModalContext.mode === "edit") {
+            const tariff = demoTariffs.find(t => t.id === currentModalContext.id);
+            if (tariff) {
+              tariff.type = type;
+              tariff.description = description;
+              tariff.prix = prix;
+              sendToMake("tariff_updated", tariff);
+              syncWithGoogleSheets("tariffs", tariff);
+            }
+          }
+          renderSettingsTables();
+          closeModal();
+        }
+      }
+    ];
+  }
+
+  function getExpenseForm(exp = {}) {
+    const truckOptions = demoTrucks
+      .map(t => `<option value="${t.id}" ${exp.truckId === t.id ? "selected" : ""}>${t.immat}</option>`)
+      .join("");
+    const typeOptions = ["Carburant", "Vidange", "Réparations", "Assurance", "Pneus"]
+      .map(t => `<option value="${t}" ${exp.type === t ? "selected" : ""}>${t}</option>`)
+      .join("");
+
+    return `
+      <div class="form-grid-2">
+        <div class="form-field">
+          <label>Date</label>
+          <input id="fExpDate" type="date" value="${exp.date || ""}" />
+        </div>
+        <div class="form-field">
+          <label>Camion</label>
+          <select id="fExpTruck">${truckOptions}</select>
+        </div>
+      </div>
+      <div class="form-grid-2">
+        <div class="form-field">
+          <label>Type de frais</label>
+          <select id="fExpType">${typeOptions}</select>
+        </div>
+        <div class="form-field">
+          <label>Montant (€)</label>
+          <input id="fExpAmount" type="number" value="${exp.montant || ""}" />
+        </div>
+      </div>
+    `;
+  }
+
+  function getExpenseFormButtons() {
+    return [
+      {
+        label: "Annuler",
+        className: "btn btn-outline",
+        onClick: () => closeModal()
+      },
+      {
+        label: "Enregistrer",
+        className: "btn btn-primary",
+        onClick: () => {
+          const date = document.getElementById("fExpDate").value || new Date().toISOString().slice(0, 10);
+          const truckId = parseInt(document.getElementById("fExpTruck").value, 10);
+          const type = document.getElementById("fExpType").value;
+          const montant = parseFloat(document.getElementById("fExpAmount").value || "0");
+
+          if (currentModalContext.mode === "create") {
+            const newExp = {
+              id: demoVehicleExpenses.length ? Math.max(...demoVehicleExpenses.map(e => e.id)) + 1 : 1,
+              date,
+              truckId,
+              type,
+              montant
+            };
+            demoVehicleExpenses.push(newExp);
+            sendToMake("expense_created", newExp);
+            syncWithGoogleSheets("vehicle_expenses", newExp);
+          } else if (currentModalContext.mode === "edit") {
+            const exp = demoVehicleExpenses.find(e => e.id === currentModalContext.id);
+            if (exp) {
+              exp.date = date;
+              exp.truckId = truckId;
+              exp.type = type;
+              exp.montant = montant;
+              sendToMake("expense_updated", exp);
+              syncWithGoogleSheets("vehicle_expenses", exp);
+            }
+          }
+          renderSettingsTables();
+          renderDashboard();
+          renderReports();
+          renderMargin();
+          closeModal();
+        }
+      }
+    ];
+  }
+
+  // -----------------------
+  // Interface Chauffeur
+  // -----------------------
+
+  const driverAvatar = document.getElementById("driverAvatar");
+  const driverNameTitle = document.getElementById("driverNameTitle");
+  const driverSubTitle = document.getElementById("driverSubTitle");
+  const driverTransportsList = document.getElementById("driverTransportsList");
+  const formDriverEndOfDay = document.getElementById("formDriverEndOfDay");
+
+  const transportModalBackdrop = document.getElementById("transportModalBackdrop");
+  const transportModalBody = document.getElementById("transportModalBody");
+  const transportModalCloseBtn = document.getElementById("transportModalCloseBtn");
+  const transportModalCancel = document.getElementById("transportModalCancel");
+  const transportModalSave = document.getElementById("transportModalSave");
+
+  let currentTransportContext = null;
+
+  function initDriverView(driver) {
+    const initials = driver.nom.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
+    driverAvatar.textContent = initials;
+    driverNameTitle.textContent = driver.nom;
+    driverSubTitle.textContent = "Chauffeur – SOTRANSNORD";
+
+    // Générer la liste des transports du jour pour ce chauffeur
+    const today = new Date().toISOString().slice(0, 10);
+    const todaysOrders = demoOrders.filter(o => o.driverId === driver.id && o.date === today);
+    driverTransportsList.innerHTML = "";
+
+    if (!todaysOrders.length) {
+      const info = document.createElement("div");
+      info.style.fontSize = "12px";
+      info.style.color = "#6b7280";
+      info.textContent = "Aucun transport planifié pour aujourd'hui dans la démo, des exemples sont générés.";
+      driverTransportsList.appendChild(info);
+    }
+
+    const simulatedTransports = todaysOrders.length ? todaysOrders : demoOrders.filter(o => o.driverId === driver.id);
+
+    simulatedTransports.forEach(order => {
+      for (let i = 1; i <= order.transportsEstimated; i++) {
+        const index = i;
+        const done = index <= order.transportsDone;
+        const item = document.createElement("div");
+        item.className = "transport-item";
+        item.dataset.orderId = order.id;
+        item.dataset.index = index;
+
+        const client = demoClients.find(c => c.id === order.clientId);
+        const mainLabel = `${client ? client.entreprise : "Client"} – Transport ${index}/${order.transportsEstimated}`;
+        const metaLabel = `${formatDate(order.date)} • ${order.address}`;
+
+        item.innerHTML = `
+          <div class="transport-main">
+            <div>${mainLabel}</div>
+            <div class="transport-meta">${metaLabel}</div>
+          </div>
+          <div class="transport-status ${done ? "done" : "pending"}">
+            ${done ? "Terminé" : "À réaliser"}
+          </div>
+        `;
+        item.addEventListener("click", () => openTransportModal(order, index));
+        driverTransportsList.appendChild(item);
+      }
+    });
+  }
+
+  function openTransportModal(order, index) {
+    currentTransportContext = { orderId: order.id, index };
+
+    transportModalBody.innerHTML = `
+      <div style="font-size:13px;margin-bottom:8px;">
+        <strong>Commande :</strong> ${order.address}<br/>
+        <strong>Transport :</strong> ${index}/${order.transportsEstimated}
+      </div>
+      <div class="form-field">
+        <label>Tonnage réceptionné (tonnes)</label>
+        <input id="fTransportTonnage" type="number" placeholder="Ex : 18" />
+      </div>
+      <div class="form-field">
+        <label>Nom du réceptionnaire</label>
+        <input id="fTransportReceiver" type="text" placeholder="Ex : M. Durand" />
+      </div>
+      <div class="form-field">
+        <label>Fonction</label>
+        <input id="fTransportRole" type="text" placeholder="Ex : Chef de chantier" />
+      </div>
+      <div class="form-field">
+        <label>Signature électronique (simulée)</label>
+        <textarea id="fTransportSignature" rows="2" placeholder="Ex : Signature reçue par tablette"></textarea>
+      </div>
+    `;
+    transportModalBackdrop.style.display = "flex";
+  }
+
+  function closeTransportModal() {
+    transportModalBackdrop.style.display = "none";
+    currentTransportContext = null;
+  }
+
+  transportModalCloseBtn.addEventListener("click", closeTransportModal);
+  transportModalCancel.addEventListener("click", closeTransportModal);
+  transportModalBackdrop.addEventListener("click", e => {
+    if (e.target === transportModalBackdrop) closeTransportModal();
+  });
+
+  transportModalSave.addEventListener("click", () => {
+    if (!currentTransportContext) return;
+    const tonnage = parseFloat(document.getElementById("fTransportTonnage").value || "0");
+    const receiver = document.getElementById("fTransportReceiver").value || "";
+    const role = document.getElementById("fTransportRole").value || "";
+    const signature = document.getElementById("fTransportSignature").value || "";
+
+    const order = demoOrders.find(o => o.id === currentTransportContext.orderId);
+    if (!order) return;
+
+    if (order.transportsDone < order.transportsEstimated) {
+      order.transportsDone += 1;
+    }
+    if (order.transportsDone >= order.transportsEstimated) {
+      order.statut = "termine";
+    }
+
+    const payload = {
+      orderId: order.id,
+      index: currentTransportContext.index,
+      tonnage,
+      receiver,
+      role,
+      signature
+    };
+    sendToMake("driver_transport_done", payload);
+    syncWithGoogleSheets("transports", payload);
+
+    renderDashboard();
+    renderOrdersTables();
+    if (currentDriver) {
+      initDriverView(currentDriver);
+    }
+    closeTransportModal();
+    alert("Transport validé (données de démo).");
+  });
+
+  // Fiche fin de journée
+  formDriverEndOfDay.addEventListener("submit", e => {
+    e.preventDefault();
+    if (!currentDriver) return;
+
+    const km = parseInt(document.getElementById("driverKm").value || "0", 10);
+    const fuelQty = parseFloat(document.getElementById("driverFuelQty").value || "0");
+    const fuelAmount = parseFloat(document.getElementById("driverFuelAmount").value || "0");
+
+    const payload = {
+      driverId: currentDriver.id,
+      date: new Date().toISOString().slice(0, 10),
+      km,
+      fuelQty,
+      fuelAmount
+    };
+
+    sendToMake("driver_end_of_day", payload);
+    syncWithGoogleSheets("driver_end_of_day", payload);
+
+    formDriverEndOfDay.reset();
+    alert("Fiche de fin de journée envoyée (démo).");
+  });
+
+  // -----------------------
+  // Intégration Google Sheets / Make (hooks simulés)
+  // -----------------------
+
+  function sendToMake(eventType, payload) {
+    // Ici vous pouvez remplacer par un appel fetch() vers votre webhook Make :
+    // fetch('https://hook.make.com/xxx', { method: 'POST', body: JSON.stringify({ eventType, payload }) })
+    console.log("sendToMake", eventType, payload);
+  }
+
+  function syncWithGoogleSheets(resource, payload) {
+    // Ici vous pouvez soit appeler directement l'API Google Sheets côté front,
+    // soit déléguer à Make.com via un webhook.
+    console.log("syncWithGoogleSheets", resource, payload);
+  }
+
+  // -----------------------
+  // Modal d'intégration Make / Sheets
+  // -----------------------
+
+  const integrationModalBackdrop = document.getElementById("integrationModalBackdrop");
+  const integrationModalCloseBtn = document.getElementById("integrationModalCloseBtn");
+  const integrationModalOk = document.getElementById("integrationModalOk");
+  const btnOpenIntegration = document.getElementById("btnOpenIntegration");
+
+  btnOpenIntegration.addEventListener("click", () => {
+    integrationModalBackdrop.style.display = "flex";
+  });
+
+  function closeIntegrationModal() {
+    integrationModalBackdrop.style.display = "none";
+  }
+
+  integrationModalCloseBtn.addEventListener("click", closeIntegrationModal);
+  integrationModalOk.addEventListener("click", closeIntegrationModal);
+  integrationModalBackdrop.addEventListener("click", e => {
+    if (e.target === integrationModalBackdrop) closeIntegrationModal();
+  });
+
+  // -----------------------
+  // Initialisation
+  // -----------------------
+  window.addEventListener("load", () => {
+    pinInputs[0].focus();
+  });
 </script>
 </body>
 </html>
