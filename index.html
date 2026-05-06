@@ -1,3430 +1,2078 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <title>SOTRANSNORD - Gestion de flotte</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    :root {
-      --primary: #2563eb;
-      --primary-soft: #dbeafe;
-      --bg: #f3f4f6;
-      --sidebar-bg: #0f172a;
-      --sidebar-text: #e5e7eb;
-      --card-bg: #ffffff;
-      --border: #e5e7eb;
-      --danger: #dc2626;
-      --success: #16a34a;
-      --warning: #f97316;
-      --text-main: #111827;
-      --text-soft: #6b7280;
-      --radius: 10px;
-      --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    body {
-      background: radial-gradient(circle at top left, #e0f2fe 0, #f9fafb 40%, #e5e7eb 100%);
-      min-height: 100vh;
-      color: var(--text-main);
-      display: flex;
-      align-items: stretch;
-      justify-content: center;
-    }
-
-    /* Wrapper pour page unique */
-    .app-root {
-      width: 100%;
-      min-height: 100vh;
-      display: flex;
-      align-items: stretch;
-      justify-content: center;
-    }
-
-    /* ----------- ECRAN LOGIN ----------- */
-    .login-screen {
-      width: 100%;
-      max-width: 1200px;
-      margin: auto;
-      display: flex;
-      align-items: stretch;
-      justify-content: center;
-      padding: 32px 16px;
-    }
-
-    .login-card {
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(12px);
-      box-shadow: var(--shadow);
-      border-radius: 24px;
-      display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      width: 100%;
-      overflow: hidden;
-    }
-
-    .login-left {
-      padding: 32px 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    .login-badge {
-      font-size: 12px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--primary);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .login-badge span.dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      background: #22c55e;
-      box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.2);
-    }
-
-    .login-title {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .login-subtitle {
-      font-size: 14px;
-      color: var(--text-soft);
-      max-width: 440px;
-      line-height: 1.5;
-    }
-
-    .login-switch {
-      display: inline-flex;
-      padding: 4px;
-      border-radius: 999px;
-      background: #e5e7eb;
-      position: relative;
-    }
-
-    .login-switch button {
-      border: none;
-      background: transparent;
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-size: 13px;
-      cursor: pointer;
-      position: relative;
-      z-index: 1;
-      color: #4b5563;
-      transition: color .2s ease;
-      white-space: nowrap;
-    }
-
-    .login-switch button.active {
-      color: #111827;
-      font-weight: 600;
-    }
-
-    .login-switch-thumb {
-      position: absolute;
-      top: 4px;
-      bottom: 4px;
-      width: 50%;
-      border-radius: 999px;
-      background: #ffffff;
-      box-shadow: 0 4px 10px rgba(148, 163, 184, 0.7);
-      transition: transform .2s ease;
-    }
-
-    .login-switch-thumb.manager {
-      transform: translateX(0);
-    }
-
-    .login-switch-thumb.driver {
-      transform: translateX(100%);
-    }
-
-    .pin-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .pin-input {
-      width: 100%;
-      aspect-ratio: 3/4;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      text-align: center;
-      font-size: 20px;
-      font-weight: 600;
-      outline: none;
-      background: #f9fafb;
-      transition: border .15s ease, box-shadow .15s ease, background .15s ease;
-    }
-
-    .pin-input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.4);
-      background: #ffffff;
-    }
-
-    .login-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    .btn {
-      border-radius: 999px;
-      border: none;
-      padding: 10px 18px;
-      font-size: 14px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background .15s ease, box-shadow .15s ease, transform .05s ease, color .15s ease;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: #f9fafb;
-      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.4);
-    }
-
-    .btn-primary:hover {
-      background: #1d4ed8;
-      transform: translateY(-1px);
-    }
-
-    .btn-outline {
-      background: #ffffff;
-      color: #374151;
-      border: 1px solid var(--border);
-    }
-
-    .btn-outline:hover {
-      background: #f9fafb;
-    }
-
-    .login-hint {
-      font-size: 12px;
-      color: #6b7280;
-      margin-top: 6px;
-    }
-
-    .login-hint code {
-      background: #111827;
-      color: #e5e7eb;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 11px;
-    }
-
-    .login-alert {
-      font-size: 13px;
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid #fecaca;
-      background: #fef2f2;
-      color: #b91c1c;
-      display: none;
-    }
-
-    .login-right {
-      background: radial-gradient(circle at top left, #1d4ed8, #0f172a);
-      color: #e5e7eb;
-      padding: 24px 24px 24px 32px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .login-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 600;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      font-size: 12px;
-    }
-
-    .logo-circle {
-      width: 30px;
-      height: 30px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #f97316, #facc15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #0f172a;
-      font-weight: 800;
-      font-size: 14px;
-      box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.7);
-    }
-
-    .login-right-main {
-      margin-top: 16px;
-    }
-
-    .login-right-title {
-      font-size: 22px;
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-
-    .login-right-text {
-      font-size: 13px;
-      color: #cbd5f5;
-      max-width: 260px;
-      line-height: 1.6;
-    }
-
-    .login-pill {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      background: rgba(15, 23, 42, 0.7);
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 14px;
-    }
-
-    .login-pill span {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: #22c55e;
-    }
-
-    .login-badges {
-      margin-top: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .login-badge-pill {
-      font-size: 11px;
-      background: rgba(15, 23, 42, 0.7);
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .login-badge-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 999px;
-      background: #60a5fa;
-    }
-
-    .login-footer {
-      margin-top: auto;
-      font-size: 11px;
-      color: #9ca3af;
-    }
-
-    .login-footer strong {
-      color: #e5e7eb;
-    }
-
-    /* ----------- LAYOUT GESTIONNAIRE ----------- */
-    .app-shell {
-      display: none;
-      width: 100%;
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text-main);
-    }
-
-    .app-shell-inner {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    .sidebar {
-      width: 260px;
-      background: var(--sidebar-bg);
-      color: var(--sidebar-text);
-      display: flex;
-      flex-direction: column;
-      padding: 18px 16px;
-      gap: 18px;
-    }
-
-    .sidebar-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 6px 10px 14px;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.3);
-    }
-
-    .sidebar-title {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .sidebar-title span:first-child {
-      font-size: 12px;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      color: #9ca3af;
-    }
-
-    .sidebar-title span:last-child {
-      font-size: 16px;
-      font-weight: 600;
-      color: #e5e7eb;
-    }
-
-    .sidebar-nav {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-top: 4px;
-      flex: 1;
-    }
-
-    .sidebar-section-label {
-      font-size: 11px;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: #6b7280;
-      padding: 10px 10px 4px;
-    }
-
-    .nav-item {
-      padding: 9px 10px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      cursor: pointer;
-      color: #e5e7eb;
-      border: 1px solid transparent;
-      transition: background .15s ease, border .15s ease, transform .05s ease;
-    }
-
-    .nav-item span.icon {
-      width: 22px;
-      height: 22px;
-      border-radius: 8px;
-      background: rgba(148, 163, 184, 0.16);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-    }
-
-    .nav-item.active {
-      background: rgba(37, 99, 235, 0.22);
-      border-color: rgba(59, 130, 246, 0.7);
-      transform: translateY(-1px);
-    }
-
-    .nav-item:hover:not(.active) {
-      background: rgba(15, 23, 42, 0.9);
-    }
-
-    .sidebar-footer {
-      font-size: 11px;
-      color: #6b7280;
-      padding-top: 10px;
-      border-top: 1px solid rgba(55, 65, 81, 0.9);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .sidebar-footer button {
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      background: transparent;
-      color: #e5e7eb;
-      font-size: 11px;
-      cursor: pointer;
-    }
-
-    .sidebar-footer button:hover {
-      background: rgba(31, 41, 55, 0.9);
-    }
-
-    /* Topbar & main */
-    .app-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    .topbar {
-      height: 60px;
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
-
-    .topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .topbar-page-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    .topbar-page-sub {
-      font-size: 12px;
-      color: var(--text-soft);
-    }
-
-    .topbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .chip {
-      font-size: 11px;
-      background: var(--primary-soft);
-      color: var(--primary);
-      padding: 4px 9px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .chip-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: #22c55e;
-    }
-
-    .topbar-user {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--text-soft);
-    }
-
-    .avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #0ea5e9, #6366f1);
-      color: #f9fafb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .app-content {
-      padding: 16px 20px 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      min-height: 0;
-    }
-
-    /* ----------- CARDS & TABLES ----------- */
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 14px 14px 16px;
-      border: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      min-width: 0;
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .card-title {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .card-subtitle {
-      font-size: 11px;
-      color: var(--text-soft);
-    }
-
-    .pill {
-      font-size: 11px;
-      background: #eff6ff;
-      color: #1d4ed8;
-      padding: 3px 8px;
-      border-radius: 999px;
-    }
-
-    .metric-row {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .metric-main {
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    .metric-label {
-      font-size: 11px;
-      color: var(--text-soft);
-    }
-
-    .badge {
-      font-size: 11px;
-      border-radius: 999px;
-      padding: 2px 7px;
-    }
-
-    .badge-success {
-      background: #dcfce7;
-      color: #15803d;
-    }
-
-    .badge-danger {
-      background: #fee2e2;
-      color: #b91c1c;
-    }
-
-    .badge-warning {
-      background: #ffedd5;
-      color: #c2410c;
-    }
-
-    .scroll-x {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-      min-width: 520px;
-    }
-
-    thead {
-      background: #f3f4f6;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 8px 6px;
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-    }
-
-    th {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: #6b7280;
-    }
-
-    tbody tr:hover {
-      background: #f9fafb;
-    }
-
-    .status-pill {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .status-pill span.dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-    }
-
-    .status-en-cours {
-      background: #eff6ff;
-      color: #1d4ed8;
-    }
-
-    .status-en-cours span.dot {
-      background: #3b82f6;
-    }
-
-    .status-termine {
-      background: #dcfce7;
-      color: #15803d;
-    }
-
-    .status-termine span.dot {
-      background: #16a34a;
-    }
-
-    .status-a-facturer {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .status-a-facturer span.dot {
-      background: #f59e0b;
-    }
-
-    .table-actions button {
-      font-size: 11px;
-      padding: 4px 7px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: #f9fafb;
-      cursor: pointer;
-    }
-
-    .table-actions button:hover {
-      background: #e5e7eb;
-    }
-
-    /* ----------- FORMULAIRES CRUD ----------- */
-    .form-grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .form-grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .form-field {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .form-field label {
-      font-size: 11px;
-      font-weight: 500;
-      color: #374151;
-    }
-
-    .form-field input,
-    .form-field select,
-    .form-field textarea {
-      padding: 7px 9px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      font-size: 13px;
-      outline: none;
-      background: #f9fafb;
-    }
-
-    .form-field input:focus,
-    .form-field select:focus,
-    .form-field textarea:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3);
-      background: #ffffff;
-    }
-
-    .form-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-    }
-
-    .tag-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 6px;
-    }
-
-    .tag {
-      font-size: 11px;
-      padding: 3px 7px;
-      border-radius: 999px;
-      border: 1px dashed #cbd5f5;
-      background: #eff6ff;
-      color: #1d4ed8;
-    }
-
-    /* ----------- RAPPORTS / MARGE ----------- */
-    .margin-table {
-      min-width: 720px;
-    }
-
-    .month-current {
-      background: #eff6ff !important;
-    }
-
-    /* ----------- VUE CHAUFFEUR ----------- */
-    .driver-shell {
-      display: none;
-      width: 100%;
-      min-height: 100vh;
-      background: var(--bg);
-      padding: 16px 12px 26px;
-    }
-
-    .driver-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
-    .driver-identity {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .driver-title {
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .driver-sub {
-      font-size: 12px;
-      color: var(--text-soft);
-    }
-
-    .driver-block-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-
-    .driver-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .transport-item {
-      background: #ffffff;
-      border-radius: 12px;
-      padding: 10px 10px;
-      border: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-    }
-
-    .transport-main {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      font-size: 13px;
-    }
-
-    .transport-meta {
-      font-size: 11px;
-      color: var(--text-soft);
-    }
-
-    .transport-status {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 999px;
-    }
-
-    .transport-status.done {
-      background: #dcfce7;
-      color: #15803d;
-    }
-
-    .transport-status.pending {
-      background: #f3f4f6;
-      color: #4b5563;
-    }
-
-    .driver-footer {
-      margin-top: 12px;
-      font-size: 11px;
-      color: var(--text-soft);
-    }
-
-    /* ----------- MODAL GENERIQUE ----------- */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.55);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 40;
-      padding: 16px;
-    }
-
-    .modal {
-      background: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.5);
-      max-width: 480px;
-      width: 100%;
-      padding: 18px 16px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .modal-title {
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .modal-close-btn {
-      border: none;
-      background: transparent;
-      font-size: 18px;
-      cursor: pointer;
-    }
-
-    .modal-footer {
-      margin-top: 6px;
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-    }
-
-    /* ----------- ALERTE "API" (Sheets / Make) ----------- */
-    .api-hint {
-      font-size: 11px;
-      color: #6b7280;
-      padding: 8px 9px;
-      border-radius: 10px;
-      background: #f9fafb;
-      border: 1px dashed #cbd5f5;
-      margin-top: 4px;
-    }
-
-    .api-hint code {
-      font-size: 11px;
-      background: #111827;
-      color: #e5e7eb;
-      padding: 2px 5px;
-      border-radius: 4px;
-    }
-
-    /* ----------- RESPONSIVE ----------- */
-    @media (max-width: 900px) {
-      .login-card {
-        grid-template-columns: 1fr;
-      }
-      .login-right {
-        display: none;
-      }
-      .sidebar {
-        display: none;
-      }
-      .app-shell-inner {
-        flex-direction: column;
-      }
-      .topbar {
-        position: static;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .grid-3 {
-        grid-template-columns: 1fr;
-      }
-      .grid-2 {
-        grid-template-columns: 1fr;
-      }
-      .form-grid-2,
-      .form-grid-3 {
-        grid-template-columns: 1fr;
-      }
-      .app-content {
-        padding: 14px 12px 20px;
-      }
-      .topbar {
-        padding: 10px 12px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .login-left {
-        padding: 22px 18px 18px;
-      }
-      .login-title {
-        font-size: 22px;
-      }
-      .pin-grid {
-        gap: 6px;
-      }
-      .pin-input {
-        font-size: 16px;
-      }
-      .driver-shell {
-        padding: 12px 10px 18px;
-      }
-    }
-  </style>
-</head>
-<body>
-<div class="app-root">
-  <!-- ECRAN DE CONNEXION -->
-  <div id="loginScreen" class="login-screen">
-    <div class="login-card">
-      <div class="login-left">
-        <div class="login-badge">
-          <span class="dot"></span>
-          DEMO FLOTTE POIDS LOURDS
-        </div>
-        <div>
-          <div class="login-title">SOTRANSNORD – Espace de gestion</div>
-          <p class="login-subtitle">
-            Base de démonstration pour la gestion de flotte de camions (Gabriel OZIER). 
-            Connexion simple par code PIN, sans mot de passe.
-          </p>
-        </div>
-
-        <!-- Switch manager / driver -->
-        <div>
-          <div style="font-size:12px;font-weight:500;margin-bottom:6px;">Type de connexion</div>
-          <div class="login-switch" id="roleSwitch">
-            <div class="login-switch-thumb manager" id="switchThumb"></div>
-            <button type="button" data-role="manager" class="active" id="switchManager">Connexion gérant</button>
-            <button type="button" data-role="driver" id="switchDriver">Connexion chauffeur</button>
+  <head>
+    <meta charset="UTF-8" />
+    <title>SOTRANSNORD - Gestion Transport BTP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Emplacement futur CSS global -->
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- Icônes éventuelles (fontawesome ou autre) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- ===================== APP WRAPPER ===================== -->
+    <div id="app" class="app-root">
+
+      <!-- ===================== GLOBAL HEADER ===================== -->
+      <header class="app-header">
+        <div class="app-branding">
+          <span class="app-logo-circle">SN</span>
+          <div class="app-title-block">
+            <h1 class="app-title">SOTRANSNORD</h1>
+            <p class="app-subtitle">Gestion de transport de matériaux BTP</p>
           </div>
         </div>
 
-        <!-- Zone PIN -->
-        <div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;margin-bottom:4px;">
-            <span style="font-size:12px;font-weight:500;">Code PIN (6 chiffres)</span>
-          </div>
-          <div class="pin-grid">
-            <input type="password" inputmode="numeric" maxlength="1" class="pin-input" />
-            <input type="password" inputmode="numeric" maxlength="1" class="pin-input" />
-            <input type="password" inputmode="numeric" maxlength="1" class="pin-input" />
-            <input type="password" inputmode="numeric" maxlength="1" class="pin-input" />
-            <input type="password" inputmode="numeric" maxlength="1" class="pin-input" />
-            <input type="password" inputmode="numeric" maxlength="1" class="pin-input" />
-          </div>
-          <div class="login-actions">
-            <button id="btnLogin" class="btn btn-primary">
-              <span>Entrer</span>
-            </button>
-            <button id="btnClearPin" class="btn btn-outline">Effacer</button>
-          </div>
-          <div class="login-hint">
-            Pour la démo : gérant <code>123456</code> – chauffeurs 
-            <code>654321</code>, <code>111111</code>.
-          </div>
-          <div id="loginAlert" class="login-alert"></div>
+        <!-- Switch Mode Démo / Mode Réel -->
+        <div class="mode-switch-wrapper" aria-label="Sélection du mode">
+          <span class="mode-label mode-label-demo">Démo</span>
+          <button
+            id="modeToggle"
+            class="mode-toggle"
+            type="button"
+            aria-pressed="false"
+            data-mode="demo"
+          >
+            <span class="mode-toggle-knob"></span>
+          </button>
+          <span class="mode-label mode-label-real">Réel</span>
         </div>
+      </header>
 
-        <div style="font-size:11px;color:#6b7280;margin-top:18px;">
-          Cette démonstration utilise des données fictives pour illustrer : paramétrages, commandes, frais véhicules, marge mensuelle et interface chauffeur.
+      <!-- ===================== GLOBAL STATUS BAR ===================== -->
+      <section class="app-status-bar">
+        <div class="status-item">
+          <span class="status-label">Mode :</span>
+          <span id="currentModeLabel" class="status-value">Démo</span>
         </div>
-      </div>
+        <div class="status-item">
+          <span class="status-label">Utilisateur :</span>
+          <span id="currentUserRole" class="status-value">Non connecté</span>
+        </div>
+        <div class="status-item status-item-pill">
+          <span class="status-label">Connexion Sheets / Make :</span>
+          <span id="integrationStatus" class="status-chip status-chip-disconnected">
+            Hors-ligne
+          </span>
+        </div>
+      </section>
 
-      <div class="login-right">
-        <div class="login-logo">
-          <div class="logo-circle">ST</div>
-          <div>SOTRANSNORD • FLOTTE</div>
-        </div>
-        <div class="login-right-main">
-          <div class="login-right-title">Pilotage temps réel</div>
-          <p class="login-right-text">
-            Suivi des commandes, transports réalisés, frais de véhicules et calcul de marge par mois. 
-            Prévu pour une connexion automatique avec Google Sheets et Make.com.
-          </p>
-          <div class="login-pill">
-            <span></span>
-            Web + Google Sheets + Make.com
-          </div>
-          <div class="login-badges">
-            <div class="login-badge-pill">
-              <span class="login-badge-dot"></span>
-              CRUD Chauffeurs & Camions
-            </div>
-            <div class="login-badge-pill">
-              <span class="login-badge-dot"></span>
-              Commandes & facturation
-            </div>
-            <div class="login-badge-pill">
-              <span class="login-badge-dot"></span>
-              Interface chauffeur mobile
-            </div>
-            <div class="login-badge-pill">
-              <span class="login-badge-dot"></span>
-              Calcul marge mensuelle
-            </div>
-          </div>
-        </div>
-        <div class="login-footer">
-          Démonstration interne – <strong>SOTRANSNORD</strong> – Données fictives uniquement.
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- APP GESTIONNAIRE -->
-  <div id="managerApp" class="app-shell">
-    <div class="app-shell-inner">
-      <!-- Sidebar -->
-      <aside class="sidebar">
-        <div class="sidebar-header">
-          <div class="logo-circle">ST</div>
-          <div class="sidebar-title">
-            <span>Gérant</span>
-            <span>SOTRANSNORD</span>
-          </div>
-        </div>
-        <div class="sidebar-nav">
-          <div class="sidebar-section-label">Navigation</div>
-          <div class="nav-item active" data-view="dashboard">
-            <span class="icon">📊</span>
-            <span>Dashboard</span>
-          </div>
-          <div class="nav-item" data-view="orders">
-            <span class="icon">📦</span>
-            <span>Commandes</span>
-          </div>
-          <div class="nav-item" data-view="settings">
-            <span class="icon">⚙️</span>
-            <span>Paramétrages</span>
-          </div>
-          <div class="nav-item" data-view="reports">
-            <span class="icon">📈</span>
-            <span>Rapports</span>
-          </div>
-          <div class="nav-item" data-view="margin">
-            <span class="icon">💰</span>
-            <span>Calcul de marge</span>
-          </div>
-
-          <div class="sidebar-section-label">Connexion</div>
-          <div class="nav-item" id="btnOpenIntegration">
-            <span class="icon">🔌</span>
-            <span>Google Sheets &amp; Make</span>
-          </div>
-        </div>
-        <div class="sidebar-footer">
-          <span>Démonstration</span>
-          <button id="btnLogoutManager">Quitter</button>
-        </div>
-      </aside>
-
-      <!-- Main -->
+      <!-- ===================== MAIN LAYOUT ===================== -->
       <main class="app-main">
-        <header class="topbar">
-          <div class="topbar-left">
-            <div>
-              <div id="topbarTitle" class="topbar-page-title">Dashboard gérant</div>
-              <div id="topbarSubtitle" class="topbar-page-sub">
-                Vue synthétique des commandes et de la flotte.
-              </div>
+
+        <!-- =========================================================== -->
+        <!-- 1. ÉCRAN DE CONNEXION PAR PIN                              -->
+        <!-- =========================================================== -->
+        <section id="authSection" class="auth-section" aria-label="Connexion sécurisée">
+          <div class="auth-card">
+            <h2 class="auth-title">Connexion sécurisée</h2>
+            <p class="auth-description">
+              Choisissez votre rôle puis saisissez votre code PIN à 6 chiffres.
+            </p>
+
+            <!-- Sélecteur de rôle -->
+            <div class="role-selector" aria-label="Choix du rôle">
+              <button
+                type="button"
+                class="role-chip role-chip-active"
+                data-role="gerant"
+                id="roleGerantBtn"
+              >
+                <i class="fa-solid fa-user-tie"></i>
+                Gérant
+              </button>
+              <button
+                type="button"
+                class="role-chip"
+                data-role="chauffeur"
+                id="roleChauffeurBtn"
+              >
+                <i class="fa-solid fa-truck"></i>
+                Chauffeur
+              </button>
+            </div>
+
+            <!-- Affichage des 6 digits du PIN -->
+            <div class="pin-display" aria-label="Code PIN">
+              <div class="pin-dot" data-index="1"></div>
+              <div class="pin-dot" data-index="2"></div>
+              <div class="pin-dot" data-index="3"></div>
+              <div class="pin-dot" data-index="4"></div>
+              <div class="pin-dot" data-index="5"></div>
+              <div class="pin-dot" data-index="6"></div>
+            </div>
+
+            <!-- Messages d'erreur / état -->
+            <div id="pinMessage" class="pin-message" aria-live="polite">
+              <!-- Exemple : "Code PIN incorrect. 2 tentatives restantes." -->
+            </div>
+
+            <!-- Clavier numérique -->
+            <div class="pin-keypad" aria-label="Clavier numérique">
+              <button class="key-btn" type="button" data-key="1">1</button>
+              <button class="key-btn" type="button" data-key="2">2</button>
+              <button class="key-btn" type="button" data-key="3">3</button>
+
+              <button class="key-btn" type="button" data-key="4">4</button>
+              <button class="key-btn" type="button" data-key="5">5</button>
+              <button class="key-btn" type="button" data-key="6">6</button>
+
+              <button class="key-btn" type="button" data-key="7">7</button>
+              <button class="key-btn" type="button" data-key="8">8</button>
+              <button class="key-btn" type="button" data-key="9">9</button>
+
+              <button class="key-btn key-btn-action" type="button" data-key="clear">
+                <i class="fa-solid fa-delete-left"></i>
+              </button>
+              <button class="key-btn" type="button" data-key="0">0</button>
+              <button class="key-btn key-btn-action" type="button" data-key="validate">
+                <i class="fa-solid fa-check"></i>
+              </button>
+            </div>
+
+            <!-- Indication de verrouillage -->
+            <div id="lockoutInfo" class="lockout-info" aria-live="polite">
+              <!-- Exemple : "Verrouillé pendant 5 minutes." -->
             </div>
           </div>
-          <div class="topbar-actions">
-            <div class="chip">
-              <span class="chip-dot"></span>
-              Données de démonstration
+        </section>
+
+        <!-- =========================================================== -->
+        <!-- 2. ESPACE GÉRANT                                            -->
+        <!-- =========================================================== -->
+        <section
+          id="managerSection"
+          class="manager-section hidden"
+          aria-label="Espace gérant"
+        >
+          <!-- Barre supérieure gérant -->
+          <header class="role-header">
+            <div class="role-header-left">
+              <h2 class="role-title">
+                <i class="fa-solid fa-user-tie"></i>
+                Espace Gérant
+              </h2>
+              <p class="role-subtitle">
+                Paramétrages, commandes, rapports et marge mensuelle.
+              </p>
             </div>
-            <div class="topbar-user">
-              <div class="avatar">GO</div>
-              <div>
-                <div style="font-weight:500;">Gérant</div>
-                <div style="font-size:11px;">SOTRANSNORD</div>
-              </div>
+            <div class="role-header-right">
+              <button id="auditLogBtn" class="btn btn-ghost" type="button">
+                <i class="fa-regular fa-file-lines"></i>
+                Historique
+              </button>
+              <button id="logoutManagerBtn" class="btn btn-outline" type="button">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Déconnexion
+              </button>
             </div>
-          </div>
-        </header>
+          </header>
 
-        <section class="app-content">
-          <!-- Vue DASHBOARD -->
-          <div id="viewDashboard">
-            <div class="grid-3">
-              <div class="card">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Commandes actives</div>
-                    <div class="card-subtitle">Nombre de chantiers en cours</div>
-                  </div>
-                  <span class="pill">Aujourd'hui</span>
-                </div>
-                <div class="metric-row">
-                  <div class="metric-main" id="metricActiveOrders">0</div>
-                  <div class="badge badge-success" id="metricActivePercent">+0% vs hier</div>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Transports du jour</div>
-                    <div class="card-subtitle">Réalisation vs estimé</div>
-                  </div>
-                </div>
-                <div class="metric-row">
-                  <div>
-                    <div class="metric-main" id="metricTransportsToday">0/0</div>
-                    <div class="metric-label">Terminé / Estimé</div>
-                  </div>
-                  <div class="badge badge-warning" id="metricTransportsProgress">0% complété</div>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Dépenses véhicules (mois)</div>
-                    <div class="card-subtitle">Carburant + entretien</div>
-                  </div>
-                </div>
-                <div class="metric-row">
-                  <div class="metric-main" id="metricVehicleCosts">0 €</div>
-                  <div class="metric-label" id="metricVehicleCostsDetail">Carburant / Vidange / Pneus</div>
-                </div>
-              </div>
-            </div>
+          <!-- Navigation principale gérant (mobile-first -> scroll horizontal) -->
+          <nav class="manager-nav" aria-label="Navigation gérant">
+            <button
+              class="nav-tab nav-tab-active"
+              type="button"
+              data-target="#managerDashboard"
+            >
+              <i class="fa-solid fa-gauge"></i>
+              Dashboard
+            </button>
+            <button class="nav-tab" type="button" data-target="#managerParametrages">
+              <i class="fa-solid fa-sliders"></i>
+              Paramétrages
+            </button>
+            <button class="nav-tab" type="button" data-target="#managerCommandes">
+              <i class="fa-solid fa-truck-front"></i>
+              Commandes
+            </button>
+            <button class="nav-tab" type="button" data-target="#managerRapports">
+              <i class="fa-solid fa-chart-line"></i>
+              Rapports
+            </button>
+            <button class="nav-tab" type="button" data-target="#managerMarge">
+              <i class="fa-solid fa-calculator"></i>
+              Marge
+            </button>
+          </nav>
 
-            <div class="grid-2" style="margin-top:10px;">
-              <div class="card">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Commandes récentes</div>
-                    <div class="card-subtitle">Les 5 dernières commandes créées</div>
-                  </div>
-                </div>
-                <div class="scroll-x">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Client</th>
-                        <th>Chantier</th>
-                        <th>Date</th>
-                        <th>Chauffeur</th>
-                        <th>Statut</th>
-                      </tr>
-                    </thead>
-                    <tbody id="tableRecentOrders"></tbody>
-                  </table>
-                </div>
-              </div>
+          <!-- ===================== Dashboard synthèse ===================== -->
+          <section
+            id="managerDashboard"
+            class="manager-panel"
+            aria-label="Vue synthèse gérant"
+          >
+            <div class="cards-grid">
+              <article class="stat-card">
+                <h3 class="stat-label">Transports du jour</h3>
+                <p class="stat-value" id="statTransportsJour">12</p>
+                <p class="stat-extra">Dont 3 en attente de validation chauffeur.</p>
+              </article>
 
-              <div class="card">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Consommation carburant</div>
-                    <div class="card-subtitle">Moyenne par camion (mois en cours)</div>
-                  </div>
-                </div>
-                <div class="scroll-x">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Camion</th>
-                        <th>Km</th>
-                        <th>Litres</th>
-                        <th>Moyenne (L/100)</th>
-                      </tr>
-                    </thead>
-                    <tbody id="tableFuelPerTruck"></tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
+              <article class="stat-card">
+                <h3 class="stat-label">Commandes en cours</h3>
+                <p class="stat-value" id="statCommandesEnCours">5</p>
+                <p class="stat-extra">Mise à jour automatique selon retours chauffeurs.</p>
+              </article>
 
-          <!-- Vue COMMANDES -->
-          <div id="viewOrders" style="display:none;">
-            <div class="grid-2">
-              <div class="card">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Créer une commande</div>
-                    <div class="card-subtitle">Saisie rapide client / chantier / planning</div>
-                  </div>
-                </div>
-                <form id="formOrder">
-                  <div class="form-grid-2">
-                    <div class="form-field">
-                      <label>Client</label>
-                      <select id="orderClient"></select>
-                    </div>
-                    <div class="form-field">
-                      <label>Adresse de livraison</label>
-                      <input id="orderAddress" type="text" placeholder="Zone Industrielle Nord..." />
-                    </div>
-                  </div>
-                  <div class="form-grid-3">
-                    <div class="form-field">
-                      <label>Nombre de transports estimés</label>
-                      <input id="orderTransportsEstimated" type="number" min="1" value="3" />
-                    </div>
-                    <div class="form-field">
-                      <label>Date du chantier</label>
-                      <input id="orderDate" type="date" />
-                    </div>
-                    <div class="form-field">
-                      <label>Statut</label>
-                      <select id="orderStatus">
-                        <option value="en_cours">En cours</option>
-                        <option value="termine">Terminé</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="form-grid-3">
-                    <div class="form-field">
-                      <label>Camion</label>
-                      <select id="orderTruck"></select>
-                    </div>
-                    <div class="form-field">
-                      <label>Chauffeur</label>
-                      <select id="orderDriver"></select>
-                    </div>
-                    <div class="form-field">
-                      <label>Type de commande</label>
-                      <select id="orderType">
-                        <option value="materiaux">Matériaux</option>
-                        <option value="journee">Journée</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="form-field" id="orderMaterialField">
-                    <label>Matériau</label>
-                    <select id="orderMaterial"></select>
-                  </div>
-                  <div class="api-hint">
-                    Lorsque vous validez, cette commande peut être envoyée vers un <code>webhook Make</code> 
-                    et insérée dans un Google Sheet (onglet COMMANDES).
-                  </div>
-                  <div class="form-footer" style="margin-top:10px;">
-                    <button type="button" class="btn btn-outline" id="btnResetOrder">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Enregistrer la commande</button>
-                  </div>
-                </form>
-              </div>
+              <article class="stat-card">
+                <h3 class="stat-label">CA mois en cours</h3>
+                <p class="stat-value" id="statCAEnCours">42 350 €</p>
+                <p class="stat-extra">Données fictives en mode démo.</p>
+              </article>
 
-              <div class="card">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Tableau de suivi</div>
-                    <div class="card-subtitle">Mise à jour par les actions des chauffeurs</div>
-                  </div>
-                </div>
-                <div class="scroll-x">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Client</th>
-                        <th>Date</th>
-                        <th>Camion</th>
-                        <th>Chauffeur</th>
-                        <th>Transports</th>
-                        <th>Statut</th>
-                        <th>Facturation</th>
-                      </tr>
-                    </thead>
-                    <tbody id="tableOrders"></tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Vue PARAMETRAGES (CRUD) -->
-          <div id="viewSettings" style="display:none;">
-            <div class="grid-2">
-              <!-- Chauffeurs -->
-              <div class="card">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Chauffeurs</div>
-                    <div class="card-subtitle">Création, modification, suppression</div>
-                  </div>
-                  <button class="btn btn-outline" id="btnAddDriver">Ajouter</button>
-                </div>
-                <div class="scroll-x">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Nom</th>
-                        <th>Téléphone</th>
-                        <th>Permis</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody id="tableDrivers"></tbody>
-                  </table>
-                </div>
-              </div>
-
-              <!-- Camions -->
-              <div class="card">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Camions</div>
-                    <div class="card-subtitle">Suivi kilométrage et CT</div>
-                  </div>
-                  <button class="btn btn-outline" id="btnAddTruck">Ajouter</button>
-                </div>
-                <div class="scroll-x">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Immat.</th>
-                        <th>Kilométrage</th>
-                        <th>Type</th>
-                        <th>CT</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody id="tableTrucks"></tbody>
-                  </table>
-                </div>
-              </div>
+              <article class="stat-card">
+                <h3 class="stat-label">Dépenses véhicules (mois)</h3>
+                <p class="stat-value" id="statDepensesMois">15 200 €</p>
+                <p class="stat-extra">Carburant, vidange, réparations, pneus, assurance.</p>
+              </article>
             </div>
 
-            <div class="grid-3" style="margin-top:10px;">
-              <!-- Clients -->
-              <div class="card">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Clients</div>
-                    <div class="card-subtitle">Entreprises et contacts</div>
-                  </div>
-                  <button class="btn btn-outline" id="btnAddClient">Ajouter</button>
-                </div>
-                <div class="scroll-x">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Entreprise</th>
-                        <th>Gérant</th>
-                        <th>Téléphone</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody id="tableClients"></tbody>
-                  </table>
-                </div>
+            <!-- Placeholder pour mini graphique / résumé visuel -->
+            <section class="panel-box">
+              <header class="panel-header">
+                <h3>Vue rapide des activités</h3>
+                <span class="panel-tag">Synthèse</span>
+              </header>
+              <div class="panel-body">
+                <p>
+                  Espace dédié à un mini graphique ou indicateurs avancés (intégration
+                  future via JS, Make, Google Sheets).
+                </p>
               </div>
+            </section>
+          </section>
 
-              <!-- Matériaux -->
-              <div class="card">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Matériaux</div>
-                    <div class="card-subtitle">Typologie des matériaux</div>
-                  </div>
-                  <button class="btn btn-outline" id="btnAddMaterial">Ajouter</button>
-                </div>
-                <div class="scroll-x">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Nom</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody id="tableMaterials"></tbody>
-                  </table>
-                </div>
-              </div>
+          <!-- ===================== Paramétrages CRUD ===================== -->
+          <section
+            id="managerParametrages"
+            class="manager-panel hidden"
+            aria-label="Paramétrages gérant"
+          >
+            <!-- Sous-navigation Paramétrages -->
+            <nav class="sub-nav" aria-label="Modules de paramétrage">
+              <button
+                class="sub-tab sub-tab-active"
+                type="button"
+                data-target="#paramChauffeurs"
+              >
+                Chauffeurs
+              </button>
+              <button class="sub-tab" type="button" data-target="#paramCamions">
+                Camions
+              </button>
+              <button class="sub-tab" type="button" data-target="#paramClients">
+                Clients
+              </button>
+              <button class="sub-tab" type="button" data-target="#paramMateriaux">
+                Matériaux
+              </button>
+              <button class="sub-tab" type="button" data-target="#paramTarifs">
+                Tarifs
+              </button>
+              <button class="sub-tab" type="button" data-target="#paramFraisVehicules">
+                Frais véhicules
+              </button>
+            </nav>
 
-              <!-- Tarifs -->
-              <div class="card">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Tarifs</div>
-                    <div class="card-subtitle">Matériaux / Journée</div>
-                  </div>
-                  <button class="btn btn-outline" id="btnAddTariff">Ajouter</button>
-                </div>
-                <div class="scroll-x">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Type</th>
-                        <th>Description</th>
-                        <th>Tarif</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody id="tableTariffs"></tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+            <!-- === Chauffeurs === -->
+            <section
+              id="paramChauffeurs"
+              class="param-panel"
+              aria-label="Paramétrage chauffeurs"
+            >
+              <header class="panel-header">
+                <h3>Chauffeurs</h3>
+                <button
+                  class="btn btn-primary"
+                  type="button"
+                  data-modal-open="modalChauffeur"
+                >
+                  <i class="fa-solid fa-plus"></i>
+                  Ajouter un chauffeur
+                </button>
+              </header>
 
-            <div class="card" style="margin-top:10px;">
-              <div class="card-header">
-                <div>
-                  <div class="card-title">Frais véhicules</div>
-                  <div class="card-subtitle">Carburant, vidange, réparations, assurance, pneus…</div>
-                </div>
-                <button class="btn btn-outline" id="btnAddVehicleExpense">Ajouter</button>
-              </div>
-              <div class="scroll-x">
-                <table>
+              <div class="table-wrapper">
+                <table class="data-table">
                   <thead>
                     <tr>
-                      <th>Date</th>
-                      <th>Camion</th>
-                      <th>Type de frais</th>
-                      <th>Montant</th>
+                      <th>Nom complet</th>
+                      <th>Téléphone</th>
+                      <th>Email</th>
+                      <th>Type de permis</th>
+                      <th>Documents</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
-                  <tbody id="tableVehicleExpenses"></tbody>
+                  <tbody id="chauffeursTableBody">
+                    <tr>
+                      <td>Jean Dupont</td>
+                      <td>06 12 34 56 78</td>
+                      <td>jean.dupont@example.com</td>
+                      <td>PL</td>
+                      <td>Contrat, permis</td>
+                      <td class="actions-cell">
+                        <button
+                          class="icon-btn"
+                          type="button"
+                          data-action="edit"
+                          data-id="1"
+                        >
+                          <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                        <button
+                          class="icon-btn icon-btn-danger"
+                          type="button"
+                          data-action="delete"
+                          data-id="1"
+                        >
+                          <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <!-- Lignes chauffeurs dynamiques -->
+                  </tbody>
                 </table>
               </div>
-            </div>
-          </div>
+            </section>
 
-          <!-- Vue RAPPORTS -->
-          <div id="viewReports" style="display:none;">
-            <div class="grid-2">
-              <div class="card">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Consommation moyenne carburant</div>
-                    <div class="card-subtitle">Par camion et par mois</div>
-                  </div>
-                </div>
-                <div class="scroll-x">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Camion</th>
-                        <th>Mois</th>
-                        <th>Km</th>
-                        <th>Litres</th>
-                        <th>Moyenne L/100</th>
-                      </tr>
-                    </thead>
-                    <tbody id="tableReportFuel"></tbody>
-                  </table>
-                </div>
-              </div>
+            <!-- === Camions === -->
+            <section
+              id="paramCamions"
+              class="param-panel hidden"
+              aria-label="Paramétrage camions"
+            >
+              <header class="panel-header">
+                <h3>Camions</h3>
+                <button
+                  class="btn btn-primary"
+                  type="button"
+                  data-modal-open="modalCamion"
+                >
+                  <i class="fa-solid fa-plus"></i>
+                  Ajouter un camion
+                </button>
+              </header>
 
-              <div class="card">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Frais par camion</div>
-                    <div class="card-subtitle">Détail mensuel des dépenses</div>
-                  </div>
-                </div>
-                <div class="scroll-x">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Camion</th>
-                        <th>Mois</th>
-                        <th>Carburant</th>
-                        <th>Vidange</th>
-                        <th>Réparations</th>
-                        <th>Pneus</th>
-                        <th>Assurance</th>
-                        <th>Total</th>
-                      </tr>
-                    </thead>
-                    <tbody id="tableReportCosts"></tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Vue MARGE -->
-          <div id="viewMargin" style="display:none;">
-            <div class="card">
-              <div class="card-header">
-                <div>
-                  <div class="card-title">Marge mensuelle</div>
-                  <div class="card-subtitle">Chiffre d’affaires, dépenses et marge brute</div>
-                </div>
-              </div>
-              <div class="scroll-x">
-                <table class="margin-table">
+              <div class="table-wrapper">
+                <table class="data-table">
                   <thead>
                     <tr>
-                      <th>Mois</th>
-                      <th>CA</th>
+                      <th>Immatriculation</th>
+                      <th>Kilométrage</th>
+                      <th>Type</th>
+                      <th>Contrôle technique</th>
+                      <th>Documents</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="camionsTableBody">
+                    <tr>
+                      <td>AB-123-CD</td>
+                      <td>150 000 km</td>
+                      <td>Benne</td>
+                      <td>12/2026</td>
+                      <td>Carte grise</td>
+                      <td class="actions-cell">
+                        <button class="icon-btn" type="button" data-action="edit">
+                          <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                        <button
+                          class="icon-btn icon-btn-danger"
+                          type="button"
+                          data-action="delete"
+                        >
+                          <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <!-- Lignes camions dynamiques -->
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- === Clients === -->
+            <section
+              id="paramClients"
+              class="param-panel hidden"
+              aria-label="Paramétrage clients"
+            >
+              <header class="panel-header">
+                <h3>Clients</h3>
+                <button
+                  class="btn btn-primary"
+                  type="button"
+                  data-modal-open="modalClient"
+                >
+                  <i class="fa-solid fa-plus"></i>
+                  Ajouter un client
+                </button>
+              </header>
+
+              <div class="table-wrapper">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Entreprise</th>
+                      <th>Gérant</th>
+                      <th>Téléphone</th>
+                      <th>Email</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="clientsTableBody">
+                    <tr>
+                      <td>BTP Caraïbes</td>
+                      <td>Marie Martin</td>
+                      <td>06 87 65 43 21</td>
+                      <td>contact@btp-caraibes.com</td>
+                      <td class="actions-cell">
+                        <button class="icon-btn" type="button" data-action="edit">
+                          <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                        <button
+                          class="icon-btn icon-btn-danger"
+                          type="button"
+                          data-action="delete"
+                        >
+                          <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <!-- Lignes clients dynamiques -->
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- === Matériaux === -->
+            <section
+              id="paramMateriaux"
+              class="param-panel hidden"
+              aria-label="Paramétrage matériaux"
+            >
+              <header class="panel-header">
+                <h3>Matériaux</h3>
+                <button
+                  class="btn btn-primary"
+                  type="button"
+                  data-modal-open="modalMateriau"
+                >
+                  <i class="fa-solid fa-plus"></i>
+                  Ajouter un matériau
+                </button>
+              </header>
+
+              <div class="table-wrapper">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Nom du matériau</th>
+                      <th>Notes</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="materiauxTableBody">
+                    <tr>
+                      <td>Sable 0/4</td>
+                      <td>Utilisé pour mortier et enduits</td>
+                      <td class="actions-cell">
+                        <button class="icon-btn" type="button" data-action="edit">
+                          <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                        <button
+                          class="icon-btn icon-btn-danger"
+                          type="button"
+                          data-action="delete"
+                        >
+                          <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <!-- Lignes matériaux dynamiques -->
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- === Tarifs === -->
+            <section
+              id="paramTarifs"
+              class="param-panel hidden"
+              aria-label="Paramétrage tarifs"
+            >
+              <header class="panel-header">
+                <h3>Tarifs</h3>
+                <button
+                  class="btn btn-primary"
+                  type="button"
+                  data-modal-open="modalTarif"
+                >
+                  <i class="fa-solid fa-plus"></i>
+                  Ajouter un tarif
+                </button>
+              </header>
+
+              <div class="panel-box">
+                <header class="panel-subheader">
+                  <h4>Matériaux par tonne</h4>
+                </header>
+                <div class="table-wrapper">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Matériau</th>
+                        <th>Prix / tonne</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tarifsMateriauxTableBody">
+                      <tr>
+                        <td>Sable 0/4</td>
+                        <td>18 €</td>
+                        <td>Tarif standard</td>
+                        <td class="actions-cell">
+                          <button class="icon-btn" type="button" data-action="edit">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                          </button>
+                          <button
+                            class="icon-btn icon-btn-danger"
+                            type="button"
+                            data-action="delete"
+                          >
+                            <i class="fa-regular fa-trash-can"></i>
+                          </button>
+                        </td>
+                      </tr>
+                      <!-- Lignes tarifs matériaux dynamiques -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="panel-box">
+                <header class="panel-subheader">
+                  <h4>Journée par jour</h4>
+                </header>
+                <div class="table-wrapper">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Type de prestation</th>
+                        <th>Prix / jour</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tarifsJourneeTableBody">
+                      <tr>
+                        <td>Location camion + chauffeur</td>
+                        <td>520 €</td>
+                        <td>8h de travail</td>
+                        <td class="actions-cell">
+                          <button class="icon-btn" type="button" data-action="edit">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                          </button>
+                          <button
+                            class="icon-btn icon-btn-danger"
+                            type="button"
+                            data-action="delete"
+                          >
+                            <i class="fa-regular fa-trash-can"></i>
+                          </button>
+                        </td>
+                      </tr>
+                      <!-- Lignes tarifs journée dynamiques -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            <!-- === Frais véhicules === -->
+            <section
+              id="paramFraisVehicules"
+              class="param-panel hidden"
+              aria-label="Paramétrage frais véhicules"
+            >
+              <header class="panel-header">
+                <h3>Frais véhicules</h3>
+                <button
+                  class="btn btn-primary"
+                  type="button"
+                  data-modal-open="modalFraisVehicule"
+                >
+                  <i class="fa-solid fa-plus"></i>
+                  Ajouter un frais
+                </button>
+              </header>
+
+              <div class="table-wrapper">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Camion</th>
+                      <th>Type de frais</th>
+                      <th>Montant</th>
+                      <th>Date</th>
+                      <th>Notes</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="fraisVehiculesTableBody">
+                    <tr>
+                      <td>AB-123-CD</td>
+                      <td>Carburant</td>
+                      <td>250 €</td>
+                      <td>05/05/2026</td>
+                      <td>Trajets chantiers Nord</td>
+                      <td class="actions-cell">
+                        <button class="icon-btn" type="button" data-action="edit">
+                          <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                        <button
+                          class="icon-btn icon-btn-danger"
+                          type="button"
+                          data-action="delete"
+                        >
+                          <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <!-- Lignes frais véhicules dynamiques -->
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </section>
+
+          <!-- ===================== Gestion des commandes ===================== -->
+          <section
+            id="managerCommandes"
+            class="manager-panel hidden"
+            aria-label="Gestion des commandes"
+          >
+            <header class="panel-header">
+              <div>
+                <h3>Commandes</h3>
+                <p>Création, suivi des transports et préparation à la facturation.</p>
+              </div>
+              <button
+                class="btn btn-primary"
+                type="button"
+                data-modal-open="modalCommande"
+              >
+                <i class="fa-solid fa-plus"></i>
+                Créer une commande
+              </button>
+            </header>
+
+            <!-- Tableau de suivi des commandes -->
+            <div class="table-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Client</th>
+                    <th>Adresse de livraison</th>
+                    <th>Date chantier</th>
+                    <th>Camion</th>
+                    <th>Chauffeur</th>
+                    <th>Type</th>
+                    <th>Transports</th>
+                    <th>Statut</th>
+                    <th>Facturation</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="commandesTableBody">
+                  <tr>
+                    <td>BTP Caraïbes</td>
+                    <td>Zone industrielle du Lamentin</td>
+                    <td>07/05/2026</td>
+                    <td>AB-123-CD</td>
+                    <td>Jean Dupont</td>
+                    <td>Matériaux</td>
+                    <td>
+                      <span>3 / 5</span>
+                    </td>
+                    <td>
+                      <span class="status-chip status-chip-progress">En cours</span>
+                    </td>
+                    <td>
+                      <!-- Affiché seulement si tous les transports complétés -->
+                      <button class="btn btn-mini btn-disabled" type="button" disabled>
+                        À facturer
+                      </button>
+                    </td>
+                    <td class="actions-cell">
+                      <button class="icon-btn" type="button" data-action="view">
+                        <i class="fa-regular fa-eye"></i>
+                      </button>
+                      <button class="icon-btn" type="button" data-action="edit">
+                        <i class="fa-regular fa-pen-to-square"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Travaux Nord</td>
+                    <td>Chantier RN1, km 12</td>
+                    <td>06/05/2026</td>
+                    <td>CD-456-EF</td>
+                    <td>Paul Laurent</td>
+                    <td>Journée</td>
+                    <td>
+                      <span>1 / 1</span>
+                    </td>
+                    <td>
+                      <span class="status-chip status-chip-done">Terminé</span>
+                    </td>
+                    <td>
+                      <button class="btn btn-mini btn-primary" type="button">
+                        À facturer
+                      </button>
+                    </td>
+                    <td class="actions-cell">
+                      <button class="icon-btn" type="button" data-action="view">
+                        <i class="fa-regular fa-eye"></i>
+                      </button>
+                      <button class="icon-btn" type="button" data-action="edit">
+                        <i class="fa-regular fa-pen-to-square"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <!-- Lignes commandes dynamiques -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Placeholder mapping Google Sheets / Make -->
+            <section class="panel-box">
+              <header class="panel-subheader">
+                <h4>Synchronisation & automatisations</h4>
+              </header>
+              <div class="panel-body">
+                <ul class="bullet-list">
+                  <li>
+                    En mode réel, la création de commande déclenche la génération des
+                    transports du jour (Make + Google Sheets).
+                  </li>
+                  <li>
+                    Chaque mise à jour de statut de transport envoyée par le chauffeur
+                    met à jour cette table de suivi.
+                  </li>
+                  <li>
+                    Les commandes terminées peuvent déclencher la préparation de la
+                    facturation (Make).
+                  </li>
+                </ul>
+              </div>
+            </section>
+          </section>
+
+          <!-- ===================== Rapports ===================== -->
+          <section
+            id="managerRapports"
+            class="manager-panel hidden"
+            aria-label="Rapports et analyses"
+          >
+            <header class="panel-header">
+              <div>
+                <h3>Rapports</h3>
+                <p>Consommation moyenne de carburant et frais par camion.</p>
+              </div>
+              <div class="panel-actions">
+                <label class="field-label" for="rapportMoisSelect">Mois :</label>
+                <select id="rapportMoisSelect" class="field-input">
+                  <option value="2026-01">Janvier 2026</option>
+                  <option value="2026-02">Février 2026</option>
+                  <option value="2026-03">Mars 2026</option>
+                  <option value="2026-04">Avril 2026</option>
+                  <option value="2026-05" selected>Mai 2026</option>
+                </select>
+              </div>
+            </header>
+
+            <!-- Consommation moyenne de carburant par camion -->
+            <section class="panel-box">
+              <header class="panel-subheader">
+                <h4>Consommation moyenne de carburant par camion</h4>
+              </header>
+              <div class="table-wrapper">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Camion</th>
+                      <th>Litres consommés</th>
+                      <th>Km parcourus</th>
+                      <th>Conso moyenne (L/100km)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="consoCarburantTableBody">
+                    <tr>
+                      <td>AB-123-CD</td>
+                      <td>520 L</td>
+                      <td>3 800 km</td>
+                      <td>13,7</td>
+                    </tr>
+                    <tr>
+                      <td>CD-456-EF</td>
+                      <td>450 L</td>
+                      <td>3 200 km</td>
+                      <td>14,1</td>
+                    </tr>
+                    <!-- Lignes dynamiques par camion -->
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- Calcul des frais par camion et par mois -->
+            <section class="panel-box">
+              <header class="panel-subheader">
+                <h4>Frais par camion (mois sélectionné)</h4>
+              </header>
+              <div class="table-wrapper">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Camion</th>
                       <th>Carburant</th>
                       <th>Vidange</th>
                       <th>Réparations</th>
                       <th>Pneus</th>
                       <th>Assurance</th>
-                      <th>Total dépenses</th>
-                      <th>Marge brute</th>
+                      <th>Total</th>
                     </tr>
                   </thead>
-                  <tbody id="tableMargin"></tbody>
+                  <tbody id="fraisParCamionTableBody">
+                    <tr>
+                      <td>AB-123-CD</td>
+                      <td>1 200 €</td>
+                      <td>150 €</td>
+                      <td>300 €</td>
+                      <td>0 €</td>
+                      <td>120 €</td>
+                      <td>1 770 €</td>
+                    </tr>
+                    <tr>
+                      <td>CD-456-EF</td>
+                      <td>980 €</td>
+                      <td>0 €</td>
+                      <td>450 €</td>
+                      <td>200 €</td>
+                      <td>110 €</td>
+                      <td>1 740 €</td>
+                    </tr>
+                    <!-- Lignes dynamiques -->
+                  </tbody>
                 </table>
               </div>
-              <div class="api-hint" style="margin-top:10px;">
-                Chaque ligne peut correspondre à une ligne dans un <code>Google Sheet MARGE_MENSUELLE</code>. 
-                Les données peuvent être alimentées par Make à partir des commandes et des frais véhicules.
+            </section>
+          </section>
+
+          <!-- ===================== Calcul de la marge ===================== -->
+          <section
+            id="managerMarge"
+            class="manager-panel hidden"
+            aria-label="Calcul de la marge"
+          >
+            <header class="panel-header">
+              <div>
+                <h3>Marge mensuelle</h3>
+                <p>Chiffre d'affaires, dépenses et marge brute par mois.</p>
+              </div>
+              <div class="panel-actions">
+                <span class="legend current-month-legend">
+                  <span class="legend-color"></span> Mois en cours
+                </span>
+              </div>
+            </header>
+
+            <!-- Tableau mensuel (12 colonnes) -->
+            <div class="table-wrapper table-wrapper-scroll-x">
+              <table class="data-table data-table-compact">
+                <thead>
+                  <tr>
+                    <th>Mois</th>
+                    <th>CA</th>
+                    <th>Carburant</th>
+                    <th>Vidange</th>
+                    <th>Réparations</th>
+                    <th>Pneus</th>
+                    <th>Assurance</th>
+                    <th>Total dépenses</th>
+                    <th>Marge brute</th>
+                  </tr>
+                </thead>
+                <tbody id="margeMensuelleTableBody">
+                  <!-- Exemple de ligne par mois, Mai comme mois courant -->
+                  <tr>
+                    <td>Janv.</td>
+                    <td>30 000 €</td>
+                    <td>8 000 €</td>
+                    <td>500 €</td>
+                    <td>1 200 €</td>
+                    <td>400 €</td>
+                    <td>600 €</td>
+                    <td>10 700 €</td>
+                    <td>19 300 €</td>
+                  </tr>
+                  <tr>
+                    <td>Fév.</td>
+                    <td>32 500 €</td>
+                    <td>8 500 €</td>
+                    <td>500 €</td>
+                    <td>600 €</td>
+                    <td>350 €</td>
+                    <td>600 €</td>
+                    <td>10 550 €</td>
+                    <td>21 950 €</td>
+                  </tr>
+                  <tr>
+                    <td>Mars</td>
+                    <td>40 000 €</td>
+                    <td>9 100 €</td>
+                    <td>500 €</td>
+                    <td>1 000 €</td>
+                    <td>500 €</td>
+                    <td>600 €</td>
+                    <td>11 700 €</td>
+                    <td>28 300 €</td>
+                  </tr>
+                  <tr>
+                    <td>Avril</td>
+                    <td>38 000 €</td>
+                    <td>8 800 €</td>
+                    <td>500 €</td>
+                    <td>900 €</td>
+                    <td>400 €</td>
+                    <td>600 €</td>
+                    <td>11 200 €</td>
+                    <td>26 800 €</td>
+                  </tr>
+                  <tr class="current-month-row">
+                    <td>Mai</td>
+                    <td>42 350 €</td>
+                    <td>9 400 €</td>
+                    <td>600 €</td>
+                    <td>1 300 €</td>
+                    <td>450 €</td>
+                    <td>600 €</td>
+                    <td>12 350 €</td>
+                    <td>30 000 €</td>
+                  </tr>
+                  <!-- Juin à Déc. en données fictives -->
+                  <tr>
+                    <td>Juin</td>
+                    <td>35 000 €</td>
+                    <td>8 000 €</td>
+                    <td>500 €</td>
+                    <td>800 €</td>
+                    <td>350 €</td>
+                    <td>600 €</td>
+                    <td>10 250 €</td>
+                    <td>24 750 €</td>
+                  </tr>
+                  <tr>
+                    <td>Juil.</td>
+                    <td>34 000 €</td>
+                    <td>7 800 €</td>
+                    <td>500 €</td>
+                    <td>750 €</td>
+                    <td>350 €</td>
+                    <td>600 €</td>
+                    <td>10 000 €</td>
+                    <td>24 000 €</td>
+                  </tr>
+                  <tr>
+                    <td>Août</td>
+                    <td>28 000 €</td>
+                    <td>6 500 €</td>
+                    <td>500 €</td>
+                    <td>700 €</td>
+                    <td>300 €</td>
+                    <td>600 €</td>
+                    <td>8 600 €</td>
+                    <td>19 400 €</td>
+                  </tr>
+                  <tr>
+                    <td>Sept.</td>
+                    <td>36 000 €</td>
+                    <td>8 300 €</td>
+                    <td>500 €</td>
+                    <td>900 €</td>
+                    <td>350 €</td>
+                    <td>600 €</td>
+                    <td>10 650 €</td>
+                    <td>25 350 €</td>
+                  </tr>
+                  <tr>
+                    <td>Oct.</td>
+                    <td>37 500 €</td>
+                    <td>8 400 €</td>
+                    <td>500 €</td>
+                    <td>950 €</td>
+                    <td>400 €</td>
+                    <td>600 €</td>
+                    <td>10 850 €</td>
+                    <td>26 650 €</td>
+                  </tr>
+                  <tr>
+                    <td>Nov.</td>
+                    <td>39 000 €</td>
+                    <td>8 700 €</td>
+                    <td>500 €</td>
+                    <td>1 100 €</td>
+                    <td>400 €</td>
+                    <td>600 €</td>
+                    <td>11 300 €</td>
+                    <td>27 700 €</td>
+                  </tr>
+                  <tr>
+                    <td>Déc.</td>
+                    <td>41 000 €</td>
+                    <td>9 000 €</td>
+                    <td>500 €</td>
+                    <td>1 200 €</td>
+                    <td>450 €</td>
+                    <td>600 €</td>
+                    <td>11 750 €</td>
+                    <td>29 250 €</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <section class="panel-box">
+              <header class="panel-subheader">
+                <h4>Notes sur la marge</h4>
+              </header>
+              <div class="panel-body">
+                <p>
+                  Les valeurs ci-dessus sont en données fictives en mode Démo, à
+                  connecter en mode Réel aux onglets de synthèse de votre Google Sheets
+                  (CA, dépenses par nature, marge brute).
+                </p>
+              </div>
+            </section>
+          </section>
+        </section>
+
+        <!-- =========================================================== -->
+        <!-- 3. ESPACE CHAUFFEUR                                         -->
+        <!-- =========================================================== -->
+        <section
+          id="driverSection"
+          class="driver-section hidden"
+          aria-label="Espace chauffeur"
+        >
+          <!-- Barre supérieure chauffeur -->
+          <header class="role-header role-header-driver">
+            <div class="role-header-left">
+              <h2 class="role-title">
+                <i class="fa-solid fa-truck"></i>
+                Espace Chauffeur
+              </h2>
+              <p class="role-subtitle">
+                Vos transports du jour et votre fiche de fin de journée.
+              </p>
+            </div>
+            <div class="role-header-right">
+              <button id="logoutDriverBtn" class="btn btn-outline" type="button">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Déconnexion
+              </button>
+            </div>
+          </header>
+
+          <!-- Chauffeur : 2 blocs principaux -->
+          <section class="driver-layout">
+
+            <!-- Bloc Transports du jour -->
+            <section
+              class="panel-box driver-panel"
+              aria-label="Transports du jour"
+            >
+              <header class="panel-header">
+                <div>
+                  <h3>Transports du jour</h3>
+                  <p>Liste des transports qui vous sont assignés aujourd'hui.</p>
+                </div>
+              </header>
+
+              <ul id="transportsJourList" class="cards-list">
+                <!-- Exemple de transport (1 ligne = 1 transport concret) -->
+                <li
+                  class="transport-card"
+                  data-transport-id="T1"
+                  data-modal-open="modalTransportDetails"
+                >
+                  <div class="transport-main">
+                    <div class="transport-line">
+                      <span class="transport-chip">Commande #C-2026-001</span>
+                      <span class="transport-status status-chip status-chip-progress">
+                        En cours
+                      </span>
+                    </div>
+                    <p class="transport-client">Client : BTP Caraïbes</p>
+                    <p class="transport-address">
+                      Livraison : Zone industrielle du Lamentin
+                    </p>
+                  </div>
+                  <div class="transport-meta">
+                    <span>Transport 1 / 5</span>
+                    <span class="transport-heure">Heure cible : 09h30</span>
+                  </div>
+                </li>
+
+                <li
+                  class="transport-card"
+                  data-transport-id="T2"
+                  data-modal-open="modalTransportDetails"
+                >
+                  <div class="transport-main">
+                    <div class="transport-line">
+                      <span class="transport-chip">Commande #C-2026-001</span>
+                      <span class="transport-status status-chip status-chip-progress">
+                        En cours
+                      </span>
+                    </div>
+                    <p class="transport-client">Client : BTP Caraïbes</p>
+                    <p class="transport-address">
+                      Livraison : Zone industrielle du Lamentin
+                    </p>
+                  </div>
+                  <div class="transport-meta">
+                    <span>Transport 2 / 5</span>
+                    <span class="transport-heure">Heure cible : 10h30</span>
+                  </div>
+                </li>
+
+                <li
+                  class="transport-card"
+                  data-transport-id="T3"
+                  data-modal-open="modalTransportDetails"
+                >
+                  <div class="transport-main">
+                    <div class="transport-line">
+                      <span class="transport-chip">Commande #C-2026-001</span>
+                      <span class="transport-status status-chip status-chip-todo">
+                        À faire
+                      </span>
+                    </div>
+                    <p class="transport-client">Client : BTP Caraïbes</p>
+                    <p class="transport-address">
+                      Livraison : Zone industrielle du Lamentin
+                    </p>
+                  </div>
+                  <div class="transport-meta">
+                    <span>Transport 3 / 5</span>
+                    <span class="transport-heure">Heure cible : 11h30</span>
+                  </div>
+                </li>
+
+                <!-- Transports dynamiques générés depuis les commandes gérant -->
+              </ul>
+            </section>
+
+            <!-- Bloc Fiche de fin de journée -->
+            <section
+              class="panel-box driver-panel"
+              aria-label="Fiche de fin de journée"
+            >
+              <header class="panel-header">
+                <div>
+                  <h3>Fiche de fin de journée</h3>
+                  <p>
+                    Renseignez votre kilométrage et votre consommation de carburant.
+                  </p>
+                </div>
+              </header>
+
+              <form
+                id="ficheFinJourneeForm"
+                class="form-grid"
+                autocomplete="off"
+              >
+                <div class="form-group">
+                  <label class="field-label" for="driverKilometrage">
+                    Kilométrage (compteur)
+                  </label>
+                  <input
+                    type="number"
+                    id="driverKilometrage"
+                    class="field-input"
+                    placeholder="Ex : 152340"
+                    inputmode="numeric"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="driverCarburantQte">
+                    Carburant - quantité (L)
+                  </label>
+                  <input
+                    type="number"
+                    id="driverCarburantQte"
+                    class="field-input"
+                    placeholder="Ex : 120"
+                    inputmode="decimal"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="driverCarburantPrix">
+                    Carburant - montant (€)
+                  </label>
+                  <input
+                    type="number"
+                    id="driverCarburantPrix"
+                    class="field-input"
+                    placeholder="Ex : 250"
+                    inputmode="decimal"
+                  />
+                </div>
+
+                <div class="form-actions">
+                  <button
+                    type="submit"
+                    id="submitFicheFinJournee"
+                    class="btn btn-primary btn-block"
+                  >
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Envoyer ma fiche
+                  </button>
+                </div>
+
+                <!-- Info / état d'envoi -->
+                <p id="ficheFinJourneeMessage" class="form-message">
+                  <!-- Exemple : "Fiche envoyée. Merci !" -->
+                </p>
+              </form>
+            </section>
+          </section>
+        </section>
+
+        <!-- =========================================================== -->
+        <!-- 4. MODALS / POPUPS                                          -->
+        <!-- =========================================================== -->
+
+        <!-- Modal Détails Transport Chauffeur -->
+        <div
+          id="modalTransportDetails"
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modalTransportDetailsTitle"
+        >
+          <div class="modal-backdrop" data-modal-close></div>
+          <div class="modal-dialog">
+            <header class="modal-header">
+              <h3 id="modalTransportDetailsTitle">Détails du transport</h3>
+              <button class="icon-btn" type="button" data-modal-close>
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </header>
+            <div class="modal-body">
+              <p class="modal-subtitle">
+                Merci de renseigner les informations de réception sur le chantier.
+              </p>
+
+              <form id="transportDetailsForm" class="form-grid">
+                <div class="form-group">
+                  <label class="field-label" for="tonnageReceptionne">
+                    Tonnage réceptionné (tonnes)
+                  </label>
+                  <input
+                    type="number"
+                    id="tonnageReceptionne"
+                    class="field-input"
+                    placeholder="Ex : 18"
+                    inputmode="decimal"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="nomReceptionnaire">
+                    Nom du réceptionnaire
+                  </label>
+                  <input
+                    type="text"
+                    id="nomReceptionnaire"
+                    class="field-input"
+                    placeholder="Nom et prénom"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="fonctionReceptionnaire">
+                    Fonction du réceptionnaire
+                  </label>
+                  <input
+                    type="text"
+                    id="fonctionReceptionnaire"
+                    class="field-input"
+                    placeholder="Ex : Chef de chantier"
+                  />
+                </div>
+
+                <!-- Zone signature électronique -->
+                <div class="form-group">
+                  <label class="field-label">Signature électronique</label>
+                  <div class="signature-pad">
+                    <canvas
+                      id="signatureCanvas"
+                      class="signature-canvas"
+                    >
+                      Votre navigateur ne supporte pas la signature.
+                    </canvas>
+                    <div class="signature-actions">
+                      <button
+                        type="button"
+                        class="btn btn-mini btn-outline"
+                        id="signatureClearBtn"
+                      >
+                        Effacer
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button
+                    type="submit"
+                    class="btn btn-primary btn-block"
+                    id="validateTransportBtn"
+                  >
+                    Valider le transport
+                  </button>
+                </div>
+
+                <p id="transportDetailsMessage" class="form-message">
+                  <!-- Exemple : "Transport validé. Merci !" -->
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal CRUD Chauffeur -->
+        <div
+          id="modalChauffeur"
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modalChauffeurTitle"
+        >
+          <div class="modal-backdrop" data-modal-close></div>
+          <div class="modal-dialog">
+            <header class="modal-header">
+              <h3 id="modalChauffeurTitle">Chauffeur</h3>
+              <button class="icon-btn" type="button" data-modal-close>
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </header>
+            <div class="modal-body">
+              <form id="chauffeurForm" class="form-grid">
+                <div class="form-group">
+                  <label class="field-label" for="chauffeurNomComplet">
+                    Nom complet
+                  </label>
+                  <input
+                    type="text"
+                    id="chauffeurNomComplet"
+                    class="field-input"
+                    placeholder="Nom et prénom"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="chauffeurDateNaissance">
+                    Date de naissance
+                  </label>
+                  <input
+                    type="date"
+                    id="chauffeurDateNaissance"
+                    class="field-input"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="chauffeurTelephone">
+                    Téléphone
+                  </label>
+                  <input
+                    type="tel"
+                    id="chauffeurTelephone"
+                    class="field-input"
+                    placeholder="06 12 34 56 78"
+                    inputmode="tel"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="chauffeurEmail">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="chauffeurEmail"
+                    class="field-input"
+                    placeholder="email@example.com"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="chauffeurPermis">
+                    Type de permis
+                  </label>
+                  <input
+                    type="text"
+                    id="chauffeurPermis"
+                    class="field-input"
+                    placeholder="Ex : PL, SPL"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="chauffeurDocs">
+                    Documents (multiples)
+                  </label>
+                  <input
+                    type="file"
+                    id="chauffeurDocs"
+                    class="field-input"
+                    multiple
+                  />
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary btn-block">
+                    Enregistrer
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal CRUD Camion -->
+        <div
+          id="modalCamion"
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modalCamionTitle"
+        >
+          <div class="modal-backdrop" data-modal-close></div>
+          <div class="modal-dialog">
+            <header class="modal-header">
+              <h3 id="modalCamionTitle">Camion</h3>
+              <button class="icon-btn" type="button" data-modal-close>
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </header>
+            <div class="modal-body">
+              <form id="camionForm" class="form-grid">
+                <div class="form-group">
+                  <label class="field-label" for="camionImmatriculation">
+                    Immatriculation
+                  </label>
+                  <input
+                    type="text"
+                    id="camionImmatriculation"
+                    class="field-input"
+                    placeholder="Ex : AB-123-CD"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="camionKilometrage">
+                    Kilométrage
+                  </label>
+                  <input
+                    type="number"
+                    id="camionKilometrage"
+                    class="field-input"
+                    placeholder="Ex : 150000"
+                    inputmode="numeric"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="camionType">
+                    Type
+                  </label>
+                  <input
+                    type="text"
+                    id="camionType"
+                    class="field-input"
+                    placeholder="Ex : Benne, Plateau"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="camionControleTechnique">
+                    Date du contrôle technique
+                  </label>
+                  <input
+                    type="date"
+                    id="camionControleTechnique"
+                    class="field-input"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="camionDocs">
+                    Documents (multiples)
+                  </label>
+                  <input
+                    type="file"
+                    id="camionDocs"
+                    class="field-input"
+                    multiple
+                  />
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary btn-block">
+                    Enregistrer
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal CRUD Client -->
+        <div
+          id="modalClient"
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modalClientTitle"
+        >
+          <div class="modal-backdrop" data-modal-close></div>
+          <div class="modal-dialog">
+            <header class="modal-header">
+              <h3 id="modalClientTitle">Client</h3>
+              <button class="icon-btn" type="button" data-modal-close>
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </header>
+            <div class="modal-body">
+              <form id="clientForm" class="form-grid">
+                <div class="form-group">
+                  <label class="field-label" for="clientEntreprise">
+                    Nom de l'entreprise
+                  </label>
+                  <input
+                    type="text"
+                    id="clientEntreprise"
+                    class="field-input"
+                    placeholder="Ex : BTP Caraïbes"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="clientGerant">
+                    Nom du gérant
+                  </label>
+                  <input
+                    type="text"
+                    id="clientGerant"
+                    class="field-input"
+                    placeholder="Nom et prénom"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="clientTelephone">
+                    Téléphone
+                  </label>
+                  <input
+                    type="tel"
+                    id="clientTelephone"
+                    class="field-input"
+                    placeholder="06 12 34 56 78"
+                    inputmode="tel"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="clientEmail">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="clientEmail"
+                    class="field-input"
+                    placeholder="email@entreprise.com"
+                  />
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary btn-block">
+                    Enregistrer
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal CRUD Matériau -->
+        <div
+          id="modalMateriau"
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modalMateriauTitle"
+        >
+          <div class="modal-backdrop" data-modal-close></div>
+          <div class="modal-dialog">
+            <header class="modal-header">
+              <h3 id="modalMateriauTitle">Matériau</h3>
+              <button class="icon-btn" type="button" data-modal-close>
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </header>
+            <div class="modal-body">
+              <form id="materiauForm" class="form-grid">
+                <div class="form-group">
+                  <label class="field-label" for="materiauNom">
+                    Nom du matériau
+                  </label>
+                  <input
+                    type="text"
+                    id="materiauNom"
+                    class="field-input"
+                    placeholder="Ex : Sable 0/4"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="materiauNotes">
+                    Notes
+                  </label>
+                  <textarea
+                    id="materiauNotes"
+                    class="field-input"
+                    rows="3"
+                    placeholder="Informations complémentaires"
+                  ></textarea>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary btn-block">
+                    Enregistrer
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal CRUD Tarif -->
+        <div
+          id="modalTarif"
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modalTarifTitle"
+        >
+          <div class="modal-backdrop" data-modal-close></div>
+          <div class="modal-dialog">
+            <header class="modal-header">
+              <h3 id="modalTarifTitle">Tarif</h3>
+              <button class="icon-btn" type="button" data-modal-close>
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </header>
+            <div class="modal-body">
+              <form id="tarifForm" class="form-grid">
+                <div class="form-group">
+                  <label class="field-label" for="tarifType">
+                    Type de tarif
+                  </label>
+                  <select id="tarifType" class="field-input">
+                    <option value="materiau">Matériau par tonne</option>
+                    <option value="journee">Journée par jour</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="tarifLibelle">
+                    Libellé
+                  </label>
+                  <input
+                    type="text"
+                    id="tarifLibelle"
+                    class="field-input"
+                    placeholder="Ex : Sable 0/4 ou Location camion + chauffeur"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="tarifMontant">
+                    Montant
+                  </label>
+                  <input
+                    type="number"
+                    id="tarifMontant"
+                    class="field-input"
+                    placeholder="Ex : 18"
+                    inputmode="decimal"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="tarifNotes">
+                    Notes
+                  </label>
+                  <textarea
+                    id="tarifNotes"
+                    class="field-input"
+                    rows="3"
+                    placeholder="Informations complémentaires"
+                  ></textarea>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary btn-block">
+                    Enregistrer
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal CRUD Frais véhicule -->
+        <div
+          id="modalFraisVehicule"
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modalFraisVehiculeTitle"
+        >
+          <div class="modal-backdrop" data-modal-close></div>
+          <div class="modal-dialog">
+            <header class="modal-header">
+              <h3 id="modalFraisVehiculeTitle">Frais véhicule</h3>
+              <button class="icon-btn" type="button" data-modal-close>
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </header>
+            <div class="modal-body">
+              <form id="fraisVehiculeForm" class="form-grid">
+                <div class="form-group">
+                  <label class="field-label" for="fraisCamion">
+                    Camion
+                  </label>
+                  <select id="fraisCamion" class="field-input">
+                    <!-- Options dynamiques depuis Camions -->
+                    <option value="AB-123-CD">AB-123-CD</option>
+                    <option value="CD-456-EF">CD-456-EF</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="fraisType">
+                    Type de frais
+                  </label>
+                  <select id="fraisType" class="field-input">
+                    <option value="carburant">Carburant</option>
+                    <option value="vidange">Vidange</option>
+                    <option value="reparations">Réparations</option>
+                    <option value="assurance">Assurance</option>
+                    <option value="pneus">Pneus</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="fraisMontant">
+                    Montant (€)
+                  </label>
+                  <input
+                    type="number"
+                    id="fraisMontant"
+                    class="field-input"
+                    placeholder="Ex : 250"
+                    inputmode="decimal"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="fraisDate">
+                    Date
+                  </label>
+                  <input type="date" id="fraisDate" class="field-input" />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="fraisNotes">
+                    Notes
+                  </label>
+                  <textarea
+                    id="fraisNotes"
+                    class="field-input"
+                    rows="3"
+                    placeholder="Informations complémentaires"
+                  ></textarea>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary btn-block">
+                    Enregistrer
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Commande (création / édition) -->
+        <div
+          id="modalCommande"
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modalCommandeTitle"
+        >
+          <div class="modal-backdrop" data-modal-close></div>
+          <div class="modal-dialog modal-dialog-large">
+            <header class="modal-header">
+              <h3 id="modalCommandeTitle">Commande</h3>
+              <button class="icon-btn" type="button" data-modal-close>
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </header>
+            <div class="modal-body">
+              <form id="commandeForm" class="form-grid form-grid-2cols">
+                <div class="form-group">
+                  <label class="field-label" for="commandeClient">
+                    Client
+                  </label>
+                  <select id="commandeClient" class="field-input">
+                    <!-- Options dynamiques depuis Clients -->
+                    <option value="">Sélectionner un client</option>
+                    <option value="BTP Caraïbes">BTP Caraïbes</option>
+                    <option value="Travaux Nord">Travaux Nord</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="commandeAdresseLivraison">
+                    Adresse de livraison
+                  </label>
+                  <input
+                    type="text"
+                    id="commandeAdresseLivraison"
+                    class="field-input"
+                    placeholder="Adresse complète du chantier"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="commandeNbTransports">
+                    Nombre de transports estimés
+                  </label>
+                  <input
+                    type="number"
+                    id="commandeNbTransports"
+                    class="field-input"
+                    placeholder="Ex : 5"
+                    inputmode="numeric"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="commandeDateChantier">
+                    Date du chantier
+                  </label>
+                  <input
+                    type="date"
+                    id="commandeDateChantier"
+                    class="field-input"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="commandeCamion">
+                    Camion
+                  </label>
+                  <select id="commandeCamion" class="field-input">
+                    <!-- Options dynamiques depuis Camions -->
+                    <option value="">Sélectionner un camion</option>
+                    <option value="AB-123-CD">AB-123-CD</option>
+                    <option value="CD-456-EF">CD-456-EF</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="commandeChauffeur">
+                    Chauffeur
+                  </label>
+                  <select id="commandeChauffeur" class="field-input">
+                    <!-- Options dynamiques depuis Chauffeurs -->
+                    <option value="">Sélectionner un chauffeur</option>
+                    <option value="Jean Dupont">Jean Dupont</option>
+                    <option value="Paul Laurent">Paul Laurent</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label">Type</label>
+                  <div class="field-segmented">
+                    <label class="segmented-option">
+                      <input
+                        type="radio"
+                        name="commandeType"
+                        value="materiaux"
+                        checked
+                      />
+                      <span>Matériaux</span>
+                    </label>
+                    <label class="segmented-option">
+                      <input type="radio" name="commandeType" value="journee" />
+                      <span>Journée</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Liste déroulante des matériaux (affichée seulement si type = Matériaux) -->
+                <div
+                  class="form-group"
+                  id="commandeMateriauGroup"
+                  data-visible-if-type="materiaux"
+                >
+                  <label class="field-label" for="commandeMateriau">
+                    Matériau
+                  </label>
+                  <select id="commandeMateriau" class="field-input">
+                    <!-- Options dynamiques depuis Matériaux -->
+                    <option value="">Sélectionner un matériau</option>
+                    <option value="Sable 0/4">Sable 0/4</option>
+                    <option value="Gravier 4/6">Gravier 4/6</option>
+                    <option value="Remblais">Remblais</option>
+                  </select>
+                </div>
+
+                <div class="form-group form-group-full">
+                  <label class="field-label" for="commandeNotes">
+                    Notes / instructions
+                  </label>
+                  <textarea
+                    id="commandeNotes"
+                    class="field-input"
+                    rows="3"
+                    placeholder="Précisez les contraintes d'accès, horaires, etc."
+                  ></textarea>
+                </div>
+
+                <div class="form-actions form-actions-full">
+                  <button type="submit" class="btn btn-primary">
+                    Enregistrer la commande
+                  </button>
+                </div>
+              </form>
+
+              <p class="form-message">
+                En mode Réel, la validation d'une commande déclenchera la génération
+                automatique des transports du jour et les scénarios Make associés.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Historique / Audit log -->
+        <div
+          id="modalAuditLog"
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modalAuditLogTitle"
+        >
+          <div class="modal-backdrop" data-modal-close></div>
+          <div class="modal-dialog modal-dialog-large">
+            <header class="modal-header">
+              <h3 id="modalAuditLogTitle">Historique des actions</h3>
+              <button class="icon-btn" type="button" data-modal-close>
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </header>
+            <div class="modal-body">
+              <p class="modal-subtitle">
+                Journal des actions importantes réalisées par les gérants et les
+                chauffeurs.
+              </p>
+
+              <div class="table-wrapper">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Date / heure</th>
+                      <th>Utilisateur</th>
+                      <th>Rôle</th>
+                      <th>Action</th>
+                      <th>Détails</th>
+                    </tr>
+                  </thead>
+                  <tbody id="auditLogTableBody">
+                    <tr>
+                      <td>05/05/2026 - 08:30</td>
+                      <td>Jean Dupont</td>
+                      <td>Chauffeur</td>
+                      <td>Validation transport</td>
+                      <td>Commande C-2026-001, transport 1/5</td>
+                    </tr>
+                    <tr>
+                      <td>05/05/2026 - 07:45</td>
+                      <td>Admin Gérant</td>
+                      <td>Gérant</td>
+                      <td>Création commande</td>
+                      <td>Commande C-2026-001 - BTP Caraïbes</td>
+                    </tr>
+                    <!-- Lignes audit dynamiques -->
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+
+        <!-- =========================================================== -->
+        <!-- 5. ÉTATS DE CHARGEMENT / OVERLAYS                           -->
+        <!-- =========================================================== -->
+        <div id="loadingOverlay" class="loading-overlay hidden" aria-hidden="true">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">Synchronisation en cours...</p>
+        </div>
       </main>
-    </div>
-  </div>
 
-  <!-- APP CHAUFFEUR -->
-  <div id="driverApp" class="driver-shell">
-    <div class="driver-header">
-      <div class="driver-identity">
-        <div class="avatar" id="driverAvatar">CH</div>
-        <div>
-          <div class="driver-title" id="driverNameTitle">Chauffeur</div>
-          <div class="driver-sub" id="driverSubTitle">Transports et fiche de fin de journée</div>
-        </div>
-      </div>
-      <button class="btn btn-outline" id="btnLogoutDriver">Quitter</button>
+      <!-- ===================== FOOTER ===================== -->
+      <footer class="app-footer">
+        <p>
+          SOTRANSNORD &mdash; Application de gestion de transport de matériaux BTP.
+        </p>
+        <p>
+          Mode Démo : données fictives. Mode Réel : connecté via Google Sheets &amp;
+          Make.
+        </p>
+      </footer>
     </div>
 
-    <div class="card">
-      <div class="driver-block-title">Transports du jour</div>
-      <div class="driver-sub">
-        Liste générée automatiquement à partir des commandes assignées par le gérant.
-      </div>
-      <div class="driver-list" id="driverTransportsList" style="margin-top:8px;"></div>
-      <div class="driver-footer">
-        Clic sur un transport pour saisir tonnage, réceptionnaire et signature électronique.
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:10px;">
-      <div class="driver-block-title">Fiche de fin de journée</div>
-      <form id="formDriverEndOfDay">
-        <div class="form-grid-2">
-          <div class="form-field">
-            <label>Kilométrage (fin de journée)</label>
-            <input id="driverKm" type="number" placeholder="Ex : 128 450" />
-          </div>
-          <div class="form-field">
-            <label>Carburant – Quantité (L)</label>
-            <input id="driverFuelQty" type="number" placeholder="Ex : 120" />
-          </div>
-        </div>
-        <div class="form-grid-2">
-          <div class="form-field">
-            <label>Carburant – Montant (€)</label>
-            <input id="driverFuelAmount" type="number" placeholder="Ex : 210" />
-          </div>
-        </div>
-        <div class="api-hint">
-          Au clic sur “Envoyer ma fiche”, les données peuvent être envoyées vers un 
-          <code>webhook Make</code> pour alimenter un Google Sheet <code>FIN_DE_JOURNEE</code> et notifier le gérant.
-        </div>
-        <div class="form-footer" style="margin-top:10px;">
-          <button type="submit" class="btn btn-primary">Envoyer ma fiche</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- Modal générique CRUD / Forms -->
-<div id="modalBackdrop" class="modal-backdrop">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="modalTitle">Titre du formulaire</div>
-      <button class="modal-close-btn" id="modalCloseBtn">&times;</button>
-    </div>
-    <div id="modalBody"></div>
-    <div class="modal-footer" id="modalFooter"></div>
-  </div>
-</div>
-
-<!-- Modal Transport chauffeur -->
-<div id="transportModalBackdrop" class="modal-backdrop">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">Détail du transport</div>
-      <button class="modal-close-btn" id="transportModalCloseBtn">&times;</button>
-    </div>
-    <div id="transportModalBody"></div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" id="transportModalCancel">Fermer</button>
-      <button class="btn btn-primary" id="transportModalSave">Valider le transport</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal Intégration Make / Sheets -->
-<div id="integrationModalBackdrop" class="modal-backdrop">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">Connexion Google Sheets &amp; Make.com</div>
-      <button class="modal-close-btn" id="integrationModalCloseBtn">&times;</button>
-    </div>
-    <div id="integrationModalBody">
-      <p style="font-size:13px;color:#4b5563;margin-bottom:8px;">
-        Cette démo ne déclenche pas réellement d’appels API, mais les hooks sont prévus pour connecter facilement 
-        l’interface à Google Sheets et Make.com.
-      </p>
-      <ul style="font-size:12px;color:#4b5563;margin-left:16px;margin-bottom:10px;">
-        <li>Création / édition / suppression dans les modules : envoi vers un <strong>webhook Make</strong>.</li>
-        <li>Make écrit les données dans les bons onglets de vos <strong>Google Sheets</strong>.</li>
-        <li>Notifications email automatiques pour gérant, chauffeurs et clients.</li>
-      </ul>
-      <div class="api-hint">
-        Les fonctions JavaScript <code>sendToMake(eventType, payload)</code> et 
-        <code>syncWithGoogleSheets(resource, payload)</code> sont appelées à chaque action clé (CRUD, commande, fiche chauffeur).
-        À connecter directement à vos scénarios.
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" id="integrationModalOk">J'ai compris</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  // -----------------------
-  // Données de démonstration
-  // -----------------------
-
-  const demoDrivers = [
-    {
-      id: 1,
-      nom: "Jean Dupont",
-      dateNaissance: "1985-02-14",
-      telephone: "06 01 02 03 04",
-      email: "jean.dupont@sotransnord.fr",
-      permis: "C heavy",
-      documents: ["permis_jean.pdf"]
-    },
-    {
-      id: 2,
-      nom: "Sarah Martin",
-      dateNaissance: "1990-07-09",
-      telephone: "06 11 22 33 44",
-      email: "sarah.martin@sotransnord.fr",
-      permis: "CE",
-      documents: ["permis_sarah.pdf", "fco_sarah.pdf"]
-    }
-  ];
-
-  const demoTrucks = [
-    {
-      id: 1,
-      immat: "FR-907-GO",
-      km: 128450,
-      type: "Semi-benne 26T",
-      ct: "2026-03-10",
-      documents: ["carte_grise_fr907go.pdf"]
-    },
-    {
-      id: 2,
-      immat: "FR-325-SN",
-      km: 98540,
-      type: "Benner 19T",
-      ct: "2025-11-02",
-      documents: []
-    }
-  ];
-
-  const demoClients = [
-    {
-      id: 1,
-      entreprise: "Chantier Nord Travaux",
-      gerant: "Luc Leroy",
-      telephone: "03 20 11 22 33",
-      email: "luc.leroy@cnt.fr"
-    },
-    {
-      id: 2,
-      entreprise: "Graviers & Terrains",
-      gerant: "Nadia Costa",
-      telephone: "03 21 44 55 66",
-      email: "nadia.costa@gtp.fr"
-    }
-  ];
-
-  const demoMaterials = [
-    { id: 1, nom: "Sable 0/4" },
-    { id: 2, nom: "Gravier 4/6" },
-    { id: 3, nom: "Remblais carrière" }
-  ];
-
-  const demoTariffs = [
-    { id: 1, type: "materiaux", description: "Sable 0/4 – €/tonne", prix: 17.5 },
-    { id: 2, type: "materiaux", description: "Gravier 4/6 – €/tonne", prix: 22.0 },
-    { id: 3, type: "journee", description: "Camion + chauffeur – €/jour", prix: 680 }
-  ];
-
-  const demoVehicleExpenses = [
-    {
-      id: 1,
-      date: "2026-05-02",
-      truckId: 1,
-      type: "Carburant",
-      montant: 320
-    },
-    {
-      id: 2,
-      date: "2026-05-03",
-      truckId: 2,
-      type: "Pneus",
-      montant: 780
-    }
-  ];
-
-  const demoOrders = [
-    {
-      id: 1,
-      clientId: 1,
-      address: "Chantier ZAC Nord",
-      transportsEstimated: 5,
-      transportsDone: 3,
-      date: "2026-05-05",
-      truckId: 1,
-      driverId: 1,
-      type: "materiaux",
-      materialId: 1,
-      statut: "en_cours",
-      aFacturer: false
-    },
-    {
-      id: 2,
-      clientId: 2,
-      address: "Zone portuaire Ouest",
-      transportsEstimated: 3,
-      transportsDone: 3,
-      date: "2026-05-04",
-      truckId: 2,
-      driverId: 2,
-      type: "journee",
-      materialId: null,
-      statut: "termine",
-      aFacturer: true
-    }
-  ];
-
-  const demoFuelReports = [
-    { truckId: 1, mois: "Mai 2026", km: 2500, litres: 620 },
-    { truckId: 2, mois: "Mai 2026", km: 1980, litres: 480 }
-  ];
-
-  const demoCostReports = [
-    {
-      truckId: 1,
-      mois: "Mai 2026",
-      carburant: 1200,
-      vidange: 180,
-      reparations: 0,
-      pneus: 0,
-      assurance: 220
-    },
-    {
-      truckId: 2,
-      mois: "Mai 2026",
-      carburant: 980,
-      vidange: 0,
-      reparations: 150,
-      pneus: 780,
-      assurance: 220
-    }
-  ];
-
-  const demoMargins = [
-    {
-      mois: "Janv.",
-      ca: 42000,
-      carburant: 6500,
-      vidange: 800,
-      reparations: 1200,
-      pneus: 900,
-      assurance: 2200
-    },
-    {
-      mois: "Fév.",
-      ca: 38500,
-      carburant: 6100,
-      vidange: 0,
-      reparations: 600,
-      pneus: 0,
-      assurance: 2200
-    },
-    {
-      mois: "Mars",
-      ca: 44800,
-      carburant: 6900,
-      vidange: 1200,
-      reparations: 450,
-      pneus: 0,
-      assurance: 2200
-    },
-    {
-      mois: "Avr.",
-      ca: 46200,
-      carburant: 7200,
-      vidange: 0,
-      reparations: 1100,
-      pneus: 0,
-      assurance: 2200
-    },
-    {
-      mois: "Mai",
-      ca: 49800,
-      carburant: 7500,
-      vidange: 0,
-      reparations: 700,
-      pneus: 900,
-      assurance: 2200
-    },
-    {
-      mois: "Juin",
-      ca: 0,
-      carburant: 0,
-      vidange: 0,
-      reparations: 0,
-      pneus: 0,
-      assurance: 0
-    },
-    {
-      mois: "Juil.",
-      ca: 0,
-      carburant: 0,
-      vidange: 0,
-      reparations: 0,
-      pneus: 0,
-      assurance: 0
-    },
-    {
-      mois: "Août",
-      ca: 0,
-      carburant: 0,
-      vidange: 0,
-      reparations: 0,
-      pneus: 0,
-      assurance: 0
-    },
-    {
-      mois: "Sept.",
-      ca: 0,
-      carburant: 0,
-      vidange: 0,
-      reparations: 0,
-      pneus: 0,
-      assurance: 0
-    },
-    {
-      mois: "Oct.",
-      ca: 0,
-      carburant: 0,
-      vidange: 0,
-      reparations: 0,
-      pneus: 0,
-      assurance: 0
-    },
-    {
-      mois: "Nov.",
-      ca: 0,
-      carburant: 0,
-      vidange: 0,
-      reparations: 0,
-      pneus: 0,
-      assurance: 0
-    },
-    {
-      mois: "Déc.",
-      ca: 0,
-      carburant: 0,
-      vidange: 0,
-      reparations: 0,
-      pneus: 0,
-      assurance: 0
-    }
-  ];
-
-  // PIN démos
-  const MANAGER_PIN = "123456";
-  const DRIVER_PINS = {
-    "654321": demoDrivers[0],
-    "111111": demoDrivers[1]
-  };
-
-  // -----------------------
-  // Helpers généraux
-  // -----------------------
-
-  function formatEuro(value) {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "EUR",
-      maximumFractionDigits: 0
-    }).format(value);
-  }
-
-  function formatDate(value) {
-    if (!value) return "";
-    const d = new Date(value);
-    if (isNaN(d.getTime())) return value;
-    return d.toLocaleDateString("fr-FR");
-  }
-
-  // -----------------------
-  // Gestion du PIN / Login
-  // -----------------------
-
-  const loginScreen = document.getElementById("loginScreen");
-  const managerApp = document.getElementById("managerApp");
-  const driverApp = document.getElementById("driverApp");
-
-  const pinInputs = Array.from(document.querySelectorAll(".pin-input"));
-  const btnLogin = document.getElementById("btnLogin");
-  const btnClearPin = document.getElementById("btnClearPin");
-  const loginAlert = document.getElementById("loginAlert");
-
-  const switchThumb = document.getElementById("switchThumb");
-  const switchManager = document.getElementById("switchManager");
-  const switchDriver = document.getElementById("switchDriver");
-
-  let currentRole = "manager"; // "manager" | "driver"
-  let currentDriver = null;
-
-  // Changement rôle
-  switchManager.addEventListener("click", () => {
-    currentRole = "manager";
-    switchThumb.classList.remove("driver");
-    switchThumb.classList.add("manager");
-    switchManager.classList.add("active");
-    switchDriver.classList.remove("active");
-    loginAlert.style.display = "none";
-    clearPin();
-  });
-
-  switchDriver.addEventListener("click", () => {
-    currentRole = "driver";
-    switchThumb.classList.remove("manager");
-    switchThumb.classList.add("driver");
-    switchDriver.classList.add("active");
-    switchManager.classList.remove("active");
-    loginAlert.style.display = "none";
-    clearPin();
-  });
-
-  function clearPin() {
-    pinInputs.forEach(i => i.value = "");
-    pinInputs[0].focus();
-  }
-
-  // Navigation clavier entre les cases PIN
-  pinInputs.forEach((input, index) => {
-    input.addEventListener("input", e => {
-      const value = e.target.value.replace(/\D/g, "");
-      e.target.value = value.slice(0, 1);
-      if (value && index < pinInputs.length - 1) {
-        pinInputs[index + 1].focus();
-      }
-    });
-    input.addEventListener("keydown", e => {
-      if (e.key === "Backspace" && !e.target.value && index > 0) {
-        pinInputs[index - 1].focus();
-      }
-      if (e.key === "Enter") {
-        handleLogin();
-      }
-    });
-  });
-
-  btnClearPin.addEventListener("click", () => {
-    clearPin();
-    loginAlert.style.display = "none";
-  });
-
-  btnLogin.addEventListener("click", handleLogin);
-
-  function getPinValue() {
-    return pinInputs.map(i => i.value).join("");
-  }
-
-  // Validation du PIN (simulé côté front)
-  function handleLogin() {
-    const pin = getPinValue();
-    if (pin.length !== 6) {
-      showLoginError("Merci de saisir les 6 chiffres du code PIN.");
-      return;
-    }
-
-    // Connexion gérant
-    if (currentRole === "manager") {
-      if (pin === MANAGER_PIN) {
-        openManager();
-      } else {
-        showLoginError("Code PIN gérant incorrect (utiliser 123456 pour la démo).");
-      }
-      return;
-    }
-
-    // Connexion chauffeur
-    if (currentRole === "driver") {
-      const driver = DRIVER_PINS[pin];
-      if (driver) {
-        currentDriver = driver;
-        openDriver(driver);
-      } else {
-        showLoginError("Code PIN chauffeur incorrect (ex. 654321 ou 111111).");
-      }
-    }
-  }
-
-  function showLoginError(msg) {
-    loginAlert.textContent = msg;
-    loginAlert.style.display = "block";
-  }
-
-  function openManager() {
-    loginScreen.style.display = "none";
-    managerApp.style.display = "block";
-    driverApp.style.display = "none";
-    initManagerView();
-  }
-
-  function openDriver(driver) {
-    loginScreen.style.display = "none";
-    managerApp.style.display = "none";
-    driverApp.style.display = "block";
-    initDriverView(driver);
-  }
-
-  document.getElementById("btnLogoutManager").addEventListener("click", () => {
-    managerApp.style.display = "none";
-    driverApp.style.display = "none";
-    loginScreen.style.display = "flex";
-    clearPin();
-  });
-
-  document.getElementById("btnLogoutDriver").addEventListener("click", () => {
-    managerApp.style.display = "none";
-    driverApp.style.display = "none";
-    loginScreen.style.display = "flex";
-    currentDriver = null;
-    clearPin();
-  });
-
-  // -----------------------
-  // Navigation Gérant
-  // -----------------------
-
-  const navItems = document.querySelectorAll(".nav-item[data-view]");
-  const views = {
-    dashboard: document.getElementById("viewDashboard"),
-    orders: document.getElementById("viewOrders"),
-    settings: document.getElementById("viewSettings"),
-    reports: document.getElementById("viewReports"),
-    margin: document.getElementById("viewMargin")
-  };
-  const topbarTitle = document.getElementById("topbarTitle");
-  const topbarSubtitle = document.getElementById("topbarSubtitle");
-
-  navItems.forEach(item => {
-    item.addEventListener("click", () => {
-      const view = item.getAttribute("data-view");
-      if (!view) return;
-
-      navItems.forEach(i => i.classList.remove("active"));
-      item.classList.add("active");
-
-      Object.keys(views).forEach(k => {
-        views[k].style.display = (k === view) ? "block" : "none";
-      });
-
-      switch (view) {
-        case "dashboard":
-          topbarTitle.textContent = "Dashboard gérant";
-          topbarSubtitle.textContent = "Vue synthétique des commandes et de la flotte.";
-          break;
-        case "orders":
-          topbarTitle.textContent = "Gestion des commandes";
-          topbarSubtitle.textContent = "Création de commande et suivi des transports.";
-          break;
-        case "settings":
-          topbarTitle.textContent = "Paramétrages";
-          topbarSubtitle.textContent = "Chauffeurs, camions, clients, matériaux, tarifs, frais véhicules.";
-          break;
-        case "reports":
-          topbarTitle.textContent = "Rapports";
-          topbarSubtitle.textContent = "Consommation carburant et frais par camion.";
-          break;
-        case "margin":
-          topbarTitle.textContent = "Calcul de marge";
-          topbarSubtitle.textContent = "Marge brute mensuelle sur 12 mois.";
-          break;
-      }
-    });
-  });
-
-  // -----------------------
-  // Vue gérant – initialisation
-  // -----------------------
-
-  function initManagerView() {
-    renderDashboard();
-    renderSettingsTables();
-    renderOrdersTables();
-    renderReports();
-    renderMargin();
-    populateOrderSelects();
-  }
-
-  // Dashboard
-  function renderDashboard() {
-    const activeOrders = demoOrders.filter(o => o.statut === "en_cours");
-    document.getElementById("metricActiveOrders").textContent = activeOrders.length;
-    document.getElementById("metricActivePercent").textContent = "+12% vs hier";
-
-    const totalEstimated = demoOrders.reduce((sum, o) => sum + o.transportsEstimated, 0);
-    const totalDone = demoOrders.reduce((sum, o) => sum + o.transportsDone, 0);
-    const percent = totalEstimated ? Math.round((totalDone / totalEstimated) * 100) : 0;
-    document.getElementById("metricTransportsToday").textContent = totalDone + "/" + totalEstimated;
-    document.getElementById("metricTransportsProgress").textContent = percent + "% complété";
-
-    const totalVehicleCost = demoVehicleExpenses.reduce((sum, v) => sum + v.montant, 0);
-    document.getElementById("metricVehicleCosts").textContent = formatEuro(totalVehicleCost);
-    document.getElementById("metricVehicleCostsDetail").textContent = "Carburant, pneus, divers";
-
-    // Commandes récentes
-    const recentTbody = document.getElementById("tableRecentOrders");
-    recentTbody.innerHTML = "";
-    demoOrders.slice().sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 5).forEach(order => {
-      const client = demoClients.find(c => c.id === order.clientId);
-      const driver = demoDrivers.find(d => d.id === order.driverId);
-      const tr = document.createElement("tr");
-      const statutLabel = order.statut === "en_cours" ? "En cours" : "Terminé";
-      tr.innerHTML = `
-        <td>${client ? client.entreprise : "-"}</td>
-        <td>${order.address}</td>
-        <td>${formatDate(order.date)}</td>
-        <td>${driver ? driver.nom : "-"}</td>
-        <td>${statutLabel}</td>
-      `;
-      recentTbody.appendChild(tr);
-    });
-
-    // Consommation carburant moyenne
-    const fuelTbody = document.getElementById("tableFuelPerTruck");
-    fuelTbody.innerHTML = "";
-    demoFuelReports.forEach(rep => {
-      const truck = demoTrucks.find(t => t.id === rep.truckId);
-      const avg = rep.km ? (rep.litres / rep.km) * 100 : 0;
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${truck ? truck.immat : "-"}</td>
-        <td>${rep.km.toLocaleString("fr-FR")} km</td>
-        <td>${rep.litres.toLocaleString("fr-FR")} L</td>
-        <td>${avg.toFixed(1)} L/100</td>
-      `;
-      fuelTbody.appendChild(tr);
-    });
-  }
-
-  // Paramétrages – rendu tables
-  function renderSettingsTables() {
-    // Chauffeurs
-    const driversTbody = document.getElementById("tableDrivers");
-    driversTbody.innerHTML = "";
-    demoDrivers.forEach(driver => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${driver.nom}</td>
-        <td>${driver.telephone}</td>
-        <td>${driver.permis}</td>
-        <td class="table-actions">
-          <button data-action="edit-driver" data-id="${driver.id}">Modifier</button>
-          <button data-action="delete-driver" data-id="${driver.id}">Supprimer</button>
-        </td>
-      `;
-      driversTbody.appendChild(tr);
-    });
-
-    // Camions
-    const trucksTbody = document.getElementById("tableTrucks");
-    trucksTbody.innerHTML = "";
-    demoTrucks.forEach(truck => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${truck.immat}</td>
-        <td>${truck.km.toLocaleString("fr-FR")} km</td>
-        <td>${truck.type}</td>
-        <td>${formatDate(truck.ct)}</td>
-        <td class="table-actions">
-          <button data-action="edit-truck" data-id="${truck.id}">Modifier</button>
-          <button data-action="delete-truck" data-id="${truck.id}">Supprimer</button>
-        </td>
-      `;
-      trucksTbody.appendChild(tr);
-    });
-
-    // Clients
-    const clientsTbody = document.getElementById("tableClients");
-    clientsTbody.innerHTML = "";
-    demoClients.forEach(client => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${client.entreprise}</td>
-        <td>${client.gerant}</td>
-        <td>${client.telephone}</td>
-        <td class="table-actions">
-          <button data-action="edit-client" data-id="${client.id}">Modifier</button>
-          <button data-action="delete-client" data-id="${client.id}">Supprimer</button>
-        </td>
-      `;
-      clientsTbody.appendChild(tr);
-    });
-
-    // Matériaux
-    const materialsTbody = document.getElementById("tableMaterials");
-    materialsTbody.innerHTML = "";
-    demoMaterials.forEach(mat => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${mat.nom}</td>
-        <td class="table-actions">
-          <button data-action="edit-material" data-id="${mat.id}">Modifier</button>
-          <button data-action="delete-material" data-id="${mat.id}">Supprimer</button>
-        </td>
-      `;
-      materialsTbody.appendChild(tr);
-    });
-
-    // Tarifs
-    const tariffsTbody = document.getElementById("tableTariffs");
-    tariffsTbody.innerHTML = "";
-    demoTariffs.forEach(tariff => {
-      const labelType = tariff.type === "materiaux" ? "Matériaux" : "Journée";
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${labelType}</td>
-        <td>${tariff.description}</td>
-        <td>${tariff.prix.toLocaleString("fr-FR")} €</td>
-        <td class="table-actions">
-          <button data-action="edit-tariff" data-id="${tariff.id}">Modifier</button>
-          <button data-action="delete-tariff" data-id="${tariff.id}">Supprimer</button>
-        </td>
-      `;
-      tariffsTbody.appendChild(tr);
-    });
-
-    // Frais véhicules
-    const expensesTbody = document.getElementById("tableVehicleExpenses");
-    expensesTbody.innerHTML = "";
-    demoVehicleExpenses.forEach(exp => {
-      const truck = demoTrucks.find(t => t.id === exp.truckId);
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${formatDate(exp.date)}</td>
-        <td>${truck ? truck.immat : "-"}</td>
-        <td>${exp.type}</td>
-        <td>${exp.montant.toLocaleString("fr-FR")} €</td>
-        <td class="table-actions">
-          <button data-action="edit-expense" data-id="${exp.id}">Modifier</button>
-          <button data-action="delete-expense" data-id="${exp.id}">Supprimer</button>
-        </td>
-      `;
-      expensesTbody.appendChild(tr);
-    });
-  }
-
-  // Commandes – Selects et tableaux
-  function populateOrderSelects() {
-    const selectClient = document.getElementById("orderClient");
-    const selectTruck = document.getElementById("orderTruck");
-    const selectDriver = document.getElementById("orderDriver");
-    const selectMaterial = document.getElementById("orderMaterial");
-
-    selectClient.innerHTML = demoClients.map(c => `<option value="${c.id}">${c.entreprise}</option>`).join("");
-    selectTruck.innerHTML = demoTrucks.map(t => `<option value="${t.id}">${t.immat} (${t.type})</option>`).join("");
-    selectDriver.innerHTML = demoDrivers.map(d => `<option value="${d.id}">${d.nom}</option>`).join("");
-    selectMaterial.innerHTML = demoMaterials.map(m => `<option value="${m.id}">${m.nom}</option>`).join("");
-  }
-
-  function renderOrdersTables() {
-    const ordersTbody = document.getElementById("tableOrders");
-    ordersTbody.innerHTML = "";
-    demoOrders.forEach(order => {
-      const client = demoClients.find(c => c.id === order.clientId);
-      const driver = demoDrivers.find(d => d.id === order.driverId);
-      const truck = demoTrucks.find(t => t.id === order.truckId);
-
-      const tr = document.createElement("tr");
-      const statutClass =
-        order.statut === "en_cours"
-          ? "status-en-cours"
-          : order.aFacturer
-          ? "status-a-facturer"
-          : "status-termine";
-      const statutLabel =
-        order.statut === "en_cours"
-          ? "En cours"
-          : order.aFacturer
-          ? "À facturer"
-          : "Terminé";
-
-      tr.innerHTML = `
-        <td>${client ? client.entreprise : "-"}</td>
-        <td>${formatDate(order.date)}</td>
-        <td>${truck ? truck.immat : "-"}</td>
-        <td>${driver ? driver.nom : "-"}</td>
-        <td>${order.transportsDone}/${order.transportsEstimated}</td>
-        <td>
-          <span class="status-pill ${statutClass}">
-            <span class="dot"></span>${statutLabel}
-          </span>
-        </td>
-        <td class="table-actions">
-          <button data-action="facturer" data-id="${order.id}">À facturer</button>
-        </td>
-      `;
-      ordersTbody.appendChild(tr);
-    });
-  }
-
-  // Rapports
-  function renderReports() {
-    const fuelTbody = document.getElementById("tableReportFuel");
-    fuelTbody.innerHTML = "";
-    demoFuelReports.forEach(rep => {
-      const truck = demoTrucks.find(t => t.id === rep.truckId);
-      const avg = rep.km ? (rep.litres / rep.km) * 100 : 0;
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${truck ? truck.immat : "-"}</td>
-        <td>${rep.mois}</td>
-        <td>${rep.km.toLocaleString("fr-FR")} km</td>
-        <td>${rep.litres.toLocaleString("fr-FR")} L</td>
-        <td>${avg.toFixed(1)} L/100</td>
-      `;
-      fuelTbody.appendChild(tr);
-    });
-
-    const costTbody = document.getElementById("tableReportCosts");
-    costTbody.innerHTML = "";
-    demoCostReports.forEach(rep => {
-      const truck = demoTrucks.find(t => t.id === rep.truckId);
-      const total = rep.carburant + rep.vidange + rep.reparations + rep.pneus + rep.assurance;
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${truck ? truck.immat : "-"}</td>
-        <td>${rep.mois}</td>
-        <td>${formatEuro(rep.carburant)}</td>
-        <td>${formatEuro(rep.vidange)}</td>
-        <td>${formatEuro(rep.reparations)}</td>
-        <td>${formatEuro(rep.pneus)}</td>
-        <td>${formatEuro(rep.assurance)}</td>
-        <td>${formatEuro(total)}</td>
-      `;
-      costTbody.appendChild(tr);
-    });
-  }
-
-  // Marge
-  function renderMargin() {
-    const tbody = document.getElementById("tableMargin");
-    tbody.innerHTML = "";
-
-    const now = new Date();
-    const currentMonthIndex = now.getMonth(); // 0-11
-
-    demoMargins.forEach((m, index) => {
-      const totalDepenses = m.carburant + m.vidange + m.reparations + m.pneus + m.assurance;
-      const marge = m.ca - totalDepenses;
-      const tr = document.createElement("tr");
-      if (index === currentMonthIndex) {
-        tr.classList.add("month-current");
-      }
-      tr.innerHTML = `
-        <td>${m.mois}</td>
-        <td>${m.ca ? formatEuro(m.ca) : "-"}</td>
-        <td>${m.carburant ? formatEuro(m.carburant) : "-"}</td>
-        <td>${m.vidange ? formatEuro(m.vidange) : "-"}</td>
-        <td>${m.reparations ? formatEuro(m.reparations) : "-"}</td>
-        <td>${m.pneus ? formatEuro(m.pneus) : "-"}</td>
-        <td>${m.assurance ? formatEuro(m.assurance) : "-"}</td>
-        <td>${totalDepenses ? formatEuro(totalDepenses) : "-"}</td>
-        <td>${marge ? formatEuro(marge) : "-"}</td>
-      `;
-      tbody.appendChild(tr);
-    });
-  }
-
-  // -----------------------
-  // Formulaire commande
-  // -----------------------
-
-  const formOrder = document.getElementById("formOrder");
-  const btnResetOrder = document.getElementById("btnResetOrder");
-  const orderTypeSelect = document.getElementById("orderType");
-  const orderMaterialField = document.getElementById("orderMaterialField");
-
-  orderTypeSelect.addEventListener("change", () => {
-    if (orderTypeSelect.value === "materiaux") {
-      orderMaterialField.style.display = "block";
-    } else {
-      orderMaterialField.style.display = "none";
-    }
-  });
-
-  btnResetOrder.addEventListener("click", () => {
-    formOrder.reset();
-    populateOrderSelects();
-  });
-
-  formOrder.addEventListener("submit", e => {
-    e.preventDefault();
-    const clientId = parseInt(document.getElementById("orderClient").value, 10);
-    const address = document.getElementById("orderAddress").value || "Adresse à préciser";
-    const transportsEstimated = parseInt(document.getElementById("orderTransportsEstimated").value || "1", 10);
-    const date = document.getElementById("orderDate").value || new Date().toISOString().slice(0, 10);
-    const truckId = parseInt(document.getElementById("orderTruck").value, 10);
-    const driverId = parseInt(document.getElementById("orderDriver").value, 10);
-    const type = document.getElementById("orderType").value;
-    const materialId = type === "materiaux" ? parseInt(document.getElementById("orderMaterial").value, 10) : null;
-    const statut = document.getElementById("orderStatus").value;
-
-    const newOrder = {
-      id: demoOrders.length ? Math.max(...demoOrders.map(o => o.id)) + 1 : 1,
-      clientId,
-      address,
-      transportsEstimated,
-      transportsDone: 0,
-      date,
-      truckId,
-      driverId,
-      type,
-      materialId,
-      statut,
-      aFacturer: false
-    };
-
-    demoOrders.push(newOrder);
-    // Hook vers Make / Google Sheets
-    sendToMake("order_created", newOrder);
-    syncWithGoogleSheets("orders", newOrder);
-
-    renderDashboard();
-    renderOrdersTables();
-    formOrder.reset();
-    populateOrderSelects();
-    alert("Commande créée (données de démo).");
-  });
-
-  // Facturation
-  document.getElementById("tableOrders").addEventListener("click", e => {
-    const btn = e.target.closest("button[data-action='facturer']");
-    if (!btn) return;
-    const id = parseInt(btn.getAttribute("data-id"), 10);
-    const order = demoOrders.find(o => o.id === id);
-    if (!order) return;
-
-    if (order.transportsDone < order.transportsEstimated) {
-      alert("Tous les transports ne sont pas encore réalisés.");
-      return;
-    }
-
-    order.aFacturer = true;
-    sendToMake("order_to_invoice", order);
-    syncWithGoogleSheets("orders", order);
-    renderOrdersTables();
-    alert("Commande marquée 'À facturer' (démo).");
-  });
-
-  // -----------------------
-  // CRUD via modal générique
-  // -----------------------
-
-  const modalBackdrop = document.getElementById("modalBackdrop");
-  const modalTitle = document.getElementById("modalTitle");
-  const modalBody = document.getElementById("modalBody");
-  const modalFooter = document.getElementById("modalFooter");
-  const modalCloseBtn = document.getElementById("modalCloseBtn");
-
-  let currentModalContext = null;
-
-  function openModal(title, bodyHtml, footerButtons) {
-    modalTitle.textContent = title;
-    modalBody.innerHTML = bodyHtml;
-    modalFooter.innerHTML = "";
-    footerButtons.forEach(btnConfig => {
-      const b = document.createElement("button");
-      b.textContent = btnConfig.label;
-      b.className = btnConfig.className;
-      b.addEventListener("click", btnConfig.onClick);
-      modalFooter.appendChild(b);
-    });
-    modalBackdrop.style.display = "flex";
-  }
-
-  function closeModal() {
-    modalBackdrop.style.display = "none";
-    currentModalContext = null;
-  }
-
-  modalCloseBtn.addEventListener("click", closeModal);
-  modalBackdrop.addEventListener("click", e => {
-    if (e.target === modalBackdrop) {
-      closeModal();
-    }
-  });
-
-  // Boutons "Ajouter"
-  document.getElementById("btnAddDriver").addEventListener("click", () => {
-    currentModalContext = { type: "driver", mode: "create" };
-    openModal("Ajouter un chauffeur", getDriverForm(), getDriverFormButtons());
-  });
-
-  document.getElementById("btnAddTruck").addEventListener("click", () => {
-    currentModalContext = { type: "truck", mode: "create" };
-    openModal("Ajouter un camion", getTruckForm(), getTruckFormButtons());
-  });
-
-  document.getElementById("btnAddClient").addEventListener("click", () => {
-    currentModalContext = { type: "client", mode: "create" };
-    openModal("Ajouter un client", getClientForm(), getClientFormButtons());
-  });
-
-  document.getElementById("btnAddMaterial").addEventListener("click", () => {
-    currentModalContext = { type: "material", mode: "create" };
-    openModal("Ajouter un matériau", getMaterialForm(), getMaterialFormButtons());
-  });
-
-  document.getElementById("btnAddTariff").addEventListener("click", () => {
-    currentModalContext = { type: "tariff", mode: "create" };
-    openModal("Ajouter un tarif", getTariffForm(), getTariffFormButtons());
-  });
-
-  document.getElementById("btnAddVehicleExpense").addEventListener("click", () => {
-    currentModalContext = { type: "expense", mode: "create" };
-    openModal("Ajouter un frais véhicule", getExpenseForm(), getExpenseFormButtons());
-  });
-
-  // Délégation pour boutons "Modifier" / "Supprimer"
-  document.getElementById("viewSettings").addEventListener("click", e => {
-    const btn = e.target.closest("button[data-action]");
-    if (!btn) return;
-    const action = btn.getAttribute("data-action");
-    const id = parseInt(btn.getAttribute("data-id"), 10);
-
-    if (action === "edit-driver") {
-      const driver = demoDrivers.find(d => d.id === id);
-      if (!driver) return;
-      currentModalContext = { type: "driver", mode: "edit", id };
-      openModal("Modifier un chauffeur", getDriverForm(driver), getDriverFormButtons());
-    }
-    if (action === "delete-driver") {
-      const idx = demoDrivers.findIndex(d => d.id === id);
-      if (idx >= 0 && confirm("Supprimer ce chauffeur (données de démo) ?")) {
-        demoDrivers.splice(idx, 1);
-        sendToMake("driver_deleted", { id });
-        syncWithGoogleSheets("drivers", { id, deleted: true });
-        renderSettingsTables();
-      }
-    }
-
-    if (action === "edit-truck") {
-      const truck = demoTrucks.find(t => t.id === id);
-      if (!truck) return;
-      currentModalContext = { type: "truck", mode: "edit", id };
-      openModal("Modifier un camion", getTruckForm(truck), getTruckFormButtons());
-    }
-    if (action === "delete-truck") {
-      const idx = demoTrucks.findIndex(t => t.id === id);
-      if (idx >= 0 && confirm("Supprimer ce camion (données de démo) ?")) {
-        demoTrucks.splice(idx, 1);
-        sendToMake("truck_deleted", { id });
-        syncWithGoogleSheets("trucks", { id, deleted: true });
-        renderSettingsTables();
-      }
-    }
-
-    if (action === "edit-client") {
-      const client = demoClients.find(c => c.id === id);
-      if (!client) return;
-      currentModalContext = { type: "client", mode: "edit", id };
-      openModal("Modifier un client", getClientForm(client), getClientFormButtons());
-    }
-    if (action === "delete-client") {
-      const idx = demoClients.findIndex(c => c.id === id);
-      if (idx >= 0 && confirm("Supprimer ce client (données de démo) ?")) {
-        demoClients.splice(idx, 1);
-        sendToMake("client_deleted", { id });
-        syncWithGoogleSheets("clients", { id, deleted: true });
-        renderSettingsTables();
-      }
-    }
-
-    if (action === "edit-material") {
-      const mat = demoMaterials.find(m => m.id === id);
-      if (!mat) return;
-      currentModalContext = { type: "material", mode: "edit", id };
-      openModal("Modifier un matériau", getMaterialForm(mat), getMaterialFormButtons());
-    }
-    if (action === "delete-material") {
-      const idx = demoMaterials.findIndex(m => m.id === id);
-      if (idx >= 0 && confirm("Supprimer ce matériau (données de démo) ?")) {
-        demoMaterials.splice(idx, 1);
-        sendToMake("material_deleted", { id });
-        syncWithGoogleSheets("materials", { id, deleted: true });
-        renderSettingsTables();
-      }
-    }
-
-    if (action === "edit-tariff") {
-      const tariff = demoTariffs.find(t => t.id === id);
-      if (!tariff) return;
-      currentModalContext = { type: "tariff", mode: "edit", id };
-      openModal("Modifier un tarif", getTariffForm(tariff), getTariffFormButtons());
-    }
-    if (action === "delete-tariff") {
-      const idx = demoTariffs.findIndex(t => t.id === id);
-      if (idx >= 0 && confirm("Supprimer ce tarif (données de démo) ?")) {
-        demoTariffs.splice(idx, 1);
-        sendToMake("tariff_deleted", { id });
-        syncWithGoogleSheets("tariffs", { id, deleted: true });
-        renderSettingsTables();
-      }
-    }
-
-    if (action === "edit-expense") {
-      const exp = demoVehicleExpenses.find(ex => ex.id === id);
-      if (!exp) return;
-      currentModalContext = { type: "expense", mode: "edit", id };
-      openModal("Modifier un frais véhicule", getExpenseForm(exp), getExpenseFormButtons());
-    }
-    if (action === "delete-expense") {
-      const idx = demoVehicleExpenses.findIndex(ex => ex.id === id);
-      if (idx >= 0 && confirm("Supprimer ce frais (données de démo) ?")) {
-        demoVehicleExpenses.splice(idx, 1);
-        sendToMake("expense_deleted", { id });
-        syncWithGoogleSheets("vehicle_expenses", { id, deleted: true });
-        renderSettingsTables();
-      }
-    }
-  });
-
-  // Formulaires HTML pour le modal
-  function getDriverForm(driver = {}) {
-    return `
-      <div class="form-grid-2">
-        <div class="form-field">
-          <label>Nom complet</label>
-          <input id="fDriverName" type="text" value="${driver.nom || ""}" placeholder="Ex : Jean Dupont" />
-        </div>
-        <div class="form-field">
-          <label>Date de naissance</label>
-          <input id="fDriverBirth" type="date" value="${driver.dateNaissance || ""}" />
-        </div>
-      </div>
-      <div class="form-grid-2">
-        <div class="form-field">
-          <label>Téléphone</label>
-          <input id="fDriverPhone" type="text" value="${driver.telephone || ""}" placeholder="06 ..." />
-        </div>
-        <div class="form-field">
-          <label>Email</label>
-          <input id="fDriverEmail" type="email" value="${driver.email || ""}" placeholder="prenom.nom@..." />
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Type de permis</label>
-        <input id="fDriverLicense" type="text" value="${driver.permis || ""}" placeholder="Ex : C, CE" />
-      </div>
-      <div class="form-field">
-        <label>Documents (simulation d'upload multiple)</label>
-        <input id="fDriverDocs" type="text" placeholder="permis_jean.pdf; fco_jean.pdf" />
-        <div class="tag-list">
-          <div class="tag">permis.pdf</div>
-          <div class="tag">FCO.pdf</div>
-        </div>
-      </div>
-    `;
-  }
-
-  function getDriverFormButtons() {
-    return [
-      {
-        label: "Annuler",
-        className: "btn btn-outline",
-        onClick: () => closeModal()
-      },
-      {
-        label: "Enregistrer",
-        className: "btn btn-primary",
-        onClick: () => {
-          const name = document.getElementById("fDriverName").value || "Nouveau chauffeur";
-          const birth = document.getElementById("fDriverBirth").value || "";
-          const phone = document.getElementById("fDriverPhone").value || "";
-          const email = document.getElementById("fDriverEmail").value || "";
-          const license = document.getElementById("fDriverLicense").value || "";
-          const docs = (document.getElementById("fDriverDocs").value || "").split(";").map(s => s.trim()).filter(Boolean);
-
-          if (currentModalContext.mode === "create") {
-            const newDriver = {
-              id: demoDrivers.length ? Math.max(...demoDrivers.map(d => d.id)) + 1 : 1,
-              nom: name,
-              dateNaissance: birth,
-              telephone: phone,
-              email: email,
-              permis: license,
-              documents: docs
-            };
-            demoDrivers.push(newDriver);
-            sendToMake("driver_created", newDriver);
-            syncWithGoogleSheets("drivers", newDriver);
-          } else if (currentModalContext.mode === "edit") {
-            const driver = demoDrivers.find(d => d.id === currentModalContext.id);
-            if (driver) {
-              driver.nom = name;
-              driver.dateNaissance = birth;
-              driver.telephone = phone;
-              driver.email = email;
-              driver.permis = license;
-              driver.documents = docs;
-              sendToMake("driver_updated", driver);
-              syncWithGoogleSheets("drivers", driver);
-            }
-          }
-          renderSettingsTables();
-          populateOrderSelects();
-          closeModal();
-        }
-      }
-    ];
-  }
-
-  function getTruckForm(truck = {}) {
-    return `
-      <div class="form-grid-2">
-        <div class="form-field">
-          <label>Immatriculation</label>
-          <input id="fTruckImmat" type="text" value="${truck.immat || ""}" placeholder="Ex : FR-907-GO" />
-        </div>
-        <div class="form-field">
-          <label>Kilométrage</label>
-          <input id="fTruckKm" type="number" value="${truck.km || ""}" />
-        </div>
-      </div>
-      <div class="form-grid-2">
-        <div class="form-field">
-          <label>Type</label>
-          <input id="fTruckType" type="text" value="${truck.type || ""}" placeholder="Semi-benne 26T..." />
-        </div>
-        <div class="form-field">
-          <label>Date du contrôle technique</label>
-          <input id="fTruckCt" type="date" value="${truck.ct || ""}" />
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Documents (simulation d'upload multiple)</label>
-        <input id="fTruckDocs" type="text" placeholder="carte_grise.pdf; assurance.pdf" />
-        <div class="tag-list">
-          <div class="tag">carte_grise.pdf</div>
-          <div class="tag">assurance.pdf</div>
-        </div>
-      </div>
-    `;
-  }
-
-  function getTruckFormButtons() {
-    return [
-      {
-        label: "Annuler",
-        className: "btn btn-outline",
-        onClick: () => closeModal()
-      },
-      {
-        label: "Enregistrer",
-        className: "btn btn-primary",
-        onClick: () => {
-          const immat = document.getElementById("fTruckImmat").value || "Immat à préciser";
-          const km = parseInt(document.getElementById("fTruckKm").value || "0", 10);
-          const type = document.getElementById("fTruckType").value || "Type à préciser";
-          const ct = document.getElementById("fTruckCt").value || "";
-          const docs = (document.getElementById("fTruckDocs").value || "").split(";").map(s => s.trim()).filter(Boolean);
-
-          if (currentModalContext.mode === "create") {
-            const newTruck = {
-              id: demoTrucks.length ? Math.max(...demoTrucks.map(t => t.id)) + 1 : 1,
-              immat,
-              km,
-              type,
-              ct,
-              documents: docs
-            };
-            demoTrucks.push(newTruck);
-            sendToMake("truck_created", newTruck);
-            syncWithGoogleSheets("trucks", newTruck);
-          } else if (currentModalContext.mode === "edit") {
-            const truck = demoTrucks.find(t => t.id === currentModalContext.id);
-            if (truck) {
-              truck.immat = immat;
-              truck.km = km;
-              truck.type = type;
-              truck.ct = ct;
-              truck.documents = docs;
-              sendToMake("truck_updated", truck);
-              syncWithGoogleSheets("trucks", truck);
-            }
-          }
-          renderSettingsTables();
-          populateOrderSelects();
-          closeModal();
-        }
-      }
-    ];
-  }
-
-  function getClientForm(client = {}) {
-    return `
-      <div class="form-field">
-        <label>Nom de l’entreprise</label>
-        <input id="fClientName" type="text" value="${client.entreprise || ""}" placeholder="Ex : Chantier Nord Travaux" />
-      </div>
-      <div class="form-grid-2">
-        <div class="form-field">
-          <label>Nom du gérant</label>
-          <input id="fClientManager" type="text" value="${client.gerant || ""}" />
-        </div>
-        <div class="form-field">
-          <label>Téléphone</label>
-          <input id="fClientPhone" type="text" value="${client.telephone || ""}" />
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Email</label>
-        <input id="fClientEmail" type="email" value="${client.email || ""}" />
-      </div>
-    `;
-  }
-
-  function getClientFormButtons() {
-    return [
-      {
-        label: "Annuler",
-        className: "btn btn-outline",
-        onClick: () => closeModal()
-      },
-      {
-        label: "Enregistrer",
-        className: "btn btn-primary",
-        onClick: () => {
-          const entreprise = document.getElementById("fClientName").value || "Nouvelle entreprise";
-          const gerant = document.getElementById("fClientManager").value || "";
-          const telephone = document.getElementById("fClientPhone").value || "";
-          const email = document.getElementById("fClientEmail").value || "";
-
-          if (currentModalContext.mode === "create") {
-            const newClient = {
-              id: demoClients.length ? Math.max(...demoClients.map(c => c.id)) + 1 : 1,
-              entreprise,
-              gerant,
-              telephone,
-              email
-            };
-            demoClients.push(newClient);
-            sendToMake("client_created", newClient);
-            syncWithGoogleSheets("clients", newClient);
-          } else if (currentModalContext.mode === "edit") {
-            const client = demoClients.find(c => c.id === currentModalContext.id);
-            if (client) {
-              client.entreprise = entreprise;
-              client.gerant = gerant;
-              client.telephone = telephone;
-              client.email = email;
-              sendToMake("client_updated", client);
-              syncWithGoogleSheets("clients", client);
-            }
-          }
-          renderSettingsTables();
-          populateOrderSelects();
-          closeModal();
-        }
-      }
-    ];
-  }
-
-  function getMaterialForm(mat = {}) {
-    return `
-      <div class="form-field">
-        <label>Nom du matériau</label>
-        <input id="fMaterialName" type="text" value="${mat.nom || ""}" placeholder="Ex : Sable 0/4" />
-      </div>
-    `;
-  }
-
-  function getMaterialFormButtons() {
-    return [
-      {
-        label: "Annuler",
-        className: "btn btn-outline",
-        onClick: () => closeModal()
-      },
-      {
-        label: "Enregistrer",
-        className: "btn btn-primary",
-        onClick: () => {
-          const nom = document.getElementById("fMaterialName").value || "Matériau à préciser";
-          if (currentModalContext.mode === "create") {
-            const newMat = {
-              id: demoMaterials.length ? Math.max(...demoMaterials.map(m => m.id)) + 1 : 1,
-              nom
-            };
-            demoMaterials.push(newMat);
-            sendToMake("material_created", newMat);
-            syncWithGoogleSheets("materials", newMat);
-          } else if (currentModalContext.mode === "edit") {
-            const mat = demoMaterials.find(m => m.id === currentModalContext.id);
-            if (mat) {
-              mat.nom = nom;
-              sendToMake("material_updated", mat);
-              syncWithGoogleSheets("materials", mat);
-            }
-          }
-          renderSettingsTables();
-          populateOrderSelects();
-          closeModal();
-        }
-      }
-    ];
-  }
-
-  function getTariffForm(tariff = {}) {
-    return `
-      <div class="form-grid-2">
-        <div class="form-field">
-          <label>Type de tarif</label>
-          <select id="fTariffType">
-            <option value="materiaux" ${tariff.type === "materiaux" ? "selected" : ""}>Matériaux (€/tonne)</option>
-            <option value="journee" ${tariff.type === "journee" ? "selected" : ""}>Journée (€/jour)</option>
-          </select>
-        </div>
-        <div class="form-field">
-          <label>Tarif (€)</label>
-          <input id="fTariffPrice" type="number" value="${tariff.prix || ""}" />
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Description</label>
-        <input id="fTariffDesc" type="text" value="${tariff.description || ""}" placeholder="Ex : Sable 0/4 – €/tonne" />
-      </div>
-    `;
-  }
-
-  function getTariffFormButtons() {
-    return [
-      {
-        label: "Annuler",
-        className: "btn btn-outline",
-        onClick: () => closeModal()
-      },
-      {
-        label: "Enregistrer",
-        className: "btn btn-primary",
-        onClick: () => {
-          const type = document.getElementById("fTariffType").value;
-          const prix = parseFloat(document.getElementById("fTariffPrice").value || "0");
-          const description = document.getElementById("fTariffDesc").value || "";
-
-          if (currentModalContext.mode === "create") {
-            const newTariff = {
-              id: demoTariffs.length ? Math.max(...demoTariffs.map(t => t.id)) + 1 : 1,
-              type,
-              description,
-              prix
-            };
-            demoTariffs.push(newTariff);
-            sendToMake("tariff_created", newTariff);
-            syncWithGoogleSheets("tariffs", newTariff);
-          } else if (currentModalContext.mode === "edit") {
-            const tariff = demoTariffs.find(t => t.id === currentModalContext.id);
-            if (tariff) {
-              tariff.type = type;
-              tariff.description = description;
-              tariff.prix = prix;
-              sendToMake("tariff_updated", tariff);
-              syncWithGoogleSheets("tariffs", tariff);
-            }
-          }
-          renderSettingsTables();
-          closeModal();
-        }
-      }
-    ];
-  }
-
-  function getExpenseForm(exp = {}) {
-    const truckOptions = demoTrucks
-      .map(t => `<option value="${t.id}" ${exp.truckId === t.id ? "selected" : ""}>${t.immat}</option>`)
-      .join("");
-    const typeOptions = ["Carburant", "Vidange", "Réparations", "Assurance", "Pneus"]
-      .map(t => `<option value="${t}" ${exp.type === t ? "selected" : ""}>${t}</option>`)
-      .join("");
-
-    return `
-      <div class="form-grid-2">
-        <div class="form-field">
-          <label>Date</label>
-          <input id="fExpDate" type="date" value="${exp.date || ""}" />
-        </div>
-        <div class="form-field">
-          <label>Camion</label>
-          <select id="fExpTruck">${truckOptions}</select>
-        </div>
-      </div>
-      <div class="form-grid-2">
-        <div class="form-field">
-          <label>Type de frais</label>
-          <select id="fExpType">${typeOptions}</select>
-        </div>
-        <div class="form-field">
-          <label>Montant (€)</label>
-          <input id="fExpAmount" type="number" value="${exp.montant || ""}" />
-        </div>
-      </div>
-    `;
-  }
-
-  function getExpenseFormButtons() {
-    return [
-      {
-        label: "Annuler",
-        className: "btn btn-outline",
-        onClick: () => closeModal()
-      },
-      {
-        label: "Enregistrer",
-        className: "btn btn-primary",
-        onClick: () => {
-          const date = document.getElementById("fExpDate").value || new Date().toISOString().slice(0, 10);
-          const truckId = parseInt(document.getElementById("fExpTruck").value, 10);
-          const type = document.getElementById("fExpType").value;
-          const montant = parseFloat(document.getElementById("fExpAmount").value || "0");
-
-          if (currentModalContext.mode === "create") {
-            const newExp = {
-              id: demoVehicleExpenses.length ? Math.max(...demoVehicleExpenses.map(e => e.id)) + 1 : 1,
-              date,
-              truckId,
-              type,
-              montant
-            };
-            demoVehicleExpenses.push(newExp);
-            sendToMake("expense_created", newExp);
-            syncWithGoogleSheets("vehicle_expenses", newExp);
-          } else if (currentModalContext.mode === "edit") {
-            const exp = demoVehicleExpenses.find(e => e.id === currentModalContext.id);
-            if (exp) {
-              exp.date = date;
-              exp.truckId = truckId;
-              exp.type = type;
-              exp.montant = montant;
-              sendToMake("expense_updated", exp);
-              syncWithGoogleSheets("vehicle_expenses", exp);
-            }
-          }
-          renderSettingsTables();
-          renderDashboard();
-          renderReports();
-          renderMargin();
-          closeModal();
-        }
-      }
-    ];
-  }
-
-  // -----------------------
-  // Interface Chauffeur
-  // -----------------------
-
-  const driverAvatar = document.getElementById("driverAvatar");
-  const driverNameTitle = document.getElementById("driverNameTitle");
-  const driverSubTitle = document.getElementById("driverSubTitle");
-  const driverTransportsList = document.getElementById("driverTransportsList");
-  const formDriverEndOfDay = document.getElementById("formDriverEndOfDay");
-
-  const transportModalBackdrop = document.getElementById("transportModalBackdrop");
-  const transportModalBody = document.getElementById("transportModalBody");
-  const transportModalCloseBtn = document.getElementById("transportModalCloseBtn");
-  const transportModalCancel = document.getElementById("transportModalCancel");
-  const transportModalSave = document.getElementById("transportModalSave");
-
-  let currentTransportContext = null;
-
-  function initDriverView(driver) {
-    const initials = driver.nom.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
-    driverAvatar.textContent = initials;
-    driverNameTitle.textContent = driver.nom;
-    driverSubTitle.textContent = "Chauffeur – SOTRANSNORD";
-
-    // Générer la liste des transports du jour pour ce chauffeur
-    const today = new Date().toISOString().slice(0, 10);
-    const todaysOrders = demoOrders.filter(o => o.driverId === driver.id && o.date === today);
-    driverTransportsList.innerHTML = "";
-
-    if (!todaysOrders.length) {
-      const info = document.createElement("div");
-      info.style.fontSize = "12px";
-      info.style.color = "#6b7280";
-      info.textContent = "Aucun transport planifié pour aujourd'hui dans la démo, des exemples sont générés.";
-      driverTransportsList.appendChild(info);
-    }
-
-    const simulatedTransports = todaysOrders.length ? todaysOrders : demoOrders.filter(o => o.driverId === driver.id);
-
-    simulatedTransports.forEach(order => {
-      for (let i = 1; i <= order.transportsEstimated; i++) {
-        const index = i;
-        const done = index <= order.transportsDone;
-        const item = document.createElement("div");
-        item.className = "transport-item";
-        item.dataset.orderId = order.id;
-        item.dataset.index = index;
-
-        const client = demoClients.find(c => c.id === order.clientId);
-        const mainLabel = `${client ? client.entreprise : "Client"} – Transport ${index}/${order.transportsEstimated}`;
-        const metaLabel = `${formatDate(order.date)} • ${order.address}`;
-
-        item.innerHTML = `
-          <div class="transport-main">
-            <div>${mainLabel}</div>
-            <div class="transport-meta">${metaLabel}</div>
-          </div>
-          <div class="transport-status ${done ? "done" : "pending"}">
-            ${done ? "Terminé" : "À réaliser"}
-          </div>
-        `;
-        item.addEventListener("click", () => openTransportModal(order, index));
-        driverTransportsList.appendChild(item);
-      }
-    });
-  }
-
-  function openTransportModal(order, index) {
-    currentTransportContext = { orderId: order.id, index };
-
-    transportModalBody.innerHTML = `
-      <div style="font-size:13px;margin-bottom:8px;">
-        <strong>Commande :</strong> ${order.address}<br/>
-        <strong>Transport :</strong> ${index}/${order.transportsEstimated}
-      </div>
-      <div class="form-field">
-        <label>Tonnage réceptionné (tonnes)</label>
-        <input id="fTransportTonnage" type="number" placeholder="Ex : 18" />
-      </div>
-      <div class="form-field">
-        <label>Nom du réceptionnaire</label>
-        <input id="fTransportReceiver" type="text" placeholder="Ex : M. Durand" />
-      </div>
-      <div class="form-field">
-        <label>Fonction</label>
-        <input id="fTransportRole" type="text" placeholder="Ex : Chef de chantier" />
-      </div>
-      <div class="form-field">
-        <label>Signature électronique (simulée)</label>
-        <textarea id="fTransportSignature" rows="2" placeholder="Ex : Signature reçue par tablette"></textarea>
-      </div>
-    `;
-    transportModalBackdrop.style.display = "flex";
-  }
-
-  function closeTransportModal() {
-    transportModalBackdrop.style.display = "none";
-    currentTransportContext = null;
-  }
-
-  transportModalCloseBtn.addEventListener("click", closeTransportModal);
-  transportModalCancel.addEventListener("click", closeTransportModal);
-  transportModalBackdrop.addEventListener("click", e => {
-    if (e.target === transportModalBackdrop) closeTransportModal();
-  });
-
-  transportModalSave.addEventListener("click", () => {
-    if (!currentTransportContext) return;
-    const tonnage = parseFloat(document.getElementById("fTransportTonnage").value || "0");
-    const receiver = document.getElementById("fTransportReceiver").value || "";
-    const role = document.getElementById("fTransportRole").value || "";
-    const signature = document.getElementById("fTransportSignature").value || "";
-
-    const order = demoOrders.find(o => o.id === currentTransportContext.orderId);
-    if (!order) return;
-
-    if (order.transportsDone < order.transportsEstimated) {
-      order.transportsDone += 1;
-    }
-    if (order.transportsDone >= order.transportsEstimated) {
-      order.statut = "termine";
-    }
-
-    const payload = {
-      orderId: order.id,
-      index: currentTransportContext.index,
-      tonnage,
-      receiver,
-      role,
-      signature
-    };
-    sendToMake("driver_transport_done", payload);
-    syncWithGoogleSheets("transports", payload);
-
-    renderDashboard();
-    renderOrdersTables();
-    if (currentDriver) {
-      initDriverView(currentDriver);
-    }
-    closeTransportModal();
-    alert("Transport validé (données de démo).");
-  });
-
-  // Fiche fin de journée
-  formDriverEndOfDay.addEventListener("submit", e => {
-    e.preventDefault();
-    if (!currentDriver) return;
-
-    const km = parseInt(document.getElementById("driverKm").value || "0", 10);
-    const fuelQty = parseFloat(document.getElementById("driverFuelQty").value || "0");
-    const fuelAmount = parseFloat(document.getElementById("driverFuelAmount").value || "0");
-
-    const payload = {
-      driverId: currentDriver.id,
-      date: new Date().toISOString().slice(0, 10),
-      km,
-      fuelQty,
-      fuelAmount
-    };
-
-    sendToMake("driver_end_of_day", payload);
-    syncWithGoogleSheets("driver_end_of_day", payload);
-
-    formDriverEndOfDay.reset();
-    alert("Fiche de fin de journée envoyée (démo).");
-  });
-
-  // -----------------------
-  // Intégration Google Sheets / Make (hooks simulés)
-  // -----------------------
-
-  function sendToMake(eventType, payload) {
-    // Ici vous pouvez remplacer par un appel fetch() vers votre webhook Make :
-    // fetch('https://hook.make.com/xxx', { method: 'POST', body: JSON.stringify({ eventType, payload }) })
-    console.log("sendToMake", eventType, payload);
-  }
-
-  function syncWithGoogleSheets(resource, payload) {
-    // Ici vous pouvez soit appeler directement l'API Google Sheets côté front,
-    // soit déléguer à Make.com via un webhook.
-    console.log("syncWithGoogleSheets", resource, payload);
-  }
-
-  // -----------------------
-  // Modal d'intégration Make / Sheets
-  // -----------------------
-
-  const integrationModalBackdrop = document.getElementById("integrationModalBackdrop");
-  const integrationModalCloseBtn = document.getElementById("integrationModalCloseBtn");
-  const integrationModalOk = document.getElementById("integrationModalOk");
-  const btnOpenIntegration = document.getElementById("btnOpenIntegration");
-
-  btnOpenIntegration.addEventListener("click", () => {
-    integrationModalBackdrop.style.display = "flex";
-  });
-
-  function closeIntegrationModal() {
-    integrationModalBackdrop.style.display = "none";
-  }
-
-  integrationModalCloseBtn.addEventListener("click", closeIntegrationModal);
-  integrationModalOk.addEventListener("click", closeIntegrationModal);
-  integrationModalBackdrop.addEventListener("click", e => {
-    if (e.target === integrationModalBackdrop) closeIntegrationModal();
-  });
-
-  // -----------------------
-  // Initialisation
-  // -----------------------
-  window.addEventListener("load", () => {
-    pinInputs[0].focus();
-  });
-</script>
-</body>
+    <!-- ===================== PLACEHOLDER SCRIPTS ===================== -->
+    <!-- Emplacement pour votre logique JavaScript (PIN, rôles, Make, Sheets) -->
+    <script src="app.js"></script>
+  </body>
 </html>
