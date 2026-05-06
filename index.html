@@ -3,399 +3,699 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
-  <title>SOTRANSNORD — Démo flotte camions</title>
+  <title>SOTRANSNORD</title>
   <style>
     :root{
-      --bg:#f4f7fb;
+      --bg:#f3f7fc;
       --panel:#ffffff;
-      --text:#182230;
-      --muted:#6b7788;
-      --line:#e6ebf2;
+      --panel2:#f8fbff;
+      --text:#132033;
+      --muted:#66758a;
+      --line:#e5ebf3;
       --primary:#2563eb;
       --primary2:#1d4ed8;
       --success:#16a34a;
       --warning:#f59e0b;
       --danger:#ef4444;
-      --shadow:0 10px 30px rgba(15,23,42,.08);
-      --shadow2:0 8px 18px rgba(15,23,42,.06);
-      --radius:18px;
-      --radius2:12px;
+      --shadow:0 12px 30px rgba(15,23,42,.08);
+      --shadow2:0 6px 18px rgba(15,23,42,.06);
+      --r16:16px;
+      --r20:20px;
+      --r24:24px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background:linear-gradient(180deg,#f8fbff 0%, #eef3f9 100%);
       color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.08), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(22,163,74,.06), transparent 28%),
+        linear-gradient(180deg,#f8fbff 0%, #eef3f9 100%);
     }
     button,input,select,textarea{font:inherit}
-    .app{min-height:100vh; display:flex; flex-direction:column}
     .hidden{display:none !important}
+    .app{min-height:100vh}
+
+    /* ===== Connexion ===== */
     .auth{
-      min-height:100vh; display:grid; place-items:center; padding:20px;
-      background:
-        radial-gradient(circle at top left, rgba(37,99,235,.10), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(22,163,74,.08), transparent 28%),
-        linear-gradient(180deg,#f8fbff,#eef3f9);
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:20px;
     }
     .auth-card{
-      width:min(980px,100%);
-      background:rgba(255,255,255,.88);
-      backdrop-filter: blur(10px);
+      width:min(1040px,100%);
+      background:rgba(255,255,255,.9);
+      backdrop-filter: blur(12px);
       border:1px solid rgba(255,255,255,.8);
       border-radius:28px;
-      box-shadow:var(--shadow);
       overflow:hidden;
+      box-shadow:var(--shadow);
       display:grid;
-      grid-template-columns:1.1fr .9fr;
+      grid-template-columns:1.05fr .95fr;
     }
     .auth-left{
-      padding:34px;
-      background:linear-gradient(135deg, #1d4ed8, #2563eb 55%, #1e40af);
+      background:linear-gradient(135deg,#1d4ed8,#2563eb 48%,#1e40af);
       color:#fff;
-      position:relative;
-      min-height:420px;
+      padding:34px;
+      min-height:440px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
     }
-    .auth-left h1{margin:0 0 12px; font-size:clamp(30px,4vw,48px); line-height:1.05}
-    .auth-left p{margin:0; max-width:520px; opacity:.92; line-height:1.6}
-    .pill-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:24px}
-    .pill{padding:10px 14px; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.2); border-radius:999px; font-size:13px}
+    .auth-left h1{
+      margin:0 0 12px;
+      font-size:clamp(32px,4vw,52px);
+      line-height:1.05;
+    }
+    .auth-left p{
+      margin:0;
+      line-height:1.65;
+      max-width:560px;
+      opacity:.94;
+    }
+    .pill-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:24px}
+    .pill{
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.18);
+      font-size:13px;
+      font-weight:700;
+    }
     .auth-right{padding:30px; background:#fff}
-    .brand{display:flex; align-items:center; gap:12px; margin-bottom:22px}
+    .brand{display:flex; align-items:center; gap:12px; margin-bottom:18px}
     .logo{
-      width:48px; height:48px; border-radius:14px; display:grid; place-items:center;
-      background:linear-gradient(135deg,var(--primary),#7c3aed); color:#fff; font-weight:800;
-      box-shadow:0 12px 20px rgba(37,99,235,.2);
+      width:48px; height:48px; border-radius:14px;
+      display:grid; place-items:center;
+      background:linear-gradient(135deg,var(--primary),#7c3aed);
+      color:#fff; font-weight:900;
+      box-shadow:0 12px 24px rgba(37,99,235,.22);
     }
     .brand h2{margin:0; font-size:22px}
-    .sub{margin:4px 0 0; color:var(--muted); font-size:14px}
-    .toggle{
-      display:flex; gap:10px; background:#eef3fb; padding:6px; border-radius:14px; margin:18px 0;
+    .sub{margin-top:4px; color:var(--muted); font-size:14px}
+    .switch{
+      display:flex;
+      background:#eef3fb;
+      padding:6px;
+      border-radius:16px;
+      gap:6px;
+      margin:18px 0 16px;
     }
-    .toggle button{
-      flex:1; border:0; border-radius:10px; padding:12px 14px; background:transparent; color:var(--muted); cursor:pointer; font-weight:700
+    .switch button{
+      flex:1;
+      border:0;
+      padding:12px 14px;
+      border-radius:12px;
+      background:transparent;
+      cursor:pointer;
+      font-weight:800;
+      color:var(--muted);
     }
-    .toggle button.active{background:#fff; color:var(--primary); box-shadow:var(--shadow2)}
-    .pin-wrap{margin-top:16px}
+    .switch button.active{
+      background:#fff;
+      color:var(--primary);
+      box-shadow:var(--shadow2);
+    }
     .pin-display{
-      height:62px; border:1px solid var(--line); border-radius:16px; background:#fbfcfe;
-      display:grid; place-items:center; font-size:28px; letter-spacing:10px; font-weight:700;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+      height:66px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fbfcfe;
+      display:grid;
+      place-items:center;
+      font-size:28px;
+      letter-spacing:10px;
+      font-weight:800;
       margin-bottom:14px;
     }
-    .keypad{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
-    .keypad button,.action-btn,.nav-item,.chip,.tab-btn,.ghost-btn,.primary-btn,.danger-btn,.small-btn{
-      border:0; cursor:pointer;
+    .keypad{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+    .keypad button,.btn,.nav-item,.tab-btn{
+      border:0;
+      cursor:pointer;
+      border-radius:14px;
     }
     .keypad button{
-      height:58px; border-radius:14px; background:#f3f6fb; font-size:18px; font-weight:700; color:var(--text)
+      height:58px;
+      background:#f3f6fb;
+      font-weight:800;
+      font-size:18px;
+      color:var(--text);
     }
-    .keypad button:hover{background:#eaf0f9}
+    .keypad button:hover{background:#e9eff8}
     .login-actions{display:flex; gap:10px; margin-top:12px}
-    .action-btn,.primary-btn,.ghost-btn,.danger-btn,.small-btn,.tab-btn{
-      border-radius:12px; padding:12px 14px; font-weight:700
+    .btn{
+      padding:12px 14px;
+      font-weight:800;
     }
-    .primary-btn{background:var(--primary); color:#fff}
-    .primary-btn:hover{background:var(--primary2)}
-    .ghost-btn{background:#eef3fb; color:var(--text)}
-    .danger-btn{background:#fee2e2; color:#991b1b}
-    .small-btn{padding:9px 12px; font-size:13px}
-    .login-hint{
-      margin-top:14px; padding:12px 14px; border-radius:14px; background:#f8fafc; color:var(--muted); font-size:13px; line-height:1.5
+    .btn.primary{background:var(--primary); color:#fff}
+    .btn.primary:hover{background:var(--primary2)}
+    .btn.ghost{background:#eef3fb; color:var(--text)}
+    .btn.danger{background:#fee2e2; color:#991b1b}
+    .hint{
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:14px;
+      background:#f8fafc;
+      color:var(--muted);
+      line-height:1.5;
+      font-size:13px;
     }
-    .shell{display:flex; min-height:100vh; background:var(--bg)}
+
+    /* ===== Application ===== */
+    .shell{min-height:100vh; display:flex}
     .sidebar{
-      width:280px; background:linear-gradient(180deg,#0f172a,#172554);
-      color:#fff; padding:18px; position:sticky; top:0; height:100vh; overflow:auto
+      width:286px;
+      background:linear-gradient(180deg,#0f172a,#172554);
+      color:#fff;
+      padding:18px;
+      position:sticky;
+      top:0;
+      height:100vh;
+      overflow:auto;
     }
-    .sidebar .brand{margin-bottom:16px}
-    .sidebar .sub,.sidebar .muted{color:rgba(255,255,255,.7)}
+    .sidebar .sub{color:rgba(255,255,255,.72)}
     .nav{display:flex; flex-direction:column; gap:8px; margin-top:16px}
     .nav-item{
-      width:100%; text-align:left; padding:13px 14px; border-radius:14px; background:transparent; color:#e5eefc; display:flex; justify-content:space-between; align-items:center
+      width:100%;
+      text-align:left;
+      padding:13px 14px;
+      background:transparent;
+      color:#e8effc;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-weight:800;
     }
-    .nav-item.active,.nav-item:hover{background:rgba(255,255,255,.12)}
+    .nav-item:hover,.nav-item.active{background:rgba(255,255,255,.12)}
     .content{flex:1; padding:18px; min-width:0}
     .topbar{
-      background:rgba(255,255,255,.72); backdrop-filter: blur(10px); border:1px solid rgba(255,255,255,.75);
-      border-radius:24px; padding:16px 18px; box-shadow:var(--shadow2); display:flex; gap:14px; align-items:center; justify-content:space-between; flex-wrap:wrap
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ratent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra;
     }
     .topbar h3{margin:0; font-size:20px}
-    .topbar .meta{color:var(--muted); font-size:13px}
+    .meta{color:var(--muted); font-size:13px}
+    .actions{display:flex; gap:10px; flex-wrap:wrap}
+
+    .section{display:none}
+    .section.active{display:block}
     .grid-4{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:16px}
     .card{
-      background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:16px; box-shadow:var(--shadow2)
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:16px;
+      box-shadow:var(--shadow2);
     }
-    .stat{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
-    .stat .label{color:var(--muted); font-size:13px}
-    .stat .value{font-size:28px; font-weight:800; margin-top:8px}
-    .badge{padding:7px 10px; border-radius:999px; font-size:12px; font-weight:700}
+    .stat{display:flex; justify-content:space-between; gap:10px; align-items:flex-start}
+    .label{color:var(--muted); font-size:13px}
+    .value{font-size:28px; font-weight:900; margin-top:8px}
+    .badge{padding:7px 10px; border-radius:999px; font-size:12px; font-weight:800}
     .b-blue{background:#dbeafe; color:#1d4ed8}
     .b-green{background:#dcfce7; color:#166534}
     .b-amber{background:#fef3c7; color:#92400e}
     .b-red{background:#fee2e2; color:#991b1b}
     .main-grid{display:grid; grid-template-columns:1.25fr .75fr; gap:14px; margin-top:14px}
-    .section-head{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px}
+    .two-col{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px}
+    .section-head{display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:12px}
     .section-head h4{margin:0; font-size:17px}
-    .section-head .muted{color:var(--muted); font-size:13px}
-    .table-wrap{overflow:auto; border-radius:16px; border:1px solid var(--line)}
-    table{width:100%; border-collapse:collapse; min-width:760px; background:#fff}
-    th,td{padding:12px 12px; border-bottom:1px solid #edf1f7; text-align:left; font-size:14px; white-space:nowrap}
-    th{background:#f8fbff; color:#526173; font-size:12px; letter-spacing:.03em; text-transform:uppercase}
+    .section-head .muted{ctent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra
+      border:1px solid rgba(255,255,255,.75);
+      border-raing:12px;
+      border-bottom:1px solid #edf1f7;
+      text-align:left;
+      white-space:nowrap;
+      font-size:14px;
+    }
+    th{
+      background:#f8fbff;
+      color:#526173;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.03em;
+    }
     tr:hover td{background:#fbfdff}
-    .actions{display:flex; gap:8px; flex-wrap:wrap}
-    .mini{padding:7px 10px; border-radius:10px; font-size:12px}
-    .status{padding:7px 10px; border-radius:999px; font-size:12px; font-weight:800; display:inline-flex}
-    .s-open{background:#e0f2fe; color:#0369a1}
-    .s-done{background:#dcfce7; color:#166534}
+    .status{
+      padtent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rad:#dcfce7; color:#166534}
     .s-bill{background:#ede9fe; color:#6d28d9}
     .list{display:flex; flex-direction:column; gap:10px}
     .list-item{
-      background:#fff; border:1px solid var(--line); border-radius:16px; padding:12px; display:flex; justify-content:space-between; gap:10px; align-items:center
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
     }
-    .list-item .title{font-weight:700}
-    .list-item .subt{font-size:13px; color:var(--muted); margin-top:4px}
-    .two-col{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px}
-    .section{display:none}
-    .section.active{display:block}
+    .title{font-weight:800}
+    .subt{font-size:13px; color:var(--muted); margin-top:4px}
     .form-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px}
     .field{display:flex; flex-direction:column; gap:6px}
-    .field label{font-size:13px; color:#465366; font-weight:700}
+    .field label{font-size:13px; font-weight:800; color:#455468}
     .field input,.field select,.field textarea{
-      width:100%; border:1px solid #dbe3ef; background:#fff; border-radius:12px; padding:12px 12px; outline:none
+      width:100%;
+      border:1px solid #d9e1ec;
+      border-ratent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raarea:focus{
+      border-color:#93c5fd;
+      box-shadow:0 0 0 3px rgba(59,130,246,.12);
     }
-    .field textarea{min-height:94px; resize:vertical}
-    .field input:focus,.field select:focus,.field textarea:focus{border-color:#93c5fd; box-shadow:0 0 0 3px rgba(59,130,246,.12)}
-    .form-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
-    .month-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
-    .month{padding:14px; border-radius:16px; border:1px solid var(--line); background:#fff}
-    .month.current{outline:3px solid rgba(37,99,235,.18); background:#f8fbff}
-    .month .m{font-weight:800}
-    .month .k{margin-top:10px; font-size:26px; font-weight:800}
+    .form-acttent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra.month{
+      padding:14px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:#fff;
+    }
+    .month.currtent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raow{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+    .kpi{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+    }
+    .kpi .n{font-size:24px; font-weight:900; margin-top:8px}
+
+    /* ===== Vue chauffeur (sans menu) ===== */
+    .driver-screen{
+      min-height:100vh;
+      padding:18px;
+      display:none;
+    }
+    .driver-top{
+     tent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra.card{flex:1; min-width:260px}
+    .driver-grid{
+      max-width:1100px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
     .mobile-bar{
-      display:none; position:fixed; bottom:14px; left:14px; right:14px; z-index:20; background:rgba(15,23,42,.94); color:#fff;
-      border-radius:18px; padding:10px; box-shadow:var(--shadow)
+      display:none;
+      position:fixed;
+      bottom:14px;
+      left:14px;
+      right:14px;
+      z-index:20;
+      background:rgba(15,23,42,.96);
+      border-radius:18px;
+      padding:10px;
+      box-shadow:var(--shadow);
     }
-    .mobile-bar .nav{flex-direction:row; margin:0; overflow:auto}
-    .mobile-bar .nav-item{min-width:max-content; color:#fff}
-    .modal-backdrop{
-      position:fixed; inset:0; background:rgba(15,23,42,.5); display:none; align-items:center; justify-content:center; z-index:50; padding:16px
-    }
-    .modal-backdrop.open{display:flex}
+
+    /* ===== Modal signature ===== */
+    .backdrop{
+      positent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra.backdrop.open{display:flex}
     .modal{
-      width:min(720px,100%); background:#fff; border-radius:22px; padding:18px; box-shadow:var(--shadow); max-height:90vh; overflow:auto
+      width:min(760px,100%);
+      max-height:90vh;
+      overflow:auto;
+      background:#fff;
+      border-radius:22px;
+      box-shadow:var(--shadow);
+      padding:18px;
     }
-    .modal h3{margin:0 0 10px}
-    .signature{
-      border:2px dashed #cbd5e1; border-radius:16px; height:180px; display:grid; place-items:center; color:var(--muted); background:#fbfdff
+    .canvas-wrap{
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+      background:#fbfdff;
     }
-    .canvas-wrap{border:1px solid var(--line); border-radius:16px; overflow:hidden; background:#fff}
-    canvas{display:block; width:100%; height:180px; touch-action:none}
+    canvas{
+      display:block;
+      width:100%;
+      height:190px;
+      touch-action:none;
+      cursor:crosshair;
+    }
+
     .toast{
-      position:fixed; right:16px; bottom:16px; background:#111827; color:#fff; padding:12px 14px; border-radius:14px; box-shadow:var(--shadow); opacity:0; transform:translateY(10px); transition:.25s; z-index:60
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      background:#111827;
+      color:#fff;
+      padding:12px 14px;
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      opacity:0;
+      transform:translateY(10px);
+      transition:.22s;
+      z-index:60;
+      pointer-events:none;
     }
     .toast.show{opacity:1; transform:translateY(0)}
-    .kpi-row{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
-    .kpi{background:#fff; border:1px solid var(--line); border-radius:18px; padding:14px}
-    .kpi .n{font-size:24px; font-weight:800; margin-top:8px}
-    @media (max-width: 1100px){
-      .auth-card,.main-grid,.two-col{grid-template-columns:1fr}
-      .grid-4,.month-grid{grid-template-columns:repeat(2,1fr)}
-      .sidebar{width:240px}
-    }
-    @media (max-width: 800px){
-      .sidebar{display:none}
-      .mobile-bar{display:block}
+
+    @media (max-wtent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ragba(255,255,255,.75);
+      border-rasidebar{display:none}
       .content{padding-bottom:94px}
-      .grid-4,.form-grid,.kpi-row{grid-template-columns:1fr}
+      .mobile-bar{display:block}
+      .grid-4,.form-grid,.kpi-row,.month-grid,.driver-grid{grid-template-columns:1fr}
       .auth-left{min-height:auto}
-      .auth-card{border-radius:22px}
+      .auth-card{grid-template-columns:1fr}
       .auth-right,.auth-left{padding:22px}
     }
   </style>
 </head>
 <body>
 <div class="app">
-  <section id="authScreen" class="auth">
-    <div class="auth-card">
-      <div class="auth-left">
-        <h1>SOTRANSNORD</h1>
-        <p>Base de démonstration pour la gestion d’une flotte de camions de Gabriel OZIER, avec accès gérant/chauffeur, commandes, dépenses, rapports et liaison prévue avec Google Sheets + Make.com.</p>
-        <div class="pill-row">
-          <div class="pill">Login PIN</div>
-          <div class="pill">Dashboard SaaS</div>
-          <div class="pill">CRUD complet</div>
-          <div class="pill">Mobile first</div>
-        </div>
-      </div>
-      <div class="auth-right">
-        <div class="brand">
-          <div class="logo">SN</div>
-          <div>
-            <h2>Connexion</h2>
-            <div class="sub">Démo front uniquement</div>
-          </div>
-        </div>
-        <div class="toggle">
-          <button id="modeManager" class="active" type="button">Connexion gérant</button>
-          <button id="modeDriver" type="button">Connexion chauffeur</button>
-        </div>
-        <div class="pin-wrap">
-          <div id="pinDisplay" class="pin-display">••••••</div>
-          <div class="keypad">
-            <button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button>
-            <button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button>
-            <button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button>
-            <button data-key="clear" class="ghost-btn" style="grid-column:span 1">Effacer</button>
-            <button data-key="0">0</button>
-            <button data-key="enter" class="primary-btn" style="grid-column:span 1">Entrer</button>
-          </div>
-          <div class="login-actions">
-            <button id="loginEnter" class="primary-btn" type="button" style="flex:1">Entrer</button>
-            <button id="loginClear" class="ghost-btn" type="button" style="flex:1">Effacer</button>
-          </div>
-          <div class="login-hint">
-            PIN gérant : <strong>123456</strong>. PIN chauffeur de démonstration : <strong>654321</strong> ou <strong>111111</strong>. Les données sont simulées côté front, prêtes à être synchronisées plus tard via Make.com vers Google Sheets.
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <section id="dashScreen" class="shell hidden">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="logo">SN</div>
-        <div>
-          <h2 style="margin:0">SOTRANSNORD</h2>
-          <div class="sub">Gabriel OZIER</div>
-        </div>
-      </div>
-      <div class="muted" style="font-size:13px">Espace gérant / démo front</div>
-      <div class="nav" id="sideNav">
-        <button class="nav-item active" data-view="dashboard">Dashboard <span>›</span></button>
-        <button class="nav-item" data-view="commandes">Commandes <span>›</span></button>
-        <button class="nav-item" data-view="parametres">Paramétrages <span>›</span></button>
-        <button class="nav-item" data-view="rapports">Rapports <span>›</span></button>
-        <button class="nav-item" data-view="marge">Marge <span>›</span></button>
-        <button class="nav-item" data-view="chauffeur">Vue chauffeur <span>›</span></button>
-      </div>
-      <div style="margin-top:18px; padding:14px; border:1px solid rgba(255,255,255,.12); border-radius:16px; background:rgba(255,255,255,.06)">
-        <div class="muted" style="font-size:12px">Connexion active</div>
-        <div style="margin-top:6px; font-weight:800" id="currentRole">Gérant</div>
+  <!-- ===== Écran de connexion ===== -->
+  <section id="authSctent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rael OZIER, avec accès séparé gérant / chauffeur, commandes, dépetent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra   backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rablur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rablur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rarop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-radrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra2);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rabackdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra   backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raackdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rater:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra55,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra;
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rastrong>.
+          Le chauffeur n’aura jamais le menu.tent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ralur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rap-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rar(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rarop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra5,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rabackdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra    backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rackdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra5,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rarop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raize:12px">Statut</div>
+        <div style="font-weight:900; margin-top:6px" id="roleLabel">Gérant</div>
       </div>
     </aside>
 
     <main class="content">
-      <div class="topbar">
-        <div>
-          <h3 id="pageTitle">Dashboard</h3>
-          <div class="meta">Tableaux de bord, commandes, dépenses et synchronisation Google Sheets / Make.com</div>
-        </div>
-        <div class="actions">
-          <button class="ghost-btn small-btn" id="syncBtn">Simuler sync Sheets</button>
-          <button class="danger-btn small-btn" id="logoutBtn">Déconnexion</button>
-        </div>
-      </div>
+      tent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra     backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rap-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra
+      border:1px solid rgba(255,255,255,.75);
+      border-ra   backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra(255,255,255,.75);
+      border-ra);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra  backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rabackdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rackdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra   backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-radrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rackdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra"muted">Statut automatique selon transports réalisés</tent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rargba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-radrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rar(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-railter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rapadding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raackdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rachantent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rah:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra"></select></div>
+              <div class="field"><label>Chauffeur</label><select id="orderDriver"></selectent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra;
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raclass="form-actiotent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-radrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raadding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ralex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra   backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra                <thead>
+                  <tr><th>Commande</th><th>Réalisés / Estimés</th><th>Statut</th><th>Facture</th><tent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rargba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raages CRUD</h4>
+            <div class="muted">Ajout, modification, supprestent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ratton>
+            <button ctent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raing:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra data-tab="expenses" type="button">Frais véhicules</button>
+          </div>
 
-      <div id="view-dashboard" class="section active">
-        <div class="grid-4">
-          <div class="card stat"><div><div class="label">Commandes actives</div><div class="value" id="statOrders">0</div></div><span class="badge b-blue">Aujourd’hui</span></div>
-          <div class="card stat"><div><div class="label">Transports réalisés</div><div class="value" id="statTrips">0</div></div><span class="badge b-green">Suivi</span></div>
-          <div class="card stat"><div class="label">Dépenses mois</div><div class="value" id="statExpenses">0 €</div></div><span class="badge b-amber">Véhicules</span></div>
-          <div class="card stat"><div><div class="label">Marge brute</div><div class="value" id="statMargin">0 €</div></div><span class="badge b-blue">Mensuel</span></div>
-        </div>
-
-        <div class="main-grid">
-          <div class="card">
-            <div class="section-head"><h4>Commandes en cours</h4><div class="muted">Lien direct avec les actions chauffeur</div></div>
-            <div class="table-wrap">
-              <table>
-                <thead><tr><th>Client</th><th>Adresse</th><th>Type</th><th>Camion</th><th>Chauffeur</th><th>Transports</th><th>Statut</th><th>Action</th></tr></thead>
-                <tbody id="ordersTbody"></tbody>
-              </table>
-            </div>
-          </div>
-          <div class="card">
-            <div class="section-head"><h4>Activité récente</h4><div class="muted">Démo des flux</div></div>
-            <div id="activityList" class="list"></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="view-commandes" class="section">
-        <div class="two-col">
-          <div class="card">
-            <div class="section-head"><h4>Créer une commande</h4><div class="muted">Génère des lignes chauffeur</div></div>
-            <div class="form-grid">
-              <div class="field"><label>Client</label><select id="orderClient"></select></div>
-              <div class="field"><label>Adresse de livraison</label><input id="orderAddress" placeholder="Route du chantier, commune..." /></div>
-              <div class="field"><label>Nombre de transports estimés</label><input id="orderTrips" type="number" min="1" value="3" /></div>
-              <div class="field"><label>Date du chantier</label><input id="orderDate" type="date" /></div>
-              <div class="field"><label>Camion</label><select id="orderTruck"></select></div>
-              <div class="field"><label>Chauffeur</label><select id="orderDriver"></select></div>
-              <div class="field"><label>Type</label><select id="orderType"><option>Matériaux</option><option>Journée</option></select></div>
-              <div class="field"><label>Matériau</label><select id="orderMaterial"></select></div>
-            </div>
-            <div class="form-actions">
-              <button class="primary-btn" id="addOrderBtn">Créer la commande</button>
-              <button class="ghost-btn" id="resetOrderBtn">Réinitialiser</button>
-            </div>
-          </div>
-          <div class="card">
-            <div class="section-head"><h4>Suivi et facturation</h4><div class="muted">Statut auto</div></div>
-            <div class="kpi-row">
-              <div class="kpi"><div class="label">En cours</div><div class="n" id="kpiOpen">0</div></div>
-              <div class="kpi"><div class="label">Terminées</div><div class="n" id="kpiDone">0</div></div>
-              <div class="kpi"><div class="label">À facturer</div><div class="n" id="kpiBill">0</div></div>
-            </div>
-            <div style="margin-top:14px" class="table-wrap">
-              <table>
-                <thead><tr><th>Commande</th><th>Réalisés / Estimés</th><th>Statut</th><th>Facture</th></tr></thead>
-                <tbody id="trackingTbody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="view-parametres" class="section">
-        <div class="card">
-          <div class="section-head"><h4>Paramétrages CRUD</h4><div class="muted">Ajout, édition, suppression</div></div>
-          <div class="toggle" style="max-width:760px">
-            <button class="tab-btn active" data-tab="drivers">Chauffeurs</button>
-            <button class="tab-btn" data-tab="trucks">Camions</button>
-            <button class="tab-btn" data-tab="clients">Clients</button>
-            <button class="tab-btn" data-tab="materials">Matériaux</button>
-            <button class="tab-btn" data-tab="tarifs">Tarifs</button>
-            <button class="tab-btn" data-tab="expenses">Frais véhicules</button>
-          </div>
           <div id="paramTab"></div>
         </div>
       </div>
 
-      <div id="view-rapports" class="section">
-        <div class="grid-4">
-          <div class="card"><div class="label">Conso moyenne camion 1</div><div class="value" style="font-size:24px">28,4 L/100</div></div>
+      <div id="tent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra</div></div>
           <div class="card"><div class="label">Conso moyenne camion 2</div><div class="value" style="font-size:24px">31,1 L/100</div></div>
           <div class="card"><div class="label">Coût moyen km</div><div class="value" style="font-size:24px">2,85 €</div></div>
-          <div class="card"><div class="label">Frais moyens/mois</div><div class="value" style="font-size:24px">4 120 €</div></div>
-        </div>
-        <div class="two-col">
-          <div class="card">
-            <div class="section-head"><h4>Dépenses par camion</h4><div class="muted">Mensuel</div></div>
+          <div class="card"><div class="label">Frais moyens/mois</div><div class="value" stent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raamion</h4>
+              <div class="muted">Mensuel</div>
+            </div>
             <div class="table-wrap">
-              <table><thead><tr><th>Camion</th><th>Carburant</th><th>Vidange</th><th>Réparations</th><th>Assurance</th><th>Pneus</th></tr></thead>
-              <tbody id="truckExpenseTbody"></tbody></table>
+              <table>
+                <thead><tr><th>Camion</th><th>Carburant</th><th>Vidange</th><th>Réparations</th><th>Assurance</th><th>Pneus</th></tr></thead>
+                <tbody id="truckExpenseTbody"></tbody>
+              </table>
             </div>
           </div>
           <div class="card">
-            <div class="section-head"><h4>Notifications Make.com</h4><div class="muted">Flux prévu</div></div>
-            <div class="list">
-              <div class="list-item"><div><div class="title">Nouvelle commande</div><div class="subt">Envoi vers Google Sheets + email aux intervenants</div></div><span class="badge b-blue">Webhook</span></div>
-              <div class="list-item"><div><div class="title">Action chauffeur</div><div class="subt">Mise à jour transports réalisés et signature</div></div><span class="badge b-green">Update</span></div>
-              <div class="list-item"><div><div class="title">Fiche fin journée</div><div class="subt">Kilométrage et carburant transmis automatiquement</div></div><span class="badge b-amber">Mail</span></div>
+            <div clatent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-radiv class="list-item"><div><div class="title">Nouvelle commande</div><div class="subt">Webhook vers Google Sheets + emails</div></div><span class="badge b-blue">Webhook</span></div>
+              <div class="list-item"><div><div class="title">Action chauftent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raournée</div><div class="subt">Kilométrage et carburant envoyés</div></div><span class="badge b-amber">Mail</span></div>
             </div>
           </div>
         </div>
@@ -403,7 +703,10 @@
 
       <div id="view-marge" class="section">
         <div class="card">
-          <div class="section-head"><h4>Calcul de la marge mensuelle</h4><div class="muted">12 mois, mois courant mis en évidence</div></div>
+          <div class="section-head">
+            <h4>Calcul de marge mensuelle</h4>
+            <div class="muted">Mois en cours mis en évidence</div>
+          </div>
           <div class="month-grid" id="monthGrid"></div>
         </div>
       </div>
@@ -411,62 +714,133 @@
       <div id="view-chauffeur" class="section">
         <div class="two-col">
           <div class="card">
-            <div class="section-head"><h4>Transports du jour</h4><div class="muted">Cliquez pour saisir le bon de livraison</div></div>
+            <div class="section-head">
+              <h4>Transports du jour</h4>
+              <div class="muted">Popup avec signature</div>
+            </div>
             <div id="driverTrips" class="list"></div>
           </div>
           <div class="card">
-            <div class="section-head"><h4>Fiche de fin de journée</h4><div class="muted">Envoi vers le gérant</div></div>
+            <div class="section-head">
+              <h4>Fiche de fin de journée</h4>
+              <div class="muted">Envoi gérant / Sheets</div>
+            </div>
             <div class="form-grid">
               <div class="field"><label>Kilométrage</label><input id="dayKm" type="number" value="2640" /></div>
               <div class="field"><label>Carburant quantité (L)</label><input id="dayFuelQty" type="number" value="54" /></div>
               <div class="field"><label>Carburant prix (€)</label><input id="dayFuelPrice" type="number" value="112" /></div>
             </div>
-            <div class="form-actions"><button class="primary-btn" id="sendSheetBtn">Envoyer ma fiche</button></div>
-            <div class="login-hint">Cette fiche simule l’update côté gérant et la transmission aux Google Sheets via Make.com.</div>
+            <div clatent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raérant et la transmission aux Google Sheets via Make.com.</div>
           </div>
         </div>
       </div>
     </main>
   </section>
-</div>
 
-<div id="tripModalBackdrop" class="modal-backdrop">
-  <div class="modal">
-    <h3>Transport — réception et signature</h3>
-    <div class="form-grid">
-      <div class="field"><label>Tonnage réceptionné</label><input id="mTonnage" type="number" step="0.1" /></div>
-      <div class="field"><label>Nom du réceptionnaire</label><input id="mReceiver" /></div>
-      <div class="field"><label>Fonction</label><input id="mFunction" placeholder="Chef de chantier" /></div>
+  <!-- ===== Vue chauffeur seule ===== -->
+  <section id="driverScreen" class="driver-screen">
+    <div class="driver-top">
+      <div class="card">
+        <div class="brand" style="margin:0">
+          <div class="logo">SN</div>
+          <div>
+            <h2 style="margin:0">SOTRANSNORD</h2>
+            <div class="sub">Interface chauffeur</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="label">Chauffeur connecté</div>
+        <div class="value" id="driverName">Chauffeur</div>
+      </div>
     </div>
-    <div style="margin-top:12px" class="canvas-wrap"><canvas id="signCanvas" width="900" height="180"></canvas></div>
-    <div class="actions" style="margin-top:10px">
-      <button class="ghost-btn small-btn" id="clearSignBtn">Effacer signature</button>
-      <button class="primary-btn small-btn" id="saveTripBtn">Valider transport</button>
-      <button class="danger-btn small-btn" id="closeTripBtn">Fermer</button>
+
+    <div class="driver-grid">
+      <div class="card">
+        <div class="section-head">
+          <h4>Transports du jour</h4>
+          <div class="muted">Cliquer pour saisir le bon de livraison</div>
+        </div>
+        <div id="driverTripsOnly" class="list"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <h4>Fiche de fin de journée</h4>
+          <div class="muted">Envoi direct au gérant</div>
+        </div>
+        <div class="form-gridtent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raid="driverFuelQty" type="number" value="54" /></div>
+          <div class="field"><label>Carburant prix (€)</label><input id="driverFuelPrice" type="number" value="112" /></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn primary" id="driverSendBtn">Envoyer ma fiche</button>
+          <button class="btn ghost" id="driverLogoutBtn">Déconnexion</button>
+        </tent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rau gérant ===== -->
+  <div class="mobile-bar" id="mobileBar">
+    <div class="nav" id="mobileNav" style="flex-direction:row; margin:0; overflow:auto">
+      <button class="nav-item active" data-view="dashboard" type="button">Dashboard</button>
+      <button class="nav-item" data-view="commandes" type="button">Commandes</button>
+      <button class="nav-item" data-view="parametres" type="button">Paramétrages</button>
+      <button class="nav-item" data-view="rapports" type="button">Rapports</button>
+      <button class="nav-item" data-view="marge" type="button">Marge</button>
+      <button class="nav-item" data-view="chauffeur" type="button">Chauffeur</button>
     </div>
   </div>
-</div>
 
-<div class="mobile-bar">
-  <div class="nav" id="mobileNav">
-    <button class="nav-item active" data-view="dashboard">Dashboard</button>
-    <button class="nav-item" data-view="commandes">Commandes</button>
-    <button class="nav-item" data-view="parametres">Paramétrages</button>
-    <button class="nav-item" data-view="rapports">Rapports</button>
-    <button class="nav-item" data-view="marge">Marge</button>
-    <button class="nav-item" data-view="chauffeur">Chauffeur</button>
+  <!-- ===== Modal signature ===== -->
+  <div id="tripModal" class="backdrop">
+    <div class="modal">
+      <h3 style="margin:0 0 10px">Transport — réception et signature</h3>
+      <div class="form-grid">
+        <div clatent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra/div>
+        <div class="field"><label>Fonction</label><input id="mFunction" placeholder="Chef de chantier" /></div>
+      </div>
+
+      <div style="margin-top:12px" class="canvas-wrap">
+        <canvas id="signCanvas"></canvas>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn ghost small" id="clearSignBtn" type="button">Effacer signature</button>
+        <button class="btn primary small" id="saveTripBtn" type="button">Valider transport</button>
+        <button class="btn danger small" id="closeTripBtn" type="button">Fermer</button>
+      </div>
+    </div>
   </div>
-</div>
 
-<div id="toast" class="toast">Action effectuée</div>
+  <div id="toast" class="toast">OK</div>
+</div>
 
 <script>
+/* =========================
+   Données de démonstration
+   ========================= */
 const state = {
   loginMode: 'manager',
   pin: '',
   view: 'dashboard',
+  currentTrip: null,
   paramTab: 'drivers',
-  currentTripId: null,
   orders: [
     {id:1, client:'SARL BTP Nord', address:'Ducos - Chantier Lot A', trips:3, done:2, date:'2026-05-05', truck:'CAM-001', driver:'Gabriel OZIER', type:'Matériaux', material:'Sable 0/4'},
     {id:2, client:'Martiniquaise Travaux', address:'Le Lamentin - Zone industrielle', trips:5, done:5, date:'2026-05-05', truck:'CAM-002', driver:'Jean-Philippe', type:'Journée', material:''},
@@ -475,7 +849,7 @@ const state = {
   data:{
     drivers:[
       {id:1, name:'Gabriel OZIER', dob:'1988-04-12', phone:'0696 11 22 33', email:'gabriel@sotransnord.fr', permit:'C / EC', docs:'Permis.pdf'},
-      {id:2, name:'Kevin', dob:'1994-09-03', phone:'0696 44 55 66', email:'kevin@sotransnord.fr', permit:'C', docs:'ID.pdf'},
+      {id:2, name:'Kevin', dob:'1994-09-03', phone:'0696 44 55 66', email:'kevin@sotransnord.fr', permit:'C', docs:'ID.pdf'}
     ],
     trucks:[
       {id:1, reg:'CAM-001', km:143200, type:'Volvo FM', ct:'2026-10-15', docs:'Carte grise.pdf'},
@@ -497,73 +871,193 @@ const state = {
   },
   activities:[
     'Commande #1 créée puis synchronisée vers Google Sheets.',
-    'Transport #1 validé par le chauffeur avec signature électronique.',
+    'Transport #1 validé par signature électronique.',
     'Fiche fin de journée envoyée pour Gabriel OZIER.',
     'Alerte facture prête pour la commande #2.'
   ],
   months:['Janv.','Fév.','Mars','Avr.','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.']
 };
 
-const $ = s => document.querySelector(s);
-const $$ = s => document.querySelectorAll(s);
-function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1800); }
-function updatePin(){ $("#pinDisplay").textContent = state.pin.padEnd(6,'•').replace(/./g,'•').split('').map((c,i)=> i<state.pin.length ? '●' : '•').join(''); }
+const $ = s => docutent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1800);
+}
+function currentMonthIndex(){ return new Date().getMonth(); }
+function calculateMargin(){
+  const revenue = 48250;
+  const expenses = state.data.expenses.reduce((a,e)=>a+e.fuel+e.oil+e.repair+e.insurance+e.tires,0);
+  return revenue - expenses;
+}
+function ensureDateValue(){
+  const d = new Date();
+  $('#orderDate').value = d.toISOString().slice(0,10);
+}
+function setRoleLabel(role){
+  $('#roleLabel').textContent = role === 'manager' ? 'Gérant' : 'Chauffeur';
+}
+
+/* =========================
+   Connexion PIN
+   ========================= */
+function updatePinDisplay(){
+  $('#pinDisplay').textContent = state.pin.padEnd(6,'•').replace(/./g, (c, i) => i < state.pin.length ? '●' : '•');
+}
 function setLoginMode(mode){
   state.loginMode = mode;
-  $("#modeManager").classList.toggle("active", mode==='manager');
-  $("#modeDriver").classList.toggle("active", mode==='driver');
+  $('#btnManager').classList.toggle('active', mode =tent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra'111111'].includes(state.pin);
+
+  if(!ok){
+    toast('PIN incorrect');
+    state.pin = '';
+    updatePinDisplay();
+    return;
+  }
+
+  if(state.loginMode === 'manager'){
+    $('#authScreen').classList.add('hidden');
+    $('#managerApp').classList.remove('hidden');
+    $('#driverScreen').style.display = 'none';
+    $('#mobileBar').style.display = window.innerWidth <= 820 ? 'block' : 'none';
+    state.view = 'dashboard';
+    showManagerView('dashboard');
+    setRoleLabel('manager');
+    renderAllManager();
+    toast('Connexion gérant réussie');
+  }else{
+    $('#authScreen').classList.add('hidden');
+    $('#managerApp').classList.add('hidden');
+    $('#driverScreen').style.display = 'block';
+    $('#mobileBar').style.display = 'none';
+    renderDriverOnly();
+    setRoleLabel('driver');
+    toast('Connexion chauffeur réussie');
+  }
+  state.pin = '';
+  updatePinDisplay();
 }
-function login(){
-  const ok = state.loginMode==='manager' ? state.pin==='123456' : ['654321','111111'].includes(state.pin);
-  if(!ok){ toast("PIN incorrect"); state.pin=''; updatePin(); return; }
-  $("#authScreen").classList.add("hidden"); $("#dashScreen").classList.remove("hidden");
-  $("#currentRole").textContent = state.loginMode==='manager' ? 'Gérant' : 'Chauffeur';
-  renderAll(); toast("Connexion réussie");
+function logout(){
+  $('#managerApp').classList.add('hitent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ration driverLogout(){ logout(); }
+
+/* =========================
+   Navigation gérant
+   ========================= */
+function showManagerView(view){
+  state.view = view;
+  $$('.section').forEach(s=>s.classList.remove('active'));
+  $('#view-' + view).classList.add('active');
+  const titles = {
+    dashboard:'Dashboard',
+    commandes:'Commandes',
+    parametres:'Paramétrages',
+    rapports:'Rapports',
+    marge:'Marge mensuelle',
+    chauffeur:'Vue chauffeur'
+  };
+  $('#pageTitle').textContent = titles[view];
+  $$('.nav-item').forEach(b=>b.classList.toggle('active', b.dataset.view === view));
+  if(view === 'parametres') renderParams();
+  if(view === 'chauffeur') renderDriverManagerPreview();
 }
-function logout(){ $("#dashScreen").classList.add("hidden"); $("#authScreen").classList.remove("hidden"); state.pin=''; updatePin(); }
-function setView(view){
-  state.view=view;
-  $$(".section").forEach(s=>s.classList.remove("active"));
-  $("#view-"+view).classList.add("active");
-  $("#pageTitle").textContent = ({dashboard:'Dashboard',commandes:'Commandes',parametres:'Paramétrages',rapports:'Rapports',marge:'Marge mensuelle',chauffeur:'Vue chauffeur'})[view];
-  $$(".nav-item").forEach(b=>b.classList.toggle("active", b.dataset.view===view));
-  if(view==='parametres') renderParams();
-}
+
+/* =========================
+   Rendu gérant
+   ========================= */
 function renderSelects(){
-  $("#orderClient").innerHTML = state.data.clients.map(c=>`<option>${c.company}</option>`).join('');
-  $("#orderTruck").innerHTML = state.data.trucks.map(t=>`<option>${t.reg}</option>`).join('');
-  $("#orderDriver").innerHTML = state.data.drivers.map(d=>`<option>${d.name}</option>`).join('');
-  $("#orderMaterial").innerHTML = state.data.materials.map(m=>`<option>${m}</option>`).join('');
+  $('#orderClient').innerHTML = state.data.clients.map(c=>`<option>${c.company}</option>`).join('');
+  $('#orderTruck').innerHTML = state.data.trucks.map(t=>`<option>${t.reg}</option>`).join('');
+  $('#orderDriver').innerHTML = state.data.drivers.map(d=>`<option>${d.name}</option>`).join('');
+  $('#orderMaterial').innerHTML = state.data.materials.map(m=>`<option>${m}</option>`).join('');
 }
-function statusClass(o){ return o.done>=o.trips ? 's-done' : 's-open'; }
 function renderDashboard(){
-  $("#statOrders").textContent = state.orders.filter(o=>o.done<o.trips).length;
-  $("#statTrips").textContent = state.orders.reduce((a,o)=>a+o.done,0);
-  $("#statExpenses").textContent = `${state.data.expenses.reduce((a,e)=>a+e.fuel+e.oil+e.repair+e.insurance+e.tires,0).toLocaleString('fr-FR')} €`;
-  $("#statMargin").textContent = `${calculateMargin().toLocaleString('fr-FR')} €`;
-  $("#ordersTbody").innerHTML = state.orders.map(o=>`
+  $('#statOrders').textContent = state.orders.filter(o=>o.done < o.trips).length;
+  $('#statTrips').textContent = state.orders.reduce((a,o)=>a + o.done,tent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ralculateMargin().toLocaleString('fr-FR') + ' €';
+
+  $('#ordersTbody').innerHTML = state.orders.map(o=>`
     <tr>
-      <td>${o.client}</td><td>${o.address}</td><td>${o.type}${o.material ? ' / ' + o.material : ''}</td><td>${o.truck}</td><td>${o.driver}</td>
-      <td>${o.done}/${o.trips}</td><td><span class="status ${statusClass(o)}">${o.done>=o.trips ? 'Terminé' : 'En cours'}</span></td>
-      <td><button class="ghost-btn mini" onclick="goToOrder(${o.id})">Voir</button></td>
-    </tr>`).join('');
-  $("#activityList").innerHTML = state.activities.map(a=>`<div class="list-item"><div><div class="title">${a}</div><div class="subt">Démo front</div></div><span class="badge b-blue">OK</span></div>`).join('');
+      <td>${o.client}</td>
+      <td>${o.address}</td>
+      <td>${o.type}${o.material ? ' / ' + o.material : ''}</td>
+      <td>${o.truck}</td>
+      <td>${o.driver}</td>
+      <td>${o.done}/${o.trips}</td>
+      <td><span class="status ${o.done >= o.trips ? 's-done' : 's-open'}">${o.done >= o.trips ? 'Terminé' : 'En cours'}</span></td>
+      <td>
+        <button class="btn ghost small" type="button" onclick="goToOrder(${o.id})">Voir</button>
+      </td>
+    </tr>
+  `).join('');
+
+  $('#activityList').innerHTML = state.activities.map(a=>`
+    <div class="list-item">
+      <div>
+        <div class="title">${a}</div>
+        <div class="subt">Démo front</div>
+      </div>
+      <span class="badge b-blue">OK</span>
+    </div>
+  `).join('');
 }
 function renderTracking(){
-  $("#kpiOpen").textContent = state.orders.filter(o=>o.done<o.trips).length;
-  $("#kpiDone").textContent = state.orders.filter(o=>o.done>=o.trips).length;
-  $("#kpiBill").textContent = state.orders.filter(o=>o.done>=o.trips).length;
-  $("#trackingTbody").innerHTML = state.orders.map(o=>`
+  $('#kpiOpen').textContent = state.orders.filter(o=>o.done < o.trips).length;
+  $('#kpiDone').textContent = state.orders.filter(o=>o.done >= o.trips).length;
+  $('#kpiBill').textContent = state.orders.filter(o=>o.done >= o.trips).letent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rax:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra>
+    </tr>
+  `).join('');
+}
+function renderReports(){
+  $('#truckExpenseTbody').innerHTML = state.data.expenses.map(e=>`
     <tr>
-      <td>#${o.id} ${o.client}</td>
-      <td>${o.done} / ${o.trips}</td>
-      <td><span class="status ${statusClass(o)}">${o.done>=o.trips ? 'Terminé' : 'En cours'}</span></td>
-      <td>${o.done>=o.trips ? '<span class="status s-bill">À facturer</span>' : '-'}</td>
-    </tr>`).join('');
+      <td>${e.truck}</td><td>${e.fuel}€</td><td>${e.oil}€</td><td>${e.repair}€</td><td>${e.insurance}€</td><td>${e.tires}€</td>
+    </tr>
+  `).join('');
+}
+function renderMargin(){
+  const current = currentMonthIndex();
+  $('#monthGrid').innerHTML = state.months.map((m, i)=>`
+    <div class="month ${i === curtent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra.join('');
+}
+function renderDriverManagerPreview(){
+  $('#driverTrips').innerHTML = buildTripsHTML();
 }
 function renderParams(){
   const tab = state.paramTab;
-  const map = {
+  const html = {
     drivers: `
       <div class="two-col">
         <div>
@@ -572,121 +1066,419 @@ function renderParams(){
             <div class="field"><label>Date de naissance</label><input id="p2" type="date" /></div>
             <div class="field"><label>Téléphone</label><input id="p3" /></div>
             <div class="field"><label>Email</label><input id="p4" type="email" /></div>
-            <div class="field"><label>Type de permis</label><input id="p5" placeholder="C / EC" /></div>
-            <div class="field"><label>Documents</label><input id="p6" type="file" multiple /></div>
+            <div class="field"><label>Type de permis</label><input id="p5" placeholder="C / EC" tent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rasance','Téléphone','Email','Permis','Docs'])}</div>
+      </div>
+    `,
+    trucks: `
+      <div class="two-col">
+        <div>
+          <div class="form-grid">
+            <div class="field"><label>Immatriculation</label><input id="p1" /></div>
+            <div class="field"><label>Kilométrage</label><input id="p2" type="number" /></div>
+            <div class="field"><label>Type</label><input id="p3" /></div>
+            <div class="field"><label>Date du contrôle technique</label><input id="p4" type="date" /></div>
+            <div class="field"><label>Documents</label><input id="p5" type="file" multiple /></div>
           </div>
         </div>
-        <div>${renderCrudTable('drivers',['Nom','Naissance','Téléphone','Email','Permis','Docs'])}</div>
-      </div>`,
-    trucks: `
-      <div class="two-col"><div>
-      <div class="form-grid">
-        <div class="field"><label>Immatriculation</label><input id="p1" /></div>
-        <div class="field"><label>Kilométrage</label><input id="p2" type="number" /></div>
-        <div class="field"><label>Type</label><input id="p3" /></div>
-        <div class="field"><label>Date contrôle technique</label><input id="p4" type="date" /></div>
-        <div class="field"><label>Documents</label><input id="p5" type="file" multiple /></div>
-      </div></div><div>${renderCrudTable('trucks',['Immat.','KM','Type','CT','Docs'])}</div></div>`,
+        <div>${crudTable('trucks',['Immat.','KM','Type','CT','Docs'])}</div>
+      </div>
+    `,
     clients: `
-      <div class="two-col"><div class="form-grid">
-        <div class="field"><label>Nom de l’entreprise</label><input id="p1" /></div>
-        <div class="field"><label>Nom du gérant</label><input id="p2" /></div>
-        <div class="field"><label>Téléphone</label><input id="p3" /></div>
-        <div class="field"><label>Email</label><input id="p4" /></div>
-      </div></div><div>${renderCrudTable('clients',['Entreprise','Gérant','Téléphone','Email'])}</div>`,
-    materials: `<div class="two-col"><div><div class="form-grid"><div class="field"><label>Matériau</label><input id="p1" placeholder="ex : sable 0/4" /></div></div></div><div>${renderCrudTable('materials',['Matériau'])}</div></div>`,
-    tarifs: `<div class="two-col"><div class="form-grid"><div class="field"><label>Tarif matériaux (€/tonne)</label><input id="p1" type="number" value="${state.data.tariffs.materials}" /></div><div class="field"><label>Tarif journée (€/jour)</label><input id="p2" type="number" value="${state.data.tariffs.day}" /></div></div><div>${renderTarifTable()}</div></div>`,
-    expenses: `<div class="two-col"><div class="form-grid">
-        <div class="field"><label>Camion</label><select id="p1">${state.data.trucks.map(t=>`<option>${t.reg}</option>`).join('')}</select></div>
-        <div class="field"><label>Carburant</label><input id="p2" type="number" /></div>
-        <div class="field"><label>Vidange</label><input id="p3" type="number" /></div>
-        <div class="field"><label>Réparations</label><input id="p4" type="number" /></div>
-        <div class="field"><label>Assurance</label><input id="p5" type="number" /></div>
-        <div class="field"><label>Pneus</label><input id="p6" type="number" /></div>
-      </div></div><div>${renderExpenseTable()}</div></div>`
+      <div class="two-col">
+        <div>
+          <div class="form-grid">
+            <div class="field"><label>Nom de l’entreprise</label><input id="p1" /></div>
+            <div class="field"><label>Nom du gérant</label><input id="p2" /></div>
+            <div class="field"><label>Téléphotent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra','Gérant','Téléphone','Email'])}</div>
+      </div>
+    `,
+    materials: `
+      <div class="two-col">
+        <div>
+          <div class="form-grid">
+            <div class="field"><label>Matériau</label><input id="p1" placeholder="ex : sable 0/4" /></div>
+          </div>
+        </div>
+        <div>${crudTable('materials',['Matériau'])}</div>
+      </div>
+    `,
+    tarifs: `
+      <div class="two-col">
+        <div>
+          <div class="form-grid">
+            <div class="field"><label>Tarif matériaux (€/tonne)</label><input id="p1" type="number" value="${state.data.tariffs.materials}" /></div>
+            <div class="field"><label>Tarif journée (€/jour)</label><input id="p2" type="number" value="${state.data.tariffs.day}" /></div>
+          </div>
+        </div>
+        <div>${tarifTable()}</div>
+      </div>
+    `,
+    expenses: `
+      <div class="two-col">
+        <div>
+          <div class="form-grid">
+            <div class="field"><label>Camion</label><select id="p1">${state.data.trucks.map(t=>`<option>${t.reg}</option>`).join('')}</select></div>
+            <div class="field"><label>Carburant</label><input id="p2" type="number" /></div>
+            <div class="field"><label>Vidange</label><input id="p3" type="number" /></div>
+            <div clatent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-rass="field"><label>Pneus</label><input id="p6" type="number" /></div>
+          </div>
+        </div>
+        <div>${expenseTable()}</div>
+      </div>
+    `
   };
-  $("#paramTab").innerHTML = `
+  $('#paramTab').innerHTML = `
     <div class="form-actions">
-      <button class="primary-btn" onclick="addParam()">Ajouter / Enregistrer</button>
-      <button class="ghost-btn" onclick="seedDemo()">Remplir démo</button>
+      <button class="btn primary" type="button" onclick="addParam()">Ajouter / Enregistrer</button>
+      <button class="btn ghost" type="button" onclick="seedDemo()">Remplir démo</button>
     </div>
-    ${map[tab]}
+    ${html[tab]}
   `;
+  if(tab === 'tarifs'){
+    $('#p1').value = state.data.tariffs.materials;
+    $('#p2').value = state.data.tariffs.day;
+  }
 }
-function renderCrudTable(type,headers){
-  const rows = state.data[type].map((r,i)=>{
-    if(type==='materials') return `<tr><td>${r}</td><td><button class="ghost-btn mini" onclick="delParam('${type}',${i})">Supprimer</button></td></tr>`;
-    if(type==='clients') return `<tr><td>${r.company}</td><td>${r.manager}</td><td>${r.phone}</td><td>${r.email}</td><td><button class="ghost-btn mini" onclick="delParam('${type}',${i})">Supprimer</button></td></tr>`;
-    if(type==='trucks') return `<tr><td>${r.reg}</td><td>${r.km}</td><td>${r.type}</td><td>${r.ct}</td><td>${r.docs}</td><td><button class="ghost-btn mini" onclick="delParam('${type}',${i})">Supprimer</button></td></tr>`;
-    return `<tr><td>${r.name}</td><td>${r.dob}</td><td>${r.phone}</td><td>${r.email}</td><td>${r.permit}</td><td>${r.docs}</td><td><button class="ghost-btn mini" onclick="delParam('${type}',${i})">Supprimer</button></td></tr>`;
+function crudTable(type, headers){
+  const rows = state.data[type].map((r, i)=>{
+    if(type === 'drivers'){
+      return `<tr><td>${r.name}</td><td>${r.dob}</td><td>${r.phone}</td><td>${r.email}</td><td>${r.permit}</td><td>${r.docs}</td><td><button class="btn ghost small" onclick="delParam('${type}',${i})" type="button">Supprimer</button></td></tr>`;
+    }
+    if(type === 'trucks'){
+      return `<tr><td>${r.reg}</td><td>${r.km}</td><td>${r.type}</td><td>${r.ct}</td><td>${r.docs}</td><td><button class="btn ghost small" onclick="delParam('${type}',${i})" type="button">Supprimer</button></td></tr>`;
+    }
+    if(type === 'clients'){
+      return `<tr><td>${r.company}</td><td>${r.manager}</td><td>${r.phone}</td><td>${r.email}</td><td><button class="btn ghost small" onclick="delParam('${type}',${i})" type="button">Supprimer</button></td></tr>`;
+    }
+    return `<tr><td>${r}</td><td><button class="btn ghost small" onclick="delParam('${type}',${i})" type="button">Supprimer</button></td></tr>`;
   }).join('');
-  return `<div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}<th>Action</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-}
-function renderTarifTable(){ return `<div class="list"><div class="list-item"><div><div class="title">Matériaux</div><div class="subt">${state.data.tariffs.materials} €/tonne</div></div></div><div class="list-item"><div><div class="title">Journée</div><div class="subt">${state.data.tariffs.day} €/jour</div></div></div></div>`; }
-function renderExpenseTable(){ return `<div class="table-wrap"><table><thead><tr><th>Camion</th><th>Carburant</th><th>Vidange</th><th>Réparations</th><th>Assurance</th><th>Pneus</th></tr></thead><tbody>${state.data.expenses.map(e=>`<tr><td>${e.truck}</td><td>${e.fuel}€</td><td>${e.oil}€</td><td>${e.repair}€</td><td>${e.insurance}€</td><td>${e.tires}€</td></tr>`).join('')}</tbody></table></div>`; }
-function renderReports(){ $("#truckExpenseTbody").innerHTML = state.data.expenses.map(e=>`<tr><td>${e.truck}</td><td>${e.fuel}€</td><td>${e.oil}€</td><td>${e.repair}€</td><td>${e.insurance}€</td><td>${e.tires}€</td></tr>`).join(''); }
-function calculateMargin(){ return 48250 - state.data.expenses.reduce((a,e)=>a+e.fuel+e.oil+e.repair+e.insurance+e.tires,0); }
-function renderMargin(){
-  const current = new Date().getMonth();
-  $("#monthGrid").innerHTML = state.months.map((m,i)=>`<div class="month ${i===current?'current':''}"><div class="m">${m}</div><div class="k">${(38000+i*900).toLocaleString('fr-FR')} €</div><div class="subt">Marge brute</div></div>`).join('');
-}
-function renderDriver(){
-  $("#driverTrips").innerHTML = state.orders.flatMap(o=>Array.from({length:o.trips},(_,i)=>({order:o, n:i+1}))).map(t=>`
-    <div class="list-item">
-      <div><div class="title">${t.order.client} — Transport ${t.n}/${t.order.trips}</div><div class="subt">${t.order.address} • ${t.order.truck} • ${t.order.material || 'Journée'}</div></div>
-      <button class="primary-btn small-btn" onclick="openTrip(${t.order.id},${t.n})">Ouvrir</button>
-    </div>`).join('');
-}
-function goToOrder(id){ setView('commandes'); toast('Commande #'+id+' sélectionnée'); }
-function openTrip(id,n){ state.currentTripId={id,n}; $("#tripModalBackdrop").classList.add("open"); $("#mTonnage").value=10; $("#mReceiver").value='Chef de chantier'; $("#mFunction").value='Chef de chantier'; clearSignature(); }
-function closeTrip(){ $("#tripModalBackdrop").classList.remove("open"); }
-function addOrder(){
-  const client=$("#orderClient").value, address=$("#orderAddress").value||'Adresse démo', trips=+$("#orderTrips").value||1, date=$("#orderDate").value||new Date().toISOString().slice(0,10), truck=$("#orderTruck").value, driver=$("#orderDriver").value, type=$("#orderType").value, material=$("#orderMaterial").value;
-  state.orders.unshift({id:Date.now()%10000, client, address, trips, done:0, date, truck, driver, type, material:type==='Matériaux'?material:''});
-  state.activities.unshift(`Nouvelle commande créée pour ${client}.`);
-  renderAll(); toast('Commande créée');
-}
-function delParam(type,i){ state.data[type].splice(i,1); renderAll(); toast('Élément supprimé'); }
-function addParam(){
-  const tab=state.paramTab;
-  if(tab==='drivers') state.data.drivers.unshift({id:Date.now(), name:$("#p1").value, dob:$("#p2").value, phone:$("#p3").value, email:$("#p4").value, permit:$("#p5").value, docs:'Documents'});
-  if(tab==='trucks') state.data.trucks.unshift({id:Date.now(), reg:$("#p1").value, km:$("#p2").value, type:$("#p3").value, ct:$("#p4").value, docs:'Documents'});
-  if(tab==='clients') state.data.clients.unshift({id:Date.now(), company:$("#p1").value, manager:$("#p2").value, phone:$("#p3").value, email:$("#p4").value});
-  if(tab==='materials') state.data.materials.unshift($("#p1").value);
-  if(tab==='tarifs') { state.data.tariffs.materials=+$("#p1").value; state.data.tariffs.day=+$("#p2").value; }
-  if(tab==='expenses') state.data.expenses.unshift({id:Date.now(), truck:$("#p1").value, fuel:+$("#p2").value||0, oil:+$("#p3").value||0, repair:+$("#p4").value||0, insurance:+$("#p5").value||0, tires:+$("#p6").value||0});
-  renderAll(); toast('Enregistré');
-}
-function seedDemo(){ state.activities.unshift('Données de démonstration rechargées.'); renderAll(); toast('Démo rechargée'); }
-function sync(){ toast('Synchronisation simulée vers Google Sheets / Make.com'); state.activities.unshift('Synchronisation simulée vers Sheets via Make.com.'); renderAll(); }
-function sendSheet(){ toast('Fiche envoyée'); state.activities.unshift('Fiche de fin de journée transmise.'); renderAll(); }
-function saveTrip(){
-  if(!state.currentTripId) return;
-  const ord = state.orders.find(o=>o.id===state.currentTripId.id);
-  if(ord && ord.done < ord.trips) ord.done++;
-  state.activities.unshift(`Transport ${state.currentTripId.n} validé pour ${ord.client}.`);
-  closeTrip(); renderAll(); toast('Transport validé');
-}
-let drawing=false, ctx, last={x:0,y:0};
-function clearSignature(){ ctx = $("#signCanvas").getContext("2d"); ctx.clearRect(0,0,900,180); ctx.fillStyle="#f8fafc"; ctx.fillRect(0,0,900,180); ctx.fillStyle="#94a3b8"; ctx.font="20px sans-serif"; ctx.fillText("Signer ici", 20, 34); }
-function pos(e){ const r=$("#signCanvas").getBoundingClientRect(); const p=e.touches?e.touches[0]:e; return {x:(p.clientX-r.left)*($("#signCanvas").width/r.width), y:(p.clientY-r.top)*($("#signCanvas").height/r.height)}; }
-function startDraw(e){ drawing=true; last=pos(e); }
-function moveDraw(e){ if(!drawing) return; e.preventDefault(); const p=pos(e); ctx.lineWidth=3; ctx.lineCap='round'; ctx.strokeStyle='#111827'; ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p; }
-function endDraw(){ drawing=false; }
-function renderAll(){ renderSelects(); renderDashboard(); renderTracking(); renderReports(); renderMargin(); renderDriver(); if(state.view==='parametres') renderParams(); }
 
-$("#modeManager").onclick=()=>setLoginMode('manager');
-$("#modeDriver").onclick=()=>setLoginMode('driver');
-$("#loginEnter").onclick=login; $("#loginClear").onclick=()=>{state.pin=''; updatePin();};
-$$(".keypad button").forEach(b=>b.onclick=()=>{ const k=b.dataset.key; if(k==='clear'){state.pin='';} else if(k==='enter'){login();} else if(state.pin.length<6){ state.pin+=k; } updatePin();});
-$("#logoutBtn").onclick=logout; $("#syncBtn").onclick=sync; $("#addOrderBtn").onclick=addOrder; $("#resetOrderBtn").onclick=()=>location.reload(); $("#sendSheetBtn").onclick=sendSheet;
-$("#saveTripBtn").onclick=saveTrip; $("#closeTripBtn").onclick=closeTrip; $("#clearSignBtn").onclick=clearSignature;
-$$(".nav-item").forEach(b=>b.onclick=()=>setView(b.dataset.view));
-$$(".tab-btn").forEach(b=>b.onclick=()=>{ state.paramTab=b.dataset.tab; $$(".tab-btn").forEach(x=>x.classList.toggle("active",x===b)); renderParams(); });
-$("#tripModalBackdrop").onclick=e=>{ if(e.target.id==='tripModalBackdrop') closeTrip(); };
-$("#signCanvas").addEventListener("mousedown",startDraw); $("#signCanvas").addEventListener("mousemove",moveDraw); window.addEventListener("mouseup",endDraw);
-$("#signCanvas").addEventListener("touchstart",startDraw,{passive:false}); $("#signCanvas").addEventListener("touchmove",moveDraw,{passive:false}); $("#signCanvas").addEventListener("touchend",endDraw);
-updatePin(); clearSignature(); renderAll();
+  return `<div class="table-wrap">
+    <table>
+      <thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}<th>Action</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+function tarifTable(){
+  return `<div class="list">
+    <div class="list-item"><div><div class="title">Matériaux</div><div class="subt">${state.data.tariffs.matetent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raexpenseTable(){
+  return `<div class="table-wrap">
+    <table>
+      <thead><tr><th>Camion</th><th>Carburant</th><th>Vidange</th><th>Réparations</th><th>Assurance</th><th>Pneus</th></tr></thead>
+      <tbody>${state.data.expenses.map(e=>`
+        <tr><td>${e.truck}</td><td>${e.fuel}€</td><td>${e.oil}€</td><td>${e.repair}€</td><td>${e.insurance}€</td><td>${e.tires}€</td></tr>
+      `).join('')}</tbody>
+    </table>
+  </div>`;
+}
+
+/* =========================
+   Actions gérant
+   ========================= */
+function goToOrder(id){
+  showManagerView('commandes');
+  toast('Commande #' + id + ' ouverte');
+}
+function addOrder(){
+  const client = $('#orderClient').value;
+  const address = $('#orderAddress').value || 'Adresse démo';
+  const trips = Math.max(1, +$('#orderTrips').value || 1);
+  const date = $('#orderDate').value || new Date().toISOString().slice(0,10);
+  const truck = $('#orderTruck').value;
+  const driver = $('#orderDriver').value;
+  const type = $('#orderType').value;
+  const material = type === 'Matériaux' ? $('#orderMaterial').value : '';
+
+  state.orders.unshift({
+    id: Date.now() % 100000,
+    client, address, trips, done:0, date, truck, driver, type, material
+  });
+  state.activities.unshift(`Nouvelle commande créée pour ${client}.`);
+  renderAllManager();
+  toast('Commande créée');
+}
+function resetOrder(){
+  $('#orderAddress').value = '';
+  $('#orderTrips').value = 3;
+  $('#orderType').value = 'Matériaux';
+  ensureDateValue();
+}
+function delParam(type, index){
+  state.datatent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra    id:Date.now(),
+      name:$('#p1').value || 'Nouveau chauffeur',
+      dob:$('#p2').value || '',
+      phone:$('#p3').value || '',
+      email:$('#p4').value || '',
+      permit:$('#p5').value || '',
+      docs:'Documents'
+    });
+  }
+  if(tab === 'trucks'){
+    state.data.trucks.unshift({
+      id:Date.now(),
+      reg:$('#p1').value || 'CAM-XXX',
+      km:+$('#p2').value || 0,
+      type:$('#p3').value || '',
+      ct:$('#p4').value || '',
+      docs:'Documents'
+    });
+  }
+  if(tab === 'clients'){
+    state.data.clients.unshift({
+      id:Date.now(),
+      company:$('#p1').value || 'Entreprise',
+      manager:$('#p2').value || '',
+      phone:$('#p3').value || '',
+      email:$('#p4').value || ''
+    });
+  }
+  if(tab === 'materials'){
+    state.data.materials.unshift($('#p1').value || 'Matériau');
+  }
+  if(tab === 'tarifs'){
+    state.data.tariffs.materials = +$('#p1').value || 0;
+    state.data.tariffs.day = +$('#p2').value || 0;
+  }
+  if(tab === 'expenses'){
+    state.data.expenses.unshift({
+      id:Date.now(),
+      truck:$('#p1').value,
+      fuel:+$('#p2').value || 0,
+      oil:+$('#p3').value || 0,
+      repair:+$('#p4').value || 0,
+      insurance:+$('#p5').value || 0,
+      tires:+$('#p6').value || 0
+    });
+  }
+  renderAllManager();
+  toast('Enregistré');
+}
+function seedDemo(){
+  state.activities.unshift('Données de démonstration rechargées.');
+  renderAllManager();
+  toast('Démo rechargée');
+}
+function syncSheets(){
+  state.activities.unshift('Synchronisation simulée vers Google Sheets via Make.com.');
+  renderAllManager();
+  toast('Sync simulée');
+}
+function sendDaySheet(rolePrefix){
+  const km = $('#'+rolePrefix+'Km').vatent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ra);
+  renderAllManager();
+  toast('Fiche envoyée');
+}
+
+/* =========================
+   Vue chauffeur
+   ========================= */
+function buildTripsHTML(){
+  return state.orders.flatMap(o=>Array.from({length:o.trips}, (_,i)=>({order:o, n:i+1}))).map(t=>`
+    <div class="list-item">
+      <div>
+        <div class="title">${t.order.client} — Transport ${t.n}/${t.order.trips}</div>
+        <div class="subt">${t.order.address} • ${t.order.truck} • ${t.order.material || 'Journée'}</div>
+      </div>
+      <button class="btn primary small" type="button" onclick="openTrip(${t.order.id}, ${t.n})">Ouvrir</button>
+    </div>
+  `).join('');
+}
+function renderDriverOnly(){
+  $('#driverName').textContent = 'Chauffeur démo';
+  $('#driverTripsOnly').innerHTML = buildTripsHTML();
+}
+
+/* =========================
+   Signature électronique
+   ========================= */
+let drawing = false;
+let ctx = null;
+let last = {x:0,y:0};
+function resizeCanvas(){
+  const canvas = document.getElementById('signCanvas');
+  if(!canvas) return;
+  const ratio = Math.max(window.devicePixelRatio || 1, 1);
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.round(rect.width * ratio);
+  canvas.height = Math.round(rect.height * ratio);
+  ctx = canvas.getContext('2d');
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+  ctx.lineWidth = 2.4;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  clearSignature();
+}
+function ctent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raansform(1,0,0,1,0,0);
+  c.clearRect(0,0,canvas.width,canvas.height);
+  c.fillStyle = '#fbfdff';
+  c.fillRect(0,0,canvas.width,canvas.height);
+  c.fillStyle = '#94a3b8';
+  c.font = '16px sans-serif';
+  c.fillText('Signer ici', 18, 30);
+}
+function pointFromEvent(e){
+  const canvas = document.getElementById('signCanvas');
+  const rect = canvas.getBoundingClientRect();
+  const p = e.touches ? e.touches[0] : e;
+  return {
+    x: p.clientX - rect.left,
+    y: p.clientY - rect.top
+  };
+}
+function startDraw(e){
+  e.preventDefault();
+  drawing = true;
+  last = pointFromEvent(e);
+}
+function draw(e){
+  if(!drawing) return;
+  e.preventDefault();
+  const p = pointFromEvent(e);
+  ctx.beginPath();
+  ctx.moveTo(last.x, last.y);
+  ctx.lineTo(p.x, p.y);
+  ctx.strokeStyle = '#111827';
+  ctx.stroke();
+  last = p;
+}
+function endDraw(){ drawing = false; }
+
+function openTrip(orderId, n){
+  state.currentTrip = {orderId, n};
+  $('#mTonnage').value = 10;
+  $('#mReceiver').value = 'Chef de chantier';
+  $('#mFunction').value = 'Chef de chantier';
+  $('#tripModal').classList.add('open');
+  setTimeout(resizeCanvas, 50);
+}
+function closeTrip(){
+  $('#tripModal').classList.remove('open');
+}
+function saveTrip(){
+  if(!state.currentTrip) return;
+
+  const order = state.orders.find(o=>o.id === state.currentTrip.orderId);
+  if(order && order.done < order.trips){
+    order.done++;
+  }
+  state.activities.unshift(`Transport ${state.currentTrip.n} validé pour ${order ? order.client : 'commande'}.`);
+  renderAllManager();
+  closeTrip();
+  toast('Transport validé');
+}
+
+/* =========================
+   Rendu comtent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raiew();
+  if(state.view === 'parametres') renderParams();
+  if(state.view === 'chtent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-raanager');
+$('#btnDriver').onclick = () => setLoginMode('driver');
+$('#loginEnter').onclick = login;
+$('#loginClear').onclick = () => { state.pin=''; updatePinDisplay(); };
+
+$$('.keypad button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const key = btn.dataset.key;
+    if(key === 'clear') state.pin = '';
+    else if(key === 'enter') login();
+    else if(state.pin.length < 6) state.pin += key;
+    updatePinDisplay();
+  });
+});
+
+$('#logoutBtn').onclick = logout;
+$('#driverLogoutBtn').onclick = driverLogout;
+$('#syncBtn').onclick = syncSheets;
+$('#addOrderBtn').onclick = addOrder;
+$('#resetOrderBtn').onclick = resetOrder;
+$('#sendSheetBtn').onclick = () => sendDaySheet('day');
+$('#driverSendBtn').onclick = () => sendDaySheet('driver');
+
+$$('.nav-item').forEach(btn=>{
+  btn.addEventListener('click', ()=>showManagerView(btn.dataset.view));
+});
+$$('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    state.paramTab = btn.dataset.tab;
+    $$('.tab-btn').forEach(x=>x.classList.toggle('active', x === btn));
+    renderParams();
+  });
+});
+
+$('#tripModal').addEventListener('click', e=>{
+  if(e.target.id === 'tripModal') closeTrip();
+});
+$('#saveTripBtn').onclick = saveTrip;
+$('#closeTripBtn').onclick = closeTrip;
+$('#clearSignBtn').onclick = clearSignature;
+
+const canvas = document.getElementById('signCanvas');
+canvas.addEventListener('mousedown', startDraw);
+canvas.addEventListener('mousemove', draw);
+window.addEventListener('mouseup', endDraw);
+canvas.addEventListener('mouseleave',tent{flex:1; padding:18px; min-width:0}
+    .topbar{
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-ravas.addEventListener('touchcancel', endDraw);
+
+window.addEventListener('resize', ()=> {
+  if($('#tripModal').classList.contains('open')) resizeCanvas();
+});
+
+/* =========================
+   Init
+   ========================= */
+updatePinDisplay();
+ensureDateValue();
+renderAllManager();
+resizeCanvas();
 </script>
 </body>
 </html>
