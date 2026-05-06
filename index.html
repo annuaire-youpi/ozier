@@ -5,46 +5,949 @@
     <title>SOTRANSNORD - Gestion Transport BTP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Emplacement futur CSS global -->
-    <link rel="stylesheet" href="styles.css" />
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --bg-alt: #ffffff;
+        --primary: #2563eb;
+        --primary-soft: #dbe5ff;
+        --primary-dark: #1d4ed8;
+        --accent: #22c55e;
+        --danger: #ef4444;
+        --text: #0f172a;
+        --text-soft: #6b7280;
+        --border: #e2e8f0;
+        --radius-lg: 16px;
+        --radius-md: 12px;
+        --radius-sm: 8px;
+        --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.08);
+      }
 
-    <!-- Icônes éventuelles (fontawesome ou autre) -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    />
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+      }
+
+      #app {
+        width: 100%;
+        max-width: 1200px;
+        background: var(--bg);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .app-header {
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        background: #f9fafb;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .app-branding {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .app-logo-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        background: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 18px;
+        box-shadow: 0 5px 18px rgba(37, 99, 235, 0.4);
+      }
+
+      .app-title {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .app-subtitle {
+        margin: 0;
+        font-size: 12px;
+        color: var(--text-soft);
+      }
+
+      .mode-switch-wrapper {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: #e5e7eb;
+      }
+
+      .mode-label {
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .mode-toggle {
+        position: relative;
+        width: 60px;
+        height: 26px;
+        border-radius: 999px;
+        border: none;
+        background: #9ca3af;
+        padding: 0;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .mode-toggle-knob {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 20px;
+        height: 20px;
+        border-radius: 999px;
+        background: white;
+        box-shadow: 0 4px 10px rgba(15, 23, 42, 0.25);
+        transition: transform 0.18s ease-out;
+      }
+
+      .mode-toggle.real {
+        background: var(--primary);
+      }
+
+      .mode-toggle.real .mode-toggle-knob {
+        transform: translateX(31px);
+      }
+
+      .app-status-bar {
+        padding: 6px 16px 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        font-size: 11px;
+        background: #eef2ff;
+        border-bottom: 1px solid #d4d4ff;
+      }
+
+      .status-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .status-item-pill {
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: #e0e7ff;
+      }
+
+      .status-label {
+        color: var(--text-soft);
+      }
+
+      .status-value {
+        font-weight: 600;
+      }
+
+      .status-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 8px;
+        font-size: 11px;
+        border-radius: 999px;
+        font-weight: 600;
+      }
+
+      .status-chip-disconnected {
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+
+      .status-chip-connected {
+        background: #dcfce7;
+        color: #15803d;
+      }
+
+      .status-chip-progress {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      .status-chip-done {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .status-chip-todo {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+
+      .app-main {
+        flex: 1;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .auth-section,
+      .manager-section,
+      .driver-section {
+        width: 100%;
+      }
+
+      .auth-card {
+        margin: 0 auto;
+        max-width: 420px;
+        background: var(--bg-alt);
+        border-radius: var(--radius-lg);
+        padding: 18px 18px 22px;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .auth-title {
+        margin: 0 0 4px;
+        font-size: 18px;
+      }
+
+      .auth-description {
+        margin: 0 0 12px;
+        font-size: 13px;
+        color: var(--text-soft);
+      }
+
+      .role-selector {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .role-chip {
+        flex: 1;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: #f9fafb;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .role-chip-active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+      }
+
+      .pin-display {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .pin-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 999px;
+        border: 2px solid #d1d5db;
+      }
+
+      .pin-dot.filled {
+        background: #111827;
+        border-color: #111827;
+      }
+
+      .pin-message {
+        min-height: 18px;
+        font-size: 12px;
+        text-align: center;
+        color: var(--danger);
+        margin-bottom: 8px;
+      }
+
+      .lockout-info {
+        min-height: 18px;
+        font-size: 11px;
+        text-align: center;
+        color: var(--text-soft);
+        margin-top: 4px;
+      }
+
+      .pin-keypad {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .key-btn {
+        padding: 10px 0;
+        border-radius: 999px;
+        border: none;
+        background: #e5e7eb;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .key-btn-action {
+        background: var(--primary);
+        color: white;
+      }
+
+      .role-header {
+        margin-bottom: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .role-title {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .role-subtitle {
+        margin: 2px 0 0;
+        font-size: 12px;
+        color: var(--text-soft);
+      }
+
+      .btn {
+        border-radius: 999px;
+        border: none;
+        padding: 7px 12px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: var(--primary);
+        border: 1px solid var(--primary);
+      }
+
+      .btn-ghost {
+        background: transparent;
+        color: var(--text-soft);
+        border: 1px solid #e5e7eb;
+      }
+
+      .btn-block {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .btn-mini {
+        padding: 4px 8px;
+        font-size: 11px;
+      }
+
+      .btn-disabled {
+        background: #e5e7eb;
+        color: #9ca3af;
+        cursor: default;
+      }
+
+      .icon-btn {
+        border: none;
+        background: #f3f4f6;
+        border-radius: 999px;
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 13px;
+      }
+
+      .icon-btn-danger {
+        color: var(--danger);
+      }
+
+      .manager-nav {
+        display: flex;
+        overflow-x: auto;
+        gap: 6px;
+        padding-bottom: 4px;
+        margin-bottom: 10px;
+      }
+
+      .nav-tab {
+        flex: 0 0 auto;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: none;
+        font-size: 12px;
+        font-weight: 600;
+        background: #e5e7eb;
+        cursor: pointer;
+      }
+
+      .nav-tab-active {
+        background: var(--primary-dark);
+        color: white;
+      }
+
+      .manager-panel {
+        display: none;
+      }
+
+      .manager-panel.active {
+        display: block;
+      }
+
+      .cards-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .stat-card {
+        background: var(--bg-alt);
+        border-radius: var(--radius-md);
+        padding: 12px;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .stat-label {
+        margin: 0 0 4px;
+        font-size: 13px;
+        color: var(--text-soft);
+      }
+
+      .stat-value {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .stat-extra {
+        margin: 4px 0 0;
+        font-size: 11px;
+        color: var(--text-soft);
+      }
+
+      .panel-box {
+        background: var(--bg-alt);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-soft);
+        padding: 12px;
+        margin-bottom: 12px;
+      }
+
+      .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .panel-header h3 {
+        margin: 0;
+        font-size: 15px;
+      }
+
+      .panel-header p {
+        margin: 2px 0 0;
+        font-size: 12px;
+        color: var(--text-soft);
+      }
+
+      .panel-tag {
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: #4f46e5;
+      }
+
+      .panel-subheader h4 {
+        margin: 0 0 6px;
+        font-size: 13px;
+      }
+
+      .panel-body {
+        font-size: 12px;
+        color: var(--text-soft);
+      }
+
+      .bullet-list {
+        padding-left: 18px;
+        margin: 0;
+        font-size: 12px;
+        color: var(--text-soft);
+      }
+
+      .bullet-list li {
+        margin-bottom: 4px;
+      }
+
+      .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+      }
+
+      .data-table th,
+      .data-table td {
+        border-bottom: 1px solid var(--border);
+        padding: 6px 6px;
+        text-align: left;
+      }
+
+      .data-table thead {
+        background: #f3f4f6;
+      }
+
+      .data-table th {
+        font-weight: 600;
+        color: var(--text-soft);
+      }
+
+      .actions-cell {
+        white-space: nowrap;
+      }
+
+      .data-table-compact th,
+      .data-table-compact td {
+        padding: 4px 6px;
+      }
+
+      .current-month-row {
+        outline: 2px solid var(--primary);
+        outline-offset: -2px;
+        background: #eff6ff;
+      }
+
+      .legend {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+      }
+
+      .legend-color {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: #eff6ff;
+        border: 1px solid var(--primary);
+      }
+
+      .sub-nav {
+        display: flex;
+        overflow-x: auto;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+
+      .sub-tab {
+        flex: 0 0 auto;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: none;
+        font-size: 12px;
+        background: #e5e7eb;
+        cursor: pointer;
+      }
+
+      .sub-tab-active {
+        background: #111827;
+        color: white;
+      }
+
+      .param-panel {
+        display: none;
+      }
+
+      .param-panel.active {
+        display: block;
+      }
+
+      .driver-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .cards-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .transport-card {
+        padding: 10px;
+        border-radius: var(--radius-md);
+        background: var(--bg-alt);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        box-shadow: var(--shadow-soft);
+        cursor: pointer;
+      }
+
+      .transport-main {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .transport-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .transport-chip {
+        display: inline-flex;
+        padding: 2px 8px;
+        font-size: 11px;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-weight: 600;
+      }
+
+      .transport-client,
+      .transport-address {
+        margin: 0;
+        font-size: 12px;
+      }
+
+      .transport-address {
+        color: var(--text-soft);
+      }
+
+      .transport-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: var(--text-soft);
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+      }
+
+      .form-grid-2cols {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .form-group-full {
+        grid-column: 1/-1;
+      }
+
+      .field-label {
+        font-size: 12px;
+        color: var(--text-soft);
+      }
+
+      .field-input,
+      textarea,
+      select {
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        padding: 7px 9px;
+        font-size: 13px;
+        font-family: inherit;
+      }
+
+      .field-input:focus,
+      textarea:focus,
+      select:focus {
+        outline: 2px solid var(--primary-soft);
+        border-color: var(--primary);
+      }
+
+      .field-segmented {
+        display: inline-flex;
+        gap: 4px;
+        background: #f3f4f6;
+        padding: 2px;
+        border-radius: 999px;
+      }
+
+      .segmented-option {
+        position: relative;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      .segmented-option input {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+
+      .segmented-option input:checked + span {
+        background: var(--primary);
+        color: white;
+      }
+
+      .segmented-option span {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 999px;
+      }
+
+      .form-actions {
+        margin-top: 6px;
+      }
+
+      .form-actions-full {
+        grid-column: 1/-1;
+      }
+
+      .form-message {
+        margin-top: 6px;
+        font-size: 12px;
+        color: var(--text-soft);
+      }
+
+      .signature-pad {
+        border-radius: 12px;
+        border: 1px dashed #cbd5f5;
+        background: #f9fafb;
+        padding: 8px;
+      }
+
+      .signature-canvas {
+        width: 100%;
+        height: 160px;
+        background: white;
+        border-radius: 8px;
+      }
+
+      .signature-actions {
+        margin-top: 6px;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+      }
+
+      .modal.active {
+        display: flex;
+      }
+
+      .modal-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+      }
+
+      .modal-dialog {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 480px;
+        margin: 0 12px;
+        background: var(--bg-alt);
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.35);
+        padding: 12px;
+        max-height: 90vh;
+        overflow: auto;
+      }
+
+      .modal-dialog-large {
+        max-width: 700px;
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 6px;
+        margin-bottom: 8px;
+      }
+
+      .modal-header h3 {
+        margin: 0;
+        font-size: 16px;
+      }
+
+      .modal-body {
+        font-size: 13px;
+      }
+
+      .modal-subtitle {
+        margin: 0 0 8px;
+        font-size: 12px;
+        color: var(--text-soft);
+      }
+
+      .loading-overlay {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(15, 23, 42, 0.3);
+        z-index: 40;
+      }
+
+      .loading-overlay.active {
+        display: flex;
+      }
+
+      .loading-spinner {
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        border: 3px solid #e5e7eb;
+        border-top-color: var(--primary);
+        animation: spin 0.7s linear infinite;
+      }
+
+      .loading-text {
+        margin-top: 6px;
+        font-size: 12px;
+        color: white;
+        text-align: center;
+      }
+
+      .loading-overlay-inner {
+        text-align: center;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .app-footer {
+        text-align: center;
+        font-size: 11px;
+        color: var(--text-soft);
+        padding: 10px;
+        border-top: 1px solid var(--border);
+        background: #f9fafb;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      @media (min-width: 720px) {
+        .cards-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .driver-layout {
+          flex-direction: row;
+        }
+
+        .driver-panel {
+          flex: 1;
+        }
+
+        .form-grid-2cols {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .auth-card {
+          margin-top: 40px;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .app-main {
+          padding: 18px 24px;
+        }
+      }
+    </style>
   </head>
   <body>
-    <!-- ===================== APP WRAPPER ===================== -->
-    <div id="app" class="app-root">
-
-      <!-- ===================== GLOBAL HEADER ===================== -->
+    <div id="app">
       <header class="app-header">
         <div class="app-branding">
-          <span class="app-logo-circle">SN</span>
+          <div class="app-logo-circle">SN</div>
           <div class="app-title-block">
             <h1 class="app-title">SOTRANSNORD</h1>
             <p class="app-subtitle">Gestion de transport de matériaux BTP</p>
           </div>
         </div>
 
-        <!-- Switch Mode Démo / Mode Réel -->
-        <div class="mode-switch-wrapper" aria-label="Sélection du mode">
-          <span class="mode-label mode-label-demo">Démo</span>
-          <button
-            id="modeToggle"
-            class="mode-toggle"
-            type="button"
-            aria-pressed="false"
-            data-mode="demo"
-          >
+        <div class="mode-switch-wrapper">
+          <span class="mode-label">Démo</span>
+          <button id="modeToggle" class="mode-toggle" type="button">
             <span class="mode-toggle-knob"></span>
           </button>
-          <span class="mode-label mode-label-real">Réel</span>
+          <span class="mode-label">Réel</span>
         </div>
       </header>
 
-      <!-- ===================== GLOBAL STATUS BAR ===================== -->
       <section class="app-status-bar">
         <div class="status-item">
           <span class="status-label">Mode :</span>
@@ -55,248 +958,237 @@
           <span id="currentUserRole" class="status-value">Non connecté</span>
         </div>
         <div class="status-item status-item-pill">
-          <span class="status-label">Connexion Sheets / Make :</span>
-          <span id="integrationStatus" class="status-chip status-chip-disconnected">
-            Hors-ligne
-          </span>
+          <span class="status-label">Sheets / Make :</span>
+          <span
+            id="integrationStatus"
+            class="status-chip status-chip-disconnected"
+            >Hors-ligne</span
+          >
         </div>
       </section>
 
-      <!-- ===================== MAIN LAYOUT ===================== -->
       <main class="app-main">
-
-        <!-- =========================================================== -->
-        <!-- 1. ÉCRAN DE CONNEXION PAR PIN                              -->
-        <!-- =========================================================== -->
-        <section id="authSection" class="auth-section" aria-label="Connexion sécurisée">
+        <section id="authSection" class="auth-section">
           <div class="auth-card">
             <h2 class="auth-title">Connexion sécurisée</h2>
             <p class="auth-description">
-              Choisissez votre rôle puis saisissez votre code PIN à 6 chiffres.
+              Choisissez votre rôle puis saisissez votre PIN à 6 chiffres.
             </p>
 
-            <!-- Sélecteur de rôle -->
-            <div class="role-selector" aria-label="Choix du rôle">
+            <div class="role-selector">
               <button
+                id="roleGerantBtn"
                 type="button"
                 class="role-chip role-chip-active"
-                data-role="gerant"
-                id="roleGerantBtn"
               >
-                <i class="fa-solid fa-user-tie"></i>
                 Gérant
               </button>
               <button
+                id="roleChauffeurBtn"
                 type="button"
                 class="role-chip"
-                data-role="chauffeur"
-                id="roleChauffeurBtn"
               >
-                <i class="fa-solid fa-truck"></i>
                 Chauffeur
               </button>
             </div>
 
-            <!-- Affichage des 6 digits du PIN -->
-            <div class="pin-display" aria-label="Code PIN">
+            <div class="pin-display">
+              <div class="pin-dot" data-index="0"></div>
               <div class="pin-dot" data-index="1"></div>
               <div class="pin-dot" data-index="2"></div>
               <div class="pin-dot" data-index="3"></div>
               <div class="pin-dot" data-index="4"></div>
               <div class="pin-dot" data-index="5"></div>
-              <div class="pin-dot" data-index="6"></div>
             </div>
 
-            <!-- Messages d'erreur / état -->
-            <div id="pinMessage" class="pin-message" aria-live="polite">
-              <!-- Exemple : "Code PIN incorrect. 2 tentatives restantes." -->
-            </div>
+            <div id="pinMessage" class="pin-message"></div>
 
-            <!-- Clavier numérique -->
-            <div class="pin-keypad" aria-label="Clavier numérique">
-              <button class="key-btn" type="button" data-key="1">1</button>
-              <button class="key-btn" type="button" data-key="2">2</button>
-              <button class="key-btn" type="button" data-key="3">3</button>
-
-              <button class="key-btn" type="button" data-key="4">4</button>
-              <button class="key-btn" type="button" data-key="5">5</button>
-              <button class="key-btn" type="button" data-key="6">6</button>
-
-              <button class="key-btn" type="button" data-key="7">7</button>
-              <button class="key-btn" type="button" data-key="8">8</button>
-              <button class="key-btn" type="button" data-key="9">9</button>
-
-              <button class="key-btn key-btn-action" type="button" data-key="clear">
-                <i class="fa-solid fa-delete-left"></i>
-              </button>
-              <button class="key-btn" type="button" data-key="0">0</button>
-              <button class="key-btn key-btn-action" type="button" data-key="validate">
-                <i class="fa-solid fa-check"></i>
+            <div class="pin-keypad">
+              <button class="key-btn" data-key="1">1</button>
+              <button class="key-btn" data-key="2">2</button>
+              <button class="key-btn" data-key="3">3</button>
+              <button class="key-btn" data-key="4">4</button>
+              <button class="key-btn" data-key="5">5</button>
+              <button class="key-btn" data-key="6">6</button>
+              <button class="key-btn" data-key="7">7</button>
+              <button class="key-btn" data-key="8">8</button>
+              <button class="key-btn" data-key="9">9</button>
+              <button class="key-btn key-btn-action" data-key="clear">C</button>
+              <button class="key-btn" data-key="0">0</button>
+              <button class="key-btn key-btn-action" data-key="validate">
+                OK
               </button>
             </div>
 
-            <!-- Indication de verrouillage -->
-            <div id="lockoutInfo" class="lockout-info" aria-live="polite">
-              <!-- Exemple : "Verrouillé pendant 5 minutes." -->
-            </div>
+            <div id="lockoutInfo" class="lockout-info"></div>
           </div>
         </section>
 
-        <!-- =========================================================== -->
-        <!-- 2. ESPACE GÉRANT                                            -->
-        <!-- =========================================================== -->
-        <section
-          id="managerSection"
-          class="manager-section hidden"
-          aria-label="Espace gérant"
-        >
-          <!-- Barre supérieure gérant -->
+        <section id="managerSection" class="manager-section hidden">
           <header class="role-header">
-            <div class="role-header-left">
-              <h2 class="role-title">
-                <i class="fa-solid fa-user-tie"></i>
-                Espace Gérant
-              </h2>
+            <div>
+              <h2 class="role-title">Espace Gérant</h2>
               <p class="role-subtitle">
-                Paramétrages, commandes, rapports et marge mensuelle.
+                Paramétrages, commandes, rapports et marge.
               </p>
             </div>
-            <div class="role-header-right">
-              <button id="auditLogBtn" class="btn btn-ghost" type="button">
-                <i class="fa-regular fa-file-lines"></i>
+            <div>
+              <button id="auditLogBtn" type="button" class="btn btn-ghost">
                 Historique
               </button>
-              <button id="logoutManagerBtn" class="btn btn-outline" type="button">
-                <i class="fa-solid fa-right-from-bracket"></i>
+              <button id="logoutManagerBtn" type="button" class="btn btn-outline">
                 Déconnexion
               </button>
             </div>
           </header>
 
-          <!-- Navigation principale gérant (mobile-first -> scroll horizontal) -->
-          <nav class="manager-nav" aria-label="Navigation gérant">
+          <nav class="manager-nav">
             <button
-              class="nav-tab nav-tab-active"
               type="button"
-              data-target="#managerDashboard"
+              class="nav-tab nav-tab-active"
+              data-target="managerDashboard"
             >
-              <i class="fa-solid fa-gauge"></i>
               Dashboard
             </button>
-            <button class="nav-tab" type="button" data-target="#managerParametrages">
-              <i class="fa-solid fa-sliders"></i>
+            <button
+              type="button"
+              class="nav-tab"
+              data-target="managerParametrages"
+            >
               Paramétrages
             </button>
-            <button class="nav-tab" type="button" data-target="#managerCommandes">
-              <i class="fa-solid fa-truck-front"></i>
+            <button
+              type="button"
+              class="nav-tab"
+              data-target="managerCommandes"
+            >
               Commandes
             </button>
-            <button class="nav-tab" type="button" data-target="#managerRapports">
-              <i class="fa-solid fa-chart-line"></i>
+            <button
+              type="button"
+              class="nav-tab"
+              data-target="managerRapports"
+            >
               Rapports
             </button>
-            <button class="nav-tab" type="button" data-target="#managerMarge">
-              <i class="fa-solid fa-calculator"></i>
+            <button type="button" class="nav-tab" data-target="managerMarge">
               Marge
             </button>
           </nav>
 
-          <!-- ===================== Dashboard synthèse ===================== -->
           <section
             id="managerDashboard"
-            class="manager-panel"
-            aria-label="Vue synthèse gérant"
+            class="manager-panel active"
           >
             <div class="cards-grid">
               <article class="stat-card">
-                <h3 class="stat-label">Transports du jour</h3>
-                <p class="stat-value" id="statTransportsJour">12</p>
-                <p class="stat-extra">Dont 3 en attente de validation chauffeur.</p>
+                <p class="stat-label">Transports du jour</p>
+                <p id="statTransportsJour" class="stat-value">12</p>
+                <p class="stat-extra">
+                  Dont 3 en attente de validation chauffeur (démo).
+                </p>
               </article>
 
               <article class="stat-card">
-                <h3 class="stat-label">Commandes en cours</h3>
-                <p class="stat-value" id="statCommandesEnCours">5</p>
-                <p class="stat-extra">Mise à jour automatique selon retours chauffeurs.</p>
+                <p class="stat-label">Commandes en cours</p>
+                <p id="statCommandesEnCours" class="stat-value">5</p>
+                <p class="stat-extra">
+                  Mise à jour automatique depuis les retours chauffeurs.
+                </p>
               </article>
 
               <article class="stat-card">
-                <h3 class="stat-label">CA mois en cours</h3>
-                <p class="stat-value" id="statCAEnCours">42 350 €</p>
-                <p class="stat-extra">Données fictives en mode démo.</p>
+                <p class="stat-label">CA mois en cours</p>
+                <p id="statCAEnCours" class="stat-value">42 350 €</p>
+                <p class="stat-extra">Valeur fictive en mode Démo.</p>
               </article>
 
               <article class="stat-card">
-                <h3 class="stat-label">Dépenses véhicules (mois)</h3>
-                <p class="stat-value" id="statDepensesMois">15 200 €</p>
-                <p class="stat-extra">Carburant, vidange, réparations, pneus, assurance.</p>
+                <p class="stat-label">Dépenses véhicules (mois)</p>
+                <p id="statDepensesMois" class="stat-value">15 200 €</p>
+                <p class="stat-extra">
+                  Carburant, vidange, réparations, pneus, assurance.
+                </p>
               </article>
             </div>
 
-            <!-- Placeholder pour mini graphique / résumé visuel -->
             <section class="panel-box">
-              <header class="panel-header">
-                <h3>Vue rapide des activités</h3>
+              <div class="panel-header">
+                <div>
+                  <h3>Vue rapide des activités</h3>
+                  <p>
+                    Zone pour mini‑graphes ou indicateurs avancés
+                    (brancher plus tard sur Sheets/Make).
+                  </p>
+                </div>
                 <span class="panel-tag">Synthèse</span>
-              </header>
-              <div class="panel-body">
-                <p>
-                  Espace dédié à un mini graphique ou indicateurs avancés (intégration
-                  future via JS, Make, Google Sheets).
-                </p>
               </div>
             </section>
           </section>
 
-          <!-- ===================== Paramétrages CRUD ===================== -->
           <section
             id="managerParametrages"
-            class="manager-panel hidden"
-            aria-label="Paramétrages gérant"
+            class="manager-panel"
           >
-            <!-- Sous-navigation Paramétrages -->
-            <nav class="sub-nav" aria-label="Modules de paramétrage">
+            <nav class="sub-nav">
               <button
-                class="sub-tab sub-tab-active"
                 type="button"
-                data-target="#paramChauffeurs"
+                class="sub-tab sub-tab-active"
+                data-target="paramChauffeurs"
               >
                 Chauffeurs
               </button>
-              <button class="sub-tab" type="button" data-target="#paramCamions">
+              <button
+                type="button"
+                class="sub-tab"
+                data-target="paramCamions"
+              >
                 Camions
               </button>
-              <button class="sub-tab" type="button" data-target="#paramClients">
+              <button
+                type="button"
+                class="sub-tab"
+                data-target="paramClients"
+              >
                 Clients
               </button>
-              <button class="sub-tab" type="button" data-target="#paramMateriaux">
+              <button
+                type="button"
+                class="sub-tab"
+                data-target="paramMateriaux"
+              >
                 Matériaux
               </button>
-              <button class="sub-tab" type="button" data-target="#paramTarifs">
+              <button
+                type="button"
+                class="sub-tab"
+                data-target="paramTarifs"
+              >
                 Tarifs
               </button>
-              <button class="sub-tab" type="button" data-target="#paramFraisVehicules">
+              <button
+                type="button"
+                class="sub-tab"
+                data-target="paramFraisVehicules"
+              >
                 Frais véhicules
               </button>
             </nav>
 
-            <!-- === Chauffeurs === -->
             <section
               id="paramChauffeurs"
-              class="param-panel"
-              aria-label="Paramétrage chauffeurs"
+              class="param-panel active"
             >
-              <header class="panel-header">
+              <div class="panel-header">
                 <h3>Chauffeurs</h3>
                 <button
-                  class="btn btn-primary"
                   type="button"
+                  class="btn btn-primary"
                   data-modal-open="modalChauffeur"
                 >
-                  <i class="fa-solid fa-plus"></i>
-                  Ajouter un chauffeur
+                  Ajouter
                 </button>
-              </header>
+              </div>
 
               <div class="table-wrapper">
                 <table class="data-table">
@@ -305,8 +1197,7 @@
                       <th>Nom complet</th>
                       <th>Téléphone</th>
                       <th>Email</th>
-                      <th>Type de permis</th>
-                      <th>Documents</th>
+                      <th>Permis</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -316,50 +1207,30 @@
                       <td>06 12 34 56 78</td>
                       <td>jean.dupont@example.com</td>
                       <td>PL</td>
-                      <td>Contrat, permis</td>
                       <td class="actions-cell">
-                        <button
-                          class="icon-btn"
-                          type="button"
-                          data-action="edit"
-                          data-id="1"
-                        >
-                          <i class="fa-regular fa-pen-to-square"></i>
-                        </button>
-                        <button
-                          class="icon-btn icon-btn-danger"
-                          type="button"
-                          data-action="delete"
-                          data-id="1"
-                        >
-                          <i class="fa-regular fa-trash-can"></i>
-                        </button>
+                        <button class="icon-btn">✏️</button>
+                        <button class="icon-btn icon-btn-danger">🗑️</button>
                       </td>
                     </tr>
-                    <!-- Lignes chauffeurs dynamiques -->
                   </tbody>
                 </table>
               </div>
             </section>
 
-            <!-- === Camions === -->
             <section
               id="paramCamions"
-              class="param-panel hidden"
-              aria-label="Paramétrage camions"
+              class="param-panel"
             >
-              <header class="panel-header">
+              <div class="panel-header">
                 <h3>Camions</h3>
                 <button
-                  class="btn btn-primary"
                   type="button"
+                  class="btn btn-primary"
                   data-modal-open="modalCamion"
                 >
-                  <i class="fa-solid fa-plus"></i>
-                  Ajouter un camion
+                  Ajouter
                 </button>
-              </header>
-
+              </div>
               <div class="table-wrapper">
                 <table class="data-table">
                   <thead>
@@ -368,7 +1239,6 @@
                       <th>Kilométrage</th>
                       <th>Type</th>
                       <th>Contrôle technique</th>
-                      <th>Documents</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -378,44 +1248,30 @@
                       <td>150 000 km</td>
                       <td>Benne</td>
                       <td>12/2026</td>
-                      <td>Carte grise</td>
                       <td class="actions-cell">
-                        <button class="icon-btn" type="button" data-action="edit">
-                          <i class="fa-regular fa-pen-to-square"></i>
-                        </button>
-                        <button
-                          class="icon-btn icon-btn-danger"
-                          type="button"
-                          data-action="delete"
-                        >
-                          <i class="fa-regular fa-trash-can"></i>
-                        </button>
+                        <button class="icon-btn">✏️</button>
+                        <button class="icon-btn icon-btn-danger">🗑️</button>
                       </td>
                     </tr>
-                    <!-- Lignes camions dynamiques -->
                   </tbody>
                 </table>
               </div>
             </section>
 
-            <!-- === Clients === -->
             <section
               id="paramClients"
-              class="param-panel hidden"
-              aria-label="Paramétrage clients"
+              class="param-panel"
             >
-              <header class="panel-header">
+              <div class="panel-header">
                 <h3>Clients</h3>
                 <button
-                  class="btn btn-primary"
                   type="button"
+                  class="btn btn-primary"
                   data-modal-open="modalClient"
                 >
-                  <i class="fa-solid fa-plus"></i>
-                  Ajouter un client
+                  Ajouter
                 </button>
-              </header>
-
+              </div>
               <div class="table-wrapper">
                 <table class="data-table">
                   <thead>
@@ -434,47 +1290,34 @@
                       <td>06 87 65 43 21</td>
                       <td>contact@btp-caraibes.com</td>
                       <td class="actions-cell">
-                        <button class="icon-btn" type="button" data-action="edit">
-                          <i class="fa-regular fa-pen-to-square"></i>
-                        </button>
-                        <button
-                          class="icon-btn icon-btn-danger"
-                          type="button"
-                          data-action="delete"
-                        >
-                          <i class="fa-regular fa-trash-can"></i>
-                        </button>
+                        <button class="icon-btn">✏️</button>
+                        <button class="icon-btn icon-btn-danger">🗑️</button>
                       </td>
                     </tr>
-                    <!-- Lignes clients dynamiques -->
                   </tbody>
                 </table>
               </div>
             </section>
 
-            <!-- === Matériaux === -->
             <section
               id="paramMateriaux"
-              class="param-panel hidden"
-              aria-label="Paramétrage matériaux"
+              class="param-panel"
             >
-              <header class="panel-header">
+              <div class="panel-header">
                 <h3>Matériaux</h3>
                 <button
-                  class="btn btn-primary"
                   type="button"
+                  class="btn btn-primary"
                   data-modal-open="modalMateriau"
                 >
-                  <i class="fa-solid fa-plus"></i>
-                  Ajouter un matériau
+                  Ajouter
                 </button>
-              </header>
-
+              </div>
               <div class="table-wrapper">
                 <table class="data-table">
                   <thead>
                     <tr>
-                      <th>Nom du matériau</th>
+                      <th>Nom</th>
                       <th>Notes</th>
                       <th>Actions</th>
                     </tr>
@@ -482,54 +1325,41 @@
                   <tbody id="materiauxTableBody">
                     <tr>
                       <td>Sable 0/4</td>
-                      <td>Utilisé pour mortier et enduits</td>
+                      <td>Usage mortier / enduit</td>
                       <td class="actions-cell">
-                        <button class="icon-btn" type="button" data-action="edit">
-                          <i class="fa-regular fa-pen-to-square"></i>
-                        </button>
-                        <button
-                          class="icon-btn icon-btn-danger"
-                          type="button"
-                          data-action="delete"
-                        >
-                          <i class="fa-regular fa-trash-can"></i>
-                        </button>
+                        <button class="icon-btn">✏️</button>
+                        <button class="icon-btn icon-btn-danger">🗑️</button>
                       </td>
                     </tr>
-                    <!-- Lignes matériaux dynamiques -->
                   </tbody>
                 </table>
               </div>
             </section>
 
-            <!-- === Tarifs === -->
             <section
               id="paramTarifs"
-              class="param-panel hidden"
-              aria-label="Paramétrage tarifs"
+              class="param-panel"
             >
-              <header class="panel-header">
+              <div class="panel-header">
                 <h3>Tarifs</h3>
                 <button
-                  class="btn btn-primary"
                   type="button"
+                  class="btn btn-primary"
                   data-modal-open="modalTarif"
                 >
-                  <i class="fa-solid fa-plus"></i>
-                  Ajouter un tarif
+                  Ajouter
                 </button>
-              </header>
-
+              </div>
               <div class="panel-box">
-                <header class="panel-subheader">
+                <div class="panel-subheader">
                   <h4>Matériaux par tonne</h4>
-                </header>
+                </div>
                 <div class="table-wrapper">
                   <table class="data-table">
                     <thead>
                       <tr>
                         <th>Matériau</th>
-                        <th>Prix / tonne</th>
+                        <th>Prix/tonne</th>
                         <th>Notes</th>
                         <th>Actions</th>
                       </tr>
@@ -540,91 +1370,68 @@
                         <td>18 €</td>
                         <td>Tarif standard</td>
                         <td class="actions-cell">
-                          <button class="icon-btn" type="button" data-action="edit">
-                            <i class="fa-regular fa-pen-to-square"></i>
-                          </button>
-                          <button
-                            class="icon-btn icon-btn-danger"
-                            type="button"
-                            data-action="delete"
-                          >
-                            <i class="fa-regular fa-trash-can"></i>
-                          </button>
+                          <button class="icon-btn">✏️</button>
+                          <button class="icon-btn icon-btn-danger">🗑️</button>
                         </td>
                       </tr>
-                      <!-- Lignes tarifs matériaux dynamiques -->
                     </tbody>
                   </table>
                 </div>
               </div>
 
               <div class="panel-box">
-                <header class="panel-subheader">
+                <div class="panel-subheader">
                   <h4>Journée par jour</h4>
-                </header>
+                </div>
                 <div class="table-wrapper">
                   <table class="data-table">
                     <thead>
                       <tr>
-                        <th>Type de prestation</th>
-                        <th>Prix / jour</th>
+                        <th>Prestation</th>
+                        <th>Prix/jour</th>
                         <th>Notes</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody id="tarifsJourneeTableBody">
                       <tr>
-                        <td>Location camion + chauffeur</td>
+                        <td>Camion + chauffeur</td>
                         <td>520 €</td>
-                        <td>8h de travail</td>
+                        <td>8h</td>
                         <td class="actions-cell">
-                          <button class="icon-btn" type="button" data-action="edit">
-                            <i class="fa-regular fa-pen-to-square"></i>
-                          </button>
-                          <button
-                            class="icon-btn icon-btn-danger"
-                            type="button"
-                            data-action="delete"
-                          >
-                            <i class="fa-regular fa-trash-can"></i>
-                          </button>
+                          <button class="icon-btn">✏️</button>
+                          <button class="icon-btn icon-btn-danger">🗑️</button>
                         </td>
                       </tr>
-                      <!-- Lignes tarifs journée dynamiques -->
                     </tbody>
                   </table>
                 </div>
               </div>
             </section>
 
-            <!-- === Frais véhicules === -->
             <section
               id="paramFraisVehicules"
-              class="param-panel hidden"
-              aria-label="Paramétrage frais véhicules"
+              class="param-panel"
             >
-              <header class="panel-header">
+              <div class="panel-header">
                 <h3>Frais véhicules</h3>
                 <button
-                  class="btn btn-primary"
                   type="button"
+                  class="btn btn-primary"
                   data-modal-open="modalFraisVehicule"
                 >
-                  <i class="fa-solid fa-plus"></i>
-                  Ajouter un frais
+                  Ajouter
                 </button>
-              </header>
-
+              </div>
               <div class="table-wrapper">
                 <table class="data-table">
                   <thead>
                     <tr>
                       <th>Camion</th>
-                      <th>Type de frais</th>
+                      <th>Type</th>
                       <th>Montant</th>
                       <th>Date</th>
                       <th>Notes</th>
-                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody id="fraisVehiculesTableBody">
@@ -633,63 +1440,45 @@
                       <td>Carburant</td>
                       <td>250 €</td>
                       <td>05/05/2026</td>
-                      <td>Trajets chantiers Nord</td>
-                      <td class="actions-cell">
-                        <button class="icon-btn" type="button" data-action="edit">
-                          <i class="fa-regular fa-pen-to-square"></i>
-                        </button>
-                        <button
-                          class="icon-btn icon-btn-danger"
-                          type="button"
-                          data-action="delete"
-                        >
-                          <i class="fa-regular fa-trash-can"></i>
-                        </button>
-                      </td>
+                      <td>Chantiers Nord</td>
                     </tr>
-                    <!-- Lignes frais véhicules dynamiques -->
                   </tbody>
                 </table>
               </div>
             </section>
           </section>
 
-          <!-- ===================== Gestion des commandes ===================== -->
           <section
             id="managerCommandes"
-            class="manager-panel hidden"
-            aria-label="Gestion des commandes"
+            class="manager-panel"
           >
-            <header class="panel-header">
+            <div class="panel-header">
               <div>
                 <h3>Commandes</h3>
-                <p>Création, suivi des transports et préparation à la facturation.</p>
+                <p>Création, suivi et facturation.</p>
               </div>
               <button
-                class="btn btn-primary"
                 type="button"
+                class="btn btn-primary"
                 data-modal-open="modalCommande"
               >
-                <i class="fa-solid fa-plus"></i>
                 Créer une commande
               </button>
-            </header>
+            </div>
 
-            <!-- Tableau de suivi des commandes -->
             <div class="table-wrapper">
               <table class="data-table">
                 <thead>
                   <tr>
                     <th>Client</th>
-                    <th>Adresse de livraison</th>
-                    <th>Date chantier</th>
+                    <th>Adresse</th>
+                    <th>Date</th>
                     <th>Camion</th>
                     <th>Chauffeur</th>
                     <th>Type</th>
                     <th>Transports</th>
                     <th>Statut</th>
                     <th>Facturation</th>
-                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody id="commandesTableBody">
@@ -700,204 +1489,96 @@
                     <td>AB-123-CD</td>
                     <td>Jean Dupont</td>
                     <td>Matériaux</td>
-                    <td>
-                      <span>3 / 5</span>
-                    </td>
+                    <td>3 / 5</td>
                     <td>
                       <span class="status-chip status-chip-progress">En cours</span>
                     </td>
                     <td>
-                      <!-- Affiché seulement si tous les transports complétés -->
-                      <button class="btn btn-mini btn-disabled" type="button" disabled>
+                      <button
+                        class="btn btn-mini btn-disabled"
+                        type="button"
+                        disabled
+                      >
                         À facturer
                       </button>
                     </td>
-                    <td class="actions-cell">
-                      <button class="icon-btn" type="button" data-action="view">
-                        <i class="fa-regular fa-eye"></i>
-                      </button>
-                      <button class="icon-btn" type="button" data-action="edit">
-                        <i class="fa-regular fa-pen-to-square"></i>
-                      </button>
-                    </td>
                   </tr>
-                  <tr>
-                    <td>Travaux Nord</td>
-                    <td>Chantier RN1, km 12</td>
-                    <td>06/05/2026</td>
-                    <td>CD-456-EF</td>
-                    <td>Paul Laurent</td>
-                    <td>Journée</td>
-                    <td>
-                      <span>1 / 1</span>
-                    </td>
-                    <td>
-                      <span class="status-chip status-chip-done">Terminé</span>
-                    </td>
-                    <td>
-                      <button class="btn btn-mini btn-primary" type="button">
-                        À facturer
-                      </button>
-                    </td>
-                    <td class="actions-cell">
-                      <button class="icon-btn" type="button" data-action="view">
-                        <i class="fa-regular fa-eye"></i>
-                      </button>
-                      <button class="icon-btn" type="button" data-action="edit">
-                        <i class="fa-regular fa-pen-to-square"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <!-- Lignes commandes dynamiques -->
                 </tbody>
               </table>
             </div>
 
-            <!-- Placeholder mapping Google Sheets / Make -->
             <section class="panel-box">
-              <header class="panel-subheader">
+              <div class="panel-subheader">
                 <h4>Synchronisation & automatisations</h4>
-              </header>
+              </div>
               <div class="panel-body">
                 <ul class="bullet-list">
                   <li>
-                    En mode réel, la création de commande déclenche la génération des
-                    transports du jour (Make + Google Sheets).
+                    En mode Réel, chaque commande validée enverra un événement pour
+                    générer les transports (via Make).
                   </li>
                   <li>
-                    Chaque mise à jour de statut de transport envoyée par le chauffeur
-                    met à jour cette table de suivi.
-                  </li>
-                  <li>
-                    Les commandes terminées peuvent déclencher la préparation de la
-                    facturation (Make).
+                    Les validations chauffeurs mettront à jour automatiquement ce
+                    tableau.
                   </li>
                 </ul>
               </div>
             </section>
           </section>
 
-          <!-- ===================== Rapports ===================== -->
           <section
             id="managerRapports"
-            class="manager-panel hidden"
-            aria-label="Rapports et analyses"
+            class="manager-panel"
           >
-            <header class="panel-header">
+            <div class="panel-header">
               <div>
                 <h3>Rapports</h3>
-                <p>Consommation moyenne de carburant et frais par camion.</p>
+                <p>Consommation carburant et frais par camion.</p>
               </div>
-              <div class="panel-actions">
-                <label class="field-label" for="rapportMoisSelect">Mois :</label>
-                <select id="rapportMoisSelect" class="field-input">
-                  <option value="2026-01">Janvier 2026</option>
-                  <option value="2026-02">Février 2026</option>
-                  <option value="2026-03">Mars 2026</option>
-                  <option value="2026-04">Avril 2026</option>
-                  <option value="2026-05" selected>Mai 2026</option>
-                </select>
-              </div>
-            </header>
+            </div>
 
-            <!-- Consommation moyenne de carburant par camion -->
             <section class="panel-box">
-              <header class="panel-subheader">
-                <h4>Consommation moyenne de carburant par camion</h4>
-              </header>
+              <div class="panel-subheader">
+                <h4>Consommation moyenne de carburant</h4>
+              </div>
               <div class="table-wrapper">
                 <table class="data-table">
                   <thead>
                     <tr>
                       <th>Camion</th>
-                      <th>Litres consommés</th>
-                      <th>Km parcourus</th>
-                      <th>Conso moyenne (L/100km)</th>
+                      <th>Litres</th>
+                      <th>Km</th>
+                      <th>L/100km</th>
                     </tr>
                   </thead>
-                  <tbody id="consoCarburantTableBody">
+                  <tbody>
                     <tr>
                       <td>AB-123-CD</td>
-                      <td>520 L</td>
-                      <td>3 800 km</td>
+                      <td>520</td>
+                      <td>3 800</td>
                       <td>13,7</td>
                     </tr>
-                    <tr>
-                      <td>CD-456-EF</td>
-                      <td>450 L</td>
-                      <td>3 200 km</td>
-                      <td>14,1</td>
-                    </tr>
-                    <!-- Lignes dynamiques par camion -->
-                  </tbody>
-                </table>
-              </div>
-            </section>
-
-            <!-- Calcul des frais par camion et par mois -->
-            <section class="panel-box">
-              <header class="panel-subheader">
-                <h4>Frais par camion (mois sélectionné)</h4>
-              </header>
-              <div class="table-wrapper">
-                <table class="data-table">
-                  <thead>
-                    <tr>
-                      <th>Camion</th>
-                      <th>Carburant</th>
-                      <th>Vidange</th>
-                      <th>Réparations</th>
-                      <th>Pneus</th>
-                      <th>Assurance</th>
-                      <th>Total</th>
-                    </tr>
-                  </thead>
-                  <tbody id="fraisParCamionTableBody">
-                    <tr>
-                      <td>AB-123-CD</td>
-                      <td>1 200 €</td>
-                      <td>150 €</td>
-                      <td>300 €</td>
-                      <td>0 €</td>
-                      <td>120 €</td>
-                      <td>1 770 €</td>
-                    </tr>
-                    <tr>
-                      <td>CD-456-EF</td>
-                      <td>980 €</td>
-                      <td>0 €</td>
-                      <td>450 €</td>
-                      <td>200 €</td>
-                      <td>110 €</td>
-                      <td>1 740 €</td>
-                    </tr>
-                    <!-- Lignes dynamiques -->
                   </tbody>
                 </table>
               </div>
             </section>
           </section>
 
-          <!-- ===================== Calcul de la marge ===================== -->
           <section
             id="managerMarge"
-            class="manager-panel hidden"
-            aria-label="Calcul de la marge"
+            class="manager-panel"
           >
-            <header class="panel-header">
+            <div class="panel-header">
               <div>
                 <h3>Marge mensuelle</h3>
-                <p>Chiffre d'affaires, dépenses et marge brute par mois.</p>
+                <p>CA, dépenses et marge brute.</p>
               </div>
-              <div class="panel-actions">
-                <span class="legend current-month-legend">
-                  <span class="legend-color"></span> Mois en cours
-                </span>
+              <div class="legend current-month-legend">
+                <span class="legend-color"></span> Mois en cours
               </div>
-            </header>
+            </div>
 
-            <!-- Tableau mensuel (12 colonnes) -->
-            <div class="table-wrapper table-wrapper-scroll-x">
+            <div class="table-wrapper">
               <table class="data-table data-table-compact">
                 <thead>
                   <tr>
@@ -908,56 +1589,11 @@
                     <th>Réparations</th>
                     <th>Pneus</th>
                     <th>Assurance</th>
-                    <th>Total dépenses</th>
-                    <th>Marge brute</th>
+                    <th>Dépenses</th>
+                    <th>Marge</th>
                   </tr>
                 </thead>
-                <tbody id="margeMensuelleTableBody">
-                  <!-- Exemple de ligne par mois, Mai comme mois courant -->
-                  <tr>
-                    <td>Janv.</td>
-                    <td>30 000 €</td>
-                    <td>8 000 €</td>
-                    <td>500 €</td>
-                    <td>1 200 €</td>
-                    <td>400 €</td>
-                    <td>600 €</td>
-                    <td>10 700 €</td>
-                    <td>19 300 €</td>
-                  </tr>
-                  <tr>
-                    <td>Fév.</td>
-                    <td>32 500 €</td>
-                    <td>8 500 €</td>
-                    <td>500 €</td>
-                    <td>600 €</td>
-                    <td>350 €</td>
-                    <td>600 €</td>
-                    <td>10 550 €</td>
-                    <td>21 950 €</td>
-                  </tr>
-                  <tr>
-                    <td>Mars</td>
-                    <td>40 000 €</td>
-                    <td>9 100 €</td>
-                    <td>500 €</td>
-                    <td>1 000 €</td>
-                    <td>500 €</td>
-                    <td>600 €</td>
-                    <td>11 700 €</td>
-                    <td>28 300 €</td>
-                  </tr>
-                  <tr>
-                    <td>Avril</td>
-                    <td>38 000 €</td>
-                    <td>8 800 €</td>
-                    <td>500 €</td>
-                    <td>900 €</td>
-                    <td>400 €</td>
-                    <td>600 €</td>
-                    <td>11 200 €</td>
-                    <td>26 800 €</td>
-                  </tr>
+                <tbody>
                   <tr class="current-month-row">
                     <td>Mai</td>
                     <td>42 350 €</td>
@@ -969,147 +1605,35 @@
                     <td>12 350 €</td>
                     <td>30 000 €</td>
                   </tr>
-                  <!-- Juin à Déc. en données fictives -->
-                  <tr>
-                    <td>Juin</td>
-                    <td>35 000 €</td>
-                    <td>8 000 €</td>
-                    <td>500 €</td>
-                    <td>800 €</td>
-                    <td>350 €</td>
-                    <td>600 €</td>
-                    <td>10 250 €</td>
-                    <td>24 750 €</td>
-                  </tr>
-                  <tr>
-                    <td>Juil.</td>
-                    <td>34 000 €</td>
-                    <td>7 800 €</td>
-                    <td>500 €</td>
-                    <td>750 €</td>
-                    <td>350 €</td>
-                    <td>600 €</td>
-                    <td>10 000 €</td>
-                    <td>24 000 €</td>
-                  </tr>
-                  <tr>
-                    <td>Août</td>
-                    <td>28 000 €</td>
-                    <td>6 500 €</td>
-                    <td>500 €</td>
-                    <td>700 €</td>
-                    <td>300 €</td>
-                    <td>600 €</td>
-                    <td>8 600 €</td>
-                    <td>19 400 €</td>
-                  </tr>
-                  <tr>
-                    <td>Sept.</td>
-                    <td>36 000 €</td>
-                    <td>8 300 €</td>
-                    <td>500 €</td>
-                    <td>900 €</td>
-                    <td>350 €</td>
-                    <td>600 €</td>
-                    <td>10 650 €</td>
-                    <td>25 350 €</td>
-                  </tr>
-                  <tr>
-                    <td>Oct.</td>
-                    <td>37 500 €</td>
-                    <td>8 400 €</td>
-                    <td>500 €</td>
-                    <td>950 €</td>
-                    <td>400 €</td>
-                    <td>600 €</td>
-                    <td>10 850 €</td>
-                    <td>26 650 €</td>
-                  </tr>
-                  <tr>
-                    <td>Nov.</td>
-                    <td>39 000 €</td>
-                    <td>8 700 €</td>
-                    <td>500 €</td>
-                    <td>1 100 €</td>
-                    <td>400 €</td>
-                    <td>600 €</td>
-                    <td>11 300 €</td>
-                    <td>27 700 €</td>
-                  </tr>
-                  <tr>
-                    <td>Déc.</td>
-                    <td>41 000 €</td>
-                    <td>9 000 €</td>
-                    <td>500 €</td>
-                    <td>1 200 €</td>
-                    <td>450 €</td>
-                    <td>600 €</td>
-                    <td>11 750 €</td>
-                    <td>29 250 €</td>
-                  </tr>
                 </tbody>
               </table>
             </div>
-
-            <section class="panel-box">
-              <header class="panel-subheader">
-                <h4>Notes sur la marge</h4>
-              </header>
-              <div class="panel-body">
-                <p>
-                  Les valeurs ci-dessus sont en données fictives en mode Démo, à
-                  connecter en mode Réel aux onglets de synthèse de votre Google Sheets
-                  (CA, dépenses par nature, marge brute).
-                </p>
-              </div>
-            </section>
           </section>
         </section>
 
-        <!-- =========================================================== -->
-        <!-- 3. ESPACE CHAUFFEUR                                         -->
-        <!-- =========================================================== -->
-        <section
-          id="driverSection"
-          class="driver-section hidden"
-          aria-label="Espace chauffeur"
-        >
-          <!-- Barre supérieure chauffeur -->
-          <header class="role-header role-header-driver">
-            <div class="role-header-left">
-              <h2 class="role-title">
-                <i class="fa-solid fa-truck"></i>
-                Espace Chauffeur
-              </h2>
+        <section id="driverSection" class="driver-section hidden">
+          <header class="role-header">
+            <div>
+              <h2 class="role-title">Espace Chauffeur</h2>
               <p class="role-subtitle">
-                Vos transports du jour et votre fiche de fin de journée.
+                Transports du jour et fiche de fin de journée.
               </p>
             </div>
-            <div class="role-header-right">
-              <button id="logoutDriverBtn" class="btn btn-outline" type="button">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                Déconnexion
-              </button>
-            </div>
+            <button id="logoutDriverBtn" type="button" class="btn btn-outline">
+              Déconnexion
+            </button>
           </header>
 
-          <!-- Chauffeur : 2 blocs principaux -->
           <section class="driver-layout">
-
-            <!-- Bloc Transports du jour -->
-            <section
-              class="panel-box driver-panel"
-              aria-label="Transports du jour"
-            >
-              <header class="panel-header">
+            <section class="panel-box driver-panel">
+              <div class="panel-header">
                 <div>
                   <h3>Transports du jour</h3>
-                  <p>Liste des transports qui vous sont assignés aujourd'hui.</p>
+                  <p>Liste générée à partir des commandes.</p>
                 </div>
-              </header>
+              </div>
 
               <ul id="transportsJourList" class="cards-list">
-                <!-- Exemple de transport (1 ligne = 1 transport concret) -->
                 <li
                   class="transport-card"
                   data-transport-id="T1"
@@ -1117,343 +1641,222 @@
                 >
                   <div class="transport-main">
                     <div class="transport-line">
-                      <span class="transport-chip">Commande #C-2026-001</span>
-                      <span class="transport-status status-chip status-chip-progress">
-                        En cours
-                      </span>
+                      <span class="transport-chip">C‑2026‑001</span>
+                      <span class="status-chip status-chip-progress">En cours</span>
                     </div>
                     <p class="transport-client">Client : BTP Caraïbes</p>
                     <p class="transport-address">
-                      Livraison : Zone industrielle du Lamentin
+                      Zone industrielle du Lamentin
                     </p>
                   </div>
                   <div class="transport-meta">
-                    <span>Transport 1 / 5</span>
-                    <span class="transport-heure">Heure cible : 09h30</span>
+                    <span>Transport 1/5</span>
+                    <span>09h30</span>
                   </div>
                 </li>
-
-                <li
-                  class="transport-card"
-                  data-transport-id="T2"
-                  data-modal-open="modalTransportDetails"
-                >
-                  <div class="transport-main">
-                    <div class="transport-line">
-                      <span class="transport-chip">Commande #C-2026-001</span>
-                      <span class="transport-status status-chip status-chip-progress">
-                        En cours
-                      </span>
-                    </div>
-                    <p class="transport-client">Client : BTP Caraïbes</p>
-                    <p class="transport-address">
-                      Livraison : Zone industrielle du Lamentin
-                    </p>
-                  </div>
-                  <div class="transport-meta">
-                    <span>Transport 2 / 5</span>
-                    <span class="transport-heure">Heure cible : 10h30</span>
-                  </div>
-                </li>
-
-                <li
-                  class="transport-card"
-                  data-transport-id="T3"
-                  data-modal-open="modalTransportDetails"
-                >
-                  <div class="transport-main">
-                    <div class="transport-line">
-                      <span class="transport-chip">Commande #C-2026-001</span>
-                      <span class="transport-status status-chip status-chip-todo">
-                        À faire
-                      </span>
-                    </div>
-                    <p class="transport-client">Client : BTP Caraïbes</p>
-                    <p class="transport-address">
-                      Livraison : Zone industrielle du Lamentin
-                    </p>
-                  </div>
-                  <div class="transport-meta">
-                    <span>Transport 3 / 5</span>
-                    <span class="transport-heure">Heure cible : 11h30</span>
-                  </div>
-                </li>
-
-                <!-- Transports dynamiques générés depuis les commandes gérant -->
               </ul>
             </section>
 
-            <!-- Bloc Fiche de fin de journée -->
-            <section
-              class="panel-box driver-panel"
-              aria-label="Fiche de fin de journée"
-            >
-              <header class="panel-header">
+            <section class="panel-box driver-panel">
+              <div class="panel-header">
                 <div>
                   <h3>Fiche de fin de journée</h3>
-                  <p>
-                    Renseignez votre kilométrage et votre consommation de carburant.
-                  </p>
+                  <p>Résumé kilométrage et carburant.</p>
                 </div>
-              </header>
+              </div>
 
-              <form
-                id="ficheFinJourneeForm"
-                class="form-grid"
-                autocomplete="off"
-              >
+              <form id="ficheFinJourneeForm" class="form-grid">
                 <div class="form-group">
                   <label class="field-label" for="driverKilometrage">
-                    Kilométrage (compteur)
+                    Kilométrage
                   </label>
                   <input
-                    type="number"
                     id="driverKilometrage"
+                    type="number"
                     class="field-input"
-                    placeholder="Ex : 152340"
                     inputmode="numeric"
                   />
                 </div>
 
                 <div class="form-group">
                   <label class="field-label" for="driverCarburantQte">
-                    Carburant - quantité (L)
+                    Carburant (L)
                   </label>
                   <input
-                    type="number"
                     id="driverCarburantQte"
+                    type="number"
                     class="field-input"
-                    placeholder="Ex : 120"
                     inputmode="decimal"
                   />
                 </div>
 
                 <div class="form-group">
                   <label class="field-label" for="driverCarburantPrix">
-                    Carburant - montant (€)
+                    Carburant (€)
                   </label>
                   <input
-                    type="number"
                     id="driverCarburantPrix"
+                    type="number"
                     class="field-input"
-                    placeholder="Ex : 250"
                     inputmode="decimal"
                   />
                 </div>
 
                 <div class="form-actions">
                   <button
-                    type="submit"
                     id="submitFicheFinJournee"
+                    type="submit"
                     class="btn btn-primary btn-block"
                   >
-                    <i class="fa-solid fa-paper-plane"></i>
                     Envoyer ma fiche
                   </button>
                 </div>
 
-                <!-- Info / état d'envoi -->
-                <p id="ficheFinJourneeMessage" class="form-message">
-                  <!-- Exemple : "Fiche envoyée. Merci !" -->
-                </p>
+                <p id="ficheFinJourneeMessage" class="form-message"></p>
               </form>
             </section>
           </section>
         </section>
 
-        <!-- =========================================================== -->
-        <!-- 4. MODALS / POPUPS                                          -->
-        <!-- =========================================================== -->
-
-        <!-- Modal Détails Transport Chauffeur -->
         <div
           id="modalTransportDetails"
           class="modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modalTransportDetailsTitle"
         >
           <div class="modal-backdrop" data-modal-close></div>
           <div class="modal-dialog">
-            <header class="modal-header">
-              <h3 id="modalTransportDetailsTitle">Détails du transport</h3>
-              <button class="icon-btn" type="button" data-modal-close>
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-            </header>
+            <div class="modal-header">
+              <h3>Détails du transport</h3>
+              <button class="icon-btn" type="button" data-modal-close>✕</button>
+            </div>
             <div class="modal-body">
               <p class="modal-subtitle">
-                Merci de renseigner les informations de réception sur le chantier.
+                Renseignez la réception sur chantier.
               </p>
-
               <form id="transportDetailsForm" class="form-grid">
                 <div class="form-group">
-                  <label class="field-label" for="tonnageReceptionne">
-                    Tonnage réceptionné (tonnes)
-                  </label>
+                  <label class="field-label" for="tonnageReceptionne"
+                    >Tonnage réceptionné (t)</label
+                  >
                   <input
-                    type="number"
                     id="tonnageReceptionne"
+                    type="number"
                     class="field-input"
-                    placeholder="Ex : 18"
                     inputmode="decimal"
                   />
                 </div>
-
                 <div class="form-group">
-                  <label class="field-label" for="nomReceptionnaire">
-                    Nom du réceptionnaire
-                  </label>
+                  <label class="field-label" for="nomReceptionnaire"
+                    >Nom du réceptionnaire</label
+                  >
                   <input
-                    type="text"
                     id="nomReceptionnaire"
-                    class="field-input"
-                    placeholder="Nom et prénom"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label class="field-label" for="fonctionReceptionnaire">
-                    Fonction du réceptionnaire
-                  </label>
-                  <input
                     type="text"
-                    id="fonctionReceptionnaire"
                     class="field-input"
-                    placeholder="Ex : Chef de chantier"
                   />
                 </div>
-
-                <!-- Zone signature électronique -->
                 <div class="form-group">
-                  <label class="field-label">Signature électronique</label>
+                  <label class="field-label" for="fonctionReceptionnaire"
+                    >Fonction</label
+                  >
+                  <input
+                    id="fonctionReceptionnaire"
+                    type="text"
+                    class="field-input"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="field-label">Signature</label>
                   <div class="signature-pad">
                     <canvas
                       id="signatureCanvas"
                       class="signature-canvas"
-                    >
-                      Votre navigateur ne supporte pas la signature.
-                    </canvas>
+                    ></canvas>
                     <div class="signature-actions">
                       <button
+                        id="signatureClearBtn"
                         type="button"
                         class="btn btn-mini btn-outline"
-                        id="signatureClearBtn"
                       >
                         Effacer
                       </button>
                     </div>
                   </div>
                 </div>
-
                 <div class="form-actions">
                   <button
+                    id="validateTransportBtn"
                     type="submit"
                     class="btn btn-primary btn-block"
-                    id="validateTransportBtn"
                   >
                     Valider le transport
                   </button>
                 </div>
-
-                <p id="transportDetailsMessage" class="form-message">
-                  <!-- Exemple : "Transport validé. Merci !" -->
-                </p>
+                <p id="transportDetailsMessage" class="form-message"></p>
               </form>
             </div>
           </div>
         </div>
 
-        <!-- Modal CRUD Chauffeur -->
         <div
           id="modalChauffeur"
           class="modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modalChauffeurTitle"
         >
           <div class="modal-backdrop" data-modal-close></div>
           <div class="modal-dialog">
-            <header class="modal-header">
-              <h3 id="modalChauffeurTitle">Chauffeur</h3>
-              <button class="icon-btn" type="button" data-modal-close>
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-            </header>
+            <div class="modal-header">
+              <h3>Chauffeur</h3>
+              <button class="icon-btn" type="button" data-modal-close>✕</button>
+            </div>
             <div class="modal-body">
               <form id="chauffeurForm" class="form-grid">
                 <div class="form-group">
-                  <label class="field-label" for="chauffeurNomComplet">
-                    Nom complet
-                  </label>
+                  <label class="field-label" for="chauffeurNomComplet"
+                    >Nom complet</label
+                  >
                   <input
-                    type="text"
                     id="chauffeurNomComplet"
-                    class="field-input"
-                    placeholder="Nom et prénom"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label class="field-label" for="chauffeurDateNaissance">
-                    Date de naissance
-                  </label>
-                  <input
-                    type="date"
-                    id="chauffeurDateNaissance"
-                    class="field-input"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label class="field-label" for="chauffeurTelephone">
-                    Téléphone
-                  </label>
-                  <input
-                    type="tel"
-                    id="chauffeurTelephone"
-                    class="field-input"
-                    placeholder="06 12 34 56 78"
-                    inputmode="tel"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label class="field-label" for="chauffeurEmail">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="chauffeurEmail"
-                    class="field-input"
-                    placeholder="email@example.com"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label class="field-label" for="chauffeurPermis">
-                    Type de permis
-                  </label>
-                  <input
                     type="text"
-                    id="chauffeurPermis"
                     class="field-input"
-                    placeholder="Ex : PL, SPL"
                   />
                 </div>
-
                 <div class="form-group">
-                  <label class="field-label" for="chauffeurDocs">
-                    Documents (multiples)
-                  </label>
+                  <label class="field-label" for="chauffeurDateNaissance"
+                    >Date de naissance</label
+                  >
                   <input
-                    type="file"
-                    id="chauffeurDocs"
+                    id="chauffeurDateNaissance"
+                    type="date"
                     class="field-input"
-                    multiple
                   />
                 </div>
-
+                <div class="form-group">
+                  <label class="field-label" for="chauffeurTelephone"
+                    >Téléphone</label
+                  >
+                  <input
+                    id="chauffeurTelephone"
+                    type="tel"
+                    class="field-input"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="field-label" for="chauffeurEmail">Email</label>
+                  <input
+                    id="chauffeurEmail"
+                    type="email"
+                    class="field-input"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="field-label" for="chauffeurPermis"
+                    >Type de permis</label
+                  >
+                  <input
+                    id="chauffeurPermis"
+                    type="text"
+                    class="field-input"
+                  />
+                </div>
                 <div class="form-actions">
                   <button type="submit" class="btn btn-primary btn-block">
                     Enregistrer
@@ -1464,84 +1867,52 @@
           </div>
         </div>
 
-        <!-- Modal CRUD Camion -->
         <div
           id="modalCamion"
           class="modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modalCamionTitle"
         >
           <div class="modal-backdrop" data-modal-close></div>
           <div class="modal-dialog">
-            <header class="modal-header">
-              <h3 id="modalCamionTitle">Camion</h3>
-              <button class="icon-btn" type="button" data-modal-close>
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-            </header>
+            <div class="modal-header">
+              <h3>Camion</h3>
+              <button class="icon-btn" type="button" data-modal-close>✕</button>
+            </div>
             <div class="modal-body">
               <form id="camionForm" class="form-grid">
                 <div class="form-group">
-                  <label class="field-label" for="camionImmatriculation">
-                    Immatriculation
-                  </label>
+                  <label class="field-label" for="camionImmatriculation"
+                    >Immatriculation</label
+                  >
                   <input
-                    type="text"
                     id="camionImmatriculation"
-                    class="field-input"
-                    placeholder="Ex : AB-123-CD"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label class="field-label" for="camionKilometrage">
-                    Kilométrage
-                  </label>
-                  <input
-                    type="number"
-                    id="camionKilometrage"
-                    class="field-input"
-                    placeholder="Ex : 150000"
-                    inputmode="numeric"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label class="field-label" for="camionType">
-                    Type
-                  </label>
-                  <input
                     type="text"
-                    id="camionType"
                     class="field-input"
-                    placeholder="Ex : Benne, Plateau"
                   />
                 </div>
-
                 <div class="form-group">
-                  <label class="field-label" for="camionControleTechnique">
-                    Date du contrôle technique
-                  </label>
+                  <label class="field-label" for="camionKilometrage"
+                    >Kilométrage</label
+                  >
                   <input
-                    type="date"
+                    id="camionKilometrage"
+                    type="number"
+                    class="field-input"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="field-label" for="camionType">Type</label>
+                  <input id="camionType" type="text" class="field-input" />
+                </div>
+                <div class="form-group">
+                  <label class="field-label" for="camionControleTechnique"
+                    >Contrôle technique</label
+                  >
+                  <input
                     id="camionControleTechnique"
+                    type="date"
                     class="field-input"
                   />
                 </div>
-
-                <div class="form-group">
-                  <label class="field-label" for="camionDocs">
-                    Documents (multiples)
-                  </label>
-                  <input
-                    type="file"
-                    id="camionDocs"
-                    class="field-input"
-                    multiple
-                  />
-                </div>
-
                 <div class="form-actions">
                   <button type="submit" class="btn btn-primary btn-block">
                     Enregistrer
@@ -1552,73 +1923,46 @@
           </div>
         </div>
 
-        <!-- Modal CRUD Client -->
         <div
           id="modalClient"
           class="modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modalClientTitle"
         >
           <div class="modal-backdrop" data-modal-close></div>
           <div class="modal-dialog">
-            <header class="modal-header">
-              <h3 id="modalClientTitle">Client</h3>
-              <button class="icon-btn" type="button" data-modal-close>
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-            </header>
+            <div class="modal-header">
+              <h3>Client</h3>
+              <button class="icon-btn" type="button" data-modal-close>✕</button>
+            </div>
             <div class="modal-body">
               <form id="clientForm" class="form-grid">
                 <div class="form-group">
-                  <label class="field-label" for="clientEntreprise">
-                    Nom de l'entreprise
-                  </label>
+                  <label class="field-label" for="clientEntreprise"
+                    >Entreprise</label
+                  >
                   <input
-                    type="text"
                     id="clientEntreprise"
-                    class="field-input"
-                    placeholder="Ex : BTP Caraïbes"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label class="field-label" for="clientGerant">
-                    Nom du gérant
-                  </label>
-                  <input
                     type="text"
-                    id="clientGerant"
                     class="field-input"
-                    placeholder="Nom et prénom"
                   />
                 </div>
-
                 <div class="form-group">
-                  <label class="field-label" for="clientTelephone">
-                    Téléphone
-                  </label>
+                  <label class="field-label" for="clientGerant">Gérant</label>
+                  <input id="clientGerant" type="text" class="field-input" />
+                </div>
+                <div class="form-group">
+                  <label class="field-label" for="clientTelephone"
+                    >Téléphone</label
+                  >
                   <input
-                    type="tel"
                     id="clientTelephone"
+                    type="tel"
                     class="field-input"
-                    placeholder="06 12 34 56 78"
-                    inputmode="tel"
                   />
                 </div>
-
                 <div class="form-group">
-                  <label class="field-label" for="clientEmail">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="clientEmail"
-                    class="field-input"
-                    placeholder="email@entreprise.com"
-                  />
+                  <label class="field-label" for="clientEmail">Email</label>
+                  <input id="clientEmail" type="email" class="field-input" />
                 </div>
-
                 <div class="form-actions">
                   <button type="submit" class="btn btn-primary btn-block">
                     Enregistrer
@@ -1629,48 +1973,30 @@
           </div>
         </div>
 
-        <!-- Modal CRUD Matériau -->
         <div
           id="modalMateriau"
           class="modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modalMateriauTitle"
         >
           <div class="modal-backdrop" data-modal-close></div>
           <div class="modal-dialog">
-            <header class="modal-header">
-              <h3 id="modalMateriauTitle">Matériau</h3>
-              <button class="icon-btn" type="button" data-modal-close>
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-            </header>
+            <div class="modal-header">
+              <h3>Matériau</h3>
+              <button class="icon-btn" type="button" data-modal-close>✕</button>
+            </div>
             <div class="modal-body">
               <form id="materiauForm" class="form-grid">
                 <div class="form-group">
-                  <label class="field-label" for="materiauNom">
-                    Nom du matériau
-                  </label>
-                  <input
-                    type="text"
-                    id="materiauNom"
-                    class="field-input"
-                    placeholder="Ex : Sable 0/4"
-                  />
+                  <label class="field-label" for="materiauNom">Nom</label>
+                  <input id="materiauNom" type="text" class="field-input" />
                 </div>
-
                 <div class="form-group">
-                  <label class="field-label" for="materiauNotes">
-                    Notes
-                  </label>
+                  <label class="field-label" for="materiauNotes">Notes</label>
                   <textarea
                     id="materiauNotes"
-                    class="field-input"
                     rows="3"
-                    placeholder="Informations complémentaires"
+                    class="field-input"
                   ></textarea>
                 </div>
-
                 <div class="form-actions">
                   <button type="submit" class="btn btn-primary btn-block">
                     Enregistrer
@@ -1681,71 +2007,46 @@
           </div>
         </div>
 
-        <!-- Modal CRUD Tarif -->
         <div
           id="modalTarif"
           class="modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modalTarifTitle"
         >
           <div class="modal-backdrop" data-modal-close></div>
           <div class="modal-dialog">
-            <header class="modal-header">
-              <h3 id="modalTarifTitle">Tarif</h3>
-              <button class="icon-btn" type="button" data-modal-close>
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-            </header>
+            <div class="modal-header">
+              <h3>Tarif</h3>
+              <button class="icon-btn" type="button" data-modal-close>✕</button>
+            </div>
             <div class="modal-body">
               <form id="tarifForm" class="form-grid">
                 <div class="form-group">
-                  <label class="field-label" for="tarifType">
-                    Type de tarif
-                  </label>
+                  <label class="field-label" for="tarifType">Type</label>
                   <select id="tarifType" class="field-input">
-                    <option value="materiau">Matériau par tonne</option>
-                    <option value="journee">Journée par jour</option>
+                    <option value="materiau">Matériau</option>
+                    <option value="journee">Journée</option>
                   </select>
                 </div>
-
                 <div class="form-group">
-                  <label class="field-label" for="tarifLibelle">
-                    Libellé
-                  </label>
-                  <input
-                    type="text"
-                    id="tarifLibelle"
-                    class="field-input"
-                    placeholder="Ex : Sable 0/4 ou Location camion + chauffeur"
-                  />
+                  <label class="field-label" for="tarifLibelle">Libellé</label>
+                  <input id="tarifLibelle" type="text" class="field-input" />
                 </div>
-
                 <div class="form-group">
-                  <label class="field-label" for="tarifMontant">
-                    Montant
-                  </label>
+                  <label class="field-label" for="tarifMontant">Montant</label>
                   <input
-                    type="number"
                     id="tarifMontant"
+                    type="number"
                     class="field-input"
-                    placeholder="Ex : 18"
                     inputmode="decimal"
                   />
                 </div>
-
                 <div class="form-group">
-                  <label class="field-label" for="tarifNotes">
-                    Notes
-                  </label>
+                  <label class="field-label" for="tarifNotes">Notes</label>
                   <textarea
                     id="tarifNotes"
-                    class="field-input"
                     rows="3"
-                    placeholder="Informations complémentaires"
+                    class="field-input"
                   ></textarea>
                 </div>
-
                 <div class="form-actions">
                   <button type="submit" class="btn btn-primary btn-block">
                     Enregistrer
@@ -1756,80 +2057,47 @@
           </div>
         </div>
 
-        <!-- Modal CRUD Frais véhicule -->
         <div
           id="modalFraisVehicule"
           class="modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modalFraisVehiculeTitle"
         >
           <div class="modal-backdrop" data-modal-close></div>
           <div class="modal-dialog">
-            <header class="modal-header">
-              <h3 id="modalFraisVehiculeTitle">Frais véhicule</h3>
-              <button class="icon-btn" type="button" data-modal-close>
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-            </header>
+            <div class="modal-header">
+              <h3>Frais véhicule</h3>
+              <button class="icon-btn" type="button" data-modal-close>✕</button>
+            </div>
             <div class="modal-body">
               <form id="fraisVehiculeForm" class="form-grid">
                 <div class="form-group">
-                  <label class="field-label" for="fraisCamion">
-                    Camion
-                  </label>
+                  <label class="field-label" for="fraisCamion">Camion</label>
                   <select id="fraisCamion" class="field-input">
-                    <!-- Options dynamiques depuis Camions -->
-                    <option value="AB-123-CD">AB-123-CD</option>
-                    <option value="CD-456-EF">CD-456-EF</option>
+                    <option>AB-123-CD</option>
                   </select>
                 </div>
-
                 <div class="form-group">
-                  <label class="field-label" for="fraisType">
-                    Type de frais
-                  </label>
+                  <label class="field-label" for="fraisType">Type</label>
                   <select id="fraisType" class="field-input">
-                    <option value="carburant">Carburant</option>
-                    <option value="vidange">Vidange</option>
-                    <option value="reparations">Réparations</option>
-                    <option value="assurance">Assurance</option>
-                    <option value="pneus">Pneus</option>
+                    <option>Carburant</option>
+                    <option>Vidange</option>
+                    <option>Réparations</option>
+                    <option>Pneus</option>
+                    <option>Assurance</option>
                   </select>
                 </div>
-
                 <div class="form-group">
-                  <label class="field-label" for="fraisMontant">
-                    Montant (€)
-                  </label>
+                  <label class="field-label" for="fraisMontant">Montant</label>
                   <input
-                    type="number"
                     id="fraisMontant"
+                    type="number"
                     class="field-input"
-                    placeholder="Ex : 250"
                     inputmode="decimal"
                   />
                 </div>
-
                 <div class="form-group">
-                  <label class="field-label" for="fraisDate">
-                    Date
-                  </label>
-                  <input type="date" id="fraisDate" class="field-input" />
+                  <label class="field-label" for="fraisDate">Date</label>
+                  <input id="fraisDate" type="date" class="field-input" />
                 </div>
-
-                <div class="form-group">
-                  <label class="field-label" for="fraisNotes">
-                    Notes
-                  </label>
-                  <textarea
-                    id="fraisNotes"
-                    class="field-input"
-                    rows="3"
-                    placeholder="Informations complémentaires"
-                  ></textarea>
-                </div>
-
                 <div class="form-actions">
                   <button type="submit" class="btn btn-primary btn-block">
                     Enregistrer
@@ -1840,187 +2108,25 @@
           </div>
         </div>
 
-        <!-- Modal Commande (création / édition) -->
-        <div
-          id="modalCommande"
-          class="modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modalCommandeTitle"
-        >
-          <div class="modal-backdrop" data-modal-close></div>
-          <div class="modal-dialog modal-dialog-large">
-            <header class="modal-header">
-              <h3 id="modalCommandeTitle">Commande</h3>
-              <button class="icon-btn" type="button" data-modal-close>
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-            </header>
-            <div class="modal-body">
-              <form id="commandeForm" class="form-grid form-grid-2cols">
-                <div class="form-group">
-                  <label class="field-label" for="commandeClient">
-                    Client
-                  </label>
-                  <select id="commandeClient" class="field-input">
-                    <!-- Options dynamiques depuis Clients -->
-                    <option value="">Sélectionner un client</option>
-                    <option value="BTP Caraïbes">BTP Caraïbes</option>
-                    <option value="Travaux Nord">Travaux Nord</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label class="field-label" for="commandeAdresseLivraison">
-                    Adresse de livraison
-                  </label>
-                  <input
-                    type="text"
-                    id="commandeAdresseLivraison"
-                    class="field-input"
-                    placeholder="Adresse complète du chantier"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label class="field-label" for="commandeNbTransports">
-                    Nombre de transports estimés
-                  </label>
-                  <input
-                    type="number"
-                    id="commandeNbTransports"
-                    class="field-input"
-                    placeholder="Ex : 5"
-                    inputmode="numeric"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label class="field-label" for="commandeDateChantier">
-                    Date du chantier
-                  </label>
-                  <input
-                    type="date"
-                    id="commandeDateChantier"
-                    class="field-input"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label class="field-label" for="commandeCamion">
-                    Camion
-                  </label>
-                  <select id="commandeCamion" class="field-input">
-                    <!-- Options dynamiques depuis Camions -->
-                    <option value="">Sélectionner un camion</option>
-                    <option value="AB-123-CD">AB-123-CD</option>
-                    <option value="CD-456-EF">CD-456-EF</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label class="field-label" for="commandeChauffeur">
-                    Chauffeur
-                  </label>
-                  <select id="commandeChauffeur" class="field-input">
-                    <!-- Options dynamiques depuis Chauffeurs -->
-                    <option value="">Sélectionner un chauffeur</option>
-                    <option value="Jean Dupont">Jean Dupont</option>
-                    <option value="Paul Laurent">Paul Laurent</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label class="field-label">Type</label>
-                  <div class="field-segmented">
-                    <label class="segmented-option">
-                      <input
-                        type="radio"
-                        name="commandeType"
-                        value="materiaux"
-                        checked
-                      />
-                      <span>Matériaux</span>
-                    </label>
-                    <label class="segmented-option">
-                      <input type="radio" name="commandeType" value="journee" />
-                      <span>Journée</span>
-                    </label>
-                  </div>
-                </div>
-
-                <!-- Liste déroulante des matériaux (affichée seulement si type = Matériaux) -->
-                <div
-                  class="form-group"
-                  id="commandeMateriauGroup"
-                  data-visible-if-type="materiaux"
-                >
-                  <label class="field-label" for="commandeMateriau">
-                    Matériau
-                  </label>
-                  <select id="commandeMateriau" class="field-input">
-                    <!-- Options dynamiques depuis Matériaux -->
-                    <option value="">Sélectionner un matériau</option>
-                    <option value="Sable 0/4">Sable 0/4</option>
-                    <option value="Gravier 4/6">Gravier 4/6</option>
-                    <option value="Remblais">Remblais</option>
-                  </select>
-                </div>
-
-                <div class="form-group form-group-full">
-                  <label class="field-label" for="commandeNotes">
-                    Notes / instructions
-                  </label>
-                  <textarea
-                    id="commandeNotes"
-                    class="field-input"
-                    rows="3"
-                    placeholder="Précisez les contraintes d'accès, horaires, etc."
-                  ></textarea>
-                </div>
-
-                <div class="form-actions form-actions-full">
-                  <button type="submit" class="btn btn-primary">
-                    Enregistrer la commande
-                  </button>
-                </div>
-              </form>
-
-              <p class="form-message">
-                En mode Réel, la validation d'une commande déclenchera la génération
-                automatique des transports du jour et les scénarios Make associés.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Modal Historique / Audit log -->
         <div
           id="modalAuditLog"
           class="modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modalAuditLogTitle"
         >
           <div class="modal-backdrop" data-modal-close></div>
           <div class="modal-dialog modal-dialog-large">
-            <header class="modal-header">
-              <h3 id="modalAuditLogTitle">Historique des actions</h3>
-              <button class="icon-btn" type="button" data-modal-close>
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-            </header>
+            <div class="modal-header">
+              <h3>Historique des actions</h3>
+              <button class="icon-btn" type="button" data-modal-close>✕</button>
+            </div>
             <div class="modal-body">
               <p class="modal-subtitle">
-                Journal des actions importantes réalisées par les gérants et les
-                chauffeurs.
+                Journal en démo (à connecter à un log Make/Sheets).
               </p>
-
               <div class="table-wrapper">
                 <table class="data-table">
                   <thead>
                     <tr>
-                      <th>Date / heure</th>
+                      <th>Date</th>
                       <th>Utilisateur</th>
                       <th>Rôle</th>
                       <th>Action</th>
@@ -2029,20 +2135,12 @@
                   </thead>
                   <tbody id="auditLogTableBody">
                     <tr>
-                      <td>05/05/2026 - 08:30</td>
+                      <td>05/05/2026 08:30</td>
                       <td>Jean Dupont</td>
                       <td>Chauffeur</td>
                       <td>Validation transport</td>
-                      <td>Commande C-2026-001, transport 1/5</td>
+                      <td>T1 C‑2026‑001</td>
                     </tr>
-                    <tr>
-                      <td>05/05/2026 - 07:45</td>
-                      <td>Admin Gérant</td>
-                      <td>Gérant</td>
-                      <td>Création commande</td>
-                      <td>Commande C-2026-001 - BTP Caraïbes</td>
-                    </tr>
-                    <!-- Lignes audit dynamiques -->
                   </tbody>
                 </table>
               </div>
@@ -2050,29 +2148,338 @@
           </div>
         </div>
 
-        <!-- =========================================================== -->
-        <!-- 5. ÉTATS DE CHARGEMENT / OVERLAYS                           -->
-        <!-- =========================================================== -->
-        <div id="loadingOverlay" class="loading-overlay hidden" aria-hidden="true">
-          <div class="loading-spinner"></div>
-          <p class="loading-text">Synchronisation en cours...</p>
+        <div id="loadingOverlay" class="loading-overlay">
+          <div class="loading-overlay-inner">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Synchronisation en cours...</p>
+          </div>
         </div>
       </main>
 
-      <!-- ===================== FOOTER ===================== -->
       <footer class="app-footer">
-        <p>
-          SOTRANSNORD &mdash; Application de gestion de transport de matériaux BTP.
-        </p>
-        <p>
-          Mode Démo : données fictives. Mode Réel : connecté via Google Sheets &amp;
-          Make.
-        </p>
+        <p>SOTRANSNORD — Démo front locale. Mode Réel à connecter via Make/Sheets.</p>
       </footer>
     </div>
 
-    <!-- ===================== PLACEHOLDER SCRIPTS ===================== -->
-    <!-- Emplacement pour votre logique JavaScript (PIN, rôles, Make, Sheets) -->
-    <script src="app.js"></script>
+    <script>
+      const state = {
+        mode: "demo",
+        currentRole: null,
+        pin: "",
+        pinLength: 6,
+        attempts: 0,
+        maxAttempts: 5,
+        lockedUntil: null,
+        pins: {
+          gerant: "111111",
+          chauffeur: "222222",
+        },
+      };
+
+      const authSection = document.getElementById("authSection");
+      const managerSection = document.getElementById("managerSection");
+      const driverSection = document.getElementById("driverSection");
+      const roleGerantBtn = document.getElementById("roleGerantBtn");
+      const roleChauffeurBtn = document.getElementById("roleChauffeurBtn");
+      const pinDots = document.querySelectorAll(".pin-dot");
+      const pinMessage = document.getElementById("pinMessage");
+      const lockoutInfo = document.getElementById("lockoutInfo");
+      const currentUserRole = document.getElementById("currentUserRole");
+      const currentModeLabel = document.getElementById("currentModeLabel");
+      const modeToggle = document.getElementById("modeToggle");
+      const integrationStatus = document.getElementById("integrationStatus");
+      const loadingOverlay = document.getElementById("loadingOverlay");
+
+      const logoutManagerBtn = document.getElementById("logoutManagerBtn");
+      const logoutDriverBtn = document.getElementById("logoutDriverBtn");
+
+      function setRole(role) {
+        state.currentRole = role;
+        roleGerantBtn.classList.toggle("role-chip-active", role === "gerant");
+        roleChauffeurBtn.classList.toggle(
+          "role-chip-active",
+          role === "chauffeur"
+        );
+        pinMessage.textContent = "";
+        resetPin();
+      }
+
+      function resetPin() {
+        state.pin = "";
+        pinDots.forEach((d) => d.classList.remove("filled"));
+      }
+
+      function updatePinDots() {
+        pinDots.forEach((dot, idx) => {
+          dot.classList.toggle("filled", idx < state.pin.length);
+        });
+      }
+
+      function isLocked() {
+        if (!state.lockedUntil) return false;
+        const now = Date.now();
+        if (now >= state.lockedUntil) {
+          state.lockedUntil = null;
+          lockoutInfo.textContent = "";
+          state.attempts = 0;
+          return false;
+        }
+        const remaining = Math.ceil((state.lockedUntil - now) / 1000);
+        lockoutInfo.textContent =
+          "Verrouillé. Réessayez dans " + remaining + " s.";
+        return true;
+      }
+
+      function handleKey(key) {
+        if (isLocked()) return;
+
+        if (key === "clear") {
+          state.pin = state.pin.slice(0, -1);
+        } else if (key === "validate") {
+          submitPin();
+          return;
+        } else if (state.pin.length < state.pinLength) {
+          state.pin += key;
+        }
+        updatePinDots();
+      }
+
+      function submitPin() {
+        if (state.pin.length !== state.pinLength) {
+          pinMessage.textContent = "PIN incomplet (6 chiffres).";
+          return;
+        }
+
+        const expected =
+          state.currentRole === "chauffeur"
+            ? state.pins.chauffeur
+            : state.pins.gerant;
+
+        if (state.pin === expected) {
+          state.attempts = 0;
+          state.lockedUntil = null;
+          lockoutInfo.textContent = "";
+          pinMessage.textContent = "";
+
+          if (state.currentRole === "gerant") {
+            connectAsManager();
+          } else {
+            connectAsDriver();
+          }
+        } else {
+          state.attempts += 1;
+          pinMessage.textContent =
+            "PIN incorrect. Tentative " +
+            state.attempts +
+            "/" +
+            state.maxAttempts +
+            ".";
+          resetPin();
+          if (state.attempts >= state.maxAttempts) {
+            state.lockedUntil = Date.now() + 60 * 1000;
+            lockoutInfo.textContent =
+              "Trop de tentatives. Verrouillé pendant 60 s.";
+          }
+        }
+      }
+
+      function connectAsManager() {
+        authSection.classList.add("hidden");
+        driverSection.classList.add("hidden");
+        managerSection.classList.remove("hidden");
+        currentUserRole.textContent = "Gérant";
+      }
+
+      function connectAsDriver() {
+        authSection.classList.add("hidden");
+        managerSection.classList.add("hidden");
+        driverSection.classList.remove("hidden");
+        currentUserRole.textContent = "Chauffeur";
+      }
+
+      roleGerantBtn.addEventListener("click", () => setRole("gerant"));
+      roleChauffeurBtn.addEventListener("click", () =>
+        setRole("chauffeur")
+      );
+
+      document.querySelectorAll(".key-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.key;
+          handleKey(key);
+        });
+      });
+
+      logoutManagerBtn.addEventListener("click", () => {
+        managerSection.classList.add("hidden");
+        authSection.classList.remove("hidden");
+        currentUserRole.textContent = "Non connecté";
+        resetPin();
+      });
+
+      logoutDriverBtn.addEventListener("click", () => {
+        driverSection.classList.add("hidden");
+        authSection.classList.remove("hidden");
+        currentUserRole.textContent = "Non connecté";
+        resetPin();
+      });
+
+      modeToggle.addEventListener("click", () => {
+        state.mode = state.mode === "demo" ? "real" : "demo";
+        const isReal = state.mode === "real";
+        modeToggle.classList.toggle("real", isReal);
+        currentModeLabel.textContent = isReal ? "Réel" : "Démo";
+        integrationStatus.textContent = isReal ? "En attente Make" : "Hors-ligne";
+        integrationStatus.classList.toggle(
+          "status-chip-connected",
+          isReal
+        );
+        integrationStatus.classList.toggle(
+          "status-chip-disconnected",
+          !isReal
+        );
+        if (isReal) {
+          showLoadingOverlay(800);
+        }
+      });
+
+      function showLoadingOverlay(duration) {
+        loadingOverlay.classList.add("active");
+        setTimeout(() => {
+          loadingOverlay.classList.remove("active");
+        }, duration);
+      }
+
+      document.querySelectorAll(".nav-tab").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".nav-tab")
+            .forEach((b) => b.classList.remove("nav-tab-active"));
+          btn.classList.add("nav-tab-active");
+
+          const targetId = btn.dataset.target;
+          document
+            .querySelectorAll(".manager-panel")
+            .forEach((p) => p.classList.remove("active"));
+          document.getElementById(targetId).classList.add("active");
+        });
+      });
+
+      document.querySelectorAll(".sub-tab").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const container = btn.closest("#managerParametrages");
+          container
+            .querySelectorAll(".sub-tab")
+            .forEach((b) => b.classList.remove("sub-tab-active"));
+          btn.classList.add("sub-tab-active");
+
+          const targetId = btn.dataset.target;
+          container
+            .querySelectorAll(".param-panel")
+            .forEach((p) => p.classList.remove("active"));
+          container
+            .querySelector("#" + targetId)
+            .classList.add("active");
+        });
+      });
+
+      function openModal(id) {
+        const modal = document.getElementById(id);
+        if (!modal) return;
+        modal.classList.add("active");
+      }
+
+      function closeModal(el) {
+        const modal = el.closest(".modal");
+        if (!modal) return;
+        modal.classList.remove("active");
+      }
+
+      document.querySelectorAll("[data-modal-open]").forEach((el) => {
+        el.addEventListener("click", () => {
+          openModal(el.dataset.modalOpen);
+        });
+      });
+
+      document.querySelectorAll("[data-modal-close]").forEach((el) => {
+        el.addEventListener("click", () => closeModal(el));
+      });
+
+      const signatureCanvas = document.getElementById("signatureCanvas");
+      const signatureClearBtn = document.getElementById("signatureClearBtn");
+      if (signatureCanvas && signatureCanvas.getContext) {
+        const ctx = signatureCanvas.getContext("2d");
+        let drawing = false;
+
+        function getPos(e) {
+          const rect = signatureCanvas.getBoundingClientRect();
+          const touch = e.touches ? e.touches[0] : e;
+          return {
+            x: touch.clientX - rect.left,
+            y: touch.clientY - rect.top,
+          };
+        }
+
+        function startDraw(e) {
+          drawing = true;
+          const pos = getPos(e);
+          ctx.beginPath();
+          ctx.moveTo(pos.x, pos.y);
+        }
+
+        function draw(e) {
+          if (!drawing) return;
+          e.preventDefault();
+          const pos = getPos(e);
+          ctx.lineTo(pos.x, pos.y);
+          ctx.strokeStyle = "#111827";
+          ctx.lineWidth = 2;
+          ctx.lineCap = "round";
+          ctx.stroke();
+        }
+
+        function endDraw() {
+          drawing = false;
+        }
+
+        signatureCanvas.addEventListener("mousedown", startDraw);
+        signatureCanvas.addEventListener("touchstart", startDraw);
+        signatureCanvas.addEventListener("mousemove", draw);
+        signatureCanvas.addEventListener("touchmove", draw);
+        window.addEventListener("mouseup", endDraw);
+        window.addEventListener("touchend", endDraw);
+
+        signatureClearBtn.addEventListener("click", () => {
+          ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+        });
+      }
+
+      document
+        .getElementById("transportDetailsForm")
+        .addEventListener("submit", (e) => {
+          e.preventDefault();
+          document.getElementById("transportDetailsMessage").textContent =
+            "Transport validé (démo).";
+          setTimeout(() => {
+            document.getElementById("transportDetailsMessage").textContent = "";
+            document
+              .getElementById("modalTransportDetails")
+              .classList.remove("active");
+          }, 1000);
+        });
+
+      document
+        .getElementById("ficheFinJourneeForm")
+        .addEventListener("submit", (e) => {
+          e.preventDefault();
+          document.getElementById("ficheFinJourneeMessage").textContent =
+            "Fiche envoyée (démo).";
+          if (state.mode === "real") showLoadingOverlay(800);
+          setTimeout(() => {
+            document.getElementById("ficheFinJourneeMessage").textContent = "";
+          }, 1500);
+        });
+
+      setRole("gerant");
+    </script>
   </body>
 </html>
