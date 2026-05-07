@@ -803,7 +803,7 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
     <button onclick="activateDemo()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);padding:7px 18px;border-radius:99px;font-size:.72rem;cursor:pointer;letter-spacing:.05em;">
       🎭 Mode Démonstration
     </button>
-    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.9.4 — 2026</p>
+    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.9.5 — 2026</p>
   </div>
 </div>
 
@@ -3363,7 +3363,7 @@ function renderDriverDay(){
       : `<span class="badge badge-yellow" style="font-size:.7rem;">📅 ${fmtDate(t.orderDate)}</span>`;
     return `
     <div class="transport-item${t.done ? ' done' : ''}"
-         onclick="${t.done ? '' : 'openTransportModal(' + t.orderId + ',' + t.id + ')'}">
+         onclick="${t.done ? '' : 'openTransportModal(\'' + t.orderId + '\',\'' + t.id + '\')'}">
       <div class="transport-num">${i + 1}</div>
       <div class="transport-info">
         <div class="transport-client" style="display:flex;align-items:center;gap:8px;">
@@ -3402,8 +3402,10 @@ function renderDriverProfile(){
    TRANSPORT MODAL (chauffeur)
    ================================================================= */
 function openTransportModal(orderId, transportId){
-  const o=db.orders.find(x=>x.id===orderId);if(!o)return;
-  const t=o.transports.find(x=>x.id===transportId);if(!t||t.done)return;
+  const o=db.orders.find(x=>String(x.id)===String(orderId));
+  if(!o){ console.warn('Commande introuvable:', orderId); return; }
+  const t=o.transports.find(x=>String(x.id)===String(transportId));
+  if(!t||t.done){ console.warn('Transport introuvable ou déjà validé:', transportId); return; }
   state.currentOrder=o; state.currentTransport=t;
   document.getElementById('transportModalTitle').textContent=`Transport #${transportId}`;
   document.getElementById('transportModalInfo').innerHTML=`
