@@ -803,7 +803,7 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
     <button onclick="activateDemo()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);padding:7px 18px;border-radius:99px;font-size:.72rem;cursor:pointer;letter-spacing:.05em;">
       🎭 Mode Démonstration
     </button>
-    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.9.2 — 2026</p>
+    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.9.3 — 2026</p>
   </div>
 </div>
 
@@ -2443,9 +2443,9 @@ function orderCardHTML(o) {
       <div class="progress-bar-wrap"><div class="progress-bar-fill${pct>=100?' full':''}" style="width:${pct}%"></div></div>
     </div>
     <div class="flex gap-2 mt-3" style="flex-wrap:wrap;">
-      ${isFact ? `<button class="facturation-btn" onclick="facturer(${o.id})">💶 À facturer</button>` : ''}
-      <button class="btn btn-ghost btn-sm" onclick="editOrder(${o.id})">✏️ Modifier</button>
-      <button class="btn btn-danger btn-sm" onclick="deleteOrder(${o.id})">🗑️</button>
+      ${isFact ? `<button class="facturation-btn" onclick="facturer('${o.id}')">💶 À facturer</button>` : ''}
+      <button class="btn btn-ghost btn-sm" onclick="editOrder('${o.id}')">✏️ Modifier</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.id}')">🗑️</button>
     </div>
   </div>`;
 }
@@ -2537,7 +2537,8 @@ function saveOrder() {
   }
 
   if(state.editingId) {
-    const o = db.orders.find(x=>x.id===state.editingId);
+    const o = db.orders.find(x=>String(x.id)===String(state.editingId));
+    if(!o){ showToast('⚠️ Commande introuvable', 'error'); return; }
     Object.assign(o, { clientId, date, address, truckId, driverId, type, materialId:matId, nbEstimated:nb });
     showToast('✅ Commande mise à jour', 'success');
     addAudit('Modification commande', `Commande #${o.id} — ${clientName(clientId)}`);
@@ -2560,7 +2561,7 @@ function editOrder(id) { openOrderModal(id); }
 async function deleteOrder(id) {
   const ok = await showConfirm('Supprimer la commande', 'Cette action est irréversible.','🗑️','Supprimer','btn-danger');
   if(!ok) return;
-  db.orders = db.orders.filter(o=>o.id!==id);
+  db.orders = db.orders.filter(o=>String(o.id)!==String(id));
   addAudit('Suppression commande', `Commande #${id}`);
   renderOrders();
   showToast('Commande supprimée', 'error');
@@ -2588,8 +2589,8 @@ function renderDriversTable(search='') {
       <td><span class="badge ${d.status==='actif'?'badge-green':'badge-red'}">${d.status}</span></td>
       <td><span class="badge badge-gray" title="Documents uploadés">📄 ${(d.docs||[]).length}</span></td>
       <td><div class="table-actions">
-        <button class="btn btn-ghost btn-sm btn-icon" onclick="editDriver(${d.id})" title="Modifier">✏️</button>
-        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteDriver(${d.id})" title="Supprimer">🗑️</button>
+        <button class="btn btn-ghost btn-sm btn-icon" onclick="editDriver('${d.id}')" title="Modifier">✏️</button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteDriver('${d.id}')" title="Supprimer">🗑️</button>
       </div></td>
     </tr>
   `).join('') : `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">👤</div><div class="empty-title">Aucun chauffeur</div></div></td></tr>`;
@@ -2633,7 +2634,7 @@ function saveDriver() {
   };
 
   if(state.editingId) {
-    const d = db.drivers.find(x=>x.id===state.editingId);
+    const d = db.drivers.find(x=>String(x.id)===String(state.editingId));
     Object.assign(d, data);
     showToast('✅ Chauffeur mis à jour', 'success');
     addAudit('Modification chauffeur', `${name} — ${docs.length} document(s)`);
@@ -2658,7 +2659,7 @@ function editDriver(id) { openDriverModal(id); }
 async function deleteDriver(id) {
   const ok = await showConfirm('Supprimer ce chauffeur ?','Cette action est irréversible.','👤','Supprimer','btn-danger');
   if(!ok) return;
-  db.drivers = db.drivers.filter(d=>d.id!==id);
+  db.drivers = db.drivers.filter(d=>String(d.id)!==String(id));
   addAudit('Suppression chauffeur', `ID ${id}`);
   renderDriversTable();
   showToast('Chauffeur supprimé','error');
@@ -2680,8 +2681,8 @@ function renderTrucks() {
       <td><span class="badge ${t.status==='actif'?'badge-green':'badge-red'}">${t.status}</span></td>
       <td><span class="badge badge-gray" title="Documents uploadés">📄 ${(t.docs||[]).length}</span></td>
       <td><div class="table-actions">
-        <button class="btn btn-ghost btn-sm btn-icon" onclick="editTruck(${t.id})">✏️</button>
-        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteTruck(${t.id})">🗑️</button>
+        <button class="btn btn-ghost btn-sm btn-icon" onclick="editTruck('${t.id}')">✏️</button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteTruck('${t.id}')">🗑️</button>
       </div></td>
     </tr>`;
   }).join('') : `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🚛</div><div class="empty-title">Aucun camion</div></div></td></tr>`;
@@ -2719,7 +2720,7 @@ function saveTruck() {
     status:'actif', docs
   };
   if(state.editingId){
-    const t=db.trucks.find(x=>x.id===state.editingId);
+    const t=db.trucks.find(x=>String(x.id)===String(state.editingId));
     Object.assign(t,data);
     showToast('✅ Camion mis à jour','success');
     addAudit('Modification camion',`${plate} — ${docs.length} document(s)`);
@@ -2742,7 +2743,7 @@ function saveTruck() {
 function editTruck(id){ openTruckModal(id); }
 async function deleteTruck(id){
   const ok=await showConfirm('Supprimer ce camion ?','Cette action est irréversible.','🚛','Supprimer','btn-danger');
-  if(!ok)return; db.trucks=db.trucks.filter(t=>t.id!==id); addAudit('Suppression camion',`ID ${id}`); renderTrucks(); showToast('Camion supprimé','error');
+  if(!ok)return; db.trucks=db.trucks.filter(t=>String(t.id)!==String(id)); addAudit('Suppression camion',`ID ${id}`); renderTrucks(); showToast('Camion supprimé','error');
 }
 
 /* =================================================================
@@ -2863,8 +2864,8 @@ function renderMaterials(){
   tbody.innerHTML=db.materials.map(m=>`
     <tr><td>${m.name}</td><td>${m.unit}</td>
     <td><div class="table-actions">
-      <button class="btn btn-ghost btn-sm btn-icon" onclick="editMaterial(${m.id})">✏️</button>
-      <button class="btn btn-danger btn-sm btn-icon" onclick="deleteMaterial(${m.id})">🗑️</button>
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="editMaterial('${m.id}')">✏️</button>
+      <button class="btn btn-danger btn-sm btn-icon" onclick="deleteMaterial('${m.id}')">🗑️</button>
     </div></td></tr>`).join('');
 }
 
@@ -2879,7 +2880,7 @@ function saveMaterial(){
   if(!name){showToast('⚠️ Nom obligatoire','error');return;}
   const data={name,unit:document.getElementById('mm-unit').value};
   if(state.editingId){
-    const m=db.materials.find(x=>x.id===state.editingId);
+    const m=db.materials.find(x=>String(x.id)===String(state.editingId));
     Object.assign(m,data);
     showToast('✅ Matériau mis à jour','success');
     addAudit('Modification matériau',name);
@@ -2895,7 +2896,7 @@ function saveMaterial(){
 function editMaterial(id){openMaterialModal(id);}
 async function deleteMaterial(id){
   const ok=await showConfirm('Supprimer ce matériau ?','','⚙️','Supprimer','btn-danger');
-  if(!ok)return;db.materials=db.materials.filter(m=>m.id!==id);renderMaterials();showToast('Matériau supprimé','error');
+  if(!ok)return;db.materials=db.materials.filter(m=>String(m.id)!==String(id));renderMaterials();showToast('Matériau supprimé','error');
 }
 
 function renderTariffs(){
@@ -2904,8 +2905,8 @@ function renderTariffs(){
     <tr><td><span class="badge ${t.type==='journee'?'badge-blue':'badge-orange'}">${t.type==='journee'?'Journée':'Matériaux'}</span></td>
     <td>${t.name}</td><td style="font-weight:700;">${fmt(t.price)}</td>
     <td><div class="table-actions">
-      <button class="btn btn-ghost btn-sm btn-icon" onclick="editTariff(${t.id})">✏️</button>
-      <button class="btn btn-danger btn-sm btn-icon" onclick="deleteTariff(${t.id})">🗑️</button>
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="editTariff('${t.id}')">✏️</button>
+      <button class="btn btn-danger btn-sm btn-icon" onclick="deleteTariff('${t.id}')">🗑️</button>
     </div></td></tr>`).join('');
 }
 
@@ -2919,14 +2920,14 @@ function saveTariff(){
   const name=document.getElementById('trf-name').value.trim();const price=parseFloat(document.getElementById('trf-price').value);
   if(!name||isNaN(price)){showToast('⚠️ Champs obligatoires','error');return;}
   const data={type:document.getElementById('trf-type').value,name,price};
-  if(state.editingId){const t=db.tariffs.find(x=>x.id===state.editingId);Object.assign(t,data);showToast('✅ Tarif mis à jour','success');}
+  if(state.editingId){const t=db.tariffs.find(x=>String(x.id)===String(state.editingId));Object.assign(t,data);showToast('✅ Tarif mis à jour','success');}
   else{db.tariffs.push({id:uid(),...data});showToast('✅ Tarif ajouté','success');addAudit('Création tarif',name);}
   closeModal('tariffModal');renderTariffs();
 }
 function editTariff(id){openTariffModal(id);}
 async function deleteTariff(id){
   const ok=await showConfirm('Supprimer ce tarif ?','','💰','Supprimer','btn-danger');
-  if(!ok)return;db.tariffs=db.tariffs.filter(t=>t.id!==id);renderTariffs();showToast('Tarif supprimé','error');
+  if(!ok)return;db.tariffs=db.tariffs.filter(t=>String(t.id)!==String(id));renderTariffs();showToast('Tarif supprimé','error');
 }
 
 function renderExpenses(){
@@ -2936,7 +2937,7 @@ function renderExpenses(){
     <td><span class="badge badge-gray">${e.type}</span></td>
     <td style="font-weight:700;">${fmt(e.amount)}</td>
     <td><div class="table-actions">
-      <button class="btn btn-danger btn-sm btn-icon" onclick="deleteExpense(${e.id})">🗑️</button>
+      <button class="btn btn-danger btn-sm btn-icon" onclick="deleteExpense('${e.id}')">🗑️</button>
     </div></td></tr>`).join('');
 }
 
