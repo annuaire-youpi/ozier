@@ -803,7 +803,7 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
     <button onclick="activateDemo()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);padding:7px 18px;border-radius:99px;font-size:.72rem;cursor:pointer;letter-spacing:.05em;">
       🎭 Mode Démonstration
     </button>
-    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.9.0 — 2026</p>
+    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.9.1 — 2026</p>
   </div>
 </div>
 
@@ -2755,8 +2755,8 @@ function renderClients() {
       <td><div style="font-weight:700;">${c.company}</div></td>
       <td>${c.manager||'—'}</td><td>${c.phone||'—'}</td><td>${c.email||'—'}</td>
       <td><div class="table-actions">
-        <button class="btn btn-ghost btn-sm btn-icon" onclick="editClient(${c.id})">✏️</button>
-        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteClient(${c.id})">🗑️</button>
+        <button class="btn btn-ghost btn-sm btn-icon" onclick="editClient('${c.id}')">✏️</button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteClient('${c.id}')">🗑️</button>
       </div></td>
     </tr>`).join(''):`<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">🏢</div><div class="empty-title">Aucun client</div></div></td></tr>`;
 }
@@ -2776,7 +2776,7 @@ function openClientModal(id=null){
     </div>`).join('');
 
   if(id){
-    const c=db.clients.find(x=>x.id===id);
+    const c=db.clients.find(x=>String(x.id)===String(id));
     if(c){
       document.getElementById('cm-company').value = c.company;
       document.getElementById('cm-manager').value = c.manager||'';
@@ -2803,7 +2803,7 @@ function saveClient(){
 
   let clientId;
   if(state.editingId){
-    const c=db.clients.find(x=>x.id===state.editingId);
+    const c=db.clients.find(x=>String(x.id)===String(state.editingId));
     Object.assign(c,data);
     clientId = state.editingId;
     showToast('✅ Client mis à jour','success');
