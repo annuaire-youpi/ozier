@@ -803,7 +803,7 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
     <button onclick="activateDemo()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);padding:7px 18px;border-radius:99px;font-size:.72rem;cursor:pointer;letter-spacing:.05em;">
       🎭 Mode Démonstration
     </button>
-    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.1.0 — 2026</p>
+    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.2.0 — 2026</p>
   </div>
 </div>
 
@@ -1708,12 +1708,14 @@ let remoteConfig = {};
 // Charge la config depuis l'onglet CONFIG de Sheets
 async function loadRemoteConfig() {
   try {
-    const url = SHEETS_BASE + '?action=getConfig';
-    const r   = await fetch(url);
+    const r = await fetch(SHEETS_BASE, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ action: 'getConfig' })
+    });
     const cfg = await r.json();
     if(cfg && typeof cfg === 'object' && !cfg.error) {
       remoteConfig = cfg;
-      // Sauvegarde en localStorage comme cache de secours
       localStorage.setItem('sotransnord_config_cache', JSON.stringify(cfg));
       console.log('✅ Config chargée depuis Sheets :', Object.keys(cfg).length, 'clés');
     } else {
@@ -1721,7 +1723,6 @@ async function loadRemoteConfig() {
     }
   } catch(e) {
     console.warn('⚠️ Impossible de charger la config depuis Sheets, utilisation du cache local');
-    // Fallback : utilise le cache localStorage si disponible
     const cache = localStorage.getItem('sotransnord_config_cache');
     if(cache) {
       remoteConfig = JSON.parse(cache);
@@ -1876,7 +1877,11 @@ async function loadRealData() {
   console.log('🔍 loadRealData — URL:', url ? 'OK' : 'MANQUANTE');
   if(!url) { showToast('⚠️ URL Apps Script manquante', 'error'); return; }
 
-  const r    = await fetch(url + '?action=getAll');
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ action: 'getAll' })
+  });
   const data = await r.json();
 
   console.log('📦 Données reçues:', {
