@@ -1727,42 +1727,70 @@ db.annualData = {};
 })();
 
 /* =================================================================
-   MAKE WEBHOOK CONFIG (Mode Réel)
+   CONFIG CENTRALISÉE — chargée depuis Google Sheets au démarrage
    ================================================================= */
-// URLs chargées depuis localStorage (modifiables via la page Paramètres)
+
+// ⬇️ SEULE URL à garder en dur — tout le reste vient de Sheets
+const SHEETS_BASE = 'https://script.google.com/macros/s/AKfycbzfYAn6rlb01517GoR8PYQUqdSIsbl6Px0PRlsZYEIlq_T6wE8TikxE8_qW92BobLLekQ/exec';
+
+// Config en mémoire — remplie au démarrage par loadRemoteConfig()
+let remoteConfig = {};
+
+// Charge la config depuis l'onglet CONFIG de Sheets
+async function loadRemoteConfig() {
+  try {
+    const url = SHEETS_BASE + '?action=getConfig';
+    const r   = await fetch(url);
+    const cfg = await r.json();
+    if(cfg && typeof cfg === 'object' && !cfg.error) {
+      remoteConfig = cfg;
+      // Sauvegarde en localStorage comme cache de secours
+      localStorage.setItem('sotransnord_config_cache', JSON.stringify(cfg));
+      console.log('✅ Config chargée depuis Sheets :', Object.keys(cfg).length, 'clés');
+    } else {
+      throw new Error('Réponse invalide');
+    }
+  } catch(e) {
+    console.warn('⚠️ Impossible de charger la config depuis Sheets, utilisation du cache local');
+    // Fallback : utilise le cache localStorage si disponible
+    const cache = localStorage.getItem('sotransnord_config_cache');
+    if(cache) {
+      remoteConfig = JSON.parse(cache);
+      console.log('📦 Config chargée depuis le cache local');
+    }
+  }
+}
+
+// Lecture d'une clé de config
+function getConfig(key) {
+  return remoteConfig[key] || '';
+}
+
+// Lecture d'un webhook Make par clé
+function getMakeWebhook(key) {
+  return getConfig('webhook_' + key) || '';
+}
+
+// Lecture de l'URL Sheets (peut être surchargée depuis la config)
+function getSheetsBase() {
+  return getConfig('sheets_base') || SHEETS_BASE;
+}
+
+// Pour la page Paramètres — lecture/sauvegarde locale (override temporaire)
 function loadConfig() {
-  const saved = localStorage.getItem('sotransnord_config');
-  return saved ? JSON.parse(saved) : {};
+  const cache = localStorage.getItem('sotransnord_config_cache');
+  return cache ? JSON.parse(cache) : remoteConfig;
 }
 function saveConfig(cfg) {
-  localStorage.setItem('sotransnord_config', JSON.stringify(cfg));
-}
-
-const DEFAULT_WEBHOOKS = {
-  newOrder:      '',
-  updateOrder:   '',
-  transportDone: '',
-  endOfDay:      '',
-  newDriver:     '',
-  newTruck:      '',
-  expense:       '',
-};
-
-// Proxies dynamiques — lisent toujours depuis localStorage en temps réel
-function getMakeWebhook(key) {
-  const cfg = loadConfig();
-  return cfg['webhook_'+key] || DEFAULT_WEBHOOKS[key] || '';
-}
-function getSheetsBase() {
-  const cfg = loadConfig();
-  return cfg['sheets_base'] || '';
+  remoteConfig = { ...remoteConfig, ...cfg };
+  localStorage.setItem('sotransnord_config_cache', JSON.stringify(remoteConfig));
 }
 
 async function triggerMake(key, payload) {
   if(state.mode !== 'real') return { ok:true, demo:true };
   const url = getMakeWebhook(key);
   if(!url) {
-    showToast(`⚠️ URL Webhook "${key}" non configurée — allez dans Paramètres`, 'warning', 5000);
+    showToast(`⚠️ Webhook "${key}" non configuré dans Google Sheets`, 'warning', 5000);
     return { ok:false, error:'URL manquante' };
   }
   try {
@@ -2360,11 +2388,17 @@ function saveDriver() {
     showToast('✅ Chauffeur mis à jour', 'success');
     addAudit('Modification chauffeur', `${name} — ${docs.length} document(s)`);
   } else {
-    db.drivers.push({ id:uid(), pin, ...data });
+    const newId = uid();
+    db.drivers.push({ id:newId, pin, ...data });
     showToast('✅ Chauffeur ajouté', 'success');
     addAudit('Création chauffeur', `${name} — ${docs.length} document(s)`);
-    triggerMake('newDriver', { ...data, docs: docs.map(d=>({name:d.name,size:d.size,type:d.type})) });
-    syncSheets('newDriver', { ...data, docs: docs.map(d=>({name:d.name,size:d.size})) });
+    // Envoi complet vers Make avec Base64 pour upload Drive
+    triggerMake('newDriver', {
+      id: newId,
+      ...data,
+      docs: docs.map(d=>({ name:d.name, size:d.size, type:d.type, data:d.data }))
+    });
+    syncSheets('newDriver', { id:newId, ...data, docs: docs.map(d=>({name:d.name,size:d.size})) });
   }
   closeModal('driverModal');
   renderDriversTable();
@@ -2440,10 +2474,16 @@ function saveTruck() {
     showToast('✅ Camion mis à jour','success');
     addAudit('Modification camion',`${plate} — ${docs.length} document(s)`);
   } else {
-    db.trucks.push({id:uid(),...data});
+    const newId = uid();
+    db.trucks.push({id:newId,...data});
     showToast('✅ Camion ajouté','success');
     addAudit('Création camion',`${plate} — ${docs.length} document(s)`);
-    triggerMake('newTruck',{ ...data, docs: docs.map(d=>({name:d.name,size:d.size})) });
+    // Envoi complet vers Make avec Base64 pour upload Drive
+    triggerMake('newTruck', {
+      id: newId,
+      ...data,
+      docs: docs.map(d=>({ name:d.name, size:d.size, type:d.type, data:d.data }))
+    });
   }
   closeModal('truckModal');
   renderTrucks();
@@ -2483,8 +2523,19 @@ function saveClient(){
   const company=document.getElementById('cm-company').value.trim();
   if(!company){showToast('⚠️ Nom entreprise obligatoire','error');return;}
   const data={company,manager:document.getElementById('cm-manager').value.trim(),phone:document.getElementById('cm-phone').value.trim(),email:document.getElementById('cm-email').value.trim()};
-  if(state.editingId){const c=db.clients.find(x=>x.id===state.editingId);Object.assign(c,data);showToast('✅ Client mis à jour','success');addAudit('Modification client',company);}
-  else{db.clients.push({id:uid(),...data});showToast('✅ Client ajouté','success');addAudit('Création client',company);}
+  if(state.editingId){
+    const c=db.clients.find(x=>x.id===state.editingId);
+    Object.assign(c,data);
+    showToast('✅ Client mis à jour','success');
+    addAudit('Modification client',company);
+    triggerMake('updateOrder', { ...c, action:'updateClient' });
+  } else {
+    const newId=uid();
+    db.clients.push({id:newId,...data});
+    showToast('✅ Client ajouté','success');
+    addAudit('Création client',company);
+    syncSheets('newClient', {id:newId,...data});
+  }
   closeModal('clientModal');renderClients();
 }
 function editClient(id){openClientModal(id);}
@@ -2583,9 +2634,10 @@ function openExpenseModal(){
 function saveExpense(){
   const amount=parseFloat(document.getElementById('exp-amount').value);
   if(isNaN(amount)||amount<=0){showToast('⚠️ Montant invalide','error');return;}
-  const data={truckId:parseInt(document.getElementById('exp-truck').value),date:document.getElementById('exp-date').value,type:document.getElementById('exp-type').value,amount,desc:document.getElementById('exp-desc').value.trim()};
-  db.expenses.push({id:uid(),...data});showToast('✅ Frais enregistré','success');addAudit('Ajout frais',`${data.type} — ${fmt(amount)}`);
-  triggerMake('expense',data);syncSheets('expense',data);
+  const newId = uid();
+  const data={id:newId, truckId:parseInt(document.getElementById('exp-truck').value),date:document.getElementById('exp-date').value,type:document.getElementById('exp-type').value,amount,desc:document.getElementById('exp-desc').value.trim()};
+  db.expenses.push(data);showToast('✅ Frais enregistré','success');addAudit('Ajout frais',`${data.type} — ${fmt(amount)}`);
+  triggerMake('expense', data);syncSheets('expense', data);
   closeModal('expenseModal');renderExpenses();
 }
 async function deleteExpense(id){
@@ -2632,12 +2684,12 @@ const WEBHOOK_LABELS = {
 };
 
 function renderSettings() {
-  const cfg = loadConfig();
+  const cfg = remoteConfig;
 
-  // Sheets URL
-  document.getElementById('cfg-sheets').value = cfg.sheets_base || '';
+  // Sheets URL (affiche l'URL codée en dur)
+  document.getElementById('cfg-sheets').value = SHEETS_BASE;
 
-  // Webhook fields
+  // Webhook fields — affiche les valeurs chargées depuis Sheets
   const container = document.getElementById('webhookFields');
   container.innerHTML = Object.entries(WEBHOOK_LABELS).map(([key, meta]) => `
     <div class="form-group" style="margin-bottom:14px;">
@@ -2648,8 +2700,8 @@ function renderSettings() {
       <input type="url" class="form-input" id="cfg-wh-${key}"
              value="${cfg['webhook_'+key]||''}"
              placeholder="https://hook.eu1.make.com/..."
-             style="font-size:.8rem;font-family:monospace;"
-             oninput="updateWebhookStatus('${key}')">
+             style="font-size:.8rem;font-family:monospace;background:var(--gray100);"
+             readonly>
       <div style="font-size:.72rem;color:var(--gray500);margin-top:3px;">${meta.hint}</div>
     </div>`).join('');
 
@@ -3237,12 +3289,14 @@ function collectDocs(prefix) {
 /* =================================================================
    INIT
    ================================================================= */
-document.addEventListener('DOMContentLoaded',()=>{
+document.addEventListener('DOMContentLoaded', async ()=>{
   showScreen('splash');
   document.getElementById('dashDate').textContent=today();
   document.querySelectorAll('.modal-overlay').forEach(mo=>{
     mo.addEventListener('click',e=>{ if(e.target===mo) closeModal(mo.id); });
   });
+  // Chargement de la config depuis Google Sheets au démarrage
+  await loadRemoteConfig();
 });
 </script>
 </body>
