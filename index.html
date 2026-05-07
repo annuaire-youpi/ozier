@@ -803,7 +803,7 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
     <button onclick="activateDemo()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);padding:7px 18px;border-radius:99px;font-size:.72rem;cursor:pointer;letter-spacing:.05em;">
       🎭 Mode Démonstration
     </button>
-    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.8.0 — 2026</p>
+    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.9.0 — 2026</p>
   </div>
 </div>
 
@@ -1455,6 +1455,25 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
       <label class="form-label">Email</label>
       <input type="email" class="form-input" id="cm-email" placeholder="contact@...">
     </div>
+
+    <!-- TARIFS NÉGOCIÉS -->
+    <div class="divider"></div>
+    <div style="font-family:var(--font-display);font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:12px;">
+      💰 Tarifs négociés
+    </div>
+    <div style="font-size:.78rem;color:var(--gray500);margin-bottom:12px;padding:8px 12px;background:var(--blue-bg);border-radius:8px;color:var(--blue);">
+      💡 Ces tarifs seront utilisés pour calculer automatiquement le CA et la marge
+    </div>
+
+    <!-- Tarif journée -->
+    <div class="form-group" style="margin-bottom:12px;">
+      <label class="form-label">Journée (€/jour)</label>
+      <input type="number" class="form-input" id="cm-tarif-journee" placeholder="Ex: 950.00" step="0.01">
+    </div>
+
+    <!-- Tarifs matériaux -->
+    <div id="cm-tarifs-materiaux" style="display:flex;flex-direction:column;gap:10px;"></div>
+
     <div class="flex gap-3 mt-4">
       <button class="btn btn-outline btn-block" onclick="closeModal('clientModal')">Annuler</button>
       <button class="btn btn-primary btn-block" onclick="saveClient()">Enregistrer</button>
@@ -1655,9 +1674,10 @@ let db = {
   ],
 };
 // Les commandes démo sont uniquement dans le snapshot — db.orders démarre vide
-db.orders   = [];
-db.expenses = [];
-db.audit    = [];
+db.orders        = [];
+db.expenses      = [];
+db.audit         = [];
+db.clientTariffs = []; // Tarifs négociés par client
 
 
 // Generate realistic annual margin demo data for current year and previous year
@@ -1989,6 +2009,18 @@ async function loadRealData() {
       unit: m.unite|| m.unit || 'tonne',
     }));
     console.log('⚙️ Matériaux chargés:', db.materials.length);
+  }
+
+  // Tarifs clients
+  if(data.tarifs_clients?.length) {
+    db.clientTariffs = data.tarifs_clients.map(t => ({
+      id:         String(t.id),
+      clientId:   String(t.client_id || t.clientId),
+      type:       t.type || 'materiaux',
+      materialId: t.materiau_id ? String(t.materiau_id) : null,
+      price:      parseFloat(t.prix_unitaire || t.price) || 0,
+    }));
+    console.log('💰 Tarifs clients chargés:', db.clientTariffs.length);
   }
 
   showToast('✅ Données chargées depuis Google Sheets', 'success');
@@ -2488,6 +2520,22 @@ function saveOrder() {
 
   if(!address || !nb || nb<1) { showToast('⚠️ Champs obligatoires manquants', 'error'); return; }
 
+  // Validation tarif — bloquant si absent
+  if(!state.editingId) {
+    const tarif = db.clientTariffs.find(t =>
+      String(t.clientId) === String(clientId) &&
+      t.type === type &&
+      (type === 'journee' || String(t.materialId) === String(matId))
+    );
+    if(!tarif) {
+      const client = db.clients.find(c=>String(c.id)===String(clientId));
+      const mat    = matId ? db.materials.find(m=>String(m.id)===String(matId)) : null;
+      const what   = type==='journee' ? 'Journée' : (mat?.name || 'ce matériau');
+      showToast(`⚠️ Aucun tarif négocié avec "${client?.company}" pour "${what}" — configurez-le dans la fiche client`, 'error', 6000);
+      return;
+    }
+  }
+
   if(state.editingId) {
     const o = db.orders.find(x=>x.id===state.editingId);
     Object.assign(o, { clientId, date, address, truckId, driverId, type, materialId:matId, nbEstimated:nb });
@@ -2716,8 +2764,35 @@ function renderClients() {
 function openClientModal(id=null){
   state.editingId=id;
   document.getElementById('clientModalTitle').textContent=id?'Modifier client':'Nouveau client';
-  ['cm-company','cm-manager','cm-phone','cm-email'].forEach(f=>document.getElementById(f).value='');
-  if(id){const c=db.clients.find(x=>x.id===id);if(c){document.getElementById('cm-company').value=c.company;document.getElementById('cm-manager').value=c.manager||'';document.getElementById('cm-phone').value=c.phone||'';document.getElementById('cm-email').value=c.email||'';}}
+  ['cm-company','cm-manager','cm-phone','cm-email','cm-tarif-journee'].forEach(f=>document.getElementById(f).value='');
+
+  // Générer les champs tarifs pour chaque matériau
+  const matContainer = document.getElementById('cm-tarifs-materiaux');
+  matContainer.innerHTML = db.materials.map(m=>`
+    <div class="form-group">
+      <label class="form-label">${m.name} (€/${m.unit})</label>
+      <input type="number" class="form-input" id="cm-tarif-mat-${m.id}"
+             placeholder="Ex: 18.50" step="0.01">
+    </div>`).join('');
+
+  if(id){
+    const c=db.clients.find(x=>x.id===id);
+    if(c){
+      document.getElementById('cm-company').value = c.company;
+      document.getElementById('cm-manager').value = c.manager||'';
+      document.getElementById('cm-phone').value   = c.phone||'';
+      document.getElementById('cm-email').value   = c.email||'';
+      // Charger les tarifs existants
+      const tarifs = db.clientTariffs.filter(t=>String(t.clientId)===String(id));
+      const tarifJournee = tarifs.find(t=>t.type==='journee');
+      if(tarifJournee) document.getElementById('cm-tarif-journee').value = tarifJournee.price;
+      db.materials.forEach(m=>{
+        const tarifMat = tarifs.find(t=>String(t.materialId)===String(m.id));
+        const input = document.getElementById('cm-tarif-mat-'+m.id);
+        if(tarifMat && input) input.value = tarifMat.price;
+      });
+    }
+  }
   openModal('clientModal');
 }
 
@@ -2725,20 +2800,48 @@ function saveClient(){
   const company=document.getElementById('cm-company').value.trim();
   if(!company){showToast('⚠️ Nom entreprise obligatoire','error');return;}
   const data={company,manager:document.getElementById('cm-manager').value.trim(),phone:document.getElementById('cm-phone').value.trim(),email:document.getElementById('cm-email').value.trim()};
+
+  let clientId;
   if(state.editingId){
     const c=db.clients.find(x=>x.id===state.editingId);
     Object.assign(c,data);
+    clientId = state.editingId;
     showToast('✅ Client mis à jour','success');
     addAudit('Modification client',company);
   } else {
-    const newId=uid();
-    db.clients.push({id:newId,...data});
+    clientId=uid();
+    db.clients.push({id:clientId,...data});
     showToast('✅ Client ajouté','success');
     addAudit('Création client',company);
-    triggerMake('newClient', {id:newId,...data});
-    syncSheets('newClient', {id:newId,...data});
+    triggerMake('newClient', {id:clientId,...data});
   }
-  closeModal('clientModal');renderClients();
+
+  // Sauvegarder les tarifs négociés
+  // Supprimer les anciens tarifs pour ce client
+  db.clientTariffs = db.clientTariffs.filter(t=>String(t.clientId)!==String(clientId));
+
+  // Tarif journée
+  const tarifJournee = parseFloat(document.getElementById('cm-tarif-journee').value);
+  if(!isNaN(tarifJournee) && tarifJournee > 0){
+    const t = {id:uid(), clientId, type:'journee', materialId:null, price:tarifJournee};
+    db.clientTariffs.push(t);
+    triggerMake('newTariffClient', t);
+  }
+
+  // Tarifs matériaux
+  db.materials.forEach(m=>{
+    const input = document.getElementById('cm-tarif-mat-'+m.id);
+    if(!input) return;
+    const price = parseFloat(input.value);
+    if(!isNaN(price) && price > 0){
+      const t = {id:uid(), clientId, type:'materiaux', materialId:m.id, price};
+      db.clientTariffs.push(t);
+      triggerMake('newTariffClient', t);
+    }
+  });
+
+  closeModal('clientModal');
+  renderClients();
 }
 function editClient(id){openClientModal(id);}
 async function deleteClient(id){
@@ -2893,8 +2996,9 @@ const WEBHOOK_LABELS = {
   newDriver:     { label:'Nouveau chauffeur',       icon:'👤', hint:'Déclenché à l\'ajout d\'un chauffeur' },
   newTruck:      { label:'Nouveau camion',          icon:'🚛', hint:'Déclenché à l\'ajout d\'un camion' },
   expense:       { label:'Frais véhicule',          icon:'💸', hint:'Déclenché à l\'ajout d\'un frais' },
-  newClient:     { label:'Nouveau client',          icon:'🏢', hint:'Déclenché à l\'ajout d\'un client' },
-  newMaterial:   { label:'Nouveau matériau',        icon:'⚙️', hint:'Déclenché à l\'ajout d\'un matériau' },
+  newClient:        { label:'Nouveau client',          icon:'🏢', hint:'Déclenché à l\'ajout d\'un client' },
+  newMaterial:      { label:'Nouveau matériau',        icon:'⚙️', hint:'Déclenché à l\'ajout d\'un matériau' },
+  newTariffClient:  { label:'Tarif client',            icon:'💰', hint:'Déclenché à l\'ajout/modification d\'un tarif négocié' },
 };
 
 function renderSettings() {
@@ -3583,6 +3687,18 @@ async function preloadDrivers() {
         unit: m.unite || m.unit || 'tonne',
       }));
       console.log('⚙️ Matériaux pré-chargés:', db.materials.length);
+    }
+
+    // Tarifs clients
+    if(data.tarifs_clients?.length) {
+      db.clientTariffs = data.tarifs_clients.map(t => ({
+        id:         String(t.id),
+        clientId:   String(t.client_id || t.clientId),
+        type:       t.type || 'materiaux',
+        materialId: t.materiau_id ? String(t.materiau_id) : null,
+        price:      parseFloat(t.prix_unitaire || t.price) || 0,
+      }));
+      console.log('💰 Tarifs clients pré-chargés:', db.clientTariffs.length);
     }
 
   } catch(e) {
