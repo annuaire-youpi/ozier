@@ -803,7 +803,7 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
     <button onclick="activateDemo()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);padding:7px 18px;border-radius:99px;font-size:.72rem;cursor:pointer;letter-spacing:.05em;">
       🎭 Mode Démonstration
     </button>
-    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.6.0 — 2026</p>
+    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.7.0 — 2026</p>
   </div>
 </div>
 
@@ -2772,8 +2772,18 @@ function saveMaterial(){
   const name=document.getElementById('mm-name').value.trim();
   if(!name){showToast('⚠️ Nom obligatoire','error');return;}
   const data={name,unit:document.getElementById('mm-unit').value};
-  if(state.editingId){const m=db.materials.find(x=>x.id===state.editingId);Object.assign(m,data);showToast('✅ Matériau mis à jour','success');}
-  else{db.materials.push({id:uid(),...data});showToast('✅ Matériau ajouté','success');addAudit('Création matériau',name);}
+  if(state.editingId){
+    const m=db.materials.find(x=>x.id===state.editingId);
+    Object.assign(m,data);
+    showToast('✅ Matériau mis à jour','success');
+    addAudit('Modification matériau',name);
+  } else {
+    const newId=uid();
+    db.materials.push({id:newId,...data});
+    showToast('✅ Matériau ajouté','success');
+    addAudit('Création matériau',name);
+    triggerMake('newMaterial', {id:newId,...data});
+  }
   closeModal('materialModal');renderMaterials();
 }
 function editMaterial(id){openMaterialModal(id);}
