@@ -218,51 +218,48 @@ td { padding: 12px 14px; color: var(--navy); vertical-align: middle; }
 }
 
 /* ============================================================
-   SCREEN: SPLASH / LOGIN
+   SCREEN: LOGIN UNIFIÉ
    ============================================================ */
 #screen-splash {
   position: fixed; inset: 0; z-index: 500;
   background: var(--navy);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 0;
+  gap: 0; padding: 20px;
 }
 .splash-logo {
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-  animation: fadeUp .5s ease forwards;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  animation: fadeUp .5s ease forwards; margin-bottom: 28px;
 }
 .splash-logo .logo-mark {
-  width: 72px; height: 72px; background: var(--orange); border-radius: 20px;
+  width: 64px; height: 64px; background: var(--orange); border-radius: 18px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 2rem; color: #fff; font-family: var(--font-display); font-weight: 800;
+  font-size: 1.6rem; color: #fff; font-family: var(--font-display); font-weight: 800;
   box-shadow: 0 8px 32px rgba(244,130,31,.4);
 }
 .splash-logo .logo-name {
-  font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+  font-family: var(--font-display); font-size: 1.6rem; font-weight: 800;
   color: #fff; letter-spacing: .08em;
 }
 .splash-logo .logo-sub {
-  font-size: .82rem; color: rgba(255,255,255,.5); letter-spacing: .14em; text-transform: uppercase;
+  font-size: .75rem; color: rgba(255,255,255,.4); letter-spacing: .14em; text-transform: uppercase;
 }
-.splash-cards {
-  display: flex; gap: 16px; margin-top: 52px;
-  animation: fadeUp .5s .15s ease both;
+
+/* Role switch */
+.role-switch-wrap {
+  display: flex; background: var(--navy2); border-radius: 14px; padding: 4px;
+  gap: 4px; margin-bottom: 28px; animation: fadeUp .4s .1s ease both;
 }
-.role-card {
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-  background: var(--navy2); border: 2px solid var(--navy3);
-  border-radius: var(--radius-xl); padding: 28px 32px; cursor: pointer;
-  transition: var(--transition); min-width: 140px;
+.role-switch-btn {
+  padding: 10px 28px; border-radius: 10px; border: none;
+  font-family: var(--font-body); font-size: .9rem; font-weight: 600;
+  color: rgba(255,255,255,.45); background: transparent;
+  cursor: pointer; transition: var(--transition);
   -webkit-tap-highlight-color: transparent;
 }
-.role-card:hover, .role-card:active {
-  border-color: var(--orange); background: rgba(244,130,31,.08);
-  transform: translateY(-3px); box-shadow: var(--shadow-lg);
+.role-switch-btn.active {
+  background: var(--orange); color: #fff;
+  box-shadow: 0 4px 12px rgba(244,130,31,.35);
 }
-.role-card .role-icon { font-size: 2.2rem; }
-.role-card .role-label {
-  font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: #fff;
-}
-.role-card .role-hint { font-size: .76rem; color: rgba(255,255,255,.4); }
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -750,54 +747,27 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
 <!-- mode switch intégré dans la topbar -->
 
 <!-- ============================================================
-     SCREEN: SPLASH (role selection)
+     SCREEN: LOGIN UNIFIÉ (PIN + switch rôle)
      ============================================================ -->
 <div id="screen-splash">
+  <!-- Logo -->
   <div class="splash-logo">
     <div class="logo-mark">SN</div>
     <div class="logo-name">SOTRANSNORD</div>
     <div class="logo-sub">Transport BTP</div>
   </div>
-  <div class="splash-cards">
-    <div class="role-card" onclick="selectRole('gerant')">
-      <div class="role-icon">👔</div>
-      <div class="role-label">Gérant</div>
-      <div class="role-hint">Administration</div>
-    </div>
-    <div class="role-card" onclick="selectRole('chauffeur')">
-      <div class="role-icon">🚛</div>
-      <div class="role-label">Chauffeur</div>
-      <div class="role-hint">Terrain</div>
-    </div>
-  </div>
-  <div style="margin-top:44px;display:flex;flex-direction:column;align-items:center;gap:10px;">
-    <button onclick="activateDemo()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);padding:8px 20px;border-radius:99px;font-size:.75rem;cursor:pointer;letter-spacing:.06em;transition:.2s;">
-      🎭 Mode Démonstration
+
+  <!-- Switch rôle -->
+  <div class="role-switch-wrap">
+    <button class="role-switch-btn active" id="roleBtn-gerant" onclick="switchLoginRole('gerant')">
+      👔 Gérant
     </button>
-    <p style="color:rgba(255,255,255,.2);font-size:.7rem;letter-spacing:.08em;">v3.0.0 — 2026</p>
+    <button class="role-switch-btn" id="roleBtn-chauffeur" onclick="switchLoginRole('chauffeur')">
+      🚛 Chauffeur
+    </button>
   </div>
-</div>
 
-<!-- ============================================================
-     SCREEN: DRIVER SELECTION
-     ============================================================ -->
-<div id="screen-select-driver" class="hidden">
-  <button class="pin-back" onclick="showScreen('splash')">←</button>
-  <div class="driver-select-title">Choisir votre profil</div>
-  <div class="driver-select-subtitle">Sélectionnez votre nom dans la liste</div>
-  <div class="driver-list" id="driverList"></div>
-</div>
-
-<!-- ============================================================
-     SCREEN: PIN LOGIN
-     ============================================================ -->
-<div id="screen-pin" class="hidden">
-  <button class="pin-back" onclick="goBackFromPin()">←</button>
-  <div class="pin-header">
-    <div class="pin-role-badge" id="pinRoleBadge">👔 Gérant</div>
-    <div class="pin-title" id="pinTitle">Saisir votre code PIN</div>
-    <div class="pin-subtitle" id="pinSubtitle">Code à 6 chiffres</div>
-  </div>
+  <!-- Points PIN -->
   <div class="pin-dots" id="pinDots">
     <div class="pin-dot" id="d0"></div>
     <div class="pin-dot" id="d1"></div>
@@ -806,7 +776,11 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
     <div class="pin-dot" id="d4"></div>
     <div class="pin-dot" id="d5"></div>
   </div>
+
+  <!-- Message erreur -->
   <div class="pin-error" id="pinError"></div>
+
+  <!-- Clavier -->
   <div class="pin-keypad">
     <button class="pin-key" onclick="pinKey('1')">1</button>
     <button class="pin-key" onclick="pinKey('2')">2</button>
@@ -821,8 +795,22 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
     <button class="pin-key" onclick="pinKey('0')">0</button>
     <button class="pin-key del" onclick="pinDel()">⌫</button>
   </div>
+
   <div class="pin-attempts" id="pinAttempts"></div>
+
+  <!-- Demo button -->
+  <div style="margin-top:28px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+    <button onclick="activateDemo()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);padding:7px 18px;border-radius:99px;font-size:.72rem;cursor:pointer;letter-spacing:.05em;">
+      🎭 Mode Démonstration
+    </button>
+    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.0.0 — 2026</p>
+  </div>
 </div>
+
+<!-- L'écran select-driver n'est plus utilisé mais on le garde caché -->
+<div id="screen-select-driver" class="hidden"></div>
+<!-- L'écran pin séparé n'est plus utilisé -->
+<div id="screen-pin" class="hidden"></div>
 
 <!-- ============================================================
      MOBILE DRAWER NAV
@@ -2108,89 +2096,32 @@ function updateModeUI() {
 }
 
 /* =================================================================
-   SCREENS
+   LOGIN UNIFIÉ — Switch rôle + PIN direct
    ================================================================= */
-function showScreen(name) {
-  ['splash','select-driver','pin'].forEach(s=>{
-    document.getElementById('screen-'+s).classList[s===name?'remove':'add']('hidden');
-  });
-  document.getElementById('app').classList.remove('active');
-}
+let loginRole = 'gerant';
 
-async function enterApp() {
-  ['splash','select-driver','pin'].forEach(s=>document.getElementById('screen-'+s).classList.add('hidden'));
-  document.getElementById('app').classList.add('active');
-
-  // Toujours en mode Réel sauf si démo explicitement activée
-  if(state.mode !== 'demo') {
-    state.mode = 'real';
-    showLoader();
-    await loadRealData().catch(e => {
-      console.warn('Erreur chargement données réelles:', e);
-      showToast('⚠️ Vérifiez votre connexion internet', 'warning');
-    });
-    hideLoader();
-  }
-
-  initApp();
-}
-
-/* =================================================================
-   ROLE SELECTION
-   ================================================================= */
-function selectRole(role) {
-  state.pendingRole = role;
-  if(role === 'chauffeur') {
-    renderDriverSelect();
-    showScreen('select-driver');
-  } else {
-    showPinScreen({ role:'gerant', badge:'👔 Gérant', title:'Code PIN Gérant', subtitle:'Entrez votre code à 6 chiffres' });
-    showScreen('pin');
-  }
-}
-
-function renderDriverSelect() {
-  const list = document.getElementById('driverList');
-  list.innerHTML = db.drivers.filter(d=>d.status==='actif').map(d=>`
-    <div class="driver-item" onclick="selectDriver(${d.id})">
-      <div class="driver-avatar">${initials(d.name)}</div>
-      <div>
-        <div class="driver-name">${d.name}</div>
-        <div class="driver-meta">Permis ${d.licence} · ${d.phone}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function selectDriver(id) {
-  state.pendingDriver = id;
-  const d = db.drivers.find(x=>x.id===id);
-  showPinScreen({ role:'chauffeur', badge:`🚛 ${d.name}`, title:`Bonjour, ${d.name.split(' ')[0]}`, subtitle:'Entrez votre code à 6 chiffres' });
-  showScreen('pin');
-}
-
-function goBackFromPin() {
-  if(state.pendingRole === 'chauffeur') showScreen('select-driver');
-  else showScreen('splash');
-}
-
-/* =================================================================
-   PIN SYSTEM
-   ================================================================= */
-function showPinScreen({role, badge, title, subtitle}) {
+function switchLoginRole(role) {
+  loginRole = role;
   state.pinValue = '';
-  state.pinAttempts = state.pinAttempts || 0;
-  document.getElementById('pinRoleBadge').textContent = badge;
-  document.getElementById('pinTitle').textContent     = title;
-  document.getElementById('pinSubtitle').textContent  = subtitle;
-  document.getElementById('pinError').textContent     = '';
-  document.getElementById('pinAttempts').textContent  = '';
+  state.pinAttempts = 0;
   updatePinDots();
-  if(state.pinLocked) {
-    document.getElementById('pinError').textContent = '🔒 Accès verrouillé — Contactez le gérant';
-    document.querySelectorAll('.pin-key').forEach(k=>k.disabled=true);
+  document.getElementById('pinError').textContent = '';
+  document.getElementById('pinAttempts').textContent = '';
+  document.getElementById('roleBtn-gerant').classList.toggle('active', role === 'gerant');
+  document.getElementById('roleBtn-chauffeur').classList.toggle('active', role === 'chauffeur');
+}
+
+function showScreen(name) {
+  const splash = document.getElementById('screen-splash');
+  if(name === 'splash') {
+    splash.classList.remove('hidden');
+    document.getElementById('app').classList.remove('active');
+    state.pinValue = '';
+    state.pinAttempts = 0;
+    loginRole = 'gerant';
+    switchLoginRole('gerant');
   } else {
-    document.querySelectorAll('.pin-key').forEach(k=>k.disabled=false);
+    splash.classList.add('hidden');
   }
 }
 
@@ -2210,25 +2141,26 @@ function pinDel() {
 function updatePinDots() {
   for(let i=0;i<6;i++){
     const d = document.getElementById('d'+i);
-    d.className = 'pin-dot' + (i < state.pinValue.length ? ' filled' : '');
+    if(d) d.className = 'pin-dot' + (i < state.pinValue.length ? ' filled' : '');
   }
 }
 
-function validatePin() {
+async function validatePin() {
   const pin = state.pinValue;
   let valid = false;
   let user  = null;
 
-  if(state.pendingRole === 'gerant') {
+  if(loginRole === 'gerant') {
     if(pin === GERANT_PIN) {
       valid = true;
-      user  = { id:0, name:'Gérant', role:'gerant', initials:'GE' };
+      user = { id:0, name:'Gérant', role:'gerant', initials:'GE' };
     }
   } else {
-    const driver = db.drivers.find(d=>d.id===state.pendingDriver);
-    if(driver && pin === driver.pin) {
+    const driversList = db.drivers.length > 0 ? db.drivers : (demoSnapshot ? demoSnapshot.drivers : []);
+    const driver = driversList.find(d => String(d.pin) === pin);
+    if(driver) {
       valid = true;
-      user  = { id:driver.id, name:driver.name, role:'chauffeur', initials:initials(driver.name) };
+      user = { id:driver.id, name:driver.name, role:'chauffeur', initials:initials(driver.name) };
     }
   }
 
@@ -2236,14 +2168,30 @@ function validatePin() {
     state.pinAttempts = 0;
     state.currentUser = user;
     state.role = user.role;
-    addAudit('Connexion', `Connexion réussie — Mode ${state.mode.toUpperCase()}`);
-    enterApp();
+    document.getElementById('screen-splash').classList.add('hidden');
+    document.getElementById('app').classList.add('active');
+
+    if(state.mode !== 'demo') {
+      state.mode = 'real';
+      showLoader();
+      try {
+        await loadRealData();
+      } catch(e) {
+        console.warn('Erreur chargement données:', e);
+        showToast('Vérifiez votre connexion', 'warning');
+      }
+      hideLoader();
+    }
+
+    addAudit('Connexion', user.name + ' — ' + user.role + ' — Mode ' + state.mode.toUpperCase());
+    initApp();
+
   } else {
     state.pinAttempts++;
     state.pinValue = '';
     for(let i=0;i<6;i++){
       const d = document.getElementById('d'+i);
-      d.className = 'pin-dot error';
+      if(d) d.className = 'pin-dot error';
     }
     setTimeout(updatePinDots, 600);
     const rem = 3 - state.pinAttempts;
@@ -2251,136 +2199,32 @@ function validatePin() {
       state.pinLocked = true;
       document.getElementById('pinError').textContent = '🔒 Accès bloqué — 3 tentatives incorrectes';
       document.querySelectorAll('.pin-key').forEach(k=>k.disabled=true);
-      addAudit('Sécurité', 'Compte verrouillé — 3 tentatives incorrectes');
+      addAudit('Sécurité', 'Compte verrouillé');
     } else {
-      document.getElementById('pinError').textContent = `❌ Code incorrect — ${rem} tentative(s) restante(s)`;
+      document.getElementById('pinError').textContent = '❌ Code incorrect — ' + rem + ' tentative(s) restante(s)';
     }
   }
 }
 
-/* =================================================================
-   APP INIT
-   ================================================================= */
-const NAV_GERANT = [
-  { id:'dashboard',  label:'Accueil',    icon:'🏠', page:'page-dashboard' },
-  { id:'commandes',  label:'Commandes',  icon:'📋', page:'page-commandes' },
-  { id:'chauffeurs', label:'Chauffeurs', icon:'👤', page:'page-chauffeurs' },
-  { id:'camions',    label:'Camions',    icon:'🚛', page:'page-camions' },
-  { id:'clients',    label:'Clients',    icon:'🏢', page:'page-clients' },
-  { id:'materiaux',  label:'Matériaux',  icon:'⚙️', page:'page-materiaux' },
-  { id:'rapports',   label:'Rapports',   icon:'📊', page:'page-rapports' },
-  { id:'marge',      label:'Marge',      icon:'💹', page:'page-marge' },
-  { id:'audit',      label:'Audit',      icon:'🔍', page:'page-audit' },
-  { id:'parametres', label:'Paramètres', icon:'🔧', page:'page-parametres' },
-];
-const NAV_CHAUFFEUR = [
-  { id:'driver-day',     label:'Transports', icon:'🚛', page:'page-driver-day' },
-  { id:'driver-fiche',   label:'Fiche jour', icon:'📝', page:'page-driver-fiche' },
-  { id:'driver-profile', label:'Profil',     icon:'👤', page:'page-driver-profile' },
-];
-
-function initApp() {
-  const u = state.currentUser;
-  document.getElementById('topbarAvatar').textContent = u.initials || 'U';
-  document.getElementById('topbarName').textContent   = u.name;
-  document.getElementById('topbarRole').textContent   = u.role === 'gerant' ? 'Administrateur' : 'Chauffeur';
-  updateModeUI();
-
-  const nav = u.role === 'gerant' ? NAV_GERANT : NAV_CHAUFFEUR;
-  buildNav(nav, u.role);
-
-  if(u.role === 'gerant') navigate('dashboard');
-  else navigate('driver-day');
-}
-
-function buildNav(nav, role) {
-  // Mobile drawer
-  const drawerItems = document.getElementById('drawerItems');
-  drawerItems.innerHTML = `
-    <div class="drawer-section-label">Navigation</div>
-    ${nav.map(n=>`
-      <button class="drawer-item" id="dnav-${n.id}" onclick="navigate('${n.id}');closeDrawer()">
-        <span class="d-icon">${n.icon}</span> ${n.label}
-      </button>`).join('')}`;
-
-  // Desktop side nav
-  const side = document.getElementById('sidenav');
-  side.innerHTML = `
-    <div class="sidenav-logo"><div class="t-mark">SN</div> SOTRANSNORD</div>
-    <div class="sidenav-section">
-      <div class="sidenav-section-label">Navigation</div>
-      ${nav.map(n=>`
-        <button class="sidenav-item" id="snav-${n.id}" onclick="navigate('${n.id}')">
-          <span class="nav-icon">${n.icon}</span> ${n.label}
-        </button>`).join('')}
-    </div>
-    <div class="sidenav-footer">
-      <button class="sidenav-item" onclick="logout()" style="color:rgba(255,80,80,.7);">
-        <span class="nav-icon">⏻</span> Déconnexion
-      </button>
-    </div>`;
-}
-
-function openDrawer() {
-  document.getElementById('drawer').classList.add('open');
-  document.getElementById('drawerOverlay').style.display = 'block';
-  requestAnimationFrame(()=>document.getElementById('drawerOverlay').classList.add('open'));
-}
-function closeDrawer() {
-  document.getElementById('drawer').classList.remove('open');
-  document.getElementById('drawerOverlay').classList.remove('open');
-  setTimeout(()=>{ document.getElementById('drawerOverlay').style.display=''; }, 260);
-}
-
-function navigate(id) {
-  const navMap = state.role === 'gerant' ? NAV_GERANT : NAV_CHAUFFEUR;
-  const item = navMap.find(n=>n.id===id);
-  if(!item) return;
-
-  // Hide all pages
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(item.page).classList.add('active');
-
-  // Update nav active state
-  document.querySelectorAll('.drawer-item,.sidenav-item').forEach(el=>el.classList.remove('active'));
-  ['dnav','snav'].forEach(prefix=>{
-    const el=document.getElementById(`${prefix}-${id}`);
-    if(el) el.classList.add('active');
-  });
-
-  state.currentPage = id;
-  renderPage(id);
-}
-
-function renderPage(id) {
-  switch(id) {
-    case 'dashboard':    renderDashboard(); break;
-    case 'commandes':    renderOrders(); break;
-    case 'chauffeurs':   renderDriversTable(); break;
-    case 'camions':      renderTrucks(); break;
-    case 'clients':      renderClients(); break;
-    case 'materiaux':    renderMaterials(); renderTariffs(); renderExpenses(); break;
-    case 'rapports':     renderReports(); break;
-    case 'marge':        renderMarginTable(); break;
-    case 'audit':        renderAudit(); break;
-    case 'parametres':   renderSettings(); break;
-    case 'driver-day':   renderDriverDay(); break;
-    case 'driver-fiche': renderDriverFiche(); break;
-    case 'driver-profile': renderDriverProfile(); break;
-  }
+function activateDemo() {
+  state.mode = 'demo';
+  saveDemoSnapshot();
+  restoreDemoSnapshot();
+  showToast('🎭 Démo — Gérant: 123456 | Thomas: 111111 | Kevin: 222222', 'warning', 6000);
 }
 
 function logout() {
   state.currentUser = null;
   state.role = null;
-  state.pendingRole = null;
-  state.pendingDriver = null;
   state.pinValue = '';
   state.pinAttempts = 0;
-  state.mode = 'real'; // Toujours réel par défaut
-  demoSnapshot = null; // Reset snapshot
+  state.pinLocked = false;
+  state.mode = 'real';
+  demoSnapshot = null;
   document.getElementById('app').classList.remove('active');
-  showScreen('splash');
+  document.getElementById('screen-splash').classList.remove('hidden');
+  document.querySelectorAll('.pin-key').forEach(k=>k.disabled=false);
+  switchLoginRole('gerant');
 }
 
 /* =================================================================
@@ -3563,8 +3407,8 @@ function collectDocs(prefix) {
    INIT
    ================================================================= */
 document.addEventListener('DOMContentLoaded', async ()=>{
-  showScreen('splash');
-  document.getElementById('dashDate').textContent=today();
+  // L'écran splash est visible par défaut — pas besoin de showScreen
+  document.getElementById('dashDate').textContent = today();
   document.querySelectorAll('.modal-overlay').forEach(mo=>{
     mo.addEventListener('click',e=>{ if(e.target===mo) closeModal(mo.id); });
   });
