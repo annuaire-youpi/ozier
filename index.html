@@ -803,7 +803,7 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
     <button onclick="activateDemo()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);padding:7px 18px;border-radius:99px;font-size:.72rem;cursor:pointer;letter-spacing:.05em;">
       🎭 Mode Démonstration
     </button>
-    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.9.5 — 2026</p>
+    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.9.6 — 2026</p>
   </div>
 </div>
 
@@ -3437,7 +3437,18 @@ function confirmTransport(){
   if(o.nbDone>=o.nbEstimated) o.status='termine';
 
   addAudit('Transport validé',`Commande — ${clientName(o.clientId)} — Transport ${t.id} — ${tonnage}T`);
-  const payload={orderId:o.id,transportId:t.id,driverId:state.currentUser.id,tonnage,receiver,func,timestamp:new Date().toISOString()};
+  const payload={
+    orderId:    o.id,
+    transportId:t.id,
+    driverId:   state.currentUser.id,
+    tonnage,
+    receiver,
+    func,
+    timestamp:  new Date().toISOString(),
+    nbDone:     o.nbDone,
+    nbEstimated:o.nbEstimated,
+    status:     o.status,
+  };
   triggerMake('transportDone',payload);
   syncSheets('transportDone',payload);
 
