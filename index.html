@@ -1851,10 +1851,10 @@ function fmt(n) { return new Intl.NumberFormat('fr-FR',{style:'currency',currenc
 function fmtDate(d) { if(!d) return '—'; try { return new Date(d).toLocaleDateString('fr-FR'); } catch(e){ return d; } }
 function isCTExpired(date) { return date && new Date(date) < new Date(); }
 function formatPhone(p) { return p || '—'; }
-function clientName(id)   { const c=db.clients.find(c=>String(c.id)===String(id));   return c?c.company:'—'; }
-function driverName(id)   { const d=db.drivers.find(d=>String(d.id)===String(id));   return d?d.name:'—'; }
-function truckPlate(id)   { const t=db.trucks.find(t=>String(t.id)===String(id));    return t?t.plate:'—'; }
-function materialName(id) { const m=db.materials.find(m=>String(m.id)===String(id)); return m?m.name:'—'; }
+function clientName(id)   { const c=db.clients.find(c=>String(c.id)===String(id));   return c?c.company:`Client #${id}`; }
+function driverName(id)   { const d=db.drivers.find(d=>String(d.id)===String(id));   return d?d.name:`Chauffeur #${id}`; }
+function truckPlate(id)   { const t=db.trucks.find(t=>String(t.id)===String(id));    return t?t.plate:`Camion #${id}`; }
+function materialName(id) { const m=db.materials.find(m=>String(m.id)===String(id)); return m?m.name:`Matériau #${id}`; }
 
 function showToast(msg, type='', duration=3000) {
   const el = document.createElement('div');
