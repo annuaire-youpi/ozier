@@ -803,7 +803,7 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
     <button onclick="activateDemo()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);padding:7px 18px;border-radius:99px;font-size:.72rem;cursor:pointer;letter-spacing:.05em;">
       🎭 Mode Démonstration
     </button>
-    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.3.0 — 2026</p>
+    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.5.0 — 2026</p>
   </div>
 </div>
 
@@ -1609,7 +1609,7 @@ const CURRENT_MONTH = new Date().getMonth(); // 0-indexed
 const MONTHS = ['Janv.','Fév.','Mars','Avril','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.'];
 
 let state = {
-  mode: 'demo',       // 'demo' | 'real'
+  mode: 'real',        // 'demo' | 'real' — toujours réel par défaut
   role: null,         // 'gerant' | 'chauffeur'
   currentUser: null,  // { id, name, role, pin }
   currentPage: null,
@@ -3524,14 +3524,43 @@ function collectDocs(prefix) {
    INIT
    ================================================================= */
 document.addEventListener('DOMContentLoaded', async ()=>{
-  // L'écran splash est visible par défaut — pas besoin de showScreen
   document.getElementById('dashDate').textContent = today();
   document.querySelectorAll('.modal-overlay').forEach(mo=>{
     mo.addEventListener('click',e=>{ if(e.target===mo) closeModal(mo.id); });
   });
   // Chargement de la config depuis Google Sheets au démarrage
   await loadRemoteConfig();
+  // Pré-charger les chauffeurs pour que le PIN fonctionne à la connexion
+  await preloadDrivers();
 });
+
+// Charge uniquement les chauffeurs au démarrage pour valider les PINs
+async function preloadDrivers() {
+  try {
+    const url = getSheetsBase() || SHEETS_BASE;
+    if(!url) return;
+    const r = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'getAll' })
+    });
+    const data = await r.json();
+    if(data.chauffeurs?.length) {
+      db.drivers = data.chauffeurs.map(d => ({
+        id:      String(d.id),
+        name:    d.nom || d.name || '',
+        phone:   d.telephone || d.phone || '',
+        email:   d.email || '',
+        licence: d.permis || d.licence || 'C',
+        pin:     String(d.pin || ''),
+        status:  d.statut || d.status || 'actif',
+        docs:    [],
+      }));
+      console.log('👤 Chauffeurs pré-chargés:', db.drivers.length);
+    }
+  } catch(e) {
+    console.warn('⚠️ Impossible de pré-charger les chauffeurs');
+  }
+}
 </script>
 </body>
 </html>
