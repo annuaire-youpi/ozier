@@ -1749,7 +1749,7 @@ db.annualData = {};
    ================================================================= */
 
 // ⬇️ SEULE URL à garder en dur — tout le reste vient de Sheets
-const SHEETS_BASE = 'https://script.google.com/macros/s/AKfycbzfYAn6rlb01517GoR8PYQUqdSIsbl6Px0PRlsZYEIlq_T6wE8TikxE8_qW92BobLLekQ/exec';
+const SHEETS_BASE = 'https://script.google.com/macros/s/YOUR_APPS_SCRIPT_DEPLOYMENT/exec';
 
 // Config en mémoire — remplie au démarrage par loadRemoteConfig()
 let remoteConfig = {};
@@ -2382,21 +2382,35 @@ function renderDashboard() {
   // Afficher/masquer la bannière selon le mode
   const banner = document.getElementById('realModeBanner');
   if(banner) banner.classList[state.mode==='real' ? 'remove' : 'add']('hidden');
-  const active = db.orders.filter(o=>o.status==='en_cours').length;
+
+  const active  = db.orders.filter(o=>o.status==='en_cours').length;
   const todayT  = db.orders.filter(o=>o.date===new Date().toISOString().split('T')[0]).reduce((s,o)=>s+o.nbEstimated,0);
-  const now = new Date();
+  const now     = new Date();
+
+  // Frais du mois
   const monthExp = db.expenses.filter(e=>{
     const d=new Date(e.date); return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
   }).reduce((s,e)=>s+e.amount,0);
-  const margin = db.margins[now.getMonth()];
-  document.getElementById('stat-commandes').textContent = active;
-  document.getElementById('stat-transports').textContent = todayT;
-  document.getElementById('stat-ca').textContent = margin ? fmt(margin.ca) : '—';
-  document.getElementById('stat-frais').textContent = fmt(monthExp);
 
-  const recent = [...db.orders].sort((a,b)=>b.id-a.id).slice(0,5);
-  document.getElementById('recentOrders').innerHTML = recent.length ? recent.map(o=>orderCardHTML(o)).join('') :
-    `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Aucune commande</div></div>`;
+  // CA du mois depuis annualData
+  const annualYear = db.annualData?.[now.getFullYear()];
+  const margin     = annualYear?.[now.getMonth()];
+
+  document.getElementById('stat-commandes').textContent  = active;
+  document.getElementById('stat-transports').textContent = todayT;
+  document.getElementById('stat-ca').textContent         = margin ? fmt(margin.ca) : '—';
+  document.getElementById('stat-frais').textContent      = fmt(monthExp);
+
+  // Commandes récentes — tri par id converti en nombre si possible
+  const recent = [...db.orders].sort((a,b)=>{
+    const na = isNaN(Number(a.id)) ? 0 : Number(a.id);
+    const nb = isNaN(Number(b.id)) ? 0 : Number(b.id);
+    return nb - na;
+  }).slice(0,5);
+
+  document.getElementById('recentOrders').innerHTML = recent.length
+    ? recent.map(o=>orderCardHTML(o)).join('')
+    : `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Aucune commande</div><div class="empty-text">Créez votre première commande</div></div>`;
 }
 
 function orderCardHTML(o) {
