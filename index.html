@@ -803,7 +803,7 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
     <button onclick="activateDemo()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);padding:7px 18px;border-radius:99px;font-size:.72rem;cursor:pointer;letter-spacing:.05em;">
       🎭 Mode Démonstration
     </button>
-    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.9.7 — 2026</p>
+    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.9.8 — 2026</p>
   </div>
 </div>
 
@@ -3277,7 +3277,8 @@ function computeRealMarginData() {
       const assurance = monthExp.filter(e=>e.type==='assurance').reduce((s,e)=>s+e.amount,0);
       const autres    = monthExp.filter(e=>!['carburant','vidange','reparation','pneus','assurance'].includes(e.type)).reduce((s,e)=>s+e.amount,0);
       const total_dep = carbu+vidange+repar+pneus+assurance+autres;
-      // CA = nb_fait × tarif négocié par client
+      // CA = tonnage réel livré × tarif négocié (matériaux)
+      //    OU nb_fait × tarif journée (journée)
       let ca = 0;
       db.orders.forEach(o => {
         if(!o.date || !o.nbDone || o.nbDone <= 0) return;
@@ -3288,7 +3289,17 @@ function computeRealMarginData() {
           t.type === o.type &&
           (o.type === 'journee' || String(t.materialId) === String(o.materialId))
         );
-        if(tarif) ca += o.nbDone * tarif.price;
+        if(!tarif) return;
+        if(o.type === 'journee') {
+          // Journée : nb_fait × tarif/jour
+          ca += o.nbDone * tarif.price;
+        } else {
+          // Matériaux : tonnage réel × tarif/tonne
+          const tonnageTotal = o.transports
+            .filter(t => t.done && t.tonnage)
+            .reduce((s, t) => s + parseFloat(t.tonnage || 0), 0);
+          ca += tonnageTotal * tarif.price;
+        }
       });
       const marge = ca - total_dep;
       const pct_marge = ca > 0 ? Math.round((marge/ca)*100) : 0;
