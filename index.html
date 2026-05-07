@@ -874,6 +874,7 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
           </div>
         </div>
         <span id="modeIndicator" style="display:none;background:rgba(217,119,6,.2);color:var(--yellow);border:1px solid rgba(217,119,6,.3);border-radius:99px;padding:3px 10px;font-size:.7rem;font-weight:700;">🎭 DÉMO</span>
+        <button onclick="syncNow()" title="Synchroniser avec Google Sheets" style="background:rgba(255,255,255,.1);border:none;color:#fff;width:36px;height:36px;border-radius:10px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;" id="topbarSyncBtn">🔄</button>
         <button class="topbar-logout" onclick="logout()" title="Déconnexion">⏻</button>
       </div>
     </header>
@@ -1640,21 +1641,9 @@ let state = {
    DEMO DATA
    ================================================================= */
 let db = {
-  drivers: [
-    { id:1, name:'Thomas Leroy',    birth:'1985-03-14', phone:'06 12 34 56 78', email:'t.leroy@mail.fr',    licence:'CE', pin:'111111', status:'actif', docs:[] },
-    { id:2, name:'Kevin Martin',    birth:'1990-07-22', phone:'06 98 76 54 32', email:'k.martin@mail.fr',   licence:'C',  pin:'222222', status:'actif', docs:[] },
-    { id:3, name:'Sébastien Dubois',birth:'1978-11-05', phone:'06 55 44 33 22', email:'s.dubois@mail.fr',   licence:'CE', pin:'333333', status:'actif', docs:[] },
-  ],
-  trucks: [
-    { id:1, plate:'AB-123-CD', type:'Benne 8x4',   km:152430, ct:'2025-09-15', status:'actif', docs:[] },
-    { id:2, plate:'EF-456-GH', type:'Benne 6x4',   km:98200,  ct:'2025-12-01', status:'actif', docs:[] },
-    { id:3, plate:'IJ-789-KL', type:'Ampliroll',   km:203100, ct:'2024-11-30', status:'ct_expire', docs:[] },
-  ],
-  clients: [
-    { id:1, company:'SARL Dupont BTP',       manager:'Jean Dupont',   phone:'03 20 11 22 33', email:'contact@dupont-btp.fr' },
-    { id:2, company:'Entreprise Moreau',     manager:'Pierre Moreau', phone:'03 21 44 55 66', email:'p.moreau@moreau-tp.fr' },
-    { id:3, company:'Constructions Bernard', manager:'Marc Bernard',  phone:'06 70 80 90 10', email:'m.bernard@bernard-constr.fr' },
-  ],
+  drivers: [], // chargé depuis Sheets en mode Réel
+  trucks: [], // chargé depuis Sheets en mode Réel
+  clients: [], // chargé depuis Sheets en mode Réel
   materials: [
     { id:1, name:'Sable 0/4',   unit:'tonne' },
     { id:2, name:'Gravier 4/6', unit:'tonne' },
@@ -1684,39 +1673,10 @@ let db = {
     { id:4, ts:'2025-05-06 11:45', user:'Thomas Leroy', action:'Transport validé', detail:'Commande #1 — Transport 2 — 19.0T' },
   ],
 };
-// Initialize demo orders with today's date
-(function(){
-  const TODAY = new Date().toISOString().split('T')[0];
-  const YESTERDAY = new Date(Date.now()-86400000).toISOString().split('T')[0];
-  db.orders = [
-    {
-      id:1, clientId:1, address:"ZAC du Moulin, Villeneuve d'Ascq", date:TODAY,
-      truckId:1, driverId:1, type:'materiaux', materialId:1, nbEstimated:4, nbDone:2,
-      status:'en_cours', transports:[
-        { id:1, done:true,  tonnage:18.5, receiver:'M. Gautier', func:'Chef chantier', sig:'✓', ts:'' },
-        { id:2, done:true,  tonnage:19.0, receiver:'M. Gautier', func:'Chef chantier', sig:'✓', ts:'' },
-        { id:3, done:false, tonnage:null, receiver:null, func:null, sig:null },
-        { id:4, done:false, tonnage:null, receiver:null, func:null, sig:null },
-      ]
-    },
-    {
-      id:2, clientId:2, address:'Rue des Acacias, Lille', date:TODAY,
-      truckId:2, driverId:2, type:'journee', materialId:null, nbEstimated:1, nbDone:0,
-      status:'en_cours', transports:[
-        { id:1, done:false, tonnage:null, receiver:null, func:null, sig:null },
-      ]
-    },
-    {
-      id:3, clientId:3, address:'Avenue de la Gare, Roubaix', date:YESTERDAY,
-      truckId:1, driverId:3, type:'materiaux', materialId:2, nbEstimated:3, nbDone:3,
-      status:'termine', transports:[
-        { id:1, done:true, tonnage:20.0, receiver:'M. Simon', func:'Conducteur', sig:'✓' },
-        { id:2, done:true, tonnage:19.5, receiver:'M. Simon', func:'Conducteur', sig:'✓' },
-        { id:3, done:true, tonnage:21.0, receiver:'M. Simon', func:'Conducteur', sig:'✓' },
-      ]
-    },
-  ];
-})();
+// Les commandes démo sont uniquement dans le snapshot — db.orders démarre vide
+db.orders   = [];
+db.expenses = [];
+db.audit    = [];
 
 
 // Generate realistic annual margin demo data for current year and previous year
@@ -1906,10 +1866,8 @@ function closeConfirm(val) {
    SYNCHRONISATION MANUELLE
    ================================================================= */
 async function syncNow() {
-  if(state.mode !== 'real') {
-    showToast('⚠️ Passez en mode Réel pour synchroniser', 'warning');
-    return;
-  }
+  const btn = document.getElementById('topbarSyncBtn');
+  if(btn) btn.textContent = '⏳';
   showLoader();
   try {
     await loadRealData();
@@ -1919,16 +1877,27 @@ async function syncNow() {
     if(state.currentPage) renderPage(state.currentPage);
     showToast('🔄 Données synchronisées', 'success');
   } catch(e) {
-    showToast('⚠️ Erreur de synchronisation', 'warning');
+    console.error('Erreur sync:', e);
+    showToast('⚠️ Erreur de synchronisation : ' + e.message, 'warning', 5000);
   }
   hideLoader();
+  if(btn) btn.textContent = '🔄';
 }
 async function loadRealData() {
   const url = getSheetsBase();
-  if(!url) return;
+  console.log('🔍 loadRealData — URL:', url ? 'OK' : 'MANQUANTE');
+  if(!url) { showToast('⚠️ URL Apps Script manquante', 'error'); return; }
 
   const r    = await fetch(url + '?action=getAll');
   const data = await r.json();
+
+  console.log('📦 Données reçues:', {
+    chauffeurs: data.chauffeurs?.length || 0,
+    camions:    data.camions?.length    || 0,
+    clients:    data.clients?.length    || 0,
+    commandes:  data.commandes?.length  || 0,
+    frais:      data.frais?.length      || 0,
+  });
 
   // Helper : nettoie une date ISO en YYYY-MM-DD
   function cleanDate(d) {
@@ -1976,6 +1945,9 @@ async function loadRealData() {
       phone:   c.telephone  || c.phone    || '',
       email:   c.email      || '',
     }));
+    console.log('✅ Clients chargés:', db.clients.length, db.clients.map(c=>c.company));
+  } else {
+    console.warn('⚠️ Aucun client dans Sheets — db.clients garde ses valeurs actuelles:', db.clients.length);
   }
 
   // Commandes
@@ -2036,6 +2008,8 @@ async function loadRealData() {
 // Mode démo activable uniquement depuis l'écran de connexion
 function activateDemo() {
   state.mode = 'demo';
+  saveDemoSnapshot();
+  restoreDemoSnapshot();
   showToast('🎭 Mode Démonstration activé', 'warning');
 }
 
@@ -2055,15 +2029,49 @@ function updateModeUI() {
 }
 
 function saveDemoSnapshot() {
+  // Crée le snapshot démo uniquement si pas encore fait
   if(!demoSnapshot) {
+    const TODAY     = new Date().toISOString().split('T')[0];
+    const YESTERDAY = new Date(Date.now()-86400000).toISOString().split('T')[0];
     demoSnapshot = {
-      drivers:  JSON.parse(JSON.stringify(db.drivers)),
-      trucks:   JSON.parse(JSON.stringify(db.trucks)),
-      clients:  JSON.parse(JSON.stringify(db.clients)),
-      orders:   JSON.parse(JSON.stringify(db.orders)),
-      expenses: JSON.parse(JSON.stringify(db.expenses)),
-      materials:JSON.parse(JSON.stringify(db.materials)),
-      tariffs:  JSON.parse(JSON.stringify(db.tariffs)),
+      drivers: [
+        { id:1, name:'Thomas Leroy',     birth:'1985-03-14', phone:'06 12 34 56 78', email:'t.leroy@mail.fr',    licence:'CE', pin:'111111', status:'actif', docs:[] },
+        { id:2, name:'Kevin Martin',     birth:'1990-07-22', phone:'06 98 76 54 32', email:'k.martin@mail.fr',   licence:'C',  pin:'222222', status:'actif', docs:[] },
+        { id:3, name:'Sébastien Dubois', birth:'1978-11-05', phone:'06 55 44 33 22', email:'s.dubois@mail.fr',   licence:'CE', pin:'333333', status:'actif', docs:[] },
+      ],
+      trucks: [
+        { id:1, plate:'AB-123-CD', type:'Benne 8x4', km:152430, ct:'2025-09-15', status:'actif',     docs:[] },
+        { id:2, plate:'EF-456-GH', type:'Benne 6x4', km:98200,  ct:'2025-12-01', status:'actif',     docs:[] },
+        { id:3, plate:'IJ-789-KL', type:'Ampliroll',  km:203100, ct:'2024-11-30', status:'ct_expire', docs:[] },
+      ],
+      clients: [
+        { id:1, company:'SARL Dupont BTP',       manager:'Jean Dupont',   phone:'03 20 11 22 33', email:'contact@dupont-btp.fr' },
+        { id:2, company:'Entreprise Moreau',     manager:'Pierre Moreau', phone:'03 21 44 55 66', email:'p.moreau@moreau-tp.fr' },
+        { id:3, company:'Constructions Bernard', manager:'Marc Bernard',  phone:'06 70 80 90 10', email:'m.bernard@bernard-constr.fr' },
+      ],
+      orders: [
+        { id:1, clientId:1, address:"ZAC du Moulin, Villeneuve d'Ascq", date:TODAY,     truckId:1, driverId:1, type:'materiaux', materialId:1, nbEstimated:4, nbDone:2, status:'en_cours',
+          transports:[
+            {id:1,done:true, tonnage:18.5,receiver:'M. Gautier',func:'Chef chantier',sig:'✓',ts:''},
+            {id:2,done:true, tonnage:19.0,receiver:'M. Gautier',func:'Chef chantier',sig:'✓',ts:''},
+            {id:3,done:false,tonnage:null,receiver:null,func:null,sig:null},
+            {id:4,done:false,tonnage:null,receiver:null,func:null,sig:null},
+          ]},
+        { id:2, clientId:2, address:'Rue des Acacias, Lille', date:TODAY, truckId:2, driverId:2, type:'journee', materialId:null, nbEstimated:1, nbDone:0, status:'en_cours',
+          transports:[{id:1,done:false,tonnage:null,receiver:null,func:null,sig:null}]},
+        { id:3, clientId:3, address:'Avenue de la Gare, Roubaix', date:YESTERDAY, truckId:1, driverId:3, type:'materiaux', materialId:2, nbEstimated:3, nbDone:3, status:'termine',
+          transports:[
+            {id:1,done:true,tonnage:20.0,receiver:'M. Simon',func:'Conducteur',sig:'✓'},
+            {id:2,done:true,tonnage:19.5,receiver:'M. Simon',func:'Conducteur',sig:'✓'},
+            {id:3,done:true,tonnage:21.0,receiver:'M. Simon',func:'Conducteur',sig:'✓'},
+          ]},
+      ],
+      expenses: [
+        { id:1, truckId:1, date:TODAY, type:'carburant', amount:210.00, desc:'Plein complet' },
+        { id:2, truckId:2, date:TODAY, type:'carburant', amount:185.50, desc:'Plein complet' },
+      ],
+      materials: JSON.parse(JSON.stringify(db.materials)),
+      tariffs:   JSON.parse(JSON.stringify(db.tariffs)),
     };
   }
 }
@@ -2277,9 +2285,6 @@ function initApp() {
   document.getElementById('topbarName').textContent   = u.name;
   document.getElementById('topbarRole').textContent   = u.role === 'gerant' ? 'Administrateur' : 'Chauffeur';
   updateModeUI();
-
-  // Sauvegarder les données démo une seule fois au premier login
-  saveDemoSnapshot();
 
   const nav = u.role === 'gerant' ? NAV_GERANT : NAV_CHAUFFEUR;
   buildNav(nav, u.role);
