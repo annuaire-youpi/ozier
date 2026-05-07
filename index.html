@@ -803,7 +803,7 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
     <button onclick="activateDemo()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);padding:7px 18px;border-radius:99px;font-size:.72rem;cursor:pointer;letter-spacing:.05em;">
       🎭 Mode Démonstration
     </button>
-    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.2.0 — 2026</p>
+    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.3.0 — 2026</p>
   </div>
 </div>
 
@@ -1710,7 +1710,6 @@ async function loadRemoteConfig() {
   try {
     const r = await fetch(SHEETS_BASE, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ action: 'getConfig' })
     });
     const cfg = await r.json();
@@ -1782,7 +1781,7 @@ async function syncSheets(action, data) {
   if(!url) return;
   try {
     await fetch(url, {
-      method:'POST', headers:{'Content-Type':'application/json'},
+      method:'POST',
       body: JSON.stringify({ action, data })
     });
   } catch(e) {
@@ -1879,7 +1878,6 @@ async function loadRealData() {
 
   const r = await fetch(url, {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ action: 'getAll' })
   });
   const data = await r.json();
