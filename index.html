@@ -803,7 +803,7 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
     <button onclick="activateDemo()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);padding:7px 18px;border-radius:99px;font-size:.72rem;cursor:pointer;letter-spacing:.05em;">
       🎭 Mode Démonstration
     </button>
-    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.7.0 — 2026</p>
+    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.8.0 — 2026</p>
   </div>
 </div>
 
@@ -1632,14 +1632,7 @@ let db = {
   drivers: [], // chargé depuis Sheets en mode Réel
   trucks: [], // chargé depuis Sheets en mode Réel
   clients: [], // chargé depuis Sheets en mode Réel
-  materials: [
-    { id:1, name:'Sable 0/4',   unit:'tonne' },
-    { id:2, name:'Gravier 4/6', unit:'tonne' },
-    { id:3, name:'Remblais',    unit:'tonne' },
-    { id:4, name:'Grave 0/20',  unit:'tonne' },
-    { id:5, name:'Tout-venant', unit:'tonne' },
-    { id:6, name:'Enrobé',      unit:'tonne' },
-  ],
+  materials: [], // chargé depuis Sheets en mode Réel
   tariffs: [
     { id:1, type:'materiaux', name:'Sable 0/4 — Standard',  price:18.50 },
     { id:2, type:'materiaux', name:'Gravier 4/6 — Standard',price:22.00 },
@@ -1986,6 +1979,16 @@ async function loadRealData() {
       amount:  parseFloat(f.montant || f.amount) || 0,
       desc:    f.description  || f.desc   || '',
     }));
+  }
+
+  // Matériaux
+  if(data.materiaux?.length) {
+    db.materials = data.materiaux.map(m => ({
+      id:   String(m.id),
+      name: m.nom  || m.name || '',
+      unit: m.unite|| m.unit || 'tonne',
+    }));
+    console.log('⚙️ Matériaux chargés:', db.materials.length);
   }
 
   showToast('✅ Données chargées depuis Google Sheets', 'success');
@@ -3556,6 +3559,8 @@ async function preloadDrivers() {
       body: JSON.stringify({ action: 'getAll' })
     });
     const data = await r.json();
+
+    // Chauffeurs — pour valider les PINs avant login
     if(data.chauffeurs?.length) {
       db.drivers = data.chauffeurs.map(d => ({
         id:      String(d.id),
@@ -3569,8 +3574,19 @@ async function preloadDrivers() {
       }));
       console.log('👤 Chauffeurs pré-chargés:', db.drivers.length);
     }
+
+    // Matériaux — pour les listes déroulantes des commandes
+    if(data.materiaux?.length) {
+      db.materials = data.materiaux.map(m => ({
+        id:   String(m.id),
+        name: m.nom   || m.name || '',
+        unit: m.unite || m.unit || 'tonne',
+      }));
+      console.log('⚙️ Matériaux pré-chargés:', db.materials.length);
+    }
+
   } catch(e) {
-    console.warn('⚠️ Impossible de pré-charger les chauffeurs');
+    console.warn('⚠️ Impossible de pré-charger les données');
   }
 }
 </script>
