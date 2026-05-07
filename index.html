@@ -803,7 +803,7 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
     <button onclick="activateDemo()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);padding:7px 18px;border-radius:99px;font-size:.72rem;cursor:pointer;letter-spacing:.05em;">
       🎭 Mode Démonstration
     </button>
-    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.9.8 — 2026</p>
+    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.9.9 — 2026</p>
   </div>
 </div>
 
@@ -2558,11 +2558,30 @@ function saveOrder() {
 
 function editOrder(id) { openOrderModal(id); }
 
+/* =================================================================
+   SUPPRESSION DIRECTE DANS SHEETS
+   ================================================================= */
+async function deleteFromSheets(action, id) {
+  const url = getSheetsBase();
+  if(!url || state.mode !== 'real') return;
+  try {
+    await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({ action, data: { id } })
+    });
+    console.log('✅ Supprimé dans Sheets:', action, id);
+  } catch(e) {
+    console.warn('⚠️ Erreur suppression Sheets:', e);
+  }
+}
+
+
 async function deleteOrder(id) {
   const ok = await showConfirm('Supprimer la commande', 'Cette action est irréversible.','🗑️','Supprimer','btn-danger');
   if(!ok) return;
   db.orders = db.orders.filter(o=>String(o.id)!==String(id));
   addAudit('Suppression commande', `Commande #${id}`);
+  deleteFromSheets('deleteOrder', id);
   renderOrders();
   showToast('Commande supprimée', 'error');
 }
@@ -2661,6 +2680,7 @@ async function deleteDriver(id) {
   if(!ok) return;
   db.drivers = db.drivers.filter(d=>String(d.id)!==String(id));
   addAudit('Suppression chauffeur', `ID ${id}`);
+  deleteFromSheets('deleteDriver', id);
   renderDriversTable();
   showToast('Chauffeur supprimé','error');
 }
@@ -2743,7 +2763,7 @@ function saveTruck() {
 function editTruck(id){ openTruckModal(id); }
 async function deleteTruck(id){
   const ok=await showConfirm('Supprimer ce camion ?','Cette action est irréversible.','🚛','Supprimer','btn-danger');
-  if(!ok)return; db.trucks=db.trucks.filter(t=>String(t.id)!==String(id)); addAudit('Suppression camion',`ID ${id}`); renderTrucks(); showToast('Camion supprimé','error');
+  if(!ok)return; db.trucks=db.trucks.filter(t=>String(t.id)!==String(id)); addAudit('Suppression camion',`ID ${id}`); deleteFromSheets('deleteTruck', id); renderTrucks(); showToast('Camion supprimé','error');
 }
 
 /* =================================================================
@@ -2847,7 +2867,7 @@ function saveClient(){
 function editClient(id){openClientModal(id);}
 async function deleteClient(id){
   const ok=await showConfirm('Supprimer ce client ?','Cette action est irréversible.','🏢','Supprimer','btn-danger');
-  if(!ok)return;db.clients=db.clients.filter(c=>c.id!==id);addAudit('Suppression client',`ID ${id}`);renderClients();showToast('Client supprimé','error');
+  if(!ok)return;db.clients=db.clients.filter(c=>String(c.id)!==String(id));addAudit('Suppression client',`ID ${id}`); deleteFromSheets('deleteClient', id); renderClients();showToast('Client supprimé','error');
 }
 
 /* =================================================================
@@ -2896,7 +2916,7 @@ function saveMaterial(){
 function editMaterial(id){openMaterialModal(id);}
 async function deleteMaterial(id){
   const ok=await showConfirm('Supprimer ce matériau ?','','⚙️','Supprimer','btn-danger');
-  if(!ok)return;db.materials=db.materials.filter(m=>String(m.id)!==String(id));renderMaterials();showToast('Matériau supprimé','error');
+  if(!ok)return;db.materials=db.materials.filter(m=>String(m.id)!==String(id)); deleteFromSheets('deleteMaterial', id); renderMaterials();showToast('Matériau supprimé','error');
 }
 
 function renderTariffs(){
@@ -2958,7 +2978,7 @@ function saveExpense(){
 }
 async function deleteExpense(id){
   const ok=await showConfirm('Supprimer ce frais ?','','💸','Supprimer','btn-danger');
-  if(!ok)return;db.expenses=db.expenses.filter(e=>e.id!==id);renderExpenses();showToast('Frais supprimé','error');
+  if(!ok)return;db.expenses=db.expenses.filter(e=>String(e.id)!==String(id)); deleteFromSheets('deleteExpense', id); renderExpenses();showToast('Frais supprimé','error');
 }
 
 /* =================================================================
