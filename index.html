@@ -803,7 +803,7 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
     <button onclick="activateDemo()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);padding:7px 18px;border-radius:99px;font-size:.72rem;cursor:pointer;letter-spacing:.05em;">
       🎭 Mode Démonstration
     </button>
-    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.0.0 — 2026</p>
+    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.1.0 — 2026</p>
   </div>
 </div>
 
@@ -2225,6 +2225,120 @@ function logout() {
   document.getElementById('screen-splash').classList.remove('hidden');
   document.querySelectorAll('.pin-key').forEach(k=>k.disabled=false);
   switchLoginRole('gerant');
+}
+
+/* =================================================================
+   APP INIT & NAVIGATION
+   ================================================================= */
+const NAV_GERANT = [
+  { id:'dashboard',  label:'Accueil',    icon:'🏠', page:'page-dashboard' },
+  { id:'commandes',  label:'Commandes',  icon:'📋', page:'page-commandes' },
+  { id:'chauffeurs', label:'Chauffeurs', icon:'👤', page:'page-chauffeurs' },
+  { id:'camions',    label:'Camions',    icon:'🚛', page:'page-camions' },
+  { id:'clients',    label:'Clients',    icon:'🏢', page:'page-clients' },
+  { id:'materiaux',  label:'Matériaux',  icon:'⚙️', page:'page-materiaux' },
+  { id:'rapports',   label:'Rapports',   icon:'📊', page:'page-rapports' },
+  { id:'marge',      label:'Marge',      icon:'💹', page:'page-marge' },
+  { id:'audit',      label:'Audit',      icon:'🔍', page:'page-audit' },
+  { id:'parametres', label:'Paramètres', icon:'🔧', page:'page-parametres' },
+];
+const NAV_CHAUFFEUR = [
+  { id:'driver-day',     label:'Transports', icon:'🚛', page:'page-driver-day' },
+  { id:'driver-fiche',   label:'Fiche jour', icon:'📝', page:'page-driver-fiche' },
+  { id:'driver-profile', label:'Profil',     icon:'👤', page:'page-driver-profile' },
+];
+
+function initApp() {
+  const u = state.currentUser;
+  document.getElementById('topbarAvatar').textContent = u.initials || 'U';
+  document.getElementById('topbarName').textContent   = u.name;
+  document.getElementById('topbarRole').textContent   = u.role === 'gerant' ? 'Administrateur' : 'Chauffeur';
+  updateModeUI();
+
+  const nav = u.role === 'gerant' ? NAV_GERANT : NAV_CHAUFFEUR;
+  buildNav(nav, u.role);
+
+  if(u.role === 'gerant') navigate('dashboard');
+  else navigate('driver-day');
+}
+
+function buildNav(nav, role) {
+  // Mobile drawer
+  const drawerItems = document.getElementById('drawerItems');
+  if(drawerItems) {
+    drawerItems.innerHTML = `
+      <div class="drawer-section-label">Navigation</div>
+      ${nav.map(n=>`
+        <button class="drawer-item" id="dnav-${n.id}" onclick="navigate('${n.id}');closeDrawer()">
+          <span class="d-icon">${n.icon}</span> ${n.label}
+        </button>`).join('')}`;
+  }
+
+  // Desktop side nav
+  const side = document.getElementById('sidenav');
+  if(side) {
+    side.innerHTML = `
+      <div class="sidenav-logo"><div class="t-mark">SN</div> SOTRANSNORD</div>
+      <div class="sidenav-section">
+        <div class="sidenav-section-label">Navigation</div>
+        ${nav.map(n=>`
+          <button class="sidenav-item" id="snav-${n.id}" onclick="navigate('${n.id}')">
+            <span class="nav-icon">${n.icon}</span> ${n.label}
+          </button>`).join('')}
+      </div>
+      <div class="sidenav-footer">
+        <button class="sidenav-item" onclick="logout()" style="color:rgba(255,80,80,.7);">
+          <span class="nav-icon">⏻</span> Déconnexion
+        </button>
+      </div>`;
+  }
+}
+
+function openDrawer() {
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawerOverlay').style.display = 'block';
+  requestAnimationFrame(()=>document.getElementById('drawerOverlay').classList.add('open'));
+}
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+  setTimeout(()=>{ document.getElementById('drawerOverlay').style.display=''; }, 260);
+}
+
+function navigate(id) {
+  const navMap = state.role === 'gerant' ? NAV_GERANT : NAV_CHAUFFEUR;
+  const item = navMap.find(n=>n.id===id);
+  if(!item) return;
+
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(item.page).classList.add('active');
+
+  document.querySelectorAll('.drawer-item,.sidenav-item').forEach(el=>el.classList.remove('active'));
+  ['dnav','snav'].forEach(prefix=>{
+    const el=document.getElementById(`${prefix}-${id}`);
+    if(el) el.classList.add('active');
+  });
+
+  state.currentPage = id;
+  renderPage(id);
+}
+
+function renderPage(id) {
+  switch(id) {
+    case 'dashboard':    renderDashboard(); break;
+    case 'commandes':    renderOrders(); break;
+    case 'chauffeurs':   renderDriversTable(); break;
+    case 'camions':      renderTrucks(); break;
+    case 'clients':      renderClients(); break;
+    case 'materiaux':    renderMaterials(); renderTariffs(); renderExpenses(); break;
+    case 'rapports':     renderReports(); break;
+    case 'marge':        renderMarginTable(); break;
+    case 'audit':        renderAudit(); break;
+    case 'parametres':   renderSettings(); break;
+    case 'driver-day':   renderDriverDay(); break;
+    case 'driver-fiche': renderDriverFiche(); break;
+    case 'driver-profile': renderDriverProfile(); break;
+  }
 }
 
 /* =================================================================
