@@ -1882,12 +1882,125 @@ function closeConfirm(val) {
 }
 
 /* =================================================================
+   CHARGEMENT DES DONNÉES RÉELLES DEPUIS SHEETS
+   ================================================================= */
+async function loadRealData() {
+  const url = getSheetsBase();
+  if(!url) return;
+
+  const r    = await fetch(url + '?action=getAll');
+  const data = await r.json();
+
+  // Chauffeurs
+  if(data.chauffeurs?.length) {
+    db.drivers = data.chauffeurs.map(d => ({
+      id:      d.id,
+      name:    d.nom || d.name || '',
+      phone:   d.telephone || d.phone || '',
+      email:   d.email || '',
+      licence: d.permis || d.licence || 'C',
+      pin:     d.pin || '',
+      status:  d.statut || d.status || 'actif',
+      docs:    [],
+    }));
+  }
+
+  // Camions
+  if(data.camions?.length) {
+    db.trucks = data.camions.map(t => ({
+      id:     t.id,
+      plate:  t.immatriculation || t.plate || '',
+      type:   t.type || '',
+      km:     parseInt(t.kilometrage || t.km) || 0,
+      ct:     t.date_ct || t.ct || '',
+      status: t.statut || t.status || 'actif',
+      docs:   [],
+    }));
+  }
+
+  // Clients
+  if(data.clients?.length) {
+    db.clients = data.clients.map(c => ({
+      id:      c.id,
+      company: c.entreprise || c.company || '',
+      manager: c.gerant || c.manager || '',
+      phone:   c.telephone || c.phone || '',
+      email:   c.email || '',
+    }));
+  }
+
+  // Commandes
+  if(data.commandes?.length) {
+    db.orders = data.commandes.map(o => {
+      const nbEst  = parseInt(o.nb_estime || o.nbEstimated) || 0;
+      const nbDone = parseInt(o.nb_fait   || o.nbDone)      || 0;
+      // Reconstruire les transports depuis l'onglet TRANSPORTS
+      const transports = Array.from({length: nbEst}, (_, i) => {
+        const t = data.transports?.find(t =>
+          String(t.commande_id) === String(o.id) && parseInt(t.id) === i+1
+        );
+        return t
+          ? { id:i+1, done:true,  tonnage:t.tonnage, receiver:t.receptionnaire, func:t.fonction, sig:'✓', ts:t.timestamp }
+          : { id:i+1, done:false, tonnage:null, receiver:null, func:null, sig:null };
+      });
+      return {
+        id:           o.id,
+        clientId:     o.client_id   || o.clientId,
+        address:      o.adresse     || o.address  || '',
+        date:         o.date_chantier|| o.date    || '',
+        driverId:     o.chauffeur_id || o.driverId,
+        truckId:      o.camion_id   || o.truckId,
+        type:         o.type        || 'materiaux',
+        materialId:   o.materiau_id || o.materialId || null,
+        nbEstimated:  nbEst,
+        nbDone:       nbDone,
+        status:       o.statut      || o.status   || 'en_cours',
+        transports,
+      };
+    });
+  }
+
+  // Frais
+  if(data.frais?.length) {
+    db.expenses = data.frais.map(f => ({
+      id:      f.id,
+      truckId: f.camion_id || f.truckId,
+      date:    f.date || '',
+      type:    f.type_frais || f.type || '',
+      amount:  parseFloat(f.montant || f.amount) || 0,
+      desc:    f.description || f.desc || '',
+    }));
+  }
+
+  showToast('✅ Données chargées depuis Google Sheets', 'success');
+  addAudit('Synchronisation', `Données réelles chargées — ${db.orders.length} commande(s), ${db.drivers.length} chauffeur(s)`);
+}
+
+/* =================================================================
    MODE TOGGLE
    ================================================================= */
-function toggleMode() {
+async function toggleMode() {
   state.mode = state.mode === 'demo' ? 'real' : 'demo';
   updateModeUI();
-  showToast(state.mode==='demo' ? '🟡 Mode DÉMO activé' : '🟢 Mode RÉEL activé — Connexion Google Sheets', state.mode==='demo'?'warning':'success');
+
+  if(state.mode === 'real' && state.currentUser) {
+    // Recharger les données réelles depuis Sheets
+    showLoader();
+    try {
+      await loadRealData();
+      // Rafraîchir la page courante
+      if(state.currentPage) renderPage(state.currentPage);
+    } catch(e) {
+      showToast('⚠️ Impossible de charger les données Sheets', 'warning');
+    }
+    hideLoader();
+    showToast('🟢 Mode RÉEL activé — Données Google Sheets chargées', 'success');
+  } else {
+    showToast('🟡 Mode DÉMO activé', 'warning');
+    // Recharger la page pour afficher les données démo
+    if(state.currentPage) renderPage(state.currentPage);
+  }
+
   addAudit('Changement de mode', `Passage en mode ${state.mode.toUpperCase()}`);
 }
 function updateModeUI() {
@@ -1910,9 +2023,22 @@ function showScreen(name) {
   document.getElementById('app').classList.remove('active');
 }
 
-function enterApp() {
+async function enterApp() {
   ['splash','select-driver','pin'].forEach(s=>document.getElementById('screen-'+s).classList.add('hidden'));
   document.getElementById('app').classList.add('active');
+
+  // En mode Réel : charger les vraies données depuis Sheets
+  if(state.mode === 'real') {
+    showLoader();
+    try {
+      await loadRealData();
+    } catch(e) {
+      console.warn('Erreur chargement données réelles:', e);
+      showToast('⚠️ Données Sheets indisponibles — affichage local', 'warning');
+    }
+    hideLoader();
+  }
+
   initApp();
 }
 
