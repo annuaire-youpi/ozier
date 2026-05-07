@@ -51,6 +51,8 @@ html, body {
   color: var(--navy);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  /* Désactiver le pull-to-refresh sur mobile */
+  overscroll-behavior-y: contain;
 }
 
 /* ============= SCROLLBAR ============= */
@@ -880,6 +882,19 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
            PAGE: DASHBOARD GÉRANT
            ===================================================== -->
       <div class="page" id="page-dashboard">
+        <!-- Bannière mode Réel avec bouton sync -->
+        <div id="realModeBanner" class="hidden" style="background:linear-gradient(135deg,#0D1B2A,#1A2E45);border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.2rem;">🟢</span>
+            <div>
+              <div style="color:#fff;font-weight:700;font-size:.88rem;">Mode Réel activé</div>
+              <div style="color:rgba(255,255,255,.5);font-size:.75rem;" id="lastSyncTime">Jamais synchronisé</div>
+            </div>
+          </div>
+          <button class="btn btn-sm" onclick="syncNow()" style="background:var(--orange);color:#fff;white-space:nowrap;">
+            🔄 Synchroniser
+          </button>
+        </div>
         <div class="page-header">
           <div>
             <div class="page-title">Tableau de bord</div>
@@ -931,7 +946,10 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
             <div class="page-title">Commandes</div>
             <div class="page-subtitle">Gestion et suivi des commandes</div>
           </div>
-          <button class="btn btn-primary" onclick="openOrderModal()">+ Nouvelle commande</button>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-outline btn-sm" id="syncCmdBtn" onclick="syncNow()" style="display:none;">🔄</button>
+            <button class="btn btn-primary" onclick="openOrderModal()">+ Nouvelle commande</button>
+          </div>
         </div>
         <div class="tabs">
           <button class="tab-btn active" onclick="filterOrders('all',this)">Toutes</button>
@@ -1882,8 +1900,26 @@ function closeConfirm(val) {
 }
 
 /* =================================================================
-   CHARGEMENT DES DONNÉES RÉELLES DEPUIS SHEETS
+   SYNCHRONISATION MANUELLE
    ================================================================= */
+async function syncNow() {
+  if(state.mode !== 'real') {
+    showToast('⚠️ Passez en mode Réel pour synchroniser', 'warning');
+    return;
+  }
+  showLoader();
+  try {
+    await loadRealData();
+    const now = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+    const el = document.getElementById('lastSyncTime');
+    if(el) el.textContent = `Dernière synchro : ${now}`;
+    if(state.currentPage) renderPage(state.currentPage);
+    showToast('🔄 Données synchronisées', 'success');
+  } catch(e) {
+    showToast('⚠️ Erreur de synchronisation', 'warning');
+  }
+  hideLoader();
+}
 async function loadRealData() {
   const url = getSheetsBase();
   if(!url) return;
@@ -1979,25 +2015,54 @@ async function loadRealData() {
 /* =================================================================
    MODE TOGGLE
    ================================================================= */
+
+// Sauvegarde des données démo — initialisée au premier chargement
+let demoSnapshot = null;
+
+function saveDemoSnapshot() {
+  if(!demoSnapshot) {
+    demoSnapshot = {
+      drivers:  JSON.parse(JSON.stringify(db.drivers)),
+      trucks:   JSON.parse(JSON.stringify(db.trucks)),
+      clients:  JSON.parse(JSON.stringify(db.clients)),
+      orders:   JSON.parse(JSON.stringify(db.orders)),
+      expenses: JSON.parse(JSON.stringify(db.expenses)),
+      materials:JSON.parse(JSON.stringify(db.materials)),
+      tariffs:  JSON.parse(JSON.stringify(db.tariffs)),
+    };
+  }
+}
+
+function restoreDemoSnapshot() {
+  if(demoSnapshot) {
+    db.drivers   = JSON.parse(JSON.stringify(demoSnapshot.drivers));
+    db.trucks    = JSON.parse(JSON.stringify(demoSnapshot.trucks));
+    db.clients   = JSON.parse(JSON.stringify(demoSnapshot.clients));
+    db.orders    = JSON.parse(JSON.stringify(demoSnapshot.orders));
+    db.expenses  = JSON.parse(JSON.stringify(demoSnapshot.expenses));
+    db.materials = JSON.parse(JSON.stringify(demoSnapshot.materials));
+    db.tariffs   = JSON.parse(JSON.stringify(demoSnapshot.tariffs));
+  }
+}
+
 async function toggleMode() {
   state.mode = state.mode === 'demo' ? 'real' : 'demo';
   updateModeUI();
 
   if(state.mode === 'real' && state.currentUser) {
-    // Recharger les données réelles depuis Sheets
     showLoader();
     try {
       await loadRealData();
-      // Rafraîchir la page courante
-      if(state.currentPage) renderPage(state.currentPage);
+      showToast('🟢 Mode RÉEL activé — Données Google Sheets chargées', 'success');
     } catch(e) {
       showToast('⚠️ Impossible de charger les données Sheets', 'warning');
     }
     hideLoader();
-    showToast('🟢 Mode RÉEL activé — Données Google Sheets chargées', 'success');
+    if(state.currentPage) renderPage(state.currentPage);
   } else {
-    showToast('🟡 Mode DÉMO activé', 'warning');
-    // Recharger la page pour afficher les données démo
+    // Restaurer les données démo propres
+    restoreDemoSnapshot();
+    showToast('🟡 Mode DÉMO activé — Données de démonstration restaurées', 'warning');
     if(state.currentPage) renderPage(state.currentPage);
   }
 
@@ -2006,11 +2071,18 @@ async function toggleMode() {
 function updateModeUI() {
   const tog = document.getElementById('modeToggle');
   if(!tog) return;
-  if(state.mode==='real') {
+  const isReal = state.mode === 'real';
+  if(isReal) {
     tog.classList.add('real');
   } else {
     tog.classList.remove('real');
   }
+  // Bannière dashboard
+  const banner = document.getElementById('realModeBanner');
+  if(banner) banner.classList[isReal ? 'remove' : 'add']('hidden');
+  // Bouton sync commandes
+  const syncBtn = document.getElementById('syncCmdBtn');
+  if(syncBtn) syncBtn.style.display = isReal ? '' : 'none';
 }
 
 /* =================================================================
@@ -2030,12 +2102,9 @@ async function enterApp() {
   // En mode Réel : charger les vraies données depuis Sheets
   if(state.mode === 'real') {
     showLoader();
-    try {
-      await loadRealData();
-    } catch(e) {
+    await loadRealData().catch(e => {
       console.warn('Erreur chargement données réelles:', e);
-      showToast('⚠️ Données Sheets indisponibles — affichage local', 'warning');
-    }
+    });
     hideLoader();
   }
 
@@ -2193,6 +2262,9 @@ function initApp() {
   document.getElementById('topbarRole').textContent   = u.role === 'gerant' ? 'Administrateur' : 'Chauffeur';
   updateModeUI();
 
+  // Sauvegarder les données démo une seule fois au premier login
+  saveDemoSnapshot();
+
   const nav = u.role === 'gerant' ? NAV_GERANT : NAV_CHAUFFEUR;
   buildNav(nav, u.role);
 
@@ -2293,6 +2365,9 @@ function logout() {
    ================================================================= */
 function renderDashboard() {
   document.getElementById('dashDate').textContent = today();
+  // Afficher/masquer la bannière selon le mode
+  const banner = document.getElementById('realModeBanner');
+  if(banner) banner.classList[state.mode==='real' ? 'remove' : 'add']('hidden');
   const active = db.orders.filter(o=>o.status==='en_cours').length;
   const todayT  = db.orders.filter(o=>o.date===new Date().toISOString().split('T')[0]).reduce((s,o)=>s+o.nbEstimated,0);
   const now = new Date();
