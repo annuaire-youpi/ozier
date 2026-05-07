@@ -803,7 +803,7 @@ canvas#sigPad { display: block; width: 100%; touch-action: none; }
     <button onclick="activateDemo()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);padding:7px 18px;border-radius:99px;font-size:.72rem;cursor:pointer;letter-spacing:.05em;">
       🎭 Mode Démonstration
     </button>
-    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.5.0 — 2026</p>
+    <p style="color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.08em;">v3.6.0 — 2026</p>
   </div>
 </div>
 
@@ -2727,12 +2727,12 @@ function saveClient(){
     Object.assign(c,data);
     showToast('✅ Client mis à jour','success');
     addAudit('Modification client',company);
-    triggerMake('updateOrder', { ...c, action:'updateClient' });
   } else {
     const newId=uid();
     db.clients.push({id:newId,...data});
     showToast('✅ Client ajouté','success');
     addAudit('Création client',company);
+    triggerMake('newClient', {id:newId,...data});
     syncSheets('newClient', {id:newId,...data});
   }
   closeModal('clientModal');renderClients();
@@ -2880,6 +2880,8 @@ const WEBHOOK_LABELS = {
   newDriver:     { label:'Nouveau chauffeur',       icon:'👤', hint:'Déclenché à l\'ajout d\'un chauffeur' },
   newTruck:      { label:'Nouveau camion',          icon:'🚛', hint:'Déclenché à l\'ajout d\'un camion' },
   expense:       { label:'Frais véhicule',          icon:'💸', hint:'Déclenché à l\'ajout d\'un frais' },
+  newClient:     { label:'Nouveau client',          icon:'🏢', hint:'Déclenché à l\'ajout d\'un client' },
+  newMaterial:   { label:'Nouveau matériau',        icon:'⚙️', hint:'Déclenché à l\'ajout d\'un matériau' },
 };
 
 function renderSettings() {
