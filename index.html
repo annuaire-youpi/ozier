@@ -1848,10 +1848,10 @@ function fmt(n) { return new Intl.NumberFormat('fr-FR',{style:'currency',currenc
 function fmtDate(d) { if(!d) return '—'; try { return new Date(d).toLocaleDateString('fr-FR'); } catch(e){ return d; } }
 function isCTExpired(date) { return date && new Date(date) < new Date(); }
 function formatPhone(p) { return p || '—'; }
-function clientName(id) { const c=db.clients.find(c=>c.id==id); return c?c.company:'—'; }
-function driverName(id) { const d=db.drivers.find(d=>d.id==id); return d?d.name:'—'; }
-function truckPlate(id) { const t=db.trucks.find(t=>t.id==id); return t?t.plate:'—'; }
-function materialName(id) { const m=db.materials.find(m=>m.id==id); return m?m.name:'—'; }
+function clientName(id)   { const c=db.clients.find(c=>String(c.id)===String(id));   return c?c.company:'—'; }
+function driverName(id)   { const d=db.drivers.find(d=>String(d.id)===String(id));   return d?d.name:'—'; }
+function truckPlate(id)   { const t=db.trucks.find(t=>String(t.id)===String(id));    return t?t.plate:'—'; }
+function materialName(id) { const m=db.materials.find(m=>String(m.id)===String(id)); return m?m.name:'—'; }
 
 function showToast(msg, type='', duration=3000) {
   const el = document.createElement('div');
@@ -1927,16 +1927,26 @@ async function loadRealData() {
   const r    = await fetch(url + '?action=getAll');
   const data = await r.json();
 
+  // Helper : nettoie une date ISO en YYYY-MM-DD
+  function cleanDate(d) {
+    if(!d) return '';
+    if(typeof d === 'string' && d.length === 10) return d;
+    try { return new Date(d).toISOString().split('T')[0]; } catch(e) { return String(d); }
+  }
+
+  // Helper : convertit un ID en string pour comparaison fiable
+  function sid(v) { return String(v).trim(); }
+
   // Chauffeurs
   if(data.chauffeurs?.length) {
     db.drivers = data.chauffeurs.map(d => ({
-      id:      d.id,
-      name:    d.nom || d.name || '',
-      phone:   d.telephone || d.phone || '',
-      email:   d.email || '',
-      licence: d.permis || d.licence || 'C',
-      pin:     d.pin || '',
-      status:  d.statut || d.status || 'actif',
+      id:      sid(d.id),
+      name:    d.nom      || d.name    || '',
+      phone:   d.telephone|| d.phone   || '',
+      email:   d.email    || '',
+      licence: d.permis   || d.licence || 'C',
+      pin:     d.pin      || '',
+      status:  d.statut   || d.status  || 'actif',
       docs:    [],
     }));
   }
@@ -1944,11 +1954,11 @@ async function loadRealData() {
   // Camions
   if(data.camions?.length) {
     db.trucks = data.camions.map(t => ({
-      id:     t.id,
+      id:     sid(t.id),
       plate:  t.immatriculation || t.plate || '',
-      type:   t.type || '',
+      type:   t.type  || '',
       km:     parseInt(t.kilometrage || t.km) || 0,
-      ct:     t.date_ct || t.ct || '',
+      ct:     cleanDate(t.date_ct || t.ct),
       status: t.statut || t.status || 'actif',
       docs:   [],
     }));
@@ -1957,40 +1967,44 @@ async function loadRealData() {
   // Clients
   if(data.clients?.length) {
     db.clients = data.clients.map(c => ({
-      id:      c.id,
-      company: c.entreprise || c.company || '',
-      manager: c.gerant || c.manager || '',
-      phone:   c.telephone || c.phone || '',
-      email:   c.email || '',
+      id:      sid(c.id),
+      company: c.entreprise || c.company  || '',
+      manager: c.gerant     || c.manager  || '',
+      phone:   c.telephone  || c.phone    || '',
+      email:   c.email      || '',
     }));
   }
 
   // Commandes
   if(data.commandes?.length) {
     db.orders = data.commandes.map(o => {
-      const nbEst  = parseInt(o.nb_estime || o.nbEstimated) || 0;
-      const nbDone = parseInt(o.nb_fait   || o.nbDone)      || 0;
-      // Reconstruire les transports depuis l'onglet TRANSPORTS
+      const nbEst  = parseInt(o.nb_estime    || o.nbEstimated) || 0;
+      const nbDone = parseInt(o.nb_fait      || o.nbDone)      || 0;
+      const oId    = sid(o.id);
+
+      // Reconstruire les transports depuis TRANSPORTS
+      const listeTransports = (data.transports || []).filter(t =>
+        sid(t.commande_id) === oId
+      );
       const transports = Array.from({length: nbEst}, (_, i) => {
-        const t = data.transports?.find(t =>
-          String(t.commande_id) === String(o.id) && parseInt(t.id) === i+1
-        );
+        const t = listeTransports[i];
         return t
-          ? { id:i+1, done:true,  tonnage:t.tonnage, receiver:t.receptionnaire, func:t.fonction, sig:'✓', ts:t.timestamp }
+          ? { id:i+1, done:true,  tonnage:t.tonnage, receiver:t.receptionnaire||t.receiver, func:t.fonction||t.func, sig:'✓', ts:t.timestamp }
           : { id:i+1, done:false, tonnage:null, receiver:null, func:null, sig:null };
       });
+
       return {
-        id:           o.id,
-        clientId:     o.client_id   || o.clientId,
-        address:      o.adresse     || o.address  || '',
-        date:         o.date_chantier|| o.date    || '',
-        driverId:     o.chauffeur_id || o.driverId,
-        truckId:      o.camion_id   || o.truckId,
-        type:         o.type        || 'materiaux',
-        materialId:   o.materiau_id || o.materialId || null,
-        nbEstimated:  nbEst,
-        nbDone:       nbDone,
-        status:       o.statut      || o.status   || 'en_cours',
+        id:          oId,
+        clientId:    sid(o.client_id    || o.clientId),
+        address:     o.adresse          || o.address   || '',
+        date:        cleanDate(o.date_chantier || o.date),
+        driverId:    sid(o.chauffeur_id || o.driverId),
+        truckId:     sid(o.camion_id    || o.truckId),
+        type:        o.type             || 'materiaux',
+        materialId:  o.materiau_id      ? sid(o.materiau_id) : null,
+        nbEstimated: nbEst,
+        nbDone:      nbDone,
+        status:      o.statut           || o.status    || 'en_cours',
         transports,
       };
     });
@@ -1999,17 +2013,17 @@ async function loadRealData() {
   // Frais
   if(data.frais?.length) {
     db.expenses = data.frais.map(f => ({
-      id:      f.id,
-      truckId: f.camion_id || f.truckId,
-      date:    f.date || '',
-      type:    f.type_frais || f.type || '',
+      id:      sid(f.id),
+      truckId: sid(f.camion_id || f.truckId),
+      date:    cleanDate(f.date),
+      type:    f.type_frais   || f.type   || '',
       amount:  parseFloat(f.montant || f.amount) || 0,
-      desc:    f.description || f.desc || '',
+      desc:    f.description  || f.desc   || '',
     }));
   }
 
   showToast('✅ Données chargées depuis Google Sheets', 'success');
-  addAudit('Synchronisation', `Données réelles chargées — ${db.orders.length} commande(s), ${db.drivers.length} chauffeur(s)`);
+  addAudit('Synchronisation', `${db.orders.length} commande(s) · ${db.drivers.length} chauffeur(s) · ${db.trucks.length} camion(s)`);
 }
 
 /* =================================================================
