@@ -307,7 +307,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
     <button class="pin-btn empty"></button><button class="pin-btn" onclick="pinKey('0')">0</button><button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
   <div class="pin-info" id="pinAttempts"></div>
-  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v5.6 — 2026</span></div>
+  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v5.8 — 2026</span></div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
 <div id="ldvOverlay">
@@ -683,8 +683,8 @@ const order=db.orders.find(o=>String(o.id)===String(orderId));
 if(!order)return;
 const transport=order.transports.find(t=>String(t.id)===String(transportId));
 if(!transport)return;
-currentLDVData={order,transport,docType:'ldv',docRef:ref};
 const ref=ldvRef(order.id,transport.id);
+currentLDVData={order,transport,docType:'ldv',docRef:ref};
 document.getElementById('ldvBarTitle').textContent=ref;
 const html=generateLDVHTML(order,transport);
 document.getElementById('ldvContent').innerHTML=html;
