@@ -307,7 +307,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
     <button class="pin-btn empty"></button><button class="pin-btn" onclick="pinKey('0')">0</button><button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
   <div class="pin-info" id="pinAttempts"></div>
-  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v4.7 — 2026</span></div>
+  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v4.8 — 2026</span></div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
 <div id="ldvOverlay">
@@ -511,7 +511,7 @@ function saveOrder(){const cid=parseInt(document.getElementById('om-client').val
 function editOrder(id){openOrderModal(id);}
 async function deleteFromSheets(a,id){const url=getSheetsBase();if(!url||state.mode!=='real')return;try{await fetch(url,{method:'POST',body:JSON.stringify({action:a,data:{id}})});}catch(e){}}
 async function deleteOrder(id){const ok=await showConfirm('Supprimer','Irréversible.','🗑️','Supprimer');if(!ok)return;db.orders=db.orders.filter(o=>String(o.id)!==String(id));addAudit('Suppression','Commande #'+id);deleteFromSheets('deleteOrder',id);renderOrders();showToast('Supprimée','error');}
-function facturer(id){const o=db.orders.find(x=>x.id===id);showToast('💶 '+clientName(o.clientId),'success');addAudit('Facturation','#'+id);triggerMake('updateOrder',{...o,action:'facturer'});}
+function facturer(id){openInvoice(id);}
 function renderDriversTable(s){let l=db.drivers;if(s)l=l.filter(d=>d.name.toLowerCase().includes(s.toLowerCase()));document.getElementById('driversTableBody').innerHTML=l.length?l.map(d=>'<tr><td><div style="font-weight:800">'+d.name+'</div><div style="font-size:.68rem;color:var(--t4)">'+d.email+'</div></td><td>'+d.phone+'</td><td><span class="badge bg-bl">'+d.licence+'</span></td><td><span class="badge '+(d.status==='actif'?'bg-gn':'bg-rd')+'">'+d.status+'</span></td><td><span class="badge bg-gr">📄 '+(d.docs||[]).length+'</span></td><td><div class="ta"><button class="btn btn-g btn-s btn-i" onclick="editDriver(\''+d.id+'\')">✏️</button><button class="btn btn-x btn-s btn-i" onclick="deleteDriver(\''+d.id+'\')">🗑️</button></div></td></tr>').join(''):'<tr><td colspan="6"><div class="empty"><div class="empty-i">👤</div><div class="empty-t">Aucun chauffeur</div></div></td></tr>';}
 function openDriverModal(id){state.editingId=id||null;document.getElementById('driverModalTitle').textContent=id?'Modifier':'Nouveau chauffeur';['dm-name','dm-birth','dm-phone','dm-email','dm-pin'].forEach(f=>{const el=document.getElementById(f);if(el)el.value='';});document.getElementById('dm-upload-progress').classList.add('hidden');if(id){const d=db.drivers.find(x=>x.id===id);if(d){document.getElementById('dm-name').value=d.name;document.getElementById('dm-birth').value=d.birth||'';document.getElementById('dm-phone').value=d.phone||'';document.getElementById('dm-email').value=d.email||'';document.getElementById('dm-licence').value=d.licence||'CE';loadExistingDocs(d.docs,'dm','dm-uploaded');}}else{loadExistingDocs([],'dm','dm-uploaded');}openModal('driverModal');}
 function saveDriver(){const name=document.getElementById('dm-name').value.trim();const pin=document.getElementById('dm-pin').value.trim();if(!name){showToast('⚠️ Nom requis','error');return;}if(!state.editingId&&!/^\d{6}$/.test(pin)){showToast('⚠️ PIN: 6 chiffres','error');return;}const docs=collectDocs('dm');const data={name,birth:document.getElementById('dm-birth').value,phone:document.getElementById('dm-phone').value.trim(),email:document.getElementById('dm-email').value.trim(),licence:document.getElementById('dm-licence').value,status:'actif',docs};if(state.editingId){const d=db.drivers.find(x=>String(x.id)===String(state.editingId));Object.assign(d,data);showToast('✅ Mis à jour','success');addAudit('Modif. chauffeur',name);}else{const nid=uid();db.drivers.push({id:nid,pin,...data});showToast('✅ Ajouté','success');addAudit('Nouveau chauffeur',name);triggerMake('newDriver',{id:nid,...data,docs:docs.map(d=>({name:d.name,size:d.size,type:d.type,data:d.data}))});syncSheets('newDriver',{id:nid,...data});}closeModal('driverModal');renderDriversTable();}
@@ -591,9 +591,9 @@ function collectDocs(prefix){return[...(pendingDocs[prefix]||[])];}
 document.addEventListener('DOMContentLoaded',async()=>{document.getElementById('dashDate').textContent=today();document.querySelectorAll('.mo').forEach(mo=>{mo.addEventListener('click',e=>{if(e.target===mo)closeModal(mo.id);});});await loadRemoteConfig();await preloadDrivers();});
 async function preloadDrivers(){try{const url=getSheetsBase()||SHEETS_BASE;if(!url)return;const r=await fetch(url,{method:'POST',body:JSON.stringify({action:'getAll'})});const data=await r.json();if(data.chauffeurs?.length)db.drivers=data.chauffeurs.map(d=>({id:String(d.id),name:d.nom||d.name||'',phone:d.telephone||d.phone||'',email:d.email||'',licence:d.permis||d.licence||'C',pin:String(d.pin||''),status:d.statut||d.status||'actif',docs:[]}));if(data.materiaux?.length)db.materials=data.materiaux.map(m=>({id:String(m.id),name:m.nom||m.name||'',unit:m.unite||m.unit||'tonne'}));if(data.tarifs_clients?.length)db.clientTariffs=data.tarifs_clients.map(t=>({id:String(t.id),clientId:String(t.client_id||t.clientId),type:t.type||'materiaux',materialId:t.materiau_id?String(t.materiau_id):null,price:parseFloat(t.prix_unitaire||t.price)||0}));}catch(e){}}
 /* COMPANY INFO */
-function getCompanyInfo(){if(remoteConfig.company_name){return{name:remoteConfig.company_name||'',address:remoteConfig.company_address||'',postal:remoteConfig.company_postal||'',city:remoteConfig.company_city||'',siret:remoteConfig.company_siret||'',licence:remoteConfig.company_licence||'',phone:remoteConfig.company_phone||'',email:remoteConfig.company_email||''};}const c=localStorage.getItem('sotransnord_company');return c?JSON.parse(c):null;}
-function saveCompanyInfo(){const data={name:document.getElementById('co-name').value.trim(),address:document.getElementById('co-address').value.trim(),postal:document.getElementById('co-postal').value.trim(),city:document.getElementById('co-city').value.trim(),siret:document.getElementById('co-siret').value.trim(),licence:document.getElementById('co-licence').value.trim(),phone:document.getElementById('co-phone').value.trim(),email:document.getElementById('co-email').value.trim()};if(!data.name||!data.address||!data.postal||!data.city||!data.siret){showToast('⚠️ Champs obligatoires manquants','error');return;}localStorage.setItem('sotransnord_company',JSON.stringify(data));remoteConfig.company_name=data.name;remoteConfig.company_address=data.address;remoteConfig.company_postal=data.postal;remoteConfig.company_city=data.city;remoteConfig.company_siret=data.siret;remoteConfig.company_licence=data.licence;remoteConfig.company_phone=data.phone;remoteConfig.company_email=data.email;localStorage.setItem('sotransnord_config_cache',JSON.stringify(remoteConfig));syncSheets('saveCompany',data);closeModal('companyModal');showToast('✅ Informations société enregistrées','success');if(window._ldvPendingAfterCompany){window._ldvPendingAfterCompany();window._ldvPendingAfterCompany=null;}}
-function openCompanyModal(){const co=getCompanyInfo();if(co){document.getElementById('co-name').value=co.name||'SOTRANSNORD';document.getElementById('co-address').value=co.address||'';document.getElementById('co-postal').value=co.postal||'';document.getElementById('co-city').value=co.city||'';document.getElementById('co-siret').value=co.siret||'';document.getElementById('co-licence').value=co.licence||'';document.getElementById('co-phone').value=co.phone||'';document.getElementById('co-email').value=co.email||'';}openModal('companyModal');}
+function getCompanyInfo(){if(remoteConfig.company_name){return{name:remoteConfig.company_name||'',address:remoteConfig.company_address||'',postal:remoteConfig.company_postal||'',city:remoteConfig.company_city||'',siret:remoteConfig.company_siret||'',licence:remoteConfig.company_licence||'',phone:remoteConfig.company_phone||'',email:remoteConfig.company_email||'',cnr_ref:parseFloat(remoteConfig.company_cnr_ref)||0,cnr_current:parseFloat(remoteConfig.company_cnr_current)||0,cnr_weight:parseFloat(remoteConfig.company_cnr_weight)||22,tva:parseFloat(remoteConfig.company_tva)||20};}const c=localStorage.getItem('sotransnord_company');return c?JSON.parse(c):null;}
+function saveCompanyInfo(){const data={name:document.getElementById('co-name').value.trim(),address:document.getElementById('co-address').value.trim(),postal:document.getElementById('co-postal').value.trim(),city:document.getElementById('co-city').value.trim(),siret:document.getElementById('co-siret').value.trim(),licence:document.getElementById('co-licence').value.trim(),phone:document.getElementById('co-phone').value.trim(),email:document.getElementById('co-email').value.trim(),cnr_ref:parseFloat(document.getElementById('co-cnr-ref').value)||0,cnr_current:parseFloat(document.getElementById('co-cnr-current').value)||0,cnr_weight:parseFloat(document.getElementById('co-cnr-weight').value)||22,tva:parseFloat(document.getElementById('co-tva').value)||20};if(!data.name||!data.address||!data.postal||!data.city||!data.siret){showToast('⚠️ Champs obligatoires manquants','error');return;}localStorage.setItem('sotransnord_company',JSON.stringify(data));remoteConfig.company_name=data.name;remoteConfig.company_address=data.address;remoteConfig.company_postal=data.postal;remoteConfig.company_city=data.city;remoteConfig.company_siret=data.siret;remoteConfig.company_licence=data.licence;remoteConfig.company_phone=data.phone;remoteConfig.company_email=data.email;remoteConfig.company_cnr_ref=data.cnr_ref;remoteConfig.company_cnr_current=data.cnr_current;remoteConfig.company_cnr_weight=data.cnr_weight;remoteConfig.company_tva=data.tva;localStorage.setItem('sotransnord_config_cache',JSON.stringify(remoteConfig));syncSheets('saveCompany',data);closeModal('companyModal');showToast('✅ Informations société enregistrées','success');if(window._ldvPendingAfterCompany){window._ldvPendingAfterCompany();window._ldvPendingAfterCompany=null;}}
+function openCompanyModal(){const co=getCompanyInfo();if(co){document.getElementById('co-name').value=co.name||'SOTRANSNORD';document.getElementById('co-address').value=co.address||'';document.getElementById('co-postal').value=co.postal||'';document.getElementById('co-city').value=co.city||'';document.getElementById('co-siret').value=co.siret||'';document.getElementById('co-licence').value=co.licence||'';document.getElementById('co-phone').value=co.phone||'';document.getElementById('co-email').value=co.email||'';document.getElementById('co-cnr-ref').value=co.cnr_ref||'';document.getElementById('co-cnr-current').value=co.cnr_current||'';document.getElementById('co-cnr-weight').value=co.cnr_weight||22;document.getElementById('co-tva').value=co.tva||20;}openModal('companyModal');}
 
 /* LDV GENERATION */
 function ldvRef(orderId,transportId){const d=new Date();const y=d.getFullYear();const m=String(d.getMonth()+1).padStart(2,'0');const day=String(d.getDate()).padStart(2,'0');return'LDV-'+y+m+day+'-'+orderId+'-T'+transportId;}
@@ -696,6 +696,147 @@ function printLDV(){window.print();}
 function showEmailLDV(){if(!currentLDVData)return;const dr=db.drivers.find(d=>String(d.id)===String(currentLDVData.order.driverId));document.getElementById('ldv-email-to').value=dr?.email||'';openModal('emailLdvModal');}
 async function sendLDVEmail(){const email=document.getElementById('ldv-email-to').value.trim();if(!email||!email.includes('@')){showToast('⚠️ Email invalide','error');return;}if(!currentLDVData)return;showLoader();const html=generateLDVHTML(currentLDVData.order,currentLDVData.transport);const ref=ldvRef(currentLDVData.order.id,currentLDVData.transport.id);await triggerMake('sendLDV',{to:email,subject:'Lettre de voiture — '+ref,ref:ref,html:html,orderId:currentLDVData.order.id,transportId:currentLDVData.transport.id});hideLoader();closeModal('emailLdvModal');showToast('📧 Email envoyé à '+email,'success',4000);addAudit('LDV envoyée',ref+' → '+email);}
 
+/* INVOICE GENERATION */
+function invoiceRef(orderId){const d=new Date();return'FAC-'+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+'-'+orderId;}
+
+function generateInvoiceHTML(order){
+const co=getCompanyInfo();
+if(!co){return null;}
+const cl=db.clients.find(c=>String(c.id)===String(order.clientId));
+const dr=db.drivers.find(d=>String(d.id)===String(order.driverId));
+const tr=db.trucks.find(t=>String(t.id)===String(order.truckId));
+const mat=order.materialId?db.materials.find(m=>String(m.id)===String(order.materialId)):null;
+const tarif=db.clientTariffs.find(t=>String(t.clientId)===String(order.clientId)&&t.type===order.type&&(order.type==='journee'||String(t.materialId)===String(order.materialId)));
+const ref=invoiceRef(order.id);
+const dateDoc=new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+
+// Calculate line items
+const doneTransports=order.transports.filter(t=>t.done);
+let lignes=[];
+let sousTotal=0;
+
+if(order.type==='journee'){
+const prixUnit=tarif?tarif.price:0;
+const nbJours=doneTransports.length;
+const montant=nbJours*prixUnit;
+lignes.push({desc:'Prestation journée — '+((cl?cl.company:'Client')),qty:nbJours,unit:'jour(s)',prix:prixUnit,montant:montant});
+sousTotal=montant;
+}else{
+const prixUnit=tarif?tarif.price:0;
+doneTransports.forEach((t,i)=>{
+const ton=parseFloat(t.tonnage)||0;
+const montant=ton*prixUnit;
+lignes.push({desc:(mat?mat.name:'Matériau')+' — Transport #'+t.id,qty:ton,unit:'T',prix:prixUnit,montant:montant});
+sousTotal+=montant;
+});
+}
+
+// Fuel surcharge calculation
+const cnrRef=co.cnr_ref||0;
+const cnrCur=co.cnr_current||0;
+const cnrWeight=(co.cnr_weight||22)/100;
+let surchargePercent=0;
+let surchargeMontant=0;
+let hasSurcharge=cnrRef>0&&cnrCur>0&&cnrCur!==cnrRef;
+if(hasSurcharge){
+surchargePercent=((cnrCur-cnrRef)/cnrRef)*100;
+surchargeMontant=sousTotal*cnrWeight*(cnrCur-cnrRef)/cnrRef;
+}
+
+const totalHT=sousTotal+surchargeMontant;
+const tauxTVA=(co.tva||20)/100;
+const montantTVA=totalHT*tauxTVA;
+const totalTTC=totalHT+montantTVA;
+
+let h='<div class="ldv-page">';
+
+// Header
+h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:16px;border-bottom:3px solid var(--bk);margin-bottom:16px">';
+h+='<div><div style="font-size:1.2rem;font-weight:900;letter-spacing:.06em">'+co.name+'</div>';
+h+='<div style="font-size:.74rem;color:var(--t3);margin-top:2px">'+co.address+', '+co.postal+' '+co.city+'</div>';
+h+='<div style="font-size:.72rem;color:var(--t3)">SIRET : '+co.siret+'</div>';
+if(co.phone)h+='<div style="font-size:.72rem;color:var(--t3)">'+co.phone+(co.email?' — '+co.email:'')+'</div>';
+h+='</div>';
+h+='<div style="text-align:right"><div style="font-size:1.1rem;font-weight:900;color:var(--rd)">FACTURE</div>';
+h+='<div style="font-size:.86rem;font-weight:800;margin-top:2px">'+ref+'</div>';
+h+='<div style="font-size:.74rem;color:var(--t3);margin-top:2px">Date : '+dateDoc+'</div>';
+h+='</div></div>';
+
+// Client block
+h+='<div class="ldv-grid" style="margin-bottom:16px"><div class="ldv-cell" style="border-right:none">';
+h+='<div class="ldv-cell-title">Facturer à</div>';
+h+='<div class="ldv-cell-name">'+(cl?cl.company:'—')+'</div>';
+if(cl&&cl.manager)h+='<div class="ldv-cell-detail">'+cl.manager+'</div>';
+if(cl&&cl.phone)h+='<div class="ldv-cell-detail">'+cl.phone+'</div>';
+if(cl&&cl.email)h+='<div class="ldv-cell-detail">'+cl.email+'</div>';
+h+='</div><div class="ldv-cell">';
+h+='<div class="ldv-cell-title">Détails commande</div>';
+h+='<div class="ldv-cell-detail">Chantier : '+order.address+'</div>';
+h+='<div class="ldv-cell-detail">Date : '+fmtDate(order.date)+'</div>';
+h+='<div class="ldv-cell-detail">Véhicule : '+(tr?tr.plate:'—')+'</div>';
+h+='<div class="ldv-cell-detail">Chauffeur : '+(dr?dr.name:'—')+'</div>';
+h+='</div></div>';
+
+// Line items table
+h+='<div class="ldv-section"><div class="ldv-section-head">📋 Détail des prestations</div>';
+h+='<div style="padding:0"><table style="width:100%;border-collapse:collapse;font-size:.78rem">';
+h+='<thead><tr style="background:var(--bg)"><th style="padding:8px 10px;text-align:left;font-size:.65rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)">Désignation</th><th style="padding:8px 10px;text-align:right;font-size:.65rem;font-weight:900;color:var(--t3)">Qté</th><th style="padding:8px 10px;text-align:right;font-size:.65rem;font-weight:900;color:var(--t3)">Prix unit. HT</th><th style="padding:8px 10px;text-align:right;font-size:.65rem;font-weight:900;color:var(--t3)">Montant HT</th></tr></thead><tbody>';
+lignes.forEach(l=>{
+h+='<tr style="border-bottom:1px solid var(--bd)"><td style="padding:8px 10px">'+l.desc+'</td><td style="padding:8px 10px;text-align:right">'+l.qty+' '+l.unit+'</td><td style="padding:8px 10px;text-align:right">'+fmt2(l.prix)+'</td><td style="padding:8px 10px;text-align:right;font-weight:700">'+fmt(l.montant)+'</td></tr>';
+});
+h+='</tbody></table></div></div>';
+
+// Totals
+h+='<div style="max-width:320px;margin-left:auto;margin-top:16px">';
+h+='<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:.82rem"><span>Sous-total HT</span><span style="font-weight:700">'+fmt(sousTotal)+'</span></div>';
+
+if(hasSurcharge){
+h+='<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:.78rem;color:var(--t2);border-top:1px solid var(--bd)">';
+h+='<span>Indexation gazole CNR<br><span style="font-size:.65rem;color:var(--t4)">Réf. '+cnrRef.toFixed(2)+' → Actuel '+cnrCur.toFixed(2)+' | Pond. '+(cnrWeight*100).toFixed(1)+'%</span></span>';
+h+='<span style="font-weight:700;color:'+(surchargeMontant>=0?'var(--rd)':'var(--gn)')+'">'+( surchargeMontant>=0?'+':'')+fmt(surchargeMontant)+'</span></div>';
+}
+
+h+='<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:.88rem;font-weight:900;border-top:2px solid var(--bk)"><span>Total HT</span><span>'+fmt(totalHT)+'</span></div>';
+h+='<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:.78rem;color:var(--t3)"><span>TVA '+(co.tva||20)+'%</span><span>'+fmt(montantTVA)+'</span></div>';
+h+='<div style="display:flex;justify-content:space-between;padding:10px 0;font-size:1rem;font-weight:900;border-top:2px solid var(--bk);color:var(--rd)"><span>TOTAL TTC</span><span>'+fmt(totalTTC)+'</span></div>';
+h+='</div>';
+
+// Legal footer
+h+='<div class="ldv-footer" style="margin-top:24px">';
+h+='Indexation gazole conforme à l\'article L3222-2 du Code des transports — Loi du 5 janvier 2006<br>';
+h+='Indice CNR gazole professionnel · Pondération publiée par le Comité National Routier (cnr.fr)<br>';
+h+=co.name+' — SIRET '+co.siret+(co.licence?' — Licence transport '+co.licence:'');
+h+='<br>En cas de retard de paiement, une pénalité de 3x le taux d\'intérêt légal sera appliquée + indemnité forfaitaire de 40€';
+h+='</div>';
+
+h+='</div>';
+return{html:h,ref:ref,totalHT:totalHT,totalTTC:totalTTC};
+}
+
+function openInvoice(orderId){
+const co=getCompanyInfo();
+if(!co||!co.cnr_ref||!co.cnr_current){
+window._ldvPendingAfterCompany=function(){openInvoice(orderId);};
+openCompanyModal();
+showToast('⚠️ Renseignez les infos société et indices CNR','warning');
+return;
+}
+const order=db.orders.find(o=>String(o.id)===String(orderId));
+if(!order)return;
+const doneTransports=order.transports.filter(t=>t.done);
+if(doneTransports.length===0){showToast('⚠️ Aucun transport validé','error');return;}
+const tarif=db.clientTariffs.find(t=>String(t.clientId)===String(order.clientId)&&t.type===order.type&&(order.type==='journee'||String(t.materialId)===String(order.materialId)));
+if(!tarif){showToast('⚠️ Tarif client manquant — configurez-le dans Données > Clients','error',5000);return;}
+const result=generateInvoiceHTML(order);
+if(!result)return;
+currentLDVData={order:order,transport:null,invoiceRef:result.ref};
+document.getElementById('ldvBarTitle').textContent='Facture — '+result.ref;
+document.getElementById('ldvContent').innerHTML=result.html;
+document.getElementById('ldvOverlay').classList.add('active');
+document.body.style.overflow='hidden';
+addAudit('Facture générée',result.ref+' — '+clientName(order.clientId)+' — '+fmt(result.totalTTC));
+}
+
 </script>
 <div class="mo" id="ldvListModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title" id="ldvListTitle">📄 Lettres de voiture</div><div id="ldvListContent"></div><div style="margin-top:16px"><button class="btn btn-o btn-w" onclick="closeModal('ldvListModal')">Fermer</button></div></div></div>
 <div class="mo" id="companyModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">🏢 Informations société</div>
@@ -705,6 +846,11 @@ async function sendLDVEmail(){const email=document.getElementById('ldv-email-to'
   <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Code postal *</label><input type="text" class="fi" id="co-postal" placeholder="59000"></div><div class="fg"><label class="fl">Ville *</label><input type="text" class="fi" id="co-city" placeholder="Lille"></div></div>
   <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">SIRET *</label><input type="text" class="fi" id="co-siret" placeholder="123 456 789 00012"></div><div class="fg"><label class="fl">N° Licence transport</label><input type="text" class="fi" id="co-licence" placeholder="2024/59/0001234"></div></div>
   <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Téléphone</label><input type="tel" class="fi" id="co-phone" placeholder="03 20 00 00 00"></div><div class="fg"><label class="fl">Email</label><input type="email" class="fi" id="co-email" placeholder="contact@sotransnord.fr"></div></div>
+  <div class="div"></div>
+  <div style="font-size:.86rem;font-weight:900;margin-bottom:8px">⛽ Indexation gazole (CNR)</div>
+  <div style="font-size:.7rem;color:var(--bl);margin-bottom:10px;padding:6px 10px;background:var(--blb);border-radius:6px">Paramètres pour le calcul automatique de la surcharge carburant sur les factures</div>
+  <div class="fg2"><div class="fg"><label class="fl">Indice CNR de référence *</label><input type="number" class="fi" id="co-cnr-ref" placeholder="180.00" step="0.01"></div><div class="fg"><label class="fl">Indice CNR actuel *</label><input type="number" class="fi" id="co-cnr-current" placeholder="195.00" step="0.01"></div></div>
+  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Pondération gazole (%)</label><input type="number" class="fi" id="co-cnr-weight" placeholder="22" step="0.1" value="22"></div><div class="fg"><label class="fl">Taux TVA (%)</label><input type="number" class="fi" id="co-tva" placeholder="20" step="0.1" value="20"></div></div>
   <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('companyModal')">Annuler</button><button class="btn btn-p btn-w" onclick="saveCompanyInfo()">💾 Enregistrer</button></div>
 </div></div>
 
