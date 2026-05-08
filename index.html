@@ -251,6 +251,44 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
 #realModeBanner{background:var(--bk);border-radius:var(--r2);border:1px solid rgba(255,255,255,.05);padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .div{height:1px;background:var(--bd);margin:12px 0}
 @media(max-width:400px){.page{padding:14px 12px 24px}.pt{font-size:1.2rem}.sc{padding:12px}.sc-v{font-size:1.35rem}.btn{padding:10px 14px;font-size:.8rem}.pin-grid{grid-template-columns:repeat(3,62px);gap:8px}.pin-btn{height:62px;font-size:1.15rem}}
+
+/* ── LETTRE DE VOITURE ── */
+#ldvOverlay{position:fixed;inset:0;z-index:3000;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;flex-direction:column}
+#ldvOverlay.active{display:flex}
+.ldv-bar{position:sticky;top:0;z-index:10;background:var(--bk);display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:8px;flex-shrink:0}
+.ldv-bar-title{color:#fff;font-size:.82rem;font-weight:800;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ldv-bar .btn{flex-shrink:0}
+.ldv-doc{max-width:680px;margin:16px auto;padding:0 12px 32px;width:100%}
+.ldv-page{background:#fff;border:1px solid var(--bd);border-radius:var(--r2);padding:28px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+@media print{.ldv-bar{display:none}.ldv-doc{margin:0;padding:0}.ldv-page{border:none;border-radius:0;box-shadow:none;padding:16px}}
+.ldv-header{text-align:center;border-bottom:3px solid var(--bk);padding-bottom:16px;margin-bottom:16px}
+.ldv-title{font-size:1.1rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.ldv-ref{font-size:.82rem;font-weight:800;color:var(--rd);margin-top:4px}
+.ldv-date{font-size:.74rem;color:var(--t3);margin-top:2px}
+.ldv-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid var(--bk);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.ldv-grid.g3{grid-template-columns:1fr 1fr 1fr}
+.ldv-cell{padding:12px;border-bottom:1px solid var(--bd);border-right:1px solid var(--bd)}
+.ldv-cell:nth-child(2n){border-right:none}
+.ldv-grid.g3 .ldv-cell:nth-child(3n){border-right:none}
+.ldv-cell-title{font-size:.6rem;font-weight:900;color:var(--rd);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.ldv-cell-name{font-size:.86rem;font-weight:800}
+.ldv-cell-detail{font-size:.74rem;color:var(--t2);margin-top:2px;line-height:1.4}
+.ldv-section{border:1.5px solid var(--bk);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.ldv-section-head{background:var(--bk);color:#fff;font-size:.62rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;padding:7px 12px}
+.ldv-section-body{padding:12px}
+.ldv-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:.8rem}
+.ldv-row-label{color:var(--t3);font-weight:600}
+.ldv-row-value{font-weight:800;text-align:right}
+.ldv-sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.ldv-sig-box{border:1.5px solid var(--bd);border-radius:var(--r);padding:10px;min-height:80px}
+.ldv-sig-label{font-size:.6rem;font-weight:900;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.ldv-sig-img{max-width:100%;max-height:60px;display:block}
+.ldv-sig-name{font-size:.76rem;font-weight:700;margin-top:4px}
+.ldv-sig-func{font-size:.68rem;color:var(--t3)}
+.ldv-footer{margin-top:16px;padding-top:12px;border-top:1px solid var(--bd);font-size:.62rem;color:var(--t4);line-height:1.5;text-align:center}
+.ldv-stamp{display:inline-block;border:2px solid var(--gn);color:var(--gn);font-size:.7rem;font-weight:900;padding:4px 12px;border-radius:4px;transform:rotate(-3deg);letter-spacing:.06em;margin-bottom:8px}
+.ldv-email-form{display:flex;gap:8px;margin-top:12px}
+.ldv-email-form .fi{flex:1}
 </style>
 </head>
 <body>
@@ -269,9 +307,18 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
     <button class="pin-btn empty"></button><button class="pin-btn" onclick="pinKey('0')">0</button><button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
   <div class="pin-info" id="pinAttempts"></div>
-  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v4.2 — 2026</span></div>
+  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v4.3 — 2026</span></div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
+<div id="ldvOverlay">
+  <div class="ldv-bar">
+    <button class="btn btn-g btn-s" onclick="closeLDV()" style="color:#fff">← Retour</button>
+    <span class="ldv-bar-title" id="ldvBarTitle">Lettre de voiture</span>
+    <button class="btn btn-o btn-s" onclick="printLDV()" style="border-color:rgba(255,255,255,.15);color:#fff">🖨️</button>
+    <button class="btn btn-p btn-s" onclick="showEmailLDV()">📧 Email</button>
+  </div>
+  <div class="ldv-doc" id="ldvContent"></div>
+</div>
 <div id="app">
   <nav class="sidenav" id="sidenav"></nav>
   <div class="app-body">
@@ -293,7 +340,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
         <div id="ordersList"></div>
       </div>
       <div class="page" id="page-donnees">
-        <div class="ph"><div><div class="pt">Données</div><div class="ps">Gestion des ressources</div></div></div>
+        <div class="ph"><div><div class="pt">Données</div><div class="ps">Gestion des ressources</div></div><button class="btn btn-o btn-s" onclick="openCompanyModal()">🏢 Infos société</button></div>
         <div class="tabs" id="don-tabs"><button class="tab on" onclick="showDonTab('chauffeurs',this)">👤 Chauffeurs</button><button class="tab" onclick="showDonTab('camions',this)">🚛 Camions</button><button class="tab" onclick="showDonTab('clients',this)">🏢 Clients</button><button class="tab" onclick="showDonTab('materiaux',this)">⚙️ Matériaux</button></div>
         <div id="don-tab-chauffeurs"><div class="ph" style="margin-bottom:8px"><span style="font-weight:800;font-size:.86rem">Liste des chauffeurs</span><button class="btn btn-p btn-s" onclick="openDriverModal()">+ Ajouter</button></div><div class="search" style="margin-bottom:10px"><input type="text" class="fi" placeholder="Rechercher..." oninput="renderDriversTable(this.value)"></div><div class="card"><div class="tw"><table id="driversTable"><thead><tr><th>Nom</th><th>Tél.</th><th>Permis</th><th>Statut</th><th>Docs</th><th>Actions</th></tr></thead><tbody id="driversTableBody"></tbody></table></div></div></div>
         <div id="don-tab-camions" class="hidden"><div class="ph" style="margin-bottom:8px"><span style="font-weight:800;font-size:.86rem">Flotte de camions</span><button class="btn btn-p btn-s" onclick="openTruckModal()">+ Ajouter</button></div><div class="card"><div class="tw"><table><thead><tr><th>Immat.</th><th>Type</th><th>Km</th><th>CT</th><th>Statut</th><th>Docs</th><th>Actions</th></tr></thead><tbody id="trucksTableBody"></tbody></table></div></div></div>
@@ -496,7 +543,7 @@ function openExpenseModal(){document.getElementById('exp-truck').innerHTML=db.tr
 function saveExpense(){const amt=parseFloat(document.getElementById('exp-amount').value);if(isNaN(amt)||amt<=0){showToast('⚠️ Montant invalide','error');return;}const data={id:uid(),truckId:parseInt(document.getElementById('exp-truck').value),date:document.getElementById('exp-date').value,type:document.getElementById('exp-type').value,amount:amt,desc:document.getElementById('exp-desc').value.trim()};db.expenses.push(data);showToast('✅ OK','success');triggerMake('expense',data);syncSheets('expense',data);closeModal('expenseModal');renderExpenses();}
 async function deleteExpense(id){const ok=await showConfirm('Supprimer ?','','💸','Supprimer');if(!ok)return;db.expenses=db.expenses.filter(e=>String(e.id)!==String(id));deleteFromSheets('deleteExpense',id);renderExpenses();showToast('Supprimé','error');}
 function renderReports(){const now=new Date();const me=db.expenses.filter(e=>{const d=new Date(e.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});const tf=me.filter(e=>e.type==='carburant').reduce((s,e)=>s+e.amount,0);const ta=me.reduce((s,e)=>s+e.amount,0);document.getElementById('rpt-conso').textContent=(db.trucks.length>0?(tf/db.trucks.length).toFixed(0):0)+' L';document.getElementById('rpt-frais').textContent=fmt(ta);document.getElementById('truckExpenseReport').innerHTML=db.trucks.map(t=>{const te=me.filter(e=>e.truckId===t.id);const c=te.filter(e=>e.type==='carburant').reduce((s,e)=>s+e.amount,0);const v=te.filter(e=>e.type==='vidange').reduce((s,e)=>s+e.amount,0);const r=te.filter(e=>e.type==='reparation').reduce((s,e)=>s+e.amount,0);const p=te.filter(e=>e.type==='pneus').reduce((s,e)=>s+e.amount,0);const a=te.filter(e=>e.type==='assurance').reduce((s,e)=>s+e.amount,0);return'<tr><td style="font-weight:800">'+t.plate+'</td><td>'+fmt(c)+'</td><td>'+fmt(v)+'</td><td>'+fmt(r)+'</td><td>'+fmt(p)+'</td><td>'+fmt(a)+'</td><td style="font-weight:800">'+fmt(c+v+r+p+a)+'</td></tr>';}).join('');}
-const WH={newOrder:{l:'Nouvelle commande',i:'📋'},updateOrder:{l:'Modifier commande',i:'✏️'},transportDone:{l:'Transport validé',i:'✅'},endOfDay:{l:'Fiche jour',i:'📝'},newDriver:{l:'Nouveau chauffeur',i:'👤'},newTruck:{l:'Nouveau camion',i:'🚛'},expense:{l:'Frais',i:'💸'},newClient:{l:'Client',i:'🏢'},newMaterial:{l:'Matériau',i:'⚙️'},newTariffClient:{l:'Tarif client',i:'💰'}};
+const WH={newOrder:{l:'Nouvelle commande',i:'📋'},updateOrder:{l:'Modifier commande',i:'✏️'},transportDone:{l:'Transport validé',i:'✅'},endOfDay:{l:'Fiche jour',i:'📝'},newDriver:{l:'Nouveau chauffeur',i:'👤'},newTruck:{l:'Nouveau camion',i:'🚛'},expense:{l:'Frais',i:'💸'},newClient:{l:'Client',i:'🏢'},newMaterial:{l:'Matériau',i:'⚙️'},newTariffClient:{l:'Tarif client',i:'💰'},sendLDV:{l:'Lettre de voiture email',i:'📧'}};
 function renderSettings(){document.getElementById('cfg-sheets').value=SHEETS_BASE;document.getElementById('webhookFields').innerHTML=Object.entries(WH).map(([k,m])=>'<div class="fg" style="margin-bottom:10px"><label class="fl" style="display:flex;align-items:center;gap:4px">'+m.i+' '+m.l+' <span id="wh-s-'+k+'" style="margin-left:auto"></span></label><input type="url" class="fi" id="cfg-wh-'+k+'" value="'+(remoteConfig['webhook_'+k]||'')+'" placeholder="https://hook.eu1.make.com/..." style="font-size:.72rem;font-family:monospace;background:var(--sf2)" readonly></div>').join('');Object.keys(WH).forEach(k=>updateWHS(k));updateCS();document.getElementById('sheets-test-result').textContent='';}
 function updateWHS(k){const v=document.getElementById('cfg-wh-'+k)?.value?.trim();const el=document.getElementById('wh-s-'+k);if(!el)return;if(v&&v.startsWith('https://hook'))el.innerHTML='<span class="badge bg-gn">✓</span>';else if(v)el.innerHTML='<span class="badge bg-yl">⚠</span>';else el.innerHTML='<span class="badge bg-gr">—</span>';}
 function updateCS(){const cfg=loadConfig();const tot=Object.keys(WH).length+1;let n=0;if(cfg.sheets_base)n++;Object.keys(WH).forEach(k=>{if(cfg['webhook_'+k])n++;});const b=document.getElementById('configStatusBadge');const s=document.getElementById('configStatus');if(!b||!s)return;if(n===tot){b.className='badge bg-gn';b.textContent='✅ Complet';s.innerHTML='<span style="color:var(--gn);font-weight:800">Configuration complète</span>';}else{b.className='badge bg-yl';b.textContent=n+'/'+tot;s.innerHTML=n+'/'+tot+' configuré(s)';}}
@@ -518,7 +565,7 @@ function fO(v){return v>0?fmt(v):'<span style="color:var(--t5)">—</span>';}
 function computeRealMD(){const r={};const now=new Date();[now.getFullYear()-1,now.getFullYear()].forEach(yr=>{r[yr]={};for(let m=0;m<12;m++){if(yr===now.getFullYear()&&m>now.getMonth()){r[yr][m]=null;continue;}const me=db.expenses.filter(e=>{const d=new Date(e.date);return d.getMonth()===m&&d.getFullYear()===yr;});const carbu=me.filter(e=>e.type==='carburant').reduce((s,e)=>s+e.amount,0);const vidange=me.filter(e=>e.type==='vidange').reduce((s,e)=>s+e.amount,0);const repar=me.filter(e=>e.type==='reparation').reduce((s,e)=>s+e.amount,0);const pneus=me.filter(e=>e.type==='pneus').reduce((s,e)=>s+e.amount,0);const assurance=me.filter(e=>e.type==='assurance').reduce((s,e)=>s+e.amount,0);const autres=me.filter(e=>!['carburant','vidange','reparation','pneus','assurance'].includes(e.type)).reduce((s,e)=>s+e.amount,0);const td=carbu+vidange+repar+pneus+assurance+autres;let ca=0;db.orders.forEach(o=>{if(!o.date||!o.nbDone||o.nbDone<=0)return;const d=new Date(o.date);if(d.getMonth()!==m||d.getFullYear()!==yr)return;const t=db.clientTariffs.find(t=>String(t.clientId)===String(o.clientId)&&t.type===o.type&&(o.type==='journee'||String(t.materialId)===String(o.materialId)));if(!t)return;if(o.type==='journee')ca+=o.nbDone*t.price;else ca+=o.transports.filter(x=>x.done&&x.tonnage).reduce((s,x)=>s+parseFloat(x.tonnage||0),0)*t.price;});const marge=ca-td;r[yr][m]={ca,carbu,vidange,repar,pneus,assurance,autres,total_dep:td,marge,pct_marge:ca>0?Math.round((marge/ca)*100):0};}});return r;}
 function renderAudit(){document.getElementById('auditTableBody').innerHTML=db.audit.length?db.audit.map(a=>'<tr><td style="white-space:nowrap;font-size:.72rem">'+a.ts+'</td><td style="font-size:.78rem">'+a.user+'</td><td><span class="badge bg-bl">'+a.action+'</span></td><td style="font-size:.76rem;color:var(--t3)">'+a.detail+'</td></tr>').join(''):'<tr><td colspan="4"><div class="empty"><div class="empty-i">🔍</div><div class="empty-t">Historique vide</div></div></td></tr>';}
 async function clearAudit(){const ok=await showConfirm('Vider ?','','🗑️','Vider');if(!ok)return;db.audit=[];renderAudit();showToast('Vidé','error');}
-function renderDriverDay(){const d=new Date();document.getElementById('driverDayDate').textContent=d.toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});const did=state.currentUser.id;const tds=d.toISOString().split('T')[0];const orders=db.orders.filter(o=>o.driverId===did&&o.status==='en_cours');let all=[];orders.forEach(o=>{o.transports.forEach(t=>{all.push({...t,orderId:o.id,cn:clientName(o.clientId),addr:o.address,mat:o.materialId?materialName(o.materialId):null,od:o.date});});});const tot=all.length;const dn=all.filter(t=>t.done).length;const pct=tot>0?Math.round((dn/tot)*100):0;document.getElementById('driverProgress').textContent=dn+'/'+tot;const bar=document.getElementById('driverProgressBar');bar.style.width=pct+'%';bar.className='prog-fill'+(pct>=100?' full':'');const list=document.getElementById('driverTransportList');if(!all.length){list.innerHTML='<div class="empty"><div class="empty-i">🚛</div><div class="empty-t">Aucun transport</div></div>';return;}list.innerHTML=all.map((t,i)=>{const isT=t.od===tds;const db2=isT?'<span class="badge bg-gn" style="font-size:.6rem">Aujourd\'hui</span>':'<span class="badge bg-yl" style="font-size:.6rem">📅 '+fmtDate(t.od)+'</span>';return'<div class="tr-item'+(t.done?' done':'')+'" onclick="'+(t.done?'':'openTransportModal(\''+t.orderId+'\',\''+t.id+'\')')+'"><div class="tr-num">'+(i+1)+'</div><div class="tr-info"><div class="tr-client" style="display:flex;align-items:center;gap:5px">'+t.cn+' '+db2+'</div><div class="tr-meta">📍 '+t.addr+(t.mat?' · '+t.mat:'')+'</div>'+(t.done?'<div style="font-size:.76rem;color:var(--gn);margin-top:4px">✅ '+t.tonnage+'T — '+t.receiver+'</div>':'<div style="font-size:.72rem;color:var(--t4);margin-top:4px;font-style:italic">Appuyez pour valider</div>')+'</div>'+(t.done?'<span style="font-size:1.2rem">✅</span>':'<span class="tr-arr">›</span>')+'</div>';}).join('');}
+function renderDriverDay(){const d=new Date();document.getElementById('driverDayDate').textContent=d.toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});const did=state.currentUser.id;const tds=d.toISOString().split('T')[0];const orders=db.orders.filter(o=>o.driverId===did&&o.status==='en_cours');let all=[];orders.forEach(o=>{o.transports.forEach(t=>{all.push({...t,orderId:o.id,cn:clientName(o.clientId),addr:o.address,mat:o.materialId?materialName(o.materialId):null,od:o.date});});});const tot=all.length;const dn=all.filter(t=>t.done).length;const pct=tot>0?Math.round((dn/tot)*100):0;document.getElementById('driverProgress').textContent=dn+'/'+tot;const bar=document.getElementById('driverProgressBar');bar.style.width=pct+'%';bar.className='prog-fill'+(pct>=100?' full':'');const list=document.getElementById('driverTransportList');if(!all.length){list.innerHTML='<div class="empty"><div class="empty-i">🚛</div><div class="empty-t">Aucun transport</div></div>';return;}list.innerHTML=all.map((t,i)=>{const isT=t.od===tds;const db2=isT?'<span class="badge bg-gn" style="font-size:.6rem">Aujourd\'hui</span>':'<span class="badge bg-yl" style="font-size:.6rem">📅 '+fmtDate(t.od)+'</span>';return'<div class="tr-item'+(t.done?' done':'')+'" onclick="'+(t.done?'':'openTransportModal(\''+t.orderId+'\',\''+t.id+'\')')+'"><div class="tr-num">'+(i+1)+'</div><div class="tr-info"><div class="tr-client" style="display:flex;align-items:center;gap:5px">'+t.cn+' '+db2+'</div><div class="tr-meta">📍 '+t.addr+(t.mat?' · '+t.mat:'')+'</div>'+(t.done?'<div style="font-size:.76rem;color:var(--gn);margin-top:4px">✅ '+t.tonnage+'T — '+t.receiver+'</div>':'<div style="font-size:.72rem;color:var(--t4);margin-top:4px;font-style:italic">Appuyez pour valider</div>')+'<div style="margin-top:6px"><button class="btn btn-d btn-s" onclick="event.stopPropagation();openLDV(\''+t.orderId+'\',\''+t.id+'\')">📄 Lettre de voiture</button></div></div>'+(t.done?'<span style="font-size:1.2rem">✅</span>':'<span class="tr-arr">›</span>')+'</div>';}).join('');}
 function renderDriverProfile(){const d=db.drivers.find(x=>x.id===state.currentUser.id);if(!d){document.getElementById('driverProfileContent').innerHTML='—';return;}document.getElementById('driverProfileContent').innerHTML='<div style="display:flex;align-items:center;gap:14px;margin-bottom:16px"><div style="width:52px;height:52px;border-radius:var(--r2);background:var(--rd);display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:900;color:#fff">'+initials(d.name)+'</div><div><div style="font-size:1.05rem;font-weight:900">'+d.name+'</div><div style="font-size:.76rem;color:var(--t3)">Permis '+d.licence+'</div></div></div><div class="fg2"><div class="fg"><label class="fl">Téléphone</label><div class="fi" style="background:var(--sf2)">'+(d.phone||'—')+'</div></div><div class="fg"><label class="fl">Email</label><div class="fi" style="background:var(--sf2)">'+(d.email||'—')+'</div></div></div>';}
 function openTransportModal(oid,tid){const o=db.orders.find(x=>String(x.id)===String(oid));if(!o)return;const t=o.transports.find(x=>String(x.id)===String(tid));if(!t||t.done)return;state.currentOrder=o;state.currentTransport=t;document.getElementById('transportModalTitle').textContent='Transport #'+tid;document.getElementById('transportModalInfo').innerHTML='<div style="display:flex;flex-wrap:wrap;gap:5px"><span class="oc-m">🏢 '+clientName(o.clientId)+'</span><span class="oc-m">📍 '+o.address+'</span>'+(o.materialId?'<span class="oc-m">⚙️ '+materialName(o.materialId)+'</span>':'')+'</div>';document.getElementById('tm-tonnage').value='';document.getElementById('tm-receiver-name').value='';document.getElementById('tm-receiver-func').value='';initSigPad();openModal('transportModal');}
 function confirmTransport(){const ton=parseFloat(document.getElementById('tm-tonnage').value);const rec=document.getElementById('tm-receiver-name').value.trim();const fn=document.getElementById('tm-receiver-func').value.trim();if(!ton||isNaN(ton)){showToast('⚠️ Tonnage requis','error');return;}if(!rec){showToast('⚠️ Réceptionnaire requis','error');return;}const sig=getSigData();if(!sig){showToast('⚠️ Signature requise','error');return;}const t=state.currentTransport;const o=state.currentOrder;t.done=true;t.tonnage=ton;t.receiver=rec;t.func=fn;t.sig=sig;t.ts=new Date().toLocaleString('fr-FR');o.nbDone=o.transports.filter(x=>x.done).length;if(o.nbDone>=o.nbEstimated)o.status='termine';addAudit('Transport validé',clientName(o.clientId)+' — '+ton+'T');triggerMake('transportDone',{orderId:o.id,transportId:t.id,driverId:state.currentUser.id,tonnage:ton,receiver:rec,func:fn,timestamp:new Date().toISOString(),nbDone:o.nbDone,nbEstimated:o.nbEstimated,status:o.status});syncSheets('transportDone',{orderId:o.id,transportId:t.id,tonnage:ton,receiver:rec,func:fn});closeModal('transportModal');renderDriverDay();showToast('✅ Transport validé','success',4000);}
@@ -534,7 +581,35 @@ function renderDocChip(doc,prefix){const{i,c}=fileIcon(doc.name);return'<div cla
 function renderAllChips(tid,prefix){const w=document.getElementById(tid);if(!w)return;w.innerHTML=(pendingDocs[prefix]||[]).map(d=>renderDocChip(d,prefix)).join('');}
 async function handleFiles(input,tid,prefix){const files=Array.from(input.files);if(!files.length)return;if(!pendingDocs[prefix])pendingDocs[prefix]=[];const pe=document.getElementById(prefix+'-upload-progress');const ze=document.getElementById(prefix+'-upload-zone');if(pe)pe.classList.remove('hidden');if(ze)ze.classList.add('loading');for(let i=0;i<files.length;i++){const f=files[i];if(pe)pe.textContent='⏳ '+f.name;try{const b64=await readFileAsBase64(f);pendingDocs[prefix].push({id:'doc_'+uid(),name:f.name,size:f.size,type:f.type,data:b64});}catch(e){showToast('⚠️ '+f.name,'error');}}if(pe)pe.classList.add('hidden');if(ze)ze.classList.remove('loading');input.value='';renderAllChips(tid,prefix);}
 function readFileAsBase64(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=()=>rej(new Error());r.readAsDataURL(f);});}
-function viewDoc(did,prefix){const doc=(pendingDocs[prefix]||[]).find(d=>d.id===did);if(!doc)return;const w=window.open();if(!w){showToast('Autorisez popups','warning');return;}if(doc.type&&doc.type.startsWith('image/'))w.document.write('<html><body style="margin:0;background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh"><img src="'+doc.data+'" style="max-width:100%;max-height:100vh;object-fit:contain"></body></html>');else w.document.write('<html><body style="margin:0"><iframe src="'+doc.data+'" style="width:100%;height:100vh;border:none"></iframe></body></html>');w.document.title=doc.name;}
+function viewDoc(did,prefix){const doc=(pendingDocs[prefix]||[]).find(d=>d.id===did);if(!doc)return;const w=window.open();if(!w){showToast('Autorisez popups','warning');return;}if(doc.type&&doc.type.startsWith('image/'))w.document.write('<html><body style="margin:0;background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh"><img src="'+doc.data+'" style="max-width:100%;max-height:100vh;object-fit:contain"><div class="mo" id="companyModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">🏢 Informations société</div>
+  <div style="font-size:.74rem;color:var(--bl);margin-bottom:12px;padding:8px 10px;background:var(--blb);border-radius:6px">Ces informations apparaissent sur chaque lettre de voiture</div>
+  <div class="fg"><label class="fl">Raison sociale *</label><input type="text" class="fi" id="co-name" placeholder="SOTRANSNORD" value="SOTRANSNORD"></div>
+  <div class="fg" style="margin-top:10px"><label class="fl">Adresse *</label><input type="text" class="fi" id="co-address" placeholder="12 Rue du Transport"></div>
+  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Code postal *</label><input type="text" class="fi" id="co-postal" placeholder="59000"></div><div class="fg"><label class="fl">Ville *</label><input type="text" class="fi" id="co-city" placeholder="Lille"></div></div>
+  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">SIRET *</label><input type="text" class="fi" id="co-siret" placeholder="123 456 789 00012"></div><div class="fg"><label class="fl">N° Licence transport</label><input type="text" class="fi" id="co-licence" placeholder="2024/59/0001234"></div></div>
+  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Téléphone</label><input type="tel" class="fi" id="co-phone" placeholder="03 20 00 00 00"></div><div class="fg"><label class="fl">Email</label><input type="email" class="fi" id="co-email" placeholder="contact@sotransnord.fr"></div></div>
+  <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('companyModal')">Annuler</button><button class="btn btn-p btn-w" onclick="saveCompanyInfo()">💾 Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="emailLdvModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">📧 Envoyer par email</div>
+  <div class="fg"><label class="fl">Adresse email</label><input type="email" class="fi" id="ldv-email-to" placeholder="chauffeur@mail.fr"></div>
+  <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('emailLdvModal')">Annuler</button><button class="btn btn-p btn-w" onclick="sendLDVEmail()">📤 Envoyer</button></div>
+</div></div>
+</body></html>');else w.document.write('<html><body style="margin:0"><iframe src="'+doc.data+'" style="width:100%;height:100vh;border:none"></iframe><div class="mo" id="companyModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">🏢 Informations société</div>
+  <div style="font-size:.74rem;color:var(--bl);margin-bottom:12px;padding:8px 10px;background:var(--blb);border-radius:6px">Ces informations apparaissent sur chaque lettre de voiture</div>
+  <div class="fg"><label class="fl">Raison sociale *</label><input type="text" class="fi" id="co-name" placeholder="SOTRANSNORD" value="SOTRANSNORD"></div>
+  <div class="fg" style="margin-top:10px"><label class="fl">Adresse *</label><input type="text" class="fi" id="co-address" placeholder="12 Rue du Transport"></div>
+  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Code postal *</label><input type="text" class="fi" id="co-postal" placeholder="59000"></div><div class="fg"><label class="fl">Ville *</label><input type="text" class="fi" id="co-city" placeholder="Lille"></div></div>
+  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">SIRET *</label><input type="text" class="fi" id="co-siret" placeholder="123 456 789 00012"></div><div class="fg"><label class="fl">N° Licence transport</label><input type="text" class="fi" id="co-licence" placeholder="2024/59/0001234"></div></div>
+  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Téléphone</label><input type="tel" class="fi" id="co-phone" placeholder="03 20 00 00 00"></div><div class="fg"><label class="fl">Email</label><input type="email" class="fi" id="co-email" placeholder="contact@sotransnord.fr"></div></div>
+  <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('companyModal')">Annuler</button><button class="btn btn-p btn-w" onclick="saveCompanyInfo()">💾 Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="emailLdvModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">📧 Envoyer par email</div>
+  <div class="fg"><label class="fl">Adresse email</label><input type="email" class="fi" id="ldv-email-to" placeholder="chauffeur@mail.fr"></div>
+  <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('emailLdvModal')">Annuler</button><button class="btn btn-p btn-w" onclick="sendLDVEmail()">📤 Envoyer</button></div>
+</div></div>
+</body></html>');w.document.title=doc.name;}
 function removeDoc(did,prefix){pendingDocs[prefix]=(pendingDocs[prefix]||[]).filter(d=>d.id!==did);renderAllChips(prefix==='dm'?'dm-uploaded':'tm-uploaded',prefix);}
 function handleDragOver(e,zid){e.preventDefault();document.getElementById(zid)?.classList.add('drag-over');}
 function handleDragLeave(zid){document.getElementById(zid)?.classList.remove('drag-over');}
@@ -543,6 +618,125 @@ function loadExistingDocs(docs,prefix,tid){pendingDocs[prefix]=docs?[...docs]:[]
 function collectDocs(prefix){return[...(pendingDocs[prefix]||[])];}
 document.addEventListener('DOMContentLoaded',async()=>{document.getElementById('dashDate').textContent=today();document.querySelectorAll('.mo').forEach(mo=>{mo.addEventListener('click',e=>{if(e.target===mo)closeModal(mo.id);});});await loadRemoteConfig();await preloadDrivers();});
 async function preloadDrivers(){try{const url=getSheetsBase()||SHEETS_BASE;if(!url)return;const r=await fetch(url,{method:'POST',body:JSON.stringify({action:'getAll'})});const data=await r.json();if(data.chauffeurs?.length)db.drivers=data.chauffeurs.map(d=>({id:String(d.id),name:d.nom||d.name||'',phone:d.telephone||d.phone||'',email:d.email||'',licence:d.permis||d.licence||'C',pin:String(d.pin||''),status:d.statut||d.status||'actif',docs:[]}));if(data.materiaux?.length)db.materials=data.materiaux.map(m=>({id:String(m.id),name:m.nom||m.name||'',unit:m.unite||m.unit||'tonne'}));if(data.tarifs_clients?.length)db.clientTariffs=data.tarifs_clients.map(t=>({id:String(t.id),clientId:String(t.client_id||t.clientId),type:t.type||'materiaux',materialId:t.materiau_id?String(t.materiau_id):null,price:parseFloat(t.prix_unitaire||t.price)||0}));}catch(e){}}
+/* COMPANY INFO */
+function getCompanyInfo(){const c=localStorage.getItem('sotransnord_company');return c?JSON.parse(c):null;}
+function saveCompanyInfo(){const data={name:document.getElementById('co-name').value.trim(),address:document.getElementById('co-address').value.trim(),postal:document.getElementById('co-postal').value.trim(),city:document.getElementById('co-city').value.trim(),siret:document.getElementById('co-siret').value.trim(),licence:document.getElementById('co-licence').value.trim(),phone:document.getElementById('co-phone').value.trim(),email:document.getElementById('co-email').value.trim()};if(!data.name||!data.address||!data.postal||!data.city||!data.siret){showToast('⚠️ Champs obligatoires manquants','error');return;}localStorage.setItem('sotransnord_company',JSON.stringify(data));closeModal('companyModal');showToast('✅ Informations société enregistrées','success');if(window._ldvPendingAfterCompany){window._ldvPendingAfterCompany();window._ldvPendingAfterCompany=null;}}
+function openCompanyModal(){const co=getCompanyInfo();if(co){document.getElementById('co-name').value=co.name||'SOTRANSNORD';document.getElementById('co-address').value=co.address||'';document.getElementById('co-postal').value=co.postal||'';document.getElementById('co-city').value=co.city||'';document.getElementById('co-siret').value=co.siret||'';document.getElementById('co-licence').value=co.licence||'';document.getElementById('co-phone').value=co.phone||'';document.getElementById('co-email').value=co.email||'';}openModal('companyModal');}
+
+/* LDV GENERATION */
+function ldvRef(orderId,transportId){const d=new Date();const y=d.getFullYear();const m=String(d.getMonth()+1).padStart(2,'0');const day=String(d.getDate()).padStart(2,'0');return'LDV-'+y+m+day+'-'+orderId+'-T'+transportId;}
+
+function generateLDVHTML(order,transport,tIndex){
+const co=getCompanyInfo();
+if(!co){return null;}
+const cl=db.clients.find(c=>String(c.id)===String(order.clientId));
+const dr=db.drivers.find(d=>String(d.id)===String(order.driverId));
+const tr=db.trucks.find(t=>String(t.id)===String(order.truckId));
+const mat=order.materialId?db.materials.find(m=>String(m.id)===String(order.materialId)):null;
+const ref=ldvRef(order.id,transport.id);
+const dateDoc=new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+const dateChantier=fmtDate(order.date);
+const isDone=transport.done;
+const goodsDesc=order.type==='journee'?'Prestation à la journée — Transport BTP':(mat?mat.name:'Matériaux BTP')+' — Transport par benne';
+
+let html='<div class="ldv-page">';
+html+='<div class="ldv-header">';
+if(isDone)html+='<div class="ldv-stamp">✓ TRANSPORT VALIDÉ</div><br>';
+html+='<div class="ldv-title">Lettre de voiture nationale</div>';
+html+='<div class="ldv-ref">'+ref+'</div>';
+html+='<div class="ldv-date">Établie le '+dateDoc+'</div>';
+html+='</div>';
+
+// TRANSPORTEUR
+html+='<div class="ldv-section"><div class="ldv-section-head">🚛 Transporteur</div><div class="ldv-section-body">';
+html+='<div class="ldv-row"><span class="ldv-row-label">Raison sociale</span><span class="ldv-row-value">'+co.name+'</span></div>';
+html+='<div class="ldv-row"><span class="ldv-row-label">Adresse</span><span class="ldv-row-value">'+co.address+', '+co.postal+' '+co.city+'</span></div>';
+html+='<div class="ldv-row"><span class="ldv-row-label">SIRET</span><span class="ldv-row-value">'+co.siret+'</span></div>';
+if(co.licence)html+='<div class="ldv-row"><span class="ldv-row-label">Licence transport</span><span class="ldv-row-value">'+co.licence+'</span></div>';
+if(co.phone)html+='<div class="ldv-row"><span class="ldv-row-label">Téléphone</span><span class="ldv-row-value">'+co.phone+'</span></div>';
+html+='<div style="border-top:1px solid var(--bd);margin-top:6px;padding-top:6px">';
+html+='<div class="ldv-row"><span class="ldv-row-label">Chauffeur</span><span class="ldv-row-value">'+(dr?dr.name:'—')+'</span></div>';
+html+='<div class="ldv-row"><span class="ldv-row-label">Permis</span><span class="ldv-row-value">'+(dr?dr.licence:'—')+'</span></div>';
+html+='<div class="ldv-row"><span class="ldv-row-label">Véhicule</span><span class="ldv-row-value">'+(tr?tr.plate+' — '+tr.type:'—')+'</span></div>';
+html+='</div></div></div>';
+
+// EXPÉDITEUR + DESTINATAIRE
+html+='<div class="ldv-grid">';
+html+='<div class="ldv-cell"><div class="ldv-cell-title">Expéditeur</div><div class="ldv-cell-name">'+(cl?cl.company:'—')+'</div><div class="ldv-cell-detail">'+(cl?cl.manager:'')+'</div><div class="ldv-cell-detail">'+(cl?cl.phone:'')+'</div><div class="ldv-cell-detail">'+(cl?cl.email:'')+'</div></div>';
+html+='<div class="ldv-cell"><div class="ldv-cell-title">Destinataire / Chantier</div><div class="ldv-cell-name">'+order.address+'</div><div class="ldv-cell-detail">Date chantier : '+dateChantier+'</div><div class="ldv-cell-detail">Transport '+transport.id+'/'+order.nbEstimated+'</div></div>';
+html+='</div>';
+
+// MARCHANDISES
+html+='<div class="ldv-section"><div class="ldv-section-head">📦 Marchandises</div><div class="ldv-section-body">';
+html+='<div class="ldv-row"><span class="ldv-row-label">Désignation</span><span class="ldv-row-value">'+goodsDesc+'</span></div>';
+html+='<div class="ldv-row"><span class="ldv-row-label">Type</span><span class="ldv-row-value">'+(order.type==='journee'?'Journée':'Matériaux (tonne)')+'</span></div>';
+if(mat)html+='<div class="ldv-row"><span class="ldv-row-label">Matériau</span><span class="ldv-row-value">'+mat.name+'</span></div>';
+if(isDone&&transport.tonnage)html+='<div class="ldv-row"><span class="ldv-row-label">Tonnage réel</span><span class="ldv-row-value" style="font-size:.92rem;color:var(--rd)">'+transport.tonnage+' T</span></div>';
+else html+='<div class="ldv-row"><span class="ldv-row-label">Tonnage</span><span class="ldv-row-value" style="color:var(--t4);font-style:italic">À compléter à la livraison</span></div>';
+html+='<div class="ldv-row"><span class="ldv-row-label">Emballage</span><span class="ldv-row-value">Vrac — Benne</span></div>';
+html+='</div></div>';
+
+// SIGNATURES
+html+='<div class="ldv-sig-grid">';
+html+='<div class="ldv-sig-box"><div class="ldv-sig-label">Expéditeur / Chargeur</div><div style="font-size:.74rem;color:var(--t4);margin-top:16px">'+(cl?cl.company:'—')+'</div></div>';
+if(isDone&&transport.sig&&transport.sig!=='✓'){
+html+='<div class="ldv-sig-box"><div class="ldv-sig-label">Réceptionnaire (livraison)</div><img class="ldv-sig-img" src="'+transport.sig+'" alt="Signature"><div class="ldv-sig-name">'+(transport.receiver||'')+'</div><div class="ldv-sig-func">'+(transport.func||'')+'</div></div>';
+}else if(isDone){
+html+='<div class="ldv-sig-box"><div class="ldv-sig-label">Réceptionnaire (livraison)</div><div class="ldv-sig-name" style="margin-top:10px">'+(transport.receiver||'—')+'</div><div class="ldv-sig-func">'+(transport.func||'')+'</div><div style="font-size:.7rem;color:var(--gn);margin-top:4px">✅ Signé numériquement</div></div>';
+}else{
+html+='<div class="ldv-sig-box"><div class="ldv-sig-label">Réceptionnaire (livraison)</div><div style="font-size:.72rem;color:var(--t4);margin-top:20px;text-align:center;font-style:italic">Signature à la livraison</div></div>';
+}
+html+='</div>';
+
+// FOOTER
+html+='<div class="ldv-footer">';
+html+='Document généré électroniquement par SOTRANSNORD — Valeur probante conformément au règlement eFTI (UE) 2020/1056<br>';
+html+='Art. L132-9 du Code de commerce · Art. R3411-13 du Code des transports<br>';
+html+='Conservation obligatoire : 2 ans minimum · '+co.name+' — SIRET '+co.siret;
+html+='</div>';
+
+html+='</div>';
+return html;
+}
+
+/* LDV DISPLAY */
+let currentLDVData=null;
+function openLDV(orderId,transportId){
+const co=getCompanyInfo();
+if(!co){window._ldvPendingAfterCompany=function(){openLDV(orderId,transportId);};openCompanyModal();showToast('⚠️ Renseignez d\'abord les infos société','warning');return;}
+const order=db.orders.find(o=>String(o.id)===String(orderId));
+if(!order)return;
+const transport=order.transports.find(t=>String(t.id)===String(transportId));
+if(!transport)return;
+currentLDVData={order,transport};
+const ref=ldvRef(order.id,transport.id);
+document.getElementById('ldvBarTitle').textContent=ref;
+const html=generateLDVHTML(order,transport);
+document.getElementById('ldvContent').innerHTML=html;
+document.getElementById('ldvOverlay').classList.add('active');
+document.body.style.overflow='hidden';
+}
+function closeLDV(){document.getElementById('ldvOverlay').classList.remove('active');document.body.style.overflow='';currentLDVData=null;}
+function printLDV(){window.print();}
+
+/* LDV EMAIL */
+function showEmailLDV(){if(!currentLDVData)return;const dr=db.drivers.find(d=>String(d.id)===String(currentLDVData.order.driverId));document.getElementById('ldv-email-to').value=dr?.email||'';openModal('emailLdvModal');}
+async function sendLDVEmail(){const email=document.getElementById('ldv-email-to').value.trim();if(!email||!email.includes('@')){showToast('⚠️ Email invalide','error');return;}if(!currentLDVData)return;showLoader();const html=generateLDVHTML(currentLDVData.order,currentLDVData.transport);const ref=ldvRef(currentLDVData.order.id,currentLDVData.transport.id);await triggerMake('sendLDV',{to:email,subject:'Lettre de voiture — '+ref,ref:ref,html:html,orderId:currentLDVData.order.id,transportId:currentLDVData.transport.id});hideLoader();closeModal('emailLdvModal');showToast('📧 Email envoyé à '+email,'success',4000);addAudit('LDV envoyée',ref+' → '+email);}
+
 </script>
+<div class="mo" id="companyModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">🏢 Informations société</div>
+  <div style="font-size:.74rem;color:var(--bl);margin-bottom:12px;padding:8px 10px;background:var(--blb);border-radius:6px">Ces informations apparaissent sur chaque lettre de voiture</div>
+  <div class="fg"><label class="fl">Raison sociale *</label><input type="text" class="fi" id="co-name" placeholder="SOTRANSNORD" value="SOTRANSNORD"></div>
+  <div class="fg" style="margin-top:10px"><label class="fl">Adresse *</label><input type="text" class="fi" id="co-address" placeholder="12 Rue du Transport"></div>
+  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Code postal *</label><input type="text" class="fi" id="co-postal" placeholder="59000"></div><div class="fg"><label class="fl">Ville *</label><input type="text" class="fi" id="co-city" placeholder="Lille"></div></div>
+  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">SIRET *</label><input type="text" class="fi" id="co-siret" placeholder="123 456 789 00012"></div><div class="fg"><label class="fl">N° Licence transport</label><input type="text" class="fi" id="co-licence" placeholder="2024/59/0001234"></div></div>
+  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Téléphone</label><input type="tel" class="fi" id="co-phone" placeholder="03 20 00 00 00"></div><div class="fg"><label class="fl">Email</label><input type="email" class="fi" id="co-email" placeholder="contact@sotransnord.fr"></div></div>
+  <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('companyModal')">Annuler</button><button class="btn btn-p btn-w" onclick="saveCompanyInfo()">💾 Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="emailLdvModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">📧 Envoyer par email</div>
+  <div class="fg"><label class="fl">Adresse email</label><input type="email" class="fi" id="ldv-email-to" placeholder="chauffeur@mail.fr"></div>
+  <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('emailLdvModal')">Annuler</button><button class="btn btn-p btn-w" onclick="sendLDVEmail()">📤 Envoyer</button></div>
+</div></div>
 </body>
 </html>
