@@ -144,7 +144,7 @@ td{padding:10px 12px;vertical-align:middle}
 }
 @media(max-width:767px){.sidenav{display:none}.app-body{flex:1;display:flex;flex-direction:column;overflow:hidden}}
 .main-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.page{display:none;padding:18px 16px 28px;max-width:960px}
+.page{display:none;padding:18px 16px 28px;max-width:1200px}
 .page.active{display:block}
 @media(min-width:768px){.page{padding:28px 32px 36px}}
 .ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:10px}
@@ -165,9 +165,8 @@ td{padding:10px 12px;vertical-align:middle}
 .mkpi.kca{border-left:3px solid var(--gn)}.mkpi.kdep{border-left:3px solid var(--er)}.mkpi.kmarge{border-left:3px solid var(--rd)}.mkpi.kpct{border-left:3px solid var(--bl)}
 .at-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .at{width:100%;border-collapse:collapse;font-size:.74rem;min-width:800px}
-@media(min-width:768px){.at{min-width:0;font-size:.68rem;table-layout:fixed}.at thead th{padding:6px 4px;font-size:.56rem}.at td.c{padding:5px 4px;font-size:.66rem}.at .rl{min-width:100px;font-size:.66rem;padding:6px 8px}}
 .at .sec-row td{background:var(--bk)!important;color:rgba(255,255,255,.75)!important;font-size:.64rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;padding:6px 12px!important}
-.at .rl{background:var(--sf2);font-weight:700;padding:8px 12px;white-space:nowrap;min-width:130px;border-right:2px solid var(--bd)}
+.at .rl{background:var(--sf2);font-weight:700;padding:8px 12px;white-space:nowrap;min-width:130px;border-right:2px solid var(--bd);position:sticky;left:0;z-index:2}
 .at .rl.sub{font-weight:500;color:var(--t3);padding-left:20px}
 .at .rl.tdep{font-weight:900;background:var(--erb);color:var(--er)}
 .at .rl.mr{font-weight:900;background:var(--bk);color:#fff}
@@ -178,7 +177,7 @@ td{padding:10px 12px;vertical-align:middle}
 .at td.c.tc{background:var(--sf2);font-weight:800;border-left:2px solid var(--bd)}
 .at td.c.cur{background:var(--rds)!important}.at td.c.mcur{background:rgba(215,38,61,.1)!important}
 .at thead th{background:var(--bk3);color:rgba(255,255,255,.5);padding:8px 10px;text-align:right;font-size:.62rem;font-weight:900;white-space:nowrap;position:sticky;top:0}
-.at thead th:first-child{text-align:left;background:var(--bk)}
+.at thead th:first-child{text-align:left;background:var(--bk);position:sticky;left:0;z-index:3}
 .at thead th.ch{background:var(--rd)!important;color:#fff!important;font-weight:900}
 .at thead th.th{background:var(--bk4)}
 .mbw{display:flex;align-items:center;gap:4px;justify-content:flex-end}
@@ -270,7 +269,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
     <button class="pin-btn empty"></button><button class="pin-btn" onclick="pinKey('0')">0</button><button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
   <div class="pin-info" id="pinAttempts"></div>
-  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v4.1 — 2026</span></div>
+  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v4.2 — 2026</span></div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
 <div id="app">
@@ -405,7 +404,8 @@ async function syncSheets(action,data){if(state.mode!=='real')return;const url=g
 function uid(){return Date.now()+Math.floor(Math.random()*1000);}
 function today(){return new Date().toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});}
 function initials(n){return n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
-function fmt(n){return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR'}).format(n);}
+function fmt(n){return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',minimumFractionDigits:0,maximumFractionDigits:0}).format(n);}
+function fmt2(n){return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',minimumFractionDigits:2,maximumFractionDigits:2}).format(n);}
 function fmtDate(d){if(!d)return'—';try{return new Date(d).toLocaleDateString('fr-FR');}catch(e){return d;}}
 function isCTExpired(d){return d&&new Date(d)<new Date();}
 function clientName(id){const c=db.clients.find(c=>String(c.id)===String(id));return c?c.company:'Client #'+id;}
@@ -454,7 +454,7 @@ function navigate(id){const nav=state.role==='gerant'?NAV_G:NAV_C;const item=nav
 function renderPage(id){switch(id){case'dashboard':renderDashboard();break;case'commandes':renderOrders();break;case'donnees':renderDonnees();break;case'rapports':renderReports();break;case'marge':renderMarginTable();break;case'driver-day':renderDriverDay();break;case'driver-profile':renderDriverProfile();break;}}
 function showDonTab(t,btn){['chauffeurs','camions','clients','materiaux'].forEach(x=>{const el=document.getElementById('don-tab-'+x);if(el)el.classList[x===t?'remove':'add']('hidden');});document.querySelectorAll('#don-tabs .tab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
 function renderDonnees(){renderDriversTable();renderTrucks();renderClients();renderMaterials();renderTariffs();renderExpenses();}
-function renderDashboard(){document.getElementById('dashDate').textContent=today();const b=document.getElementById('realModeBanner');if(b)b.classList[state.mode==='real'?'remove':'add']('hidden');const active=db.orders.filter(o=>o.status==='en_cours').length;const td=db.orders.filter(o=>o.date===new Date().toISOString().split('T')[0]).reduce((s,o)=>s+o.nbEstimated,0);const now=new Date();const me=db.expenses.filter(e=>{const d=new Date(e.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((s,e)=>s+e.amount,0);const ay=db.annualData?.[now.getFullYear()];const mg=ay?.[now.getMonth()];document.getElementById('stat-commandes').textContent=active;document.getElementById('stat-transports').textContent=td;document.getElementById('stat-ca').textContent=mg?fmt(mg.ca):'—';document.getElementById('stat-frais').textContent=fmt(me);const recent=[...db.orders].sort((a,b)=>(isNaN(Number(b.id))?0:Number(b.id))-(isNaN(Number(a.id))?0:Number(a.id))).slice(0,5);document.getElementById('recentOrders').innerHTML=recent.length?recent.map(o=>ocHTML(o)).join(''):'<div class="empty"><div class="empty-i">📋</div><div class="empty-t">Aucune commande</div></div>';}
+function renderDashboard(){document.getElementById('dashDate').textContent=today();const b=document.getElementById('realModeBanner');if(b)b.classList[state.mode==='real'?'remove':'add']('hidden');const active=db.orders.filter(o=>o.status==='en_cours').length;const td=db.orders.filter(o=>o.date===new Date().toISOString().split('T')[0]).reduce((s,o)=>s+o.nbEstimated,0);const now=new Date();const me=db.expenses.filter(e=>{const d=new Date(e.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((s,e)=>s+e.amount,0);const md2=state.mode==='real'?computeRealMD():db.annualData;const ay=md2?.[now.getFullYear()];const mg=ay?.[now.getMonth()];document.getElementById('stat-commandes').textContent=active;document.getElementById('stat-transports').textContent=td;document.getElementById('stat-ca').textContent=mg?fmt(mg.ca):'—';document.getElementById('stat-frais').textContent=fmt(me);const recent=[...db.orders].sort((a,b)=>(isNaN(Number(b.id))?0:Number(b.id))-(isNaN(Number(a.id))?0:Number(a.id))).slice(0,5);document.getElementById('recentOrders').innerHTML=recent.length?recent.map(o=>ocHTML(o)).join(''):'<div class="empty"><div class="empty-i">📋</div><div class="empty-t">Aucune commande</div></div>';}
 function ocHTML(o){const sm={en_cours:{c:'bg-yl',l:'En cours'},termine:{c:'bg-gn',l:'Terminé'}};const s=sm[o.status]||{c:'bg-gr',l:o.status};const p=o.nbEstimated>0?Math.round((o.nbDone/o.nbEstimated)*100):0;return'<div class="oc"><div class="oc-head"><div class="oc-name">'+clientName(o.clientId)+'</div><span class="badge '+s.c+'">'+s.l+'</span></div><div class="oc-meta"><span class="oc-m">📅 '+fmtDate(o.date)+'</span><span class="oc-m">📍 '+o.address+'</span><span class="oc-m">🚛 '+truckPlate(o.truckId)+'</span><span class="oc-m">👤 '+driverName(o.driverId)+'</span></div><div class="oc-prog"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:.76rem;font-weight:800">'+o.nbDone+'/'+o.nbEstimated+'</span><span style="font-size:.7rem;color:var(--t4)">'+p+'%</span></div><div class="prog-wrap"><div class="prog-fill'+(p>=100?' full':'')+'" style="width:'+p+'%"></div></div></div><div class="oc-acts">'+(o.status==='termine'?'<button class="fact-btn" onclick="facturer(\''+o.id+'\')">💶 Facturer</button>':'')+'<button class="btn btn-g btn-s" onclick="editOrder(\''+o.id+'\')">✏️</button><button class="btn btn-x btn-s" onclick="deleteOrder(\''+o.id+'\')">🗑️</button></div></div>';}
 function renderOrders(){let list=db.orders;if(state.filterOrders==='en_cours')list=list.filter(o=>o.status==='en_cours');else if(state.filterOrders==='termine'||state.filterOrders==='a_facturer')list=list.filter(o=>o.status==='termine');document.getElementById('ordersList').innerHTML=list.length?list.map(o=>ocHTML(o)).join(''):'<div class="empty"><div class="empty-i">📋</div><div class="empty-t">Aucune commande</div></div>';}
 function filterOrders(f,btn){state.filterOrders=f;document.querySelectorAll('#page-commandes .tab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderOrders();}
@@ -486,7 +486,7 @@ function openMaterialModal(id){state.editingId=id||null;document.getElementById(
 function saveMaterial(){const name=document.getElementById('mm-name').value.trim();if(!name){showToast('⚠️ Nom requis','error');return;}const data={name,unit:document.getElementById('mm-unit').value};if(state.editingId){const m=db.materials.find(x=>String(x.id)===String(state.editingId));Object.assign(m,data);showToast('✅ OK','success');}else{const nid=uid();db.materials.push({id:nid,...data});showToast('✅ Ajouté','success');triggerMake('newMaterial',{id:nid,...data});}closeModal('materialModal');renderMaterials();}
 function editMaterial(id){openMaterialModal(id);}
 async function deleteMaterial(id){const ok=await showConfirm('Supprimer ?','','⚙️','Supprimer');if(!ok)return;db.materials=db.materials.filter(m=>String(m.id)!==String(id));deleteFromSheets('deleteMaterial',id);renderMaterials();showToast('Supprimé','error');}
-function renderTariffs(){document.getElementById('tariffsTableBody').innerHTML=db.tariffs.map(t=>'<tr><td><span class="badge '+(t.type==='journee'?'bg-bl':'bg-or')+'">'+(t.type==='journee'?'Journée':'Matériaux')+'</span></td><td>'+t.name+'</td><td style="font-weight:800">'+fmt(t.price)+'</td><td><div class="ta"><button class="btn btn-g btn-s btn-i" onclick="editTariff(\''+t.id+'\')">✏️</button><button class="btn btn-x btn-s btn-i" onclick="deleteTariff(\''+t.id+'\')">🗑️</button></div></td></tr>').join('');}
+function renderTariffs(){document.getElementById('tariffsTableBody').innerHTML=db.tariffs.map(t=>'<tr><td><span class="badge '+(t.type==='journee'?'bg-bl':'bg-or')+'">'+(t.type==='journee'?'Journée':'Matériaux')+'</span></td><td>'+t.name+'</td><td style="font-weight:800">'+fmt2(t.price)+'</td><td><div class="ta"><button class="btn btn-g btn-s btn-i" onclick="editTariff(\''+t.id+'\')">✏️</button><button class="btn btn-x btn-s btn-i" onclick="deleteTariff(\''+t.id+'\')">🗑️</button></div></td></tr>').join('');}
 function openTariffModal(id){state.editingId=id||null;document.getElementById('trf-name').value='';document.getElementById('trf-price').value='';if(id){const t=db.tariffs.find(x=>x.id===id);if(t){document.getElementById('trf-type').value=t.type;document.getElementById('trf-name').value=t.name;document.getElementById('trf-price').value=t.price;}}openModal('tariffModal');}
 function saveTariff(){const name=document.getElementById('trf-name').value.trim();const price=parseFloat(document.getElementById('trf-price').value);if(!name||isNaN(price)){showToast('⚠️ Champs requis','error');return;}const data={type:document.getElementById('trf-type').value,name,price};if(state.editingId){const t=db.tariffs.find(x=>String(x.id)===String(state.editingId));Object.assign(t,data);showToast('✅ OK','success');}else{db.tariffs.push({id:uid(),...data});showToast('✅ Ajouté','success');}closeModal('tariffModal');renderTariffs();}
 function editTariff(id){openTariffModal(id);}
