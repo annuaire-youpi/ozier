@@ -307,7 +307,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
     <button class="pin-btn empty"></button><button class="pin-btn" onclick="pinKey('0')">0</button><button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
   <div class="pin-info" id="pinAttempts"></div>
-  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v5.2 — 2026</span></div>
+  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v5.4 — 2026</span></div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
 <div id="ldvOverlay">
@@ -315,7 +315,9 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
     <button class="btn btn-g btn-s" onclick="closeLDV()" style="color:#fff">← Retour</button>
     <span class="ldv-bar-title" id="ldvBarTitle">Lettre de voiture</span>
     <button class="btn btn-o btn-s" onclick="printLDV()" style="border-color:rgba(255,255,255,.15);color:#fff">🖨️</button>
-    <button class="btn btn-p btn-s" onclick="showEmailLDV()">📧 Email</button>
+    <button class="btn btn-s" onclick="shareWhatsApp()" style="background:#25D366;color:#fff">💬</button>
+    <button class="btn btn-s" onclick="shareNative()" style="background:var(--bl);color:#fff">📤</button>
+    <button class="btn btn-p btn-s" onclick="showEmailLDV()">📧</button>
   </div>
   <div class="ldv-doc" id="ldvContent"></div>
 </div>
@@ -681,7 +683,7 @@ const order=db.orders.find(o=>String(o.id)===String(orderId));
 if(!order)return;
 const transport=order.transports.find(t=>String(t.id)===String(transportId));
 if(!transport)return;
-currentLDVData={order,transport};
+currentLDVData={order,transport,docType:'ldv',docRef:ref};
 const ref=ldvRef(order.id,transport.id);
 document.getElementById('ldvBarTitle').textContent=ref;
 const html=generateLDVHTML(order,transport);
@@ -689,7 +691,7 @@ document.getElementById('ldvContent').innerHTML=html;
 document.getElementById('ldvOverlay').classList.add('active');
 document.body.style.overflow='hidden';
 }
-function showOrderLDVs(orderId){const o=db.orders.find(x=>String(x.id)===String(orderId));if(!o)return;document.getElementById('ldvListTitle').textContent='📄 LDV — '+clientName(o.clientId);let html='<div style="font-size:.74rem;color:var(--t3);margin-bottom:12px">'+o.address+' · '+fmtDate(o.date)+'</div>';html+='<div style="display:flex;flex-direction:column;gap:8px">';o.transports.forEach(t=>{const done=t.done;html+='<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:var(--r);border:1px solid var(--bd)">';html+='<div style="width:34px;height:34px;border-radius:8px;background:'+(done?'var(--gn)':'var(--bk)')+';display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:.82rem;flex-shrink:0">'+t.id+'</div>';html+='<div style="flex:1;min-width:0"><div style="font-weight:800;font-size:.82rem">'+(done?'✅ Validé — '+t.tonnage+'T':'⏳ En attente')+'</div>';if(done&&t.receiver)html+='<div style="font-size:.72rem;color:var(--t3)">'+t.receiver+(t.func?' · '+t.func:'')+'</div>';html+='</div>';html+='<button class="btn btn-d btn-s" onclick="closeModal(\'ldvListModal\');setTimeout(function(){openLDV(\''+o.id+'\',\''+t.id+'\')},200)">📄 Voir</button>';html+='</div>';});html+='</div>';document.getElementById('ldvListContent').innerHTML=html;openModal('ldvListModal');}
+function showOrderLDVs(orderId){const o=db.orders.find(x=>String(x.id)===String(orderId));if(!o)return;document.getElementById('ldvListTitle').textContent='📄 LDV — '+clientName(o.clientId);let html='<div style="font-size:.74rem;color:var(--t3);margin-bottom:12px">'+o.address+' · '+fmtDate(o.date)+'</div>';html+='<div style="display:flex;flex-direction:column;gap:8px">';o.transports.forEach(t=>{const done=t.done;html+='<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:var(--r);border:1px solid var(--bd)">';html+='<div style="width:34px;height:34px;border-radius:8px;background:'+(done?'var(--gn)':'var(--bk)')+';display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:.82rem;flex-shrink:0">'+t.id+'</div>';html+='<div style="flex:1;min-width:0"><div style="font-weight:800;font-size:.82rem">'+(done?'✅ Validé — '+t.tonnage+'T':'⏳ En attente')+'</div>';if(done&&t.receiver)html+='<div style="font-size:.72rem;color:var(--t3)">'+t.receiver+(t.func?' · '+t.func:'')+'</div>';html+='</div>';html+='<button class="btn btn-d btn-s" onclick="closeModal(\'ldvListModal\');setTimeout(function(){openLDV(\''+o.id+'\',\''+t.id+'\')},200)">📄 LDV</button>'+(done?' <button class="btn btn-s" onclick="closeModal(\'ldvListModal\');setTimeout(function(){openBDL(\''+o.id+'\',\''+t.id+'\')},200)" style="background:var(--bl);color:#fff">📦 BDL</button>':'');html+='</div>';});html+='</div>';document.getElementById('ldvListContent').innerHTML=html;openModal('ldvListModal');}
 function closeLDV(){document.getElementById('ldvOverlay').classList.remove('active');document.body.style.overflow='';currentLDVData=null;}
 function printLDV(){window.print();}
 
@@ -836,6 +838,114 @@ document.getElementById('ldvContent').innerHTML=result.html;
 document.getElementById('ldvOverlay').classList.add('active');
 document.body.style.overflow='hidden';
 addAudit('Facture générée',result.ref+' — '+clientName(order.clientId)+' — '+fmt(result.totalTTC));
+}
+
+/* BON DE LIVRAISON */
+function generateBDLHTML(order,transport){
+const co=getCompanyInfo();if(!co)return null;
+const cl=db.clients.find(c=>String(c.id)===String(order.clientId));
+const dr=db.drivers.find(d=>String(d.id)===String(order.driverId));
+const tr=db.trucks.find(t=>String(t.id)===String(order.truckId));
+const mat=order.materialId?db.materials.find(m=>String(m.id)===String(order.materialId)):null;
+const ref='BDL-'+new Date().getFullYear()+String(new Date().getMonth()+1).padStart(2,'0')+String(new Date().getDate()).padStart(2,'0')+'-'+order.id+'-T'+transport.id;
+const dateDoc=new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+let h='<div class="ldv-page">';
+h+='<div class="ldv-header"><div class="ldv-stamp" style="border-color:var(--bl);color:var(--bl)">BON DE LIVRAISON</div><br>';
+h+='<div class="ldv-title">'+co.name+'</div>';
+h+='<div style="font-size:.74rem;color:var(--t3)">'+co.address+', '+co.postal+' '+co.city+'</div>';
+h+='<div class="ldv-ref">'+ref+'</div>';
+h+='<div class="ldv-date">'+dateDoc+'</div></div>';
+h+='<div class="ldv-grid"><div class="ldv-cell"><div class="ldv-cell-title">Livré par</div>';
+h+='<div class="ldv-cell-name">'+(dr?dr.name:'—')+'</div>';
+h+='<div class="ldv-cell-detail">Véhicule : '+(tr?tr.plate+' — '+tr.type:'—')+'</div>';
+h+='</div><div class="ldv-cell"><div class="ldv-cell-title">Livré à</div>';
+h+='<div class="ldv-cell-name">'+(cl?cl.company:'—')+'</div>';
+if(cl&&cl.manager)h+='<div class="ldv-cell-detail">'+cl.manager+'</div>';
+h+='<div class="ldv-cell-detail">'+order.address+'</div></div></div>';
+h+='<div class="ldv-section"><div class="ldv-section-head">📦 Marchandises livrées</div><div class="ldv-section-body">';
+h+='<div class="ldv-row"><span class="ldv-row-label">Désignation</span><span class="ldv-row-value">'+(mat?mat.name:(order.type==='journee'?'Prestation journée':'Matériaux'))+'</span></div>';
+h+='<div class="ldv-row"><span class="ldv-row-label">Transport</span><span class="ldv-row-value">N°'+transport.id+' / '+order.nbEstimated+'</span></div>';
+if(transport.tonnage)h+='<div class="ldv-row"><span class="ldv-row-label">Tonnage livré</span><span class="ldv-row-value" style="font-size:1rem;font-weight:900;color:var(--rd)">'+transport.tonnage+' T</span></div>';
+h+='<div class="ldv-row"><span class="ldv-row-label">Date livraison</span><span class="ldv-row-value">'+fmtDate(order.date)+'</span></div>';
+h+='<div class="ldv-row"><span class="ldv-row-label">État</span><span class="ldv-row-value" style="color:var(--gn)">✅ Conforme</span></div>';
+h+='</div></div>';
+h+='<div class="ldv-sig-grid"><div class="ldv-sig-box"><div class="ldv-sig-label">Livreur</div>';
+h+='<div class="ldv-sig-name" style="margin-top:10px">'+(dr?dr.name:'—')+'</div>';
+h+='<div class="ldv-sig-func">Chauffeur '+co.name+'</div></div>';
+if(transport.sig&&transport.sig!=='✓'){
+h+='<div class="ldv-sig-box"><div class="ldv-sig-label">Réceptionné par</div>';
+h+='<img class="ldv-sig-img" src="'+transport.sig+'" alt="Signature">';
+h+='<div class="ldv-sig-name">'+(transport.receiver||'')+'</div>';
+h+='<div class="ldv-sig-func">'+(transport.func||'')+'</div></div>';
+}else{
+h+='<div class="ldv-sig-box"><div class="ldv-sig-label">Réceptionné par</div>';
+h+='<div class="ldv-sig-name" style="margin-top:10px">'+(transport.receiver||'—')+'</div>';
+h+='<div class="ldv-sig-func">'+(transport.func||'')+'</div>';
+h+='<div style="font-size:.7rem;color:var(--gn);margin-top:4px">✅ Signé</div></div>';
+}
+h+='</div>';
+h+='<div class="ldv-footer">Document généré par '+co.name+' — SIRET '+co.siret+'<br>Ce bon atteste de la réception des marchandises en bon état sauf réserves mentionnées ci-dessus.</div>';
+h+='</div>';
+return{html:h,ref:ref};
+}
+
+function openBDL(orderId,transportId){
+const co=getCompanyInfo();
+if(!co){window._ldvPendingAfterCompany=function(){openBDL(orderId,transportId);};openCompanyModal();return;}
+const order=db.orders.find(o=>String(o.id)===String(orderId));if(!order)return;
+const transport=order.transports.find(t=>String(t.id)===String(transportId));if(!transport||!transport.done)return;
+const result=generateBDLHTML(order,transport);if(!result)return;
+currentLDVData={order,transport,docType:'bdl',docRef:result.ref};
+document.getElementById('ldvBarTitle').textContent='BDL — '+result.ref;
+document.getElementById('ldvContent').innerHTML=result.html;
+document.getElementById('ldvOverlay').classList.add('active');
+document.body.style.overflow='hidden';
+}
+
+/* WHATSAPP & NATIVE SHARE */
+function getDocSummaryText(type){
+if(!currentLDVData)return'';
+const o=currentLDVData.order;const t=currentLDVData.transport;
+const co=getCompanyInfo();
+const cl=db.clients.find(c=>String(c.id)===String(o.clientId));
+const mat=o.materialId?db.materials.find(m=>String(m.id)===String(o.materialId)):null;
+const dr=db.drivers.find(d=>String(d.id)===String(o.driverId));
+const tr=db.trucks.find(tk=>String(tk.id)===String(o.truckId));
+let icon='📄';let title='DOCUMENT';
+if(type==='bdl'){icon='📦';title='BON DE LIVRAISON';}
+else if(type==='ldv'){icon='🚛';title='LETTRE DE VOITURE';}
+else if(type==='facture'){icon='💶';title='FACTURE';}
+let txt=icon+' *'+title+'*\n';
+txt+='Réf: '+(currentLDVData.docRef||currentLDVData.invoiceRef||'')+'\n';
+txt+='━━━━━━━━━━━━\n';
+txt+='Client: '+(cl?cl.company:'—')+'\n';
+txt+='Chantier: '+o.address+'\n';
+if(mat)txt+='Matériau: '+mat.name+'\n';
+if(t&&t.tonnage)txt+='Tonnage: '+t.tonnage+' T\n';
+if(t&&t.receiver)txt+='Réceptionnaire: '+t.receiver+'\n';
+txt+='Date: '+fmtDate(o.date)+'\n';
+if(dr)txt+='Chauffeur: '+dr.name+'\n';
+if(tr)txt+='Véhicule: '+tr.plate+'\n';
+txt+='━━━━━━━━━━━━\n';
+txt+=(co?co.name:'SOTRANSNORD')+' — Transport BTP';
+return txt;
+}
+
+function shareWhatsApp(){
+if(!currentLDVData)return;
+const type=currentLDVData.docType||'ldv';
+const text=getDocSummaryText(type);
+const url='https://wa.me/?text='+encodeURIComponent(text);
+window.open(url,'_blank');
+}
+
+function shareNative(){
+if(!currentLDVData)return;
+const type=currentLDVData.docType||'ldv';
+const text=getDocSummaryText(type);
+if(navigator.share){
+navigator.share({title:(currentLDVData.docRef||currentLDVData.invoiceRef||'Document'),text:text}).catch(()=>{});
+}else{shareWhatsApp();}
 }
 
 </script>
