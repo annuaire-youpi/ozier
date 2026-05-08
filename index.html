@@ -307,7 +307,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
     <button class="pin-btn empty"></button><button class="pin-btn" onclick="pinKey('0')">0</button><button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
   <div class="pin-info" id="pinAttempts"></div>
-  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v4.3 — 2026</span></div>
+  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v4.4 — 2026</span></div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
 <div id="ldvOverlay">
@@ -581,35 +581,7 @@ function renderDocChip(doc,prefix){const{i,c}=fileIcon(doc.name);return'<div cla
 function renderAllChips(tid,prefix){const w=document.getElementById(tid);if(!w)return;w.innerHTML=(pendingDocs[prefix]||[]).map(d=>renderDocChip(d,prefix)).join('');}
 async function handleFiles(input,tid,prefix){const files=Array.from(input.files);if(!files.length)return;if(!pendingDocs[prefix])pendingDocs[prefix]=[];const pe=document.getElementById(prefix+'-upload-progress');const ze=document.getElementById(prefix+'-upload-zone');if(pe)pe.classList.remove('hidden');if(ze)ze.classList.add('loading');for(let i=0;i<files.length;i++){const f=files[i];if(pe)pe.textContent='⏳ '+f.name;try{const b64=await readFileAsBase64(f);pendingDocs[prefix].push({id:'doc_'+uid(),name:f.name,size:f.size,type:f.type,data:b64});}catch(e){showToast('⚠️ '+f.name,'error');}}if(pe)pe.classList.add('hidden');if(ze)ze.classList.remove('loading');input.value='';renderAllChips(tid,prefix);}
 function readFileAsBase64(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=()=>rej(new Error());r.readAsDataURL(f);});}
-function viewDoc(did,prefix){const doc=(pendingDocs[prefix]||[]).find(d=>d.id===did);if(!doc)return;const w=window.open();if(!w){showToast('Autorisez popups','warning');return;}if(doc.type&&doc.type.startsWith('image/'))w.document.write('<html><body style="margin:0;background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh"><img src="'+doc.data+'" style="max-width:100%;max-height:100vh;object-fit:contain"><div class="mo" id="companyModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">🏢 Informations société</div>
-  <div style="font-size:.74rem;color:var(--bl);margin-bottom:12px;padding:8px 10px;background:var(--blb);border-radius:6px">Ces informations apparaissent sur chaque lettre de voiture</div>
-  <div class="fg"><label class="fl">Raison sociale *</label><input type="text" class="fi" id="co-name" placeholder="SOTRANSNORD" value="SOTRANSNORD"></div>
-  <div class="fg" style="margin-top:10px"><label class="fl">Adresse *</label><input type="text" class="fi" id="co-address" placeholder="12 Rue du Transport"></div>
-  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Code postal *</label><input type="text" class="fi" id="co-postal" placeholder="59000"></div><div class="fg"><label class="fl">Ville *</label><input type="text" class="fi" id="co-city" placeholder="Lille"></div></div>
-  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">SIRET *</label><input type="text" class="fi" id="co-siret" placeholder="123 456 789 00012"></div><div class="fg"><label class="fl">N° Licence transport</label><input type="text" class="fi" id="co-licence" placeholder="2024/59/0001234"></div></div>
-  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Téléphone</label><input type="tel" class="fi" id="co-phone" placeholder="03 20 00 00 00"></div><div class="fg"><label class="fl">Email</label><input type="email" class="fi" id="co-email" placeholder="contact@sotransnord.fr"></div></div>
-  <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('companyModal')">Annuler</button><button class="btn btn-p btn-w" onclick="saveCompanyInfo()">💾 Enregistrer</button></div>
-</div></div>
-
-<div class="mo" id="emailLdvModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">📧 Envoyer par email</div>
-  <div class="fg"><label class="fl">Adresse email</label><input type="email" class="fi" id="ldv-email-to" placeholder="chauffeur@mail.fr"></div>
-  <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('emailLdvModal')">Annuler</button><button class="btn btn-p btn-w" onclick="sendLDVEmail()">📤 Envoyer</button></div>
-</div></div>
-</body></html>');else w.document.write('<html><body style="margin:0"><iframe src="'+doc.data+'" style="width:100%;height:100vh;border:none"></iframe><div class="mo" id="companyModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">🏢 Informations société</div>
-  <div style="font-size:.74rem;color:var(--bl);margin-bottom:12px;padding:8px 10px;background:var(--blb);border-radius:6px">Ces informations apparaissent sur chaque lettre de voiture</div>
-  <div class="fg"><label class="fl">Raison sociale *</label><input type="text" class="fi" id="co-name" placeholder="SOTRANSNORD" value="SOTRANSNORD"></div>
-  <div class="fg" style="margin-top:10px"><label class="fl">Adresse *</label><input type="text" class="fi" id="co-address" placeholder="12 Rue du Transport"></div>
-  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Code postal *</label><input type="text" class="fi" id="co-postal" placeholder="59000"></div><div class="fg"><label class="fl">Ville *</label><input type="text" class="fi" id="co-city" placeholder="Lille"></div></div>
-  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">SIRET *</label><input type="text" class="fi" id="co-siret" placeholder="123 456 789 00012"></div><div class="fg"><label class="fl">N° Licence transport</label><input type="text" class="fi" id="co-licence" placeholder="2024/59/0001234"></div></div>
-  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Téléphone</label><input type="tel" class="fi" id="co-phone" placeholder="03 20 00 00 00"></div><div class="fg"><label class="fl">Email</label><input type="email" class="fi" id="co-email" placeholder="contact@sotransnord.fr"></div></div>
-  <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('companyModal')">Annuler</button><button class="btn btn-p btn-w" onclick="saveCompanyInfo()">💾 Enregistrer</button></div>
-</div></div>
-
-<div class="mo" id="emailLdvModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">📧 Envoyer par email</div>
-  <div class="fg"><label class="fl">Adresse email</label><input type="email" class="fi" id="ldv-email-to" placeholder="chauffeur@mail.fr"></div>
-  <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('emailLdvModal')">Annuler</button><button class="btn btn-p btn-w" onclick="sendLDVEmail()">📤 Envoyer</button></div>
-</div></div>
-</body></html>');w.document.title=doc.name;}
+function viewDoc(did,prefix){const doc=(pendingDocs[prefix]||[]).find(d=>d.id===did);if(!doc)return;const w=window.open();if(!w){showToast('Autorisez popups','warning');return;}if(doc.type&&doc.type.startsWith('image/'))w.document.write('<html><body style="margin:0;background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh"><img src="'+doc.data+'" style="max-width:100%;max-height:100vh;object-fit:contain"></body></html>');else w.document.write('<html><body style="margin:0"><iframe src="'+doc.data+'" style="width:100%;height:100vh;border:none"></iframe></body></html>');w.document.title=doc.name;}
 function removeDoc(did,prefix){pendingDocs[prefix]=(pendingDocs[prefix]||[]).filter(d=>d.id!==did);renderAllChips(prefix==='dm'?'dm-uploaded':'tm-uploaded',prefix);}
 function handleDragOver(e,zid){e.preventDefault();document.getElementById(zid)?.classList.add('drag-over');}
 function handleDragLeave(zid){document.getElementById(zid)?.classList.remove('drag-over');}
