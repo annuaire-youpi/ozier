@@ -307,7 +307,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
     <button class="pin-btn empty"></button><button class="pin-btn" onclick="pinKey('0')">0</button><button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
   <div class="pin-info" id="pinAttempts"></div>
-  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v4.4 — 2026</span></div>
+  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v4.5 — 2026</span></div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
 <div id="ldvOverlay">
@@ -688,6 +688,7 @@ document.getElementById('ldvContent').innerHTML=html;
 document.getElementById('ldvOverlay').classList.add('active');
 document.body.style.overflow='hidden';
 }
+function showOrderLDVs(orderId){const o=db.orders.find(x=>String(x.id)===String(orderId));if(!o)return;document.getElementById('ldvListTitle').textContent='📄 LDV — '+clientName(o.clientId);let html='<div style="font-size:.74rem;color:var(--t3);margin-bottom:12px">'+o.address+' · '+fmtDate(o.date)+'</div>';html+='<div style="display:flex;flex-direction:column;gap:8px">';o.transports.forEach(t=>{const done=t.done;html+='<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:var(--r);border:1px solid var(--bd)">';html+='<div style="width:34px;height:34px;border-radius:8px;background:'+(done?'var(--gn)':'var(--bk)')+';display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:.82rem;flex-shrink:0">'+t.id+'</div>';html+='<div style="flex:1;min-width:0"><div style="font-weight:800;font-size:.82rem">'+(done?'✅ Validé — '+t.tonnage+'T':'⏳ En attente')+'</div>';if(done&&t.receiver)html+='<div style="font-size:.72rem;color:var(--t3)">'+t.receiver+(t.func?' · '+t.func:'')+'</div>';html+='</div>';html+='<button class="btn btn-d btn-s" onclick="closeModal(\'ldvListModal\');setTimeout(function(){openLDV(\''+o.id+'\',\''+t.id+'\')},200)">📄 Voir</button>';html+='</div>';});html+='</div>';document.getElementById('ldvListContent').innerHTML=html;openModal('ldvListModal');}
 function closeLDV(){document.getElementById('ldvOverlay').classList.remove('active');document.body.style.overflow='';currentLDVData=null;}
 function printLDV(){window.print();}
 
@@ -696,6 +697,7 @@ function showEmailLDV(){if(!currentLDVData)return;const dr=db.drivers.find(d=>St
 async function sendLDVEmail(){const email=document.getElementById('ldv-email-to').value.trim();if(!email||!email.includes('@')){showToast('⚠️ Email invalide','error');return;}if(!currentLDVData)return;showLoader();const html=generateLDVHTML(currentLDVData.order,currentLDVData.transport);const ref=ldvRef(currentLDVData.order.id,currentLDVData.transport.id);await triggerMake('sendLDV',{to:email,subject:'Lettre de voiture — '+ref,ref:ref,html:html,orderId:currentLDVData.order.id,transportId:currentLDVData.transport.id});hideLoader();closeModal('emailLdvModal');showToast('📧 Email envoyé à '+email,'success',4000);addAudit('LDV envoyée',ref+' → '+email);}
 
 </script>
+<div class="mo" id="ldvListModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title" id="ldvListTitle">📄 Lettres de voiture</div><div id="ldvListContent"></div><div style="margin-top:16px"><button class="btn btn-o btn-w" onclick="closeModal('ldvListModal')">Fermer</button></div></div></div>
 <div class="mo" id="companyModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">🏢 Informations société</div>
   <div style="font-size:.74rem;color:var(--bl);margin-bottom:12px;padding:8px 10px;background:var(--blb);border-radius:6px">Ces informations apparaissent sur chaque lettre de voiture</div>
   <div class="fg"><label class="fl">Raison sociale *</label><input type="text" class="fi" id="co-name" placeholder="SOTRANSNORD" value="SOTRANSNORD"></div>
