@@ -307,7 +307,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
     <button class="pin-btn empty"></button><button class="pin-btn" onclick="pinKey('0')">0</button><button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
   <div class="pin-info" id="pinAttempts"></div>
-  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v5.0 — 2026</span></div>
+  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v5.1 — 2026</span></div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
 <div id="ldvOverlay">
@@ -851,7 +851,7 @@ addAudit('Facture générée',result.ref+' — '+clientName(order.clientId)+' �
   <div style="font-size:.86rem;font-weight:900;margin-bottom:8px">⛽ Indexation gazole (CNR)</div>
   <div style="font-size:.7rem;color:var(--bl);margin-bottom:10px;padding:6px 10px;background:var(--blb);border-radius:6px">Seul le champ « Indice CNR actuel » est à mettre à jour chaque mois. Le reste est automatique.</div>
   <div class="fg2"><div class="fg"><label class="fl">Indice CNR de référence *</label><input type="number" class="fi" id="co-cnr-ref" placeholder="Ex: 248.30" step="0.01" oninput="updateCnrPreview()"></div><div class="fg"><label class="fl">Indice CNR actuel (mois) * — <a href="https://www.cnr.fr/" target="_blank" rel="noopener" style="color:var(--bl);font-size:.62rem;text-decoration:underline;text-transform:none;letter-spacing:0;font-weight:700">voir sur cnr.fr →</a></label><input type="number" class="fi" id="co-cnr-current" placeholder="Ex: 269.49" step="0.01" oninput="updateCnrPreview()"></div></div>
-  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Pondération gazole (%)</label><input type="number" class="fi" id="co-cnr-weight" placeholder="19.2" step="0.1" value="19.2" oninput="updateCnrPreview()" style="background:var(--sf2);color:var(--t2)"><div style="font-size:.6rem;color:var(--t4);margin-top:2px">Valeur CNR 2026 Régional EA — ne pas modifier sauf changement officiel</div></div><div class="fg"><label class="fl">Taux TVA (%)</label><input type="number" class="fi" id="co-tva" placeholder="20" step="0.1" value="20"></div></div>
+  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Pondération gazole (%)</label><input type="number" class="fi" id="co-cnr-weight" placeholder="19.2" step="0.1" value="19.2" oninput="updateCnrPreview()" style="background:var(--sf2);color:var(--t2)"><div style="font-size:.6rem;color:var(--t4);margin-top:2px">Valeur CNR 2026 Régional EA — <a href="https://www.cnr.fr/espace-standard/4/ponderations" target="_blank" rel="noopener" style="color:var(--bl);text-decoration:underline">voir les pondérations officielles →</a></div></div><div class="fg"><label class="fl">Taux TVA (%)</label><input type="number" class="fi" id="co-tva" placeholder="20" step="0.1" value="20"></div></div>
   <div id="cnr-preview" style="margin-top:10px;padding:10px 12px;background:var(--bg);border-radius:var(--r);font-size:.78rem;display:none"></div>
   <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('companyModal')">Annuler</button><button class="btn btn-p btn-w" onclick="saveCompanyInfo()">💾 Enregistrer</button></div>
 </div></div>
