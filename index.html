@@ -307,7 +307,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
     <button class="pin-btn empty"></button><button class="pin-btn" onclick="pinKey('0')">0</button><button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
   <div class="pin-info" id="pinAttempts"></div>
-  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v8.1 — 2026</span></div>
+  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v8.2 — 2026</span></div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
 <div id="ldvOverlay">
@@ -1010,16 +1010,23 @@ h+='</tbody></table></div></div></div>';
 el.innerHTML=h;}
 
 function renderRptActivite(){const el=document.getElementById('rpt-tab-activite');if(!el)return;
-const now=new Date();const moisActuel=now.getMonth();const annee=now.getFullYear();
+const now=new Date();const annee=now.getFullYear();
 const moisNoms=['Janvier','Fevrier','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Decembre'];
-let h='';
-for(let m=moisActuel;m>=Math.max(0,moisActuel-2);m--){
+const moisData=[];
+for(let m=0;m<=now.getMonth();m++){
 const ordersM=db.orders.filter(o=>{const d=new Date(o.date);return d.getMonth()===m&&d.getFullYear()===annee;});
-let ca=0;let tonnage=0;let transports=0;const clientSet=new Set();
-ordersM.forEach(o=>{const t=calcOrderTotal(o);ca+=t.ttc;tonnage+=t.tonnage;transports+=t.nbTransports;clientSet.add(o.clientId);});
-h+='<div class="card" style="margin-bottom:12px"><div class="card-h"><span class="card-t">'+moisNoms[m]+' '+annee+'</span><span class="badge bg-gr">'+ordersM.length+' commandes</span></div><div class="card-b"><div class="sg" style="grid-template-columns:repeat(2,1fr);margin:0"><div class="sc" style="padding:8px 0"><div class="sc-v" style="font-size:1.1rem">'+fmt(ca)+'</div><div class="sc-l">CA TTC</div></div><div class="sc" style="padding:8px 0"><div class="sc-v" style="font-size:1.1rem">'+transports+'</div><div class="sc-l">Transports</div></div><div class="sc" style="padding:8px 0"><div class="sc-v" style="font-size:1.1rem">'+Math.round(tonnage)+' T</div><div class="sc-l">Tonnage</div></div><div class="sc" style="padding:8px 0"><div class="sc-v" style="font-size:1.1rem">'+clientSet.size+'</div><div class="sc-l">Clients</div></div></div></div></div>';}
-if(!h)h='<div class="empty"><div class="empty-i">📊</div><div class="empty-t">Aucune donnee</div></div>';
+let ca=0;let tonnage=0;let transports=0;let factures=0;let paye=0;const clientSet=new Set();
+ordersM.forEach(o=>{const t=calcOrderTotal(o);ca+=t.ttc;tonnage+=t.tonnage;transports+=t.nbTransports;clientSet.add(o.clientId);if(o.invoiceSent)factures++;if(o.paid)paye+=t.ttc;});
+moisData.push({mois:moisNoms[m],ca,tonnage,transports,factures,paye,clients:clientSet.size,commandes:ordersM.length});}
+let totalCA=0;let totalTonnage=0;let totalTransports=0;let totalCommandes=0;
+moisData.forEach(m=>{totalCA+=m.ca;totalTonnage+=m.tonnage;totalTransports+=m.transports;totalCommandes+=m.commandes;});
+let h='<div class="sg" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px"><div class="sc"><div class="sc-i">💶</div><div class="sc-v">'+fmt(totalCA)+'</div><div class="sc-l">CA annuel TTC</div></div><div class="sc"><div class="sc-i">🚛</div><div class="sc-v">'+totalTransports+'</div><div class="sc-l">Transports annuels</div></div><div class="sc"><div class="sc-i">⚖️</div><div class="sc-v">'+Math.round(totalTonnage)+' T</div><div class="sc-l">Tonnage annuel</div></div><div class="sc"><div class="sc-i">📋</div><div class="sc-v">'+totalCommandes+'</div><div class="sc-l">Commandes annuelles</div></div></div>';
+h+='<div class="card"><div class="card-h"><span class="card-t">Activite mensuelle — '+annee+'</span></div><div class="card-b" style="padding:0"><div class="tw"><table><thead><tr><th>Mois</th><th>Commandes</th><th>Transports</th><th>Tonnage</th><th>CA TTC</th><th>Factures</th><th>Encaisse</th><th>Clients</th></tr></thead><tbody>';
+moisData.reverse().forEach(m=>{const isCurrentMonth=m.mois===moisNoms[now.getMonth()];h+='<tr style="'+(isCurrentMonth?'background:var(--blb);font-weight:700':'')+'"><td style="font-weight:800">'+m.mois+'</td><td>'+m.commandes+'</td><td>'+m.transports+'</td><td>'+Math.round(m.tonnage)+' T</td><td style="font-weight:800">'+fmt(m.ca)+'</td><td>'+m.factures+'</td><td style="color:var(--gn)">'+fmt(m.paye)+'</td><td>'+m.clients+'</td></tr>';});
+h+='<tr style="background:var(--bg);font-weight:900;border-top:2px solid var(--bk)"><td>TOTAL</td><td>'+totalCommandes+'</td><td>'+totalTransports+'</td><td>'+Math.round(totalTonnage)+' T</td><td>'+fmt(totalCA)+'</td><td></td><td></td><td></td></tr>';
+h+='</tbody></table></div></div></div>';
 el.innerHTML=h;}
+
 
 function renderRptFlotte(){const el=document.getElementById('rpt-tab-flotte');if(!el)return;
 let h='<div class="card"><div class="card-h"><span class="card-t">Rentabilite par vehicule</span></div><div class="card-b" style="padding:0"><div class="tw"><table><thead><tr><th>Vehicule</th><th>Transports</th><th>Tonnage</th><th>CA genere TTC</th><th>Frais</th><th>Marge</th></tr></thead><tbody>';
