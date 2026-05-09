@@ -289,6 +289,8 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
 .ldv-stamp{display:inline-block;border:2px solid var(--gn);color:var(--gn);font-size:.7rem;font-weight:900;padding:4px 12px;border-radius:4px;transform:rotate(-3deg);letter-spacing:.06em;margin-bottom:8px}
 .ldv-email-form{display:flex;gap:8px;margin-top:12px}
 .ldv-email-form .fi{flex:1}
+
+@media(max-width:600px){.sg{grid-template-columns:repeat(2,1fr) !important}}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -296,7 +298,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0A0A0A">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230A0A0A'/><text x='50' y='62' font-size='36' font-weight='900' fill='%23D7263D' text-anchor='middle' font-family='Arial'>SN</text></svg>">
-<link rel="manifest" href="data:application/json,{%22name%22:%22SOTRANSNORD%22,%22short_name%22:%22SN%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%230A0A0A%22,%22theme_color%22:%22%230A0A0A%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230A0A0A'/><text x='50' y='62' font-size='36' font-weight='900' fill='%23D7263D' text-anchor='middle' font-family='Arial'>SN</text></svg>%22,%22sizes%22:%22any%22,%22type%22:%22image/svg+xml%22}]}">
+
 </head>
 <body>
 <div id="toast-container"></div>
@@ -314,7 +316,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
     <button class="pin-btn empty"></button><button class="pin-btn" onclick="pinKey('0')">0</button><button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
   <div class="pin-info" id="pinAttempts"></div>
-  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v8.3 — 2026</span></div>
+  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v8.4 — 2026</span></div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
 <div id="ldvOverlay">
@@ -457,7 +459,8 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
   <div class="fg" style="margin-top:10px"><label class="fl">Signature *</label><div class="sig-wrap"><canvas id="sigPad" height="140"></canvas></div><div class="sig-ctrl"><button class="btn btn-g btn-s" onclick="clearSig()">🗑️ Effacer</button><span style="font-size:.7rem;color:var(--t4)">Signez avec le doigt</span></div></div>
   <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('transportModal')">Annuler</button><button class="btn btn-ok btn-w btn-l" onclick="confirmTransport()">✅ Valider</button></div>
 </div></div>
-<script>
+<script>(function(){var m={name:'SOTRANSNORD',short_name:'SOTRANSNORD',start_url:'.',display:'standalone',background_color:'#0A0A0A',theme_color:'#0A0A0A',orientation:'portrait'};var b=new Blob([JSON.stringify(m)],{type:'application/json'});var u=URL.createObjectURL(b);var l=document.createElement('link');l.rel='manifest';l.href=u;document.head.appendChild(l);})();
+
 let GERANT_PIN='123456';const CURRENT_YEAR=new Date().getFullYear();const CURRENT_MONTH=new Date().getMonth();const MONTHS=['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
 let state={mode:'real',role:null,currentUser:null,currentPage:null,pinValue:'',pinAttempts:0,pinLocked:false,editingId:null,currentTransport:null,currentOrder:null,filterOrders:'all'};
 let db={drivers:[],trucks:[],clients:[],materials:[],tariffs:[{id:1,type:'materiaux',name:'Sable 0/4 — Standard',price:18.50},{id:2,type:'materiaux',name:'Gravier 4/6 — Standard',price:22.00},{id:3,type:'journee',name:'Journée chauffeur + camion',price:950.00},{id:4,type:'materiaux',name:'Remblais — Standard',price:12.00}],expenses:[],orders:[],audit:[],clientTariffs:[],annualData:{}};
@@ -1006,11 +1009,19 @@ el.innerHTML=h;}
 
 function renderClientDetail(){const cid=document.getElementById('rpt-client-select').value;const el=document.getElementById('rpt-client-detail');if(!cid||!el){if(el)el.innerHTML='';return;}
 const cl=db.clients.find(c=>String(c.id)===cid);
-const orders=db.orders.filter(o=>String(o.clientId)===cid);
+const yearSel=document.getElementById('rpt-client-year');
+const selYear=yearSel?parseInt(yearSel.value):new Date().getFullYear();
+const allOrders=db.orders.filter(o=>String(o.clientId)===cid);
+const years=[...new Set(allOrders.map(o=>new Date(o.date).getFullYear()))].sort((a,b)=>b-a);
+if(!years.length)years.push(new Date().getFullYear());
+const orders=allOrders.filter(o=>new Date(o.date).getFullYear()===selYear);
 let totalCA=0;let totalTonnage=0;let totalTransports=0;let totalPaye=0;let totalImpaye=0;
 orders.forEach(o=>{const t=calcOrderTotal(o);totalCA+=t.ttc;totalTonnage+=t.tonnage;totalTransports+=t.nbTransports;if(o.paid)totalPaye+=t.ttc;else if(o.invoiceSent)totalImpaye+=t.ttc;});
-let h='<div class="sg" style="grid-template-columns:repeat(6,1fr);margin-bottom:14px"><div class="sc"><div class="sc-i">📋</div><div class="sc-v">'+orders.length+'</div><div class="sc-l">Chantiers</div></div><div class="sc"><div class="sc-i">🚛</div><div class="sc-v">'+totalTransports+'</div><div class="sc-l">Transports</div></div><div class="sc"><div class="sc-i">⚖️</div><div class="sc-v">'+Math.round(totalTonnage)+' T</div><div class="sc-l">Tonnage total</div></div><div class="sc"><div class="sc-i">💶</div><div class="sc-v">'+fmt(totalCA)+'</div><div class="sc-l">CA total TTC</div></div><div class="sc"><div class="sc-i">✅</div><div class="sc-v" style="color:var(--gn)">'+fmt(totalPaye)+'</div><div class="sc-l">Paye</div></div><div class="sc"><div class="sc-i">⏳</div><div class="sc-v" style="color:#D4A017">'+fmt(totalImpaye)+'</div><div class="sc-l">Reste a payer</div></div></div>';
-h+='<div class="card"><div class="card-h"><span class="card-t">Historique chantiers — '+(cl?cl.company:'')+'</span></div><div class="card-b" style="padding:0"><div class="tw"><table><thead><tr><th>Date</th><th>Chantier</th><th>Transports</th><th>Tonnage</th><th>Montant TTC</th><th>Statut</th></tr></thead><tbody>';
+let h='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="font-weight:800;font-size:.82rem">Annee :</span><select class="fi" id="rpt-client-year" onchange="renderClientDetail()" style="width:auto;padding:6px 12px">';
+years.forEach(y=>{h+='<option value="'+y+'"'+(y===selYear?' selected':'')+'>'+y+'</option>';});
+h+='</select></div>';
+h+='<div class="sg" style="grid-template-columns:repeat(6,1fr);margin-bottom:14px"><div class="sc"><div class="sc-i">📋</div><div class="sc-v">'+orders.length+'</div><div class="sc-l">Chantiers</div></div><div class="sc"><div class="sc-i">🚛</div><div class="sc-v">'+totalTransports+'</div><div class="sc-l">Transports</div></div><div class="sc"><div class="sc-i">⚖️</div><div class="sc-v">'+Math.round(totalTonnage)+' T</div><div class="sc-l">Tonnage total</div></div><div class="sc"><div class="sc-i">💶</div><div class="sc-v">'+fmt(totalCA)+'</div><div class="sc-l">CA total TTC</div></div><div class="sc"><div class="sc-i">✅</div><div class="sc-v" style="color:var(--gn)">'+fmt(totalPaye)+'</div><div class="sc-l">Paye</div></div><div class="sc"><div class="sc-i">⏳</div><div class="sc-v" style="color:#D4A017">'+fmt(totalImpaye)+'</div><div class="sc-l">Reste a payer</div></div></div>';
+h+='<div class="card"><div class="card-h"><span class="card-t">Historique chantiers — '+(cl?cl.company:'')+' — '+selYear+'</span></div><div class="card-b" style="padding:0"><div class="tw"><table><thead><tr><th>Date</th><th>Chantier</th><th>Transports</th><th>Tonnage</th><th>Montant TTC</th><th>Statut</th></tr></thead><tbody>';
 orders.sort((a,b)=>new Date(b.date)-new Date(a.date));
 orders.forEach(o=>{const t=calcOrderTotal(o);const mat=o.materialId?db.materials.find(m=>String(m.id)===String(o.materialId)):null;const status=o.paid?'<button class="btn btn-s" style="background:var(--gn);color:#fff;font-size:.6rem" onclick="facturer(\''+o.id+'\')">✅ Facture</button>':o.invoiceSent?'<button class="btn btn-s" style="background:#D4A017;color:#fff;font-size:.6rem" onclick="markPaid(\''+o.id+'\')">💰 Marquer paye</button>':o.status==='termine'?'<button class="btn btn-s" style="background:var(--bl);color:#fff;font-size:.6rem" onclick="facturer(\''+o.id+'\')">💶 Facturer</button>':'<span class="badge bg-gr" style="font-size:.6rem">En cours</span>';h+='<tr><td>'+fmtDate(o.date)+'</td><td style="font-weight:700">'+o.address+(mat?' — '+mat.name:'')+'</td><td>'+o.nbDone+'/'+o.nbEstimated+'</td><td>'+Math.round(t.tonnage)+' T</td><td style="font-weight:800">'+fmt(t.ttc)+'</td><td>'+status+'</td></tr>';});
 h+='</tbody></table></div></div></div>';
@@ -1037,7 +1048,7 @@ el.innerHTML=h;}
 
 function renderRptFlotte(){const el=document.getElementById('rpt-tab-flotte');if(!el)return;
 let globalCA=0;let globalFrais=0;let globalTonnage=0;let globalTransports=0;
-const truckData=db.trucks.map(tk=>{const ordersT=db.orders.filter(o=>String(o.truckId)===String(tk.id));let ca=0;let tonnage=0;let transports=0;ordersT.forEach(o=>{const t=calcOrderTotal(o);ca+=t.ttc;tonnage+=t.tonnage;transports+=t.nbTransports;});const fraisT=db.expenses.filter(e=>String(e.truckId)===String(tk.id)).reduce((s,e)=>s+(parseFloat(e.amount)||0),0);const marge=ca-fraisT;const coutTonne=tonnage>0?fraisT/tonnage:0;globalCA+=ca;globalFrais+=fraisT;globalTonnage+=tonnage;globalTransports+=transports;return{tk,ca,tonnage,transports,fraisT,marge,coutTonne};});
+const truckData=db.trucks.map(tk=>{const ordersT=db.orders.filter(o=>String(o.truckId)===String(tk.id));let ca=0;let tonnage=0;let transports=0;ordersT.forEach(o=>{const t=calcOrderTotal(o);ca+=t.ttc;tonnage+=t.tonnage;transports+=t.nbTransports;});let fraisT=db.expenses.filter(e=>String(e.truckId)===String(tk.id)).reduce((s,e)=>s+(parseFloat(e.amount)||0),0);const fichesT=db.dayReports?db.dayReports.filter(f=>{const o=ordersT.find(x=>String(x.driverId)===String(f.driverId));return o;}):[]; fichesT.forEach(f=>{fraisT+=(parseFloat(f.fuelPrice)||0);});const marge=ca-fraisT;const coutTonne=tonnage>0?fraisT/tonnage:0;globalCA+=ca;globalFrais+=fraisT;globalTonnage+=tonnage;globalTransports+=transports;return{tk,ca,tonnage,transports,fraisT,marge,coutTonne};});
 const globalMarge=globalCA-globalFrais;
 let h='<div class="sg" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px"><div class="sc"><div class="sc-i">💶</div><div class="sc-v">'+fmt(globalCA)+'</div><div class="sc-l">CA flotte TTC</div></div><div class="sc"><div class="sc-i">🔧</div><div class="sc-v" style="color:var(--er)">'+fmt(globalFrais)+'</div><div class="sc-l">Frais totaux</div></div><div class="sc"><div class="sc-i">📈</div><div class="sc-v" style="color:'+(globalMarge>=0?'var(--gn)':'var(--er)')+'">'+fmt(globalMarge)+'</div><div class="sc-l">Marge nette</div></div><div class="sc"><div class="sc-i">⚖️</div><div class="sc-v">'+(globalTonnage>0?(globalFrais/globalTonnage).toFixed(1)+' eur/T':'—')+'</div><div class="sc-l">Cout moyen/tonne</div></div></div>';
 h+='<div class="card"><div class="card-h"><span class="card-t">Rentabilite par vehicule</span></div><div class="card-b" style="padding:0"><div class="tw"><table><thead><tr><th>Vehicule</th><th>Type</th><th>Transports</th><th>Tonnage</th><th>CA TTC</th><th>Frais</th><th>Cout/T</th><th>Marge</th></tr></thead><tbody>';
