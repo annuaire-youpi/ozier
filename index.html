@@ -153,6 +153,8 @@ td{padding:10px 12px;vertical-align:middle}
 .sg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px}
 @media(min-width:600px){.sg{grid-template-columns:repeat(4,1fr);gap:10px}}
 .tabs{display:flex;gap:2px;background:var(--bg);border-radius:var(--r);padding:3px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs.tabs-wrap{flex-wrap:wrap;overflow-x:visible}
+@media(max-width:768px){.tabs.tabs-wrap{flex-wrap:wrap;overflow-x:visible}.tabs.tabs-wrap .tab{flex:1 1 calc(50% - 4px);min-width:0;font-size:.7rem;padding:8px 6px;text-align:center}}
 .tabs::-webkit-scrollbar{display:none}
 .tab{padding:8px 14px;border-radius:8px;border:none;background:none;font-family:var(--f);font-size:.76rem;font-weight:800;color:var(--t4);cursor:pointer;transition:all .12s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
 .tab.on{background:var(--sf);color:var(--t1);box-shadow:0 1px 4px rgba(0,0,0,.06)}
@@ -316,7 +318,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
     <button class="pin-btn empty"></button><button class="pin-btn" onclick="pinKey('0')">0</button><button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
   <div class="pin-info" id="pinAttempts"></div>
-  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v10.11 — 2026</span></div>
+  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v10.12 — 2026</span></div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
 <div id="ldvOverlay">
@@ -354,18 +356,18 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       </div>
       <div class="page" id="page-donnees">
         <div class="ph"><div><div class="pt">Données</div><div class="ps">Gestion des ressources</div></div><button class="btn btn-o btn-s" onclick="openCompanyModal()">🏢 Infos société</button> <button class="btn btn-o btn-s" onclick="openPinChange()">🔐 PIN</button></div>
-        <div class="tabs" id="don-tabs"><button class="tab on" onclick="showDonTab('chauffeurs',this)">👤 Chauffeurs</button><button class="tab" onclick="showDonTab('camions',this)">🚛 Camions</button><button class="tab" onclick="showDonTab('clients',this)">🏢 Clients</button><button class="tab" onclick="showDonTab('materiaux',this)">⚙️ Matériaux</button><button class="tab" onclick="showDonTab('frais',this)">💸 Frais véhicules</button></div>
+        <div class="tabs tabs-wrap" id="don-tabs"><button class="tab on" onclick="showDonTab('chauffeurs',this)">👤 Chauffeurs</button><button class="tab" onclick="showDonTab('camions',this)">🚛 Camions</button><button class="tab" onclick="showDonTab('clients',this)">🏢 Clients</button><button class="tab" onclick="showDonTab('materiaux',this)">⚙️ Matériaux</button><button class="tab" onclick="showDonTab('frais',this)">💸 Frais véhicules</button></div>
         <div id="don-tab-chauffeurs"><div class="ph" style="margin-bottom:8px"><span style="font-weight:800;font-size:.86rem">Liste des chauffeurs</span><button class="btn btn-p btn-s" onclick="openDriverModal()">+ Ajouter</button></div><div class="search" style="margin-bottom:10px"><input type="text" class="fi" placeholder="Rechercher..." oninput="renderDriversTable(this.value)"></div><div class="card"><div class="tw"><table id="driversTable"><thead><tr><th>Nom</th><th>Tél.</th><th>Permis</th><th>Statut</th><th>CQC</th><th>Visite méd.</th><th>Actions</th></tr></thead><tbody id="driversTableBody"></tbody></table></div></div></div>
         <div id="don-tab-camions" class="hidden"><div class="ph" style="margin-bottom:8px"><span style="font-weight:800;font-size:.86rem">Flotte de camions</span><button class="btn btn-p btn-s" onclick="openTruckModal()">+ Ajouter</button></div><div class="card"><div class="tw"><table><thead><tr><th>Immat.</th><th>Type</th><th>Km</th><th>CT</th><th>Tachy.</th><th>Limiteur</th><th>Actions</th></tr></thead><tbody id="trucksTableBody"></tbody></table></div></div></div>
         <div id="don-tab-clients" class="hidden"><div class="ph" style="margin-bottom:8px"><span style="font-weight:800;font-size:.86rem">Carnet clients</span><button class="btn btn-p btn-s" onclick="openClientModal()">+ Ajouter</button></div><div class="card"><div class="tw"><table><thead><tr><th>Entreprise</th><th>Gérant</th><th>Tél.</th><th>Email</th><th>Actions</th></tr></thead><tbody id="clientsTableBody"></tbody></table></div></div></div>
         <div id="don-tab-materiaux" class="hidden"><div class="ph" style="margin-bottom:8px"><span style="font-weight:800;font-size:.86rem">Liste des matériaux</span><button class="btn btn-p btn-s" onclick="openMaterialModal()">+ Ajouter</button></div><div class="card"><div class="tw"><table><thead><tr><th>Matériau</th><th>Unité</th><th>Actions</th></tr></thead><tbody id="materialsTableBody"></tbody></table></div></div></div>
-        <div id="don-tab-frais" class="hidden"><div class="tabs" style="margin-bottom:10px"><button class="tab on" onclick="showFraisTab('saisie',this)">📝 Saisie manuelle</button><button class="tab" onclick="showFraisTab('fiches',this)">📋 Fiches journalières (carburant)</button><button class="tab" onclick="showFraisTab('types',this)">🏷️ Types de frais</button></div><div id="frais-tab-saisie"><div class="ph" style="margin-bottom:8px"><span style="font-weight:800;font-size:.86rem">Frais véhicules saisis</span><button class="btn btn-p btn-s" onclick="openExpenseModal()">+ Ajouter</button></div><div class="card"><div class="tw"><table><thead><tr><th>Date</th><th>Camion</th><th>Type</th><th>Montant</th><th>Description</th><th>Actions</th></tr></thead><tbody id="expensesTableBody"></tbody></table></div></div></div><div id="frais-tab-fiches" class="hidden"><div class="ph" style="margin-bottom:8px"><span style="font-weight:800;font-size:.86rem">Carburant déclaré par les chauffeurs</span></div><div class="card"><div class="tw"><table><thead><tr><th>Date</th><th>Chauffeur</th><th>Km</th><th>Litres</th><th>Prix (€)</th><th>Observations</th></tr></thead><tbody id="fichesTableBody"></tbody></table></div></div></div><div id="frais-tab-types" class="hidden"><div class="ph" style="margin-bottom:8px"><span style="font-weight:800;font-size:.86rem">Catégories de frais véhicules</span><button class="btn btn-p btn-s" onclick="openExpenseTypeModal()">+ Ajouter</button></div><div class="card"><div class="tw"><table><thead><tr><th>Libellé</th><th>Actions</th></tr></thead><tbody id="expenseTypesTableBody"></tbody></table></div></div></div></div>
+        <div id="don-tab-frais" class="hidden"><div class="tabs tabs-wrap" style="margin-bottom:10px"><button class="tab on" onclick="showFraisTab('saisie',this)">📝 Saisie manuelle</button><button class="tab" onclick="showFraisTab('fiches',this)">📋 Fiches journalières (carburant)</button><button class="tab" onclick="showFraisTab('types',this)">🏷️ Types de frais</button></div><div id="frais-tab-saisie"><div class="ph" style="margin-bottom:8px"><span style="font-weight:800;font-size:.86rem">Frais véhicules saisis</span><button class="btn btn-p btn-s" onclick="openExpenseModal()">+ Ajouter</button></div><div class="card"><div class="tw"><table><thead><tr><th>Date</th><th>Camion</th><th>Type</th><th>Montant</th><th>Description</th><th>Actions</th></tr></thead><tbody id="expensesTableBody"></tbody></table></div></div></div><div id="frais-tab-fiches" class="hidden"><div class="ph" style="margin-bottom:8px"><span style="font-weight:800;font-size:.86rem">Carburant déclaré par les chauffeurs</span></div><div class="card"><div class="tw"><table><thead><tr><th>Date</th><th>Chauffeur</th><th>Km</th><th>Litres</th><th>Prix (€)</th><th>Observations</th></tr></thead><tbody id="fichesTableBody"></tbody></table></div></div></div><div id="frais-tab-types" class="hidden"><div class="ph" style="margin-bottom:8px"><span style="font-weight:800;font-size:.86rem">Catégories de frais véhicules</span><button class="btn btn-p btn-s" onclick="openExpenseTypeModal()">+ Ajouter</button></div><div class="card"><div class="tw"><table><thead><tr><th>Libellé</th><th>Actions</th></tr></thead><tbody id="expenseTypesTableBody"></tbody></table></div></div></div></div>
       </div>
       
       
       <div class="page" id="page-rapports">
         <div class="ph"><div><div class="pt">Rapports</div><div class="ps">Pilotage et suivi</div></div></div>
-        <div style="display:flex;gap:4px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px">
+        <div class="tabs tabs-wrap" style="margin-bottom:14px">
           <button class="tab on" onclick="showRptTab('paiements',this)">💰 Paiements</button>
           <button class="tab" onclick="showRptTab('clients',this)">👤 Clients</button>
           <button class="tab" onclick="showRptTab('activite',this)">📊 Activité</button>
@@ -750,7 +752,7 @@ function closeLDV(){document.getElementById('ldvOverlay').classList.remove('acti
 function printLDV(){window.print();}
 
 /* LDV EMAIL */
-function showEmailLDV(){if(!currentLDVData)return;const dr=db.drivers.find(d=>String(d.id)===String(currentLDVData.order.driverId));document.getElementById('ldv-email-to').value=dr?.email||'';openModal('emailLdvModal');}
+function showEmailLDV(){if(!currentLDVData)return;const o=currentLDVData.order;const _firstDid=String(o.driverId||'').split(/[|,]/)[0];const dr=db.drivers.find(d=>String(d.id)===String(_firstDid));const cl=db.clients.find(c=>String(c.id)===String(o.clientId));const co=getCompanyInfo()||{};const choices=[];if(dr&&dr.email)choices.push({label:'👤 '+(dr.name||'Chauffeur'),email:dr.email});if(cl&&cl.email)choices.push({label:'🏢 '+(cl.company||'Client'),email:cl.email});if(co.email)choices.push({label:'🏠 Gérant',email:co.email});const quick=document.getElementById('ldv-email-quick');if(quick){quick.innerHTML=choices.length?choices.map(c=>'<button type="button" class="btn btn-o btn-s" style="flex:0 1 auto;font-size:.72rem;padding:6px 10px" onclick="document.getElementById(\'ldv-email-to\').value=\''+c.email.replace(/'/g,"\\'")+'\'">'+c.label+'</button>').join(''):'<span style="font-size:.72rem;color:var(--t4)">Aucun email connu — saisis-le ci-dessous</span>';}document.getElementById('ldv-email-to').value=dr?.email||cl?.email||'';openModal('emailLdvModal');setTimeout(()=>{const inp=document.getElementById('ldv-email-to');if(inp)inp.focus();},150);}
 async function sendLDVEmail(){const email=document.getElementById('ldv-email-to').value.trim();if(!email||!email.includes('@')){showToast('⚠️ Email invalide','error');return;}if(!currentLDVData)return;showLoader();const html=generateLDVHTML(currentLDVData.order,currentLDVData.transport);const ref=ldvRef(currentLDVData.order.id,currentLDVData.transport.id);try{const r=await fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'sendLDV',data:{to:email,subject:'Lettre de voiture '+ref+' — SOTRANSNORD',html:html,ref:ref,orderId:currentLDVData.order.id,transportId:currentLDVData.transport.id}})});const res=await r.json();hideLoader();if(res.success){closeModal('emailLdvModal');showToast('📧 Email envoyé à '+email,'success',4000);addAudit('LDV envoyée',ref+' → '+email);}else{showToast('⚠️ Erreur: '+(res.error||'Envoi échoué'),'error',5000);}}catch(e){hideLoader();showToast('⚠️ Erreur: '+e.message,'error',5000);}}
 
 /* INVOICE GENERATION */
@@ -807,7 +809,8 @@ const tauxTVA=(co.tva||20)/100;
 const montantTVA=totalHT*tauxTVA;
 const totalTTC=totalHT+montantTVA;
 
-let h='<div class="ldv-page">';
+let h='<div class="ldv-page" style="position:relative">';
+if(order.paid){var paidDateStamp=order.paidDate?fmtDate(order.paidDate):'';h+='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-18deg);border:6px solid #16a34a;color:#16a34a;font-family:Georgia,serif;font-weight:900;font-size:3.2rem;padding:14px 36px;border-radius:14px;letter-spacing:.08em;opacity:.22;pointer-events:none;z-index:10;text-align:center;line-height:1;white-space:nowrap;box-shadow:inset 0 0 0 3px #16a34a">PAYÉ'+(paidDateStamp?'<div style="font-size:.95rem;letter-spacing:.04em;margin-top:8px;font-weight:700">le '+paidDateStamp+'</div>':'')+'</div>';}
 
 // Header
 h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:16px;border-bottom:3px solid var(--bk);margin-bottom:16px">';
@@ -816,7 +819,7 @@ h+='<div style="font-size:.74rem;color:var(--t3);margin-top:2px">'+co.address+',
 h+='<div style="font-size:.72rem;color:var(--t3)">SIRET : '+co.siret+'</div>';
 if(co.phone)h+='<div style="font-size:.72rem;color:var(--t3)">'+co.phone+(co.email?' — '+co.email:'')+'</div>';
 h+='</div>';
-h+='<div style="text-align:right"><div style="font-size:1.1rem;font-weight:900;color:var(--rd)">FACTURE</div>';if(sentInfo){h+='<div style="display:inline-block;border:2px solid var(--gn);color:var(--gn);font-size:.62rem;font-weight:900;padding:3px 10px;border-radius:4px;margin-top:4px;letter-spacing:.04em">✅ ENVOYÉE LE '+sentInfo.date+'</div>';}
+h+='<div style="text-align:right"><div style="font-size:1.1rem;font-weight:900;color:var(--rd)">FACTURE</div>';if(sentInfo){var sentDateF=sentInfo.date;if(/^\d{4}-\d{2}-\d{2}T/.test(sentDateF))sentDateF=fmtDate(sentDateF);h+='<div style="display:inline-block;border:2px solid var(--gn);color:var(--gn);font-size:.62rem;font-weight:900;padding:3px 10px;border-radius:4px;margin-top:4px;letter-spacing:.04em">✅ ENVOYÉE LE '+sentDateF+'</div>';}
 h+='<div style="font-size:.86rem;font-weight:800;margin-top:2px">'+ref+'</div>';
 h+='<div style="font-size:.74rem;color:var(--t3);margin-top:2px">Date : '+dateDoc+'</div>';
 h+='</div></div>';
@@ -909,7 +912,7 @@ const ref='BDL-'+new Date().getFullYear()+String(new Date().getMonth()+1).padSta
 const dateDoc=new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
 let h='<div class="ldv-page">';
 h+='<div class="ldv-header"><div class="ldv-stamp" style="border-color:var(--bl);color:var(--bl)">BON DE LIVRAISON</div><br>';
-if(transport.done&&transport.ts){h+='<div style="display:inline-block;border:2px solid var(--gn);color:var(--gn);font-size:.62rem;font-weight:900;padding:3px 10px;border-radius:4px;margin-bottom:8px;letter-spacing:.04em">✅ ENVOYÉ PAR EMAIL LE '+(transport.ts||fmtDate(order.date))+'</div><br>';}
+if(transport.done&&transport.ts){var bdlTsF=transport.ts;if(/^\d{4}-\d{2}-\d{2}T/.test(bdlTsF))bdlTsF=fmtDate(bdlTsF);h+='<div style="display:inline-block;border:2px solid var(--gn);color:var(--gn);font-size:.62rem;font-weight:900;padding:3px 10px;border-radius:4px;margin-bottom:8px;letter-spacing:.04em">✅ ENVOYÉ PAR EMAIL LE '+(bdlTsF||fmtDate(order.date))+'</div><br>';}
 h+='<div class="ldv-title">'+co.name+'</div>';
 h+='<div style="font-size:.74rem;color:var(--t3)">'+co.address+', '+co.postal+' '+co.city+'</div>';
 h+='<div class="ldv-ref">'+ref+'</div>';
@@ -1026,7 +1029,7 @@ const rows=factures.map(o=>{const cl=db.clients.find(c=>String(c.id)===String(o.
 let h='<div class="sg" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px"><div class="sc"><div class="sc-i">💰</div><div class="sc-v" style="color:#D4A017">'+fmt(totalImpaye)+'</div><div class="sc-l">Impaye TTC</div></div><div class="sc"><div class="sc-i">✅</div><div class="sc-v" style="color:var(--gn)">'+fmt(totalPaye)+'</div><div class="sc-l">Encaisse TTC</div></div><div class="sc"><div class="sc-i">📄</div><div class="sc-v">'+factures.length+'</div><div class="sc-l">Factures emises</div></div></div>';
 h+='<div class="card"><div class="card-h"><span class="card-t">Suivi des factures</span></div><div class="card-b" style="padding:0"><div class="tw"><table><thead><tr><th>Client</th><th>Ref</th><th>Montant TTC</th><th>Envoyee le</th><th>Jours</th><th>Statut</th></tr></thead><tbody>';
 rows.sort((a,b)=>a.o.paid-b.o.paid||b.days-a.days);
-rows.forEach(r=>{const statusColor=r.o.paid?'var(--gn)':r.days>30?'var(--er)':'#D4A017';const statusText=r.o.paid?'Paye'+(r.o.paidDate?' le '+r.o.paidDate:''):r.days>30?'Impaye ('+r.days+'j)':'En attente ('+r.days+'j)';h+='<tr><td style="font-weight:800">'+(r.cl?r.cl.company:'—')+'</td><td style="font-size:.72rem">'+( r.o.invoiceRef||'—')+'</td><td style="font-weight:800">'+fmt(r.tot.ttc)+'</td><td>'+( r.o.invoiceDate||'—')+'</td><td style="font-weight:800;color:'+statusColor+'">'+r.days+'</td><td><span class="badge" style="background:'+statusColor+';color:#fff;font-size:.62rem">'+statusText+'</span></td></tr>';});
+rows.forEach(r=>{const statusColor=r.o.paid?'var(--gn)':r.days>30?'var(--er)':'#D4A017';const paidDateF=r.o.paidDate?fmtDate(r.o.paidDate):'';const statusText=r.o.paid?(paidDateF?'Payé le '+paidDateF:'Payé'):r.days>30?'Impayé ('+r.days+'j)':'En attente ('+r.days+'j)';const sentDateF=r.o.invoiceDate?fmtDate(r.o.invoiceDate):'—';h+='<tr><td style="font-weight:800">'+(r.cl?r.cl.company:'—')+'</td><td style="font-size:.72rem">'+( r.o.invoiceRef||'—')+'</td><td style="font-weight:800">'+fmt(r.tot.ttc)+'</td><td>'+sentDateF+'</td><td style="font-weight:800;color:'+statusColor+'">'+r.days+'</td><td><span class="badge" style="background:'+statusColor+';color:#fff;font-size:.62rem">'+statusText+'</span></td></tr>';});
 h+='</tbody></table></div></div></div>';
 el.innerHTML=h;}
 
@@ -1104,8 +1107,9 @@ el.innerHTML=h;}
   <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('companyModal')">Annuler</button><button class="btn btn-p btn-w" onclick="saveCompanyInfo()">💾 Enregistrer</button></div>
 </div></div>
 
-<div class="mo" id="emailLdvModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">📧 Envoyer par email</div>
-  <div class="fg"><label class="fl">Adresse email</label><input type="email" class="fi" id="ldv-email-to" placeholder="chauffeur@mail.fr"></div>
+<div class="mo" id="emailLdvModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">📧 Envoyer la LDV par email</div>
+  <div class="fg"><label class="fl">Choix rapide</label><div id="ldv-email-quick" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px"></div></div>
+  <div class="fg"><label class="fl">Adresse email *</label><input type="email" class="fi" id="ldv-email-to" placeholder="exemple@domaine.fr" autocapitalize="off" autocorrect="off" spellcheck="false" style="font-size:.92rem"></div>
   <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('emailLdvModal')">Annuler</button><button class="btn btn-p btn-w" onclick="sendLDVEmail()">📤 Envoyer</button></div>
 </div></div>
 <div class="mo" id="pinChangeModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">🔐 Changer mon code PIN</div>
