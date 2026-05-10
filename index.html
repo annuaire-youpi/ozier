@@ -322,7 +322,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
     <button class="pin-btn hash" onclick="pinKey('#')">#</button><button class="pin-btn" onclick="pinKey('0')">0</button><button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
   <div class="pin-info" id="pinAttempts"></div>
-  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v10.17 — 2026</span></div>
+  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v10.18 — 2026</span></div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
 <div id="ldvOverlay">
@@ -1005,7 +1005,49 @@ h+='</div>';
 return{html:h,ref:ref};
 }
 
-async function autoSendBDL(order,transport){const co=getCompanyInfo();if(!co)return;const cl=db.clients.find(c=>String(c.id)===String(order.clientId));if(!cl||!cl.email)return;const result=generateBDLHTML(order,transport);if(!result)return;const filename='BDL-'+(cl.company.replace(/[^a-zA-Z0-9]/g,''))+'-'+result.ref;const url=getSheetsBase();try{const pdfBase64=await htmlToPdfBase64(result.html,filename);await fetch(url,{method:'POST',body:JSON.stringify({action:'sendBDL',data:{to:cl.email,subject:'Bon de livraison '+result.ref+' — '+(co.name||'SOTRANSNORD'),pdfBase64:pdfBase64,ref:filename,clientName:cl.company,tonnage:transport.tonnage}})});showToast('📦 BDL envoyé à '+cl.email+' (PDF joint)','success',4000);}catch(e){console.error('autoSendBDL error:',e);}}
+async function autoSendBDL(order,transport){
+  const co=getCompanyInfo();if(!co)return;
+  const cl=db.clients.find(c=>String(c.id)===String(order.clientId));if(!cl||!cl.email)return;
+  const result=generateBDLHTML(order,transport);if(!result)return;
+  const filename='BDL-'+(cl.company.replace(/[^a-zA-Z0-9]/g,''))+'-'+result.ref;
+  
+  // Ouvrir temporairement l'overlay BDL pour que html2canvas capture un DOM réellement peint.
+  // Le container caché en position:absolute n'est pas peint par les navigateurs mobiles
+  // (optimisation), résultat = capture blanche. Solution: utiliser le viewer existant.
+  const ldvContent=document.getElementById('ldvContent');
+  const ldvOverlay=document.getElementById('ldvOverlay');
+  const ldvBarTitle=document.getElementById('ldvBarTitle');
+  const savedHTML=ldvContent.innerHTML;
+  const savedTitle=ldvBarTitle.textContent;
+  const wasActive=ldvOverlay.classList.contains('active');
+  const savedBodyOverflow=document.body.style.overflow;
+  
+  ldvContent.innerHTML=result.html;
+  ldvBarTitle.textContent='BDL — '+result.ref;
+  if(!wasActive){
+    ldvOverlay.classList.add('active');
+    document.body.style.overflow='hidden';
+  }
+  
+  try{
+    void ldvContent.offsetHeight;
+    await new Promise(r=>setTimeout(r,200));
+    const pdfBase64=await elementToPdfBase64(ldvContent,filename);
+    await fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'sendBDL',data:{to:cl.email,subject:'Bon de livraison '+result.ref+' — '+(co.name||'SOTRANSNORD'),pdfBase64:pdfBase64,ref:filename,clientName:cl.company,tonnage:transport.tonnage}})});
+    showToast('📦 BDL envoyé à '+cl.email+' (PDF joint)','success',4000);
+  }catch(e){
+    console.error('autoSendBDL error:',e);
+    showToast('⚠️ Erreur envoi BDL: '+e.message,'warning',5000);
+  }finally{
+    if(!wasActive){
+      // Fermer l'overlay si on l'avait ouvert nous-mêmes
+      ldvOverlay.classList.remove('active');
+      document.body.style.overflow=savedBodyOverflow;
+      ldvContent.innerHTML=savedHTML;
+      ldvBarTitle.textContent=savedTitle;
+    }
+  }
+}
 function openBDL(orderId,transportId){
 const co=getCompanyInfo();
 if(!co){window._ldvPendingAfterCompany=function(){openBDL(orderId,transportId);};openCompanyModal();return;}
