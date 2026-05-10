@@ -6,6 +6,7 @@
 <title>SOTRANSNORD</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -321,7 +322,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
     <button class="pin-btn hash" onclick="pinKey('#')">#</button><button class="pin-btn" onclick="pinKey('0')">0</button><button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
   <div class="pin-info" id="pinAttempts"></div>
-  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v10.15 — 2026</span></div>
+  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v10.16 — 2026</span></div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
 <div id="ldvOverlay">
@@ -766,7 +767,37 @@ function printLDV(){window.print();}
 
 /* LDV EMAIL */
 function showEmailLDV(){if(!currentLDVData)return;const o=currentLDVData.order;const _firstDid=String(o.driverId||'').split(/[|,]/)[0];const dr=db.drivers.find(d=>String(d.id)===String(_firstDid));const cl=db.clients.find(c=>String(c.id)===String(o.clientId));const co=getCompanyInfo()||{};const choices=[];if(dr&&dr.email)choices.push({label:'👤 '+(dr.name||'Chauffeur'),email:dr.email});if(cl&&cl.email)choices.push({label:'🏢 '+(cl.company||'Client'),email:cl.email});if(co.email)choices.push({label:'🏠 Gérant',email:co.email});const quick=document.getElementById('ldv-email-quick');if(quick){let html=choices.map(c=>'<button type="button" class="btn btn-o btn-s" style="flex:0 1 auto;font-size:.72rem;padding:6px 10px" onclick="document.getElementById(\'ldv-email-to\').value=\''+c.email.replace(/'/g,"\\'")+'\';document.getElementById(\'ldv-email-to\').focus()">'+c.label+'</button>').join('');html+='<button type="button" class="btn btn-s" style="flex:0 1 auto;font-size:.72rem;padding:6px 10px;background:#374151;color:#fff;border:none" onclick="document.getElementById(\'ldv-email-to\').value=\'\';document.getElementById(\'ldv-email-to\').focus()">✏️ Autre (saisie libre)</button>';quick.innerHTML=html;}document.getElementById('ldv-email-to').value=dr?.email||cl?.email||'';openModal('emailLdvModal');setTimeout(()=>{const inp=document.getElementById('ldv-email-to');if(inp)inp.focus();},150);}
-async function sendLDVEmail(){const email=document.getElementById('ldv-email-to').value.trim();if(!email||!email.includes('@')){showToast('⚠️ Email invalide','error');return;}if(!currentLDVData)return;showLoader();const html=generateLDVHTML(currentLDVData.order,currentLDVData.transport);const ref=ldvRef(currentLDVData.order.id,currentLDVData.transport.id);const cl=db.clients.find(c=>String(c.id)===String(currentLDVData.order.clientId));const filename='LDV-'+(cl?cl.company.replace(/[^a-zA-Z0-9]/g,''):'')+'-'+ref;try{const r=await fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'sendLDV',data:{to:email,subject:'Lettre de voiture '+ref+' — SOTRANSNORD',html:html,ref:filename,orderId:currentLDVData.order.id,transportId:currentLDVData.transport.id}})});const res=await r.json();hideLoader();if(res.success){closeModal('emailLdvModal');showToast('📧 Email envoyé à '+email+' (PDF joint)','success',4500);addAudit('LDV envoyée',ref+' → '+email);}else{showToast('⚠️ Erreur: '+(res.error||'Envoi échoué'),'error',5000);}}catch(e){hideLoader();showToast('⚠️ Erreur: '+e.message,'error',5000);}}
+/* HTML → PDF (rendu pixel-perfect via html2pdf.js, indépendant du device) */
+async function htmlToPdfBase64(htmlString,filename){
+  const container=document.createElement('div');
+  container.style.cssText='position:fixed;left:-99999px;top:0;width:794px;background:#fff;z-index:-1;padding:0;margin:0';
+  container.innerHTML=htmlString;
+  document.body.appendChild(container);
+  await new Promise(r=>setTimeout(r,150));
+  if(document.fonts&&document.fonts.ready){try{await document.fonts.ready;}catch(e){}}
+  try{
+    const opt={
+      margin:[8,8,8,8],
+      filename:(filename||'document')+'.pdf',
+      image:{type:'jpeg',quality:0.95},
+      html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false,windowWidth:794,letterRendering:true},
+      jsPDF:{unit:'mm',format:'a4',orientation:'portrait',compress:true},
+      pagebreak:{mode:['avoid-all','css','legacy']}
+    };
+    const blob=await html2pdf().set(opt).from(container).outputPdf('blob');
+    const base64=await new Promise((resolve,reject)=>{
+      const reader=new FileReader();
+      reader.onload=()=>resolve(String(reader.result).split(',')[1]);
+      reader.onerror=reject;
+      reader.readAsDataURL(blob);
+    });
+    return base64;
+  }finally{
+    if(container.parentNode)document.body.removeChild(container);
+  }
+}
+
+async function sendLDVEmail(){const email=document.getElementById('ldv-email-to').value.trim();if(!email||!email.includes('@')){showToast('⚠️ Email invalide','error');return;}if(!currentLDVData)return;showLoader();showToast('📄 Génération du PDF…','info',2500);const html=generateLDVHTML(currentLDVData.order,currentLDVData.transport);const ref=ldvRef(currentLDVData.order.id,currentLDVData.transport.id);const cl=db.clients.find(c=>String(c.id)===String(currentLDVData.order.clientId));const filename='LDV-'+(cl?cl.company.replace(/[^a-zA-Z0-9]/g,''):'')+'-'+ref;try{const pdfBase64=await htmlToPdfBase64(html,filename);const r=await fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'sendLDV',data:{to:email,subject:'Lettre de voiture '+ref+' — SOTRANSNORD',pdfBase64:pdfBase64,ref:filename,orderId:currentLDVData.order.id,transportId:currentLDVData.transport.id}})});const res=await r.json();hideLoader();if(res.success){closeModal('emailLdvModal');showToast('📧 Email envoyé à '+email+' (PDF joint)','success',4500);addAudit('LDV envoyée',ref+' → '+email);}else{showToast('⚠️ Erreur: '+(res.error||'Envoi échoué'),'error',5000);}}catch(e){hideLoader();showToast('⚠️ Erreur PDF: '+e.message,'error',5000);}}
 
 /* INVOICE GENERATION */
 function invoiceRef(orderId){const d=new Date();return'FAC-'+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+'-'+orderId;}
@@ -889,7 +920,7 @@ return{html:h,ref:ref,totalHT:totalHT,totalTTC:totalTTC};
 }
 
 function handleEmailClick(){if(!currentLDVData)return;if(currentLDVData.docType==='facture'){sendInvoiceToClient();}else{showEmailLDV();}}
-async function sendInvoiceToClient(){if(!currentLDVData||!currentLDVData.order)return;const order=currentLDVData.order;const cl=db.clients.find(c=>String(c.id)===String(order.clientId));if(!cl||!cl.email){showToast('⚠️ Aucune adresse email pour ce client','error',5000);return;}const co=getCompanyInfo();if(!co)return;const ref=currentLDVData.invoiceRef;const sentInfo={date:new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}),to:cl.email};const invoiceHTML=generateInvoiceHTML(order,sentInfo);const filename='Facture-'+(cl.company.replace(/[^a-zA-Z0-9]/g,''))+'-'+ref;showLoader();const url=getSheetsBase();try{const r1=await fetch(url,{method:'POST',body:JSON.stringify({action:'sendInvoice',data:{to:cl.email,subject:'Facture '+ref+' — '+(co.name||'SOTRANSNORD'),html:invoiceHTML.html,ref:filename,clientName:cl.company,totalTTC:currentLDVData.totalTTC,orderId:order.id}})});const res1=await r1.json();if(!res1.success){hideLoader();showToast('⚠️ Erreur: '+(res1.error||'Envoi échoué'),'error',5000);return;}order.invoiceSent=true;order.invoiceDate=sentInfo.date;order.invoiceTo=cl.email;order.invoiceRef=ref;await fetch(url,{method:'POST',body:JSON.stringify({action:'updateOrder',data:{id:order.id,invoiceSent:'true',invoiceDate:sentInfo.date,invoiceTo:cl.email,invoiceRef:ref}})});document.getElementById('ldvContent').innerHTML=invoiceHTML.html;hideLoader();showToast('📧 Facture envoyée à '+cl.email+' (PDF joint)','success',5000);addAudit('Facture envoyée',ref+' → '+cl.email+' — '+fmt(currentLDVData.totalTTC));}catch(e){hideLoader();showToast('⚠️ Erreur: '+e.message,'error',5000);}}
+async function sendInvoiceToClient(){if(!currentLDVData||!currentLDVData.order)return;const order=currentLDVData.order;const cl=db.clients.find(c=>String(c.id)===String(order.clientId));if(!cl||!cl.email){showToast('⚠️ Aucune adresse email pour ce client','error',5000);return;}const co=getCompanyInfo();if(!co)return;const ref=currentLDVData.invoiceRef;const sentInfo={date:new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}),to:cl.email};const invoiceHTML=generateInvoiceHTML(order,sentInfo);const filename='Facture-'+(cl.company.replace(/[^a-zA-Z0-9]/g,''))+'-'+ref;showLoader();showToast('📄 Génération du PDF…','info',2500);const url=getSheetsBase();try{const pdfBase64=await htmlToPdfBase64(invoiceHTML.html,filename);const r1=await fetch(url,{method:'POST',body:JSON.stringify({action:'sendInvoice',data:{to:cl.email,subject:'Facture '+ref+' — '+(co.name||'SOTRANSNORD'),pdfBase64:pdfBase64,ref:filename,clientName:cl.company,totalTTC:currentLDVData.totalTTC,orderId:order.id}})});const res1=await r1.json();if(!res1.success){hideLoader();showToast('⚠️ Erreur: '+(res1.error||'Envoi échoué'),'error',5000);return;}order.invoiceSent=true;order.invoiceDate=sentInfo.date;order.invoiceTo=cl.email;order.invoiceRef=ref;await fetch(url,{method:'POST',body:JSON.stringify({action:'updateOrder',data:{id:order.id,invoiceSent:'true',invoiceDate:sentInfo.date,invoiceTo:cl.email,invoiceRef:ref}})});document.getElementById('ldvContent').innerHTML=invoiceHTML.html;hideLoader();showToast('📧 Facture envoyée à '+cl.email+' (PDF joint)','success',5000);addAudit('Facture envoyée',ref+' → '+cl.email+' — '+fmt(currentLDVData.totalTTC));}catch(e){hideLoader();showToast('⚠️ Erreur PDF: '+e.message,'error',5000);}}
 function openInvoice(orderId){
 const co=getCompanyInfo();
 if(!co||!co.cnr_ref||!co.cnr_current){
@@ -964,7 +995,7 @@ h+='</div>';
 return{html:h,ref:ref};
 }
 
-async function autoSendBDL(order,transport){const co=getCompanyInfo();if(!co)return;const cl=db.clients.find(c=>String(c.id)===String(order.clientId));if(!cl||!cl.email)return;const result=generateBDLHTML(order,transport);if(!result)return;const filename='BDL-'+(cl.company.replace(/[^a-zA-Z0-9]/g,''))+'-'+result.ref;const url=getSheetsBase();try{await fetch(url,{method:'POST',body:JSON.stringify({action:'sendBDL',data:{to:cl.email,subject:'Bon de livraison '+result.ref+' — '+(co.name||'SOTRANSNORD'),html:result.html,ref:filename,clientName:cl.company,tonnage:transport.tonnage}})});showToast('📦 BDL envoyé à '+cl.email+' (PDF joint)','success',4000);}catch(e){}}
+async function autoSendBDL(order,transport){const co=getCompanyInfo();if(!co)return;const cl=db.clients.find(c=>String(c.id)===String(order.clientId));if(!cl||!cl.email)return;const result=generateBDLHTML(order,transport);if(!result)return;const filename='BDL-'+(cl.company.replace(/[^a-zA-Z0-9]/g,''))+'-'+result.ref;const url=getSheetsBase();try{const pdfBase64=await htmlToPdfBase64(result.html,filename);await fetch(url,{method:'POST',body:JSON.stringify({action:'sendBDL',data:{to:cl.email,subject:'Bon de livraison '+result.ref+' — '+(co.name||'SOTRANSNORD'),pdfBase64:pdfBase64,ref:filename,clientName:cl.company,tonnage:transport.tonnage}})});showToast('📦 BDL envoyé à '+cl.email+' (PDF joint)','success',4000);}catch(e){console.error('autoSendBDL error:',e);}}
 function openBDL(orderId,transportId){
 const co=getCompanyInfo();
 if(!co){window._ldvPendingAfterCompany=function(){openBDL(orderId,transportId);};openCompanyModal();return;}
