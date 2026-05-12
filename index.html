@@ -411,7 +411,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
       <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
     </div>
-    <span class="ver-tag">v10.32 — 2026</span>
+    <span class="ver-tag">v10.33 — 2026</span>
   </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
@@ -472,12 +472,12 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
         </div>
         <div class="card" id="planLoadInfo" style="margin-bottom:10px;display:none"><div class="card-b" style="font-size:.75rem"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px"><span style="color:var(--t3);font-weight:800;min-width:160px">👤 Charge par chauffeur :</span><div id="planLoadDriverPills" style="display:flex;gap:6px;flex-wrap:wrap"></div></div><div style="font-size:.68rem;color:var(--t4);display:flex;gap:14px;flex-wrap:wrap;padding-top:6px;border-top:1px solid var(--bd)"><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--sf2);border:1px solid var(--bd);vertical-align:middle;margin-right:4px"></span> Libre · pas encore affecté</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#F59E0B;vertical-align:middle;margin-right:4px"></span> Occupé · 1-4 rotations</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--er);vertical-align:middle;margin-right:4px"></span> Surchargé · 5+ rotations (risque)</span></div></div></div>
         <div id="planningContent"></div>
-        <div id="planValidateBar" style="margin-top:16px;display:none"><button class="btn btn-p btn-w" id="planValidateBtn" onclick="validatePlanning()" style="background:var(--gn);width:100%;padding:14px;font-size:.9rem;font-weight:900;letter-spacing:.04em">✅ Valider le planning</button></div>
         <div class="plan-mobile-bottom" id="planMobileBottom">
           <button class="btn btn-o btn-w" onclick="addPlanningLine()" id="planMobileAddBtn" style="width:100%;padding:12px;font-weight:800;border:1px dashed var(--bd);background:var(--sf);color:var(--t2);margin-bottom:14px">+ Ajouter une ligne</button>
           <div class="card" id="planMobileSummaryCard" style="margin-bottom:14px;display:none"><div class="card-h" style="padding:10px 14px"><div class="card-t" style="font-size:.85rem">📊 Synthèse rapide</div></div><div class="card-b" style="padding:10px"><div id="planMobileSummary"></div></div></div>
           <div class="card" id="planMobileLoadInfo" style="display:none"><div class="card-b" style="font-size:.75rem;padding:12px 14px"><div style="color:var(--t3);font-weight:800;margin-bottom:8px">👤 Charge par chauffeur</div><div id="planMobileLoadDriverPills" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px"></div><div style="font-size:.62rem;color:var(--t4);display:flex;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--bd)"><span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--sf2);border:1px solid var(--bd);vertical-align:middle;margin-right:3px"></span>Libre</span><span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#F59E0B;vertical-align:middle;margin-right:3px"></span>1-4 rot</span><span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--er);vertical-align:middle;margin-right:3px"></span>5+ rot (risque)</span></div></div></div>
         </div>
+        <div id="planValidateBar" style="margin-top:16px;display:none"><button class="btn btn-p btn-w" id="planValidateBtn" onclick="validatePlanning()" style="background:var(--gn);width:100%;padding:14px;font-size:.9rem;font-weight:900;letter-spacing:.04em">✅ Valider le planning</button></div>
       </div>
       <div class="page" id="page-commandes">
         <div class="ph"><div><div class="pt">Commandes</div><div class="ps">Gestion et suivi</div></div><div style="display:flex;gap:6px"><button class="btn btn-o btn-s" onclick="togglePageHelp('commandes')">💡 Aide</button><button class="btn btn-o btn-s hidden" id="syncCmdBtn" onclick="syncNow()">🔄</button><button class="btn btn-p" onclick="openOrderModal()">+ Commande</button></div></div>
