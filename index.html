@@ -94,6 +94,7 @@ td{padding:10px 12px;vertical-align:middle}
 .access-badge .ab-close:hover{opacity:1}
 .access-badge--gerant{background:linear-gradient(135deg,rgba(245,158,11,.18),rgba(245,158,11,.08));border-color:rgba(245,158,11,.5);color:#FCD34D;box-shadow:0 4px 18px rgba(245,158,11,.18),inset 0 1px 0 rgba(255,255,255,.08)}
 .access-badge--mecano{background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(59,130,246,.08));border-color:rgba(59,130,246,.55);color:#93C5FD;box-shadow:0 4px 18px rgba(59,130,246,.2),inset 0 1px 0 rgba(255,255,255,.08)}
+.access-badge--demo{background:linear-gradient(135deg,rgba(168,162,158,.22),rgba(168,162,158,.08));border-color:rgba(168,162,158,.5);color:#E7E5E4;box-shadow:0 4px 18px rgba(168,162,158,.18),inset 0 1px 0 rgba(255,255,255,.08)}
 @keyframes bdgIn{from{opacity:0;transform:translateY(-6px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
 .pin-dots{display:flex;gap:18px;margin-bottom:28px;position:relative;z-index:1;animation:fi .5s .12s ease both}
 .pin-dot{width:14px;height:14px;border-radius:50%;border:2.5px solid rgba(255,255,255,.35);transition:all .15s;background:rgba(255,255,255,.05)}
@@ -342,7 +343,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
       <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
     </div>
-    <span class="ver-tag">v10.22 — 2026</span>
+    <span class="ver-tag">v10.23 — 2026</span>
   </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
@@ -575,15 +576,35 @@ if(data.tarifs_clients?.length)db.clientTariffs=data.tarifs_clients.map(t=>{var 
 if(data.expense_types?.length){db.expenseTypes=data.expense_types.map(t=>({id:String(t.id),label:String(t.label||t.id)}));}else{db.expenseTypes=[];}
 if(data.company){remoteConfig.company_name=data.company.name||data.company.raison_sociale||'';remoteConfig.company_address=data.company.address||data.company.adresse||'';remoteConfig.company_postal=data.company.postal||data.company.code_postal||'';remoteConfig.company_city=data.company.city||data.company.ville||'';remoteConfig.company_siret=data.company.siret||'';remoteConfig.company_licence=data.company.licence||'';remoteConfig.company_phone=data.company.phone||data.company.telephone||'';remoteConfig.company_email=data.company.email||'';if(data.company.gerant_pin)GERANT_PIN=String(data.company.gerant_pin);if(data.company.mecano_pin)MECANO_PIN=String(data.company.mecano_pin);remoteConfig.company_cnr_ref=data.company.cnr_ref||data.company.company_cnr_ref||0;remoteConfig.company_cnr_current=data.company.cnr_current||data.company.company_cnr_current||0;remoteConfig.company_cnr_weight=data.company.cnr_weight||data.company.company_cnr_weight||0;remoteConfig.company_tva=data.company.tva||data.company.company_tva||20;localStorage.setItem('sotransnord_config_cache',JSON.stringify(remoteConfig));}addAudit('Synchronisation',db.orders.length+' cmd · '+db.drivers.length+' chauffeurs');}
 let demoSnapshot=null;
-function activateDemo(){state.mode='demo';saveDemoSnapshot();restoreDemoSnapshot();showToast('🎭 Gérant:123456 | Thomas:111111 | Kevin:222222','warning',6000);}
+function activateDemo(){
+  state.mode='demo';loginRole='chauffeur';
+  state.pinValue='';state.pinAttempts=0;state.pinLocked=false;updatePinDots();
+  var errEl=document.getElementById('pinError');if(errEl)errEl.textContent='';
+  var attEl=document.getElementById('pinAttempts');if(attEl)attEl.textContent='';
+  saveDemoSnapshot();restoreDemoSnapshot();
+  ['demo','gerant','mecano'].forEach(function(k){var b=document.getElementById('apill-'+k);if(b)b.classList.toggle('on',k==='demo');});
+  var badge=document.getElementById('accessModeBadge');var ico=document.getElementById('accessModeIco');var txt=document.getElementById('accessModeText');
+  if(badge){badge.classList.remove('access-badge--gerant','access-badge--mecano','access-badge--demo');badge.classList.add('access-badge--demo','show');if(ico)ico.textContent='🎭';if(txt)txt.textContent='Accès Démo';}
+  document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=false);
+  showToast('🎭 Gérant:123456 | Thomas:111111 | Kevin:222222','warning',6000);
+}
+function exitDemoMode(){
+  if(state.mode!=='demo')return;
+  state.mode='real';demoSnapshot=null;
+  db.drivers=[];db.trucks=[];db.clients=[];db.expenses=[];db.dayReports=[];db.orders=[];db.audit=[];db.clientTariffs=[];db.annualData={};
+  try{preloadDrivers();}catch(e){}
+  updateModeUI();
+}
 function updateModeUI(){const s=document.getElementById('syncCmdBtn');if(s)s.style.display=state.mode==='real'?'':'none';const i=document.getElementById('modeIndicator');if(i){i.textContent=state.mode==='demo'?'🎭 DÉMO':'';i.style.display=state.mode==='demo'?'':'none';}}
 function saveDemoSnapshot(){if(!demoSnapshot){const T=new Date().toISOString().split('T')[0];const Y=new Date(Date.now()-86400000).toISOString().split('T')[0];demoSnapshot={drivers:[{id:1,name:'Thomas Leroy',birth:'1985-03-14',phone:'06 12 34 56 78',email:'t.leroy@mail.fr',licence:'CE',pin:'111111',status:'actif',docs:[]},{id:2,name:'Kevin Martin',birth:'1990-07-22',phone:'06 98 76 54 32',email:'k.martin@mail.fr',licence:'C',pin:'222222',status:'actif',docs:[]},{id:3,name:'Sébastien Dubois',birth:'1978-11-05',phone:'06 55 44 33 22',email:'s.dubois@mail.fr',licence:'CE',pin:'333333',status:'actif',docs:[]}],trucks:[{id:1,plate:'AB-123-CD',type:'Benne 8x4',km:152430,ct:'2025-09-15',status:'actif',docs:[]},{id:2,plate:'EF-456-GH',type:'Benne 6x4',km:98200,ct:'2025-12-01',status:'actif',docs:[]},{id:3,plate:'IJ-789-KL',type:'Ampliroll',km:203100,ct:'2024-11-30',status:'ct_expire',docs:[]}],clients:[{id:1,company:'SARL Dupont BTP',manager:'Jean Dupont',phone:'03 20 11 22 33',email:'contact@dupont-btp.fr'},{id:2,company:'Entreprise Moreau',manager:'Pierre Moreau',phone:'03 21 44 55 66',email:'p.moreau@moreau-tp.fr'},{id:3,company:'Constructions Bernard',manager:'Marc Bernard',phone:'06 70 80 90 10',email:'m.bernard@bernard-constr.fr'}],orders:[{id:1,clientId:1,address:"ZAC du Moulin, Villeneuve d'Ascq",date:T,truckId:1,driverId:1,type:'materiaux',materialId:1,nbEstimated:4,nbDone:2,status:'en_cours',transports:[{id:1,done:true,tonnage:18.5,receiver:'M. Gautier',func:'Chef chantier',sig:'✓'},{id:2,done:true,tonnage:19.0,receiver:'M. Gautier',func:'Chef chantier',sig:'✓'},{id:3,done:false,tonnage:null,receiver:null,func:null,sig:null},{id:4,done:false,tonnage:null,receiver:null,func:null,sig:null}]},{id:2,clientId:2,address:'Rue des Acacias, Lille',date:T,truckId:2,driverId:2,type:'journee',materialId:null,nbEstimated:1,nbDone:0,status:'en_cours',transports:[{id:1,done:false,tonnage:null,receiver:null,func:null,sig:null}]},{id:3,clientId:3,address:'Avenue de la Gare, Roubaix',date:Y,truckId:1,driverId:3,type:'materiaux',materialId:2,nbEstimated:3,nbDone:3,status:'termine',transports:[{id:1,done:true,tonnage:20.0,receiver:'M. Simon',func:'Conducteur',sig:'✓'},{id:2,done:true,tonnage:19.5,receiver:'M. Simon',func:'Conducteur',sig:'✓'},{id:3,done:true,tonnage:21.0,receiver:'M. Simon',func:'Conducteur',sig:'✓'}]}],expenses:[{id:1,truckId:1,date:T,type:'carburant',amount:210.00,desc:'Plein complet'},{id:2,truckId:2,date:T,type:'carburant',amount:185.50,desc:'Plein complet'}],materials:JSON.parse(JSON.stringify(db.materials)),tariffs:JSON.parse(JSON.stringify(db.tariffs))};}}
 function restoreDemoSnapshot(){if(demoSnapshot){db.drivers=JSON.parse(JSON.stringify(demoSnapshot.drivers));db.trucks=JSON.parse(JSON.stringify(demoSnapshot.trucks));db.clients=JSON.parse(JSON.stringify(demoSnapshot.clients));db.orders=JSON.parse(JSON.stringify(demoSnapshot.orders));db.expenses=JSON.parse(JSON.stringify(demoSnapshot.expenses));db.materials=JSON.parse(JSON.stringify(demoSnapshot.materials));db.tariffs=JSON.parse(JSON.stringify(demoSnapshot.tariffs));}}
 let loginRole='chauffeur';
-function switchLoginRole(r){loginRole=r;state.pinValue='';state.pinAttempts=0;state.pinLocked=false;updatePinDots();document.getElementById('pinError').textContent='';document.getElementById('pinAttempts').textContent='';
+function switchLoginRole(r){
+  if((r==='gerant'||r==='mecano'||r==='chauffeur')&&state.mode==='demo'){exitDemoMode();}
+  loginRole=r;state.pinValue='';state.pinAttempts=0;state.pinLocked=false;updatePinDots();document.getElementById('pinError').textContent='';document.getElementById('pinAttempts').textContent='';
   ['demo','gerant','mecano'].forEach(function(k){var b=document.getElementById('apill-'+k);if(b)b.classList.toggle('on',r===k);});
   var badge=document.getElementById('accessModeBadge');var ico=document.getElementById('accessModeIco');var txt=document.getElementById('accessModeText');
-  if(badge){badge.classList.remove('access-badge--gerant','access-badge--mecano','show');
+  if(badge){badge.classList.remove('access-badge--gerant','access-badge--mecano','access-badge--demo','show');
     if(r==='gerant'){badge.classList.add('access-badge--gerant','show');if(ico)ico.textContent='👔';if(txt)txt.textContent='Accès Gérant';}
     else if(r==='mecano'){badge.classList.add('access-badge--mecano','show');if(ico)ico.textContent='🔧';if(txt)txt.textContent='Accès Mécanicien';}
   }
