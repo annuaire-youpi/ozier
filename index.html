@@ -138,6 +138,21 @@ td{padding:10px 12px;vertical-align:middle}
 #modeIndicator{display:none;background:rgba(217,119,6,.1);color:var(--wa);border:1px solid rgba(217,119,6,.15);border-radius:5px;padding:2px 7px;font-size:.6rem;font-weight:900;letter-spacing:.06em}
 .bnav{display:flex;background:var(--sf);border-top:1px solid var(--bd);padding:4px 0 env(safe-area-inset-bottom,6px);flex-shrink:0;z-index:100}
 .bt{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:6px 0 3px;border:none;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .12s;position:relative}
+
+/* ─── BOTTOM SHEET "PLUS" (mobile menu overflow) ─── */
+.more-sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:998;opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
+.more-sheet-backdrop.open{opacity:1;visibility:visible}
+.more-sheet{position:fixed;left:0;right:0;bottom:0;background:var(--sf);border-radius:18px 18px 0 0;padding:14px 16px 28px;box-shadow:0 -8px 28px rgba(0,0,0,.18);z-index:999;transform:translateY(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);max-height:80vh;overflow-y:auto}
+.more-sheet.open{transform:translateY(0)}
+.more-sheet-handle{width:40px;height:4px;background:var(--bd);border-radius:99px;margin:0 auto 14px}
+.more-sheet-title{font-size:.95rem;font-weight:900;text-align:center;margin-bottom:14px;color:var(--t1)}
+.more-sheet-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.more-sheet-item{background:var(--sf2);border:1px solid var(--bd);border-radius:12px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .12s;font-family:inherit}
+.more-sheet-item:active{transform:scale(.95);background:var(--bd)}
+.more-sheet-item.on{background:var(--rdg);border-color:var(--rd)}
+.more-sheet-item.on .more-sheet-item-label{color:var(--rd);font-weight:800}
+.more-sheet-item-ico{font-size:1.4rem;line-height:1}
+.more-sheet-item-label{font-size:.7rem;font-weight:700;color:var(--t2);text-align:center;line-height:1.2}
 .bt-i{font-size:1.15rem;transition:transform .12s}
 .bt-l{font-size:.58rem;font-weight:800;color:var(--t4);letter-spacing:.02em;transition:color .12s}
 .bt.on .bt-i{transform:scale(1.12)}
@@ -487,7 +502,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
       <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
     </div>
-    <span class="ver-tag">v10.41 — 2026</span>
+    <span class="ver-tag">v10.42 — 2026</span>
   </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
@@ -781,6 +796,12 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       </div>
     </main>
     <nav class="bnav" id="bottomNav"></nav>
+    <div class="more-sheet-backdrop" id="moreSheetBackdrop" onclick="closeMoreSheet()"></div>
+    <div class="more-sheet" id="moreSheet">
+      <div class="more-sheet-handle"></div>
+      <div class="more-sheet-title">Plus de menus</div>
+      <div class="more-sheet-grid" id="moreSheetGrid"></div>
+    </div>
   </div>
 </div>
 <div class="mo" id="orderModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title" id="orderModalTitle">Nouvelle commande</div>
@@ -987,9 +1008,41 @@ const ANOMALIES_LIST=[
 
 const NAV_C=[{id:'driver-day',label:'Transports',icon:'🚛',mob:'🚛',page:'page-driver-day'},{id:'driver-fiche',label:'Fiche jour',icon:'📝',mob:'📝',page:'page-driver-fiche'},{id:'driver-profile',label:'Profil',icon:'👤',mob:'👤',page:'page-driver-profile'}];
 const NAV_M=[{id:'meca-dashboard',label:'Atelier',icon:'🔧',mob:'🔧',page:'page-meca-dashboard'},{id:'meca-flotte',label:'Flotte',icon:'🚛',mob:'🚛',page:'page-meca-flotte'},{id:'meca-repairs',label:'Réparations',icon:'🛠️',mob:'🛠️',page:'page-meca-repairs'},{id:'meca-frais',label:'Entretien',icon:'💸',mob:'💸',page:'page-meca-frais'},{id:'meca-obs',label:'Signalements',icon:'📝',mob:'📝',page:'page-meca-obs'}];
-const MOB_G_TABS=['dashboard','planning','commandes','donnees','marge'];
+// 4 menus principaux directement en barre du bas (gérant)
+// Les autres (réparations, rapports, marge) accessibles via bouton "Plus"
+const MOB_G_TABS=['dashboard','planning','commandes','donnees'];
 function initApp(){const u=state.currentUser;document.getElementById('topbarAvatar').textContent=u.initials||'U';document.getElementById('topbarName').textContent=u.name;updateModeUI();const nav=u.role==='gerant'?NAV_G:(u.role==='mecano'?NAV_M:NAV_C);buildNav(nav,u.role);navigate(u.role==='gerant'?'dashboard':(u.role==='mecano'?'meca-dashboard':'driver-day'));}
-function buildNav(nav,role){const sn=document.getElementById('sidenav');sn.innerHTML='<div class="sn-logo"><div class="sn-mark">SN</div><div class="sn-name">SOTRANSNORD</div></div><div class="sn-sec"><div class="sn-lb">Navigation</div>'+nav.map(n=>'<button class="sn-it" id="sn-'+n.id+'" onclick="navigate(\''+n.id+'\')"><span class="ni">'+n.icon+'</span> '+n.label+'</button>').join('')+'</div><div class="sn-ft"><button class="sn-it" onclick="logout()" style="color:rgba(255,80,80,.5)"><span class="ni">⏻</span> Déconnexion</button></div>';const bn=document.getElementById('bottomNav');const tabs=role==='gerant'?MOB_G_TABS:nav.map(n=>n.id);bn.innerHTML=tabs.map(id=>{const n=nav.find(x=>x.id===id);if(!n)return'';return'<button class="bt" id="bt-'+n.id+'" onclick="navigate(\''+n.id+'\')"><span class="bt-i">'+n.mob+'</span><span class="bt-l">'+n.label+'</span></button>';}).join('');}
+function buildNav(nav,role){
+  const sn=document.getElementById('sidenav');
+  sn.innerHTML='<div class="sn-logo"><div class="sn-mark">SN</div><div class="sn-name">SOTRANSNORD</div></div><div class="sn-sec"><div class="sn-lb">Navigation</div>'+nav.map(n=>'<button class="sn-it" id="sn-'+n.id+'" onclick="navigate(\''+n.id+'\')"><span class="ni">'+n.icon+'</span> '+n.label+'</button>').join('')+'</div><div class="sn-ft"><button class="sn-it" onclick="logout()" style="color:rgba(255,80,80,.5)"><span class="ni">⏻</span> Déconnexion</button></div>';
+  const bn=document.getElementById('bottomNav');
+  var directTabs;var overflowItems=[];
+  if(role==='gerant'){
+    directTabs=MOB_G_TABS.slice();
+    overflowItems=nav.filter(function(n){return MOB_G_TABS.indexOf(n.id)===-1;});
+  }else{
+    var allIds=nav.map(function(n){return n.id;});
+    if(allIds.length<=5){directTabs=allIds;overflowItems=[];}
+    else{directTabs=allIds.slice(0,4);overflowItems=nav.slice(4);}
+  }
+  var html=directTabs.map(function(id){var n=nav.find(function(x){return x.id===id;});if(!n)return'';return'<button class="bt" id="bt-'+n.id+'" onclick="navigate(\''+n.id+'\')"><span class="bt-i">'+n.mob+'</span><span class="bt-l">'+n.label+'</span></button>';}).join('');
+  if(overflowItems.length>0){html+='<button class="bt" id="bt-more" onclick="openMoreSheet()"><span class="bt-i">⋯</span><span class="bt-l">Plus</span></button>';}
+  bn.innerHTML=html;
+  window._moreNavOverflow=overflowItems;
+}
+
+function openMoreSheet(){
+  var grid=document.getElementById('moreSheetGrid');
+  var items=window._moreNavOverflow||[];
+  grid.innerHTML=items.map(function(n){var on=(state.currentPage===n.id)?' on':'';return '<button class="more-sheet-item'+on+'" onclick="navigateFromMore(\''+n.id+'\')"><span class="more-sheet-item-ico">'+n.mob+'</span><span class="more-sheet-item-label">'+escapeHtml(n.label)+'</span></button>';}).join('');
+  document.getElementById('moreSheetBackdrop').classList.add('open');
+  document.getElementById('moreSheet').classList.add('open');
+}
+function closeMoreSheet(){
+  document.getElementById('moreSheetBackdrop').classList.remove('open');
+  document.getElementById('moreSheet').classList.remove('open');
+}
+function navigateFromMore(id){closeMoreSheet();setTimeout(function(){navigate(id);},150);}
 function navigate(id){const nav=state.role==='gerant'?NAV_G:(state.role==='mecano'?NAV_M:NAV_C);const item=nav.find(n=>n.id===id);if(!item)return;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(item.page).classList.add('active');document.querySelectorAll('.sn-it').forEach(el=>el.classList.remove('on'));document.querySelectorAll('.bt').forEach(el=>el.classList.remove('on'));const s=document.getElementById('sn-'+id);if(s)s.classList.add('on');const b=document.getElementById('bt-'+id);if(b)b.classList.add('on');state.currentPage=id;renderPage(id);}
 function renderPage(id){switch(id){case'dashboard':renderDashboard();break;case'planning':renderPlanning();break;case'commandes':renderOrders();break;case'donnees':renderDonnees();break;case'rapports':renderRapports();break;case'marge':renderMarginTable();break;case'reparations':renderRepairsGerant();break;case'driver-day':renderDriverDay();break;case'driver-fiche':renderDriverFiche();break;case'driver-profile':renderDriverProfile();break;case'meca-dashboard':renderMecaDashboard();break;case'meca-flotte':renderMecaFlotte();break;case'meca-frais':renderMecaFrais();break;case'meca-obs':renderMecaObs();break;case'meca-repairs':renderMecaRepairs();break;}}
 function renderDonnees(){if(!db.expenseTypes)loadExpenseTypes();renderDriversTable();renderTrucks();renderClients();renderMaterials();renderExpenses();renderFiches();}
@@ -1450,7 +1503,16 @@ function openRepairModalUI(){
     src.innerHTML='<span style="color:var(--t4);font-style:italic">Aucun signalement source — fiche créée manuellement</span>';
   }else{
     var driver=db.drivers.find(function(d){return String(d.id)===String(r.sourceDriverId);});
-    var html=driver?'<div style="font-weight:700;color:var(--t2);margin-bottom:4px">👤 Signalé par <b>'+escapeHtml(driver.name||'')+'</b></div>':'';
+    var html='';
+    if(driver){
+      html+='<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;flex-wrap:wrap"><div style="font-weight:700;color:var(--t2)">👤 Signalé par <b>'+escapeHtml(driver.name||'')+'</b></div>';
+      // Bouton appel chauffeur si numéro disponible
+      if(driver.phone&&typeof driver.phone==='string'&&driver.phone.trim()){
+        var tel=driver.phone.replace(/\s/g,'');
+        html+='<a href="tel:'+tel+'" style="display:inline-flex;align-items:center;gap:6px;background:var(--gn);color:#fff;text-decoration:none;padding:6px 10px;border-radius:99px;font-size:.7rem;font-weight:800;letter-spacing:.02em" title="Appeler '+escapeHtml(driver.name||'')+'">📞 '+escapeHtml(driver.phone)+'</a>';
+      }
+      html+='</div>';
+    }
     if(v.length>0){html+='<div style="margin-bottom:4px"><b style="color:var(--er)">🚨 Voyants :</b> ';html+=v.map(function(vid){var vo=VOYANTS_LIST.find(function(x){return x.id===vid;});return vo?(vo.ico+' '+vo.label):vid;}).join(' · ');html+='</div>';}
     if(a.length>0){html+='<div style="margin-bottom:4px"><b style="color:#92400E">🔍 Anomalies :</b> ';html+=a.map(function(aid){var an=ANOMALIES_LIST.find(function(x){return x.id===aid;});return an?(an.ico+' '+an.label):aid;}).join(' · ');html+='</div>';}
     if(n)html+='<div style="font-style:italic;color:var(--t2);margin-top:4px">💬 <b>Observation du chauffeur :</b> '+escapeHtml(n)+'</div>';
