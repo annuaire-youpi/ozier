@@ -422,7 +422,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
       <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
     </div>
-    <span class="ver-tag">v10.34 — 2026</span>
+    <span class="ver-tag">v10.35 — 2026</span>
   </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
@@ -1094,9 +1094,9 @@ function renderMecaObs(search){var s=(search||'').toLowerCase();var list=(db.day
 function openTransportModal(oid,tid){const o=db.orders.find(x=>String(x.id)===String(oid));if(!o)return;const t=o.transports.find(x=>String(x.id)===String(tid));if(!t||t.done)return;state.currentOrder=o;state.currentTransport=t;const isJournee=o.type==='journee';document.getElementById('transportModalTitle').textContent=isJournee?'Validation journée':'Transport #'+tid;document.getElementById('transportModalInfo').innerHTML='<div style="display:flex;flex-wrap:wrap;gap:5px"><span class="oc-m">🏢 '+clientName(o.clientId)+'</span><span class="oc-m">📍 '+o.address+'</span>'+(o.materialId?'<span class="oc-m">⚙️ '+materialName(o.materialId)+'</span>':'')+'<span class="oc-m">'+(isJournee?'📅 Prestation à la journée':'')+'</span></div>';document.getElementById('tm-tonnage-group').style.display=isJournee?'none':'';document.getElementById('tm-tonnage').value='';document.getElementById('tm-receiver-name').value='';document.getElementById('tm-receiver-func').value='';initSigPad();openModal('transportModal');}
 function confirmTransport(){const o=state.currentOrder;const isJournee=o&&o.type==='journee';const ton=isJournee?0:parseFloat(document.getElementById('tm-tonnage').value);const rec=document.getElementById('tm-receiver-name').value.trim();const fn=document.getElementById('tm-receiver-func').value.trim();if(!isJournee&&(!ton||isNaN(ton))){showToast('⚠️ Tonnage requis','error');return;}if(!rec){showToast('⚠️ Réceptionnaire requis','error');return;}const sig=getSigData();if(!sig){showToast('⚠️ Signature requise','error');return;}const t=state.currentTransport;t.done=true;t.tonnage=ton;t.receiver=rec;t.func=fn;t.sig=sig;t.ts=new Date().toLocaleString('fr-FR');o.nbDone=o.transports.filter(x=>x.done).length;if(o.nbDone>=o.nbEstimated)o.status='termine';addAudit(isJournee?'Journée validée':'Transport validé',clientName(o.clientId)+(isJournee?'':' — '+ton+'T'));syncSheets('transportDone',{orderId:o.id,transportId:t.id,tonnage:ton,receiver:rec,func:fn,timestamp:new Date().toISOString(),nbDone:o.nbDone,nbEstimated:o.nbEstimated,status:o.status});closeModal('transportModal');renderDriverDay();showToast('✅ '+(isJournee?'Journée validée':'Transport validé'),'success',4000);autoSendBDL(o,t);}
 // ═══════════════════════════════════════════════════════════════
-// 🎤 DICTÉE VOCALE — Web Speech API — v10.34
+// 🎤 DICTÉE VOCALE — Web Speech API — v10.35
 // ═══════════════════════════════════════════════════════════════
-var _voiceRecognition=null;var _voiceActiveTarget=null;var _voiceActiveBtnId=null;var _voiceActiveStatusId=null;var _voiceBaseText='';
+var _voiceRecognition=null;var _voiceActiveTarget=null;var _voiceActiveBtnId=null;var _voiceActiveStatusId=null;var _voiceBaseText='';var _voiceLastFinalIdx=-1;
 function isVoiceSupported(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition);}
 function toggleVoiceDictation(targetId,btnId,statusId){
   if(!isVoiceSupported()){showToast('⚠️ Dictée vocale non supportée sur ce navigateur (essayez Chrome ou Safari)','warning',6000);return;}
@@ -1107,11 +1107,18 @@ function toggleVoiceDictation(targetId,btnId,statusId){
   rec.lang='fr-FR';rec.continuous=true;rec.interimResults=true;rec.maxAlternatives=1;
   var ta=document.getElementById(targetId);var status=document.getElementById(statusId);
   _voiceBaseText=(ta.value||'').trim();if(_voiceBaseText&&!_voiceBaseText.match(/[.!?]\s*$/))_voiceBaseText+='. ';else if(_voiceBaseText)_voiceBaseText+=' ';
-  _voiceActiveTarget=targetId;_voiceActiveBtnId=btnId;_voiceActiveStatusId=statusId;
+  _voiceActiveTarget=targetId;_voiceActiveBtnId=btnId;_voiceActiveStatusId=statusId;_voiceLastFinalIdx=-1;
   rec.onstart=function(){if(btn){btn.classList.add('recording');btn.querySelector('.voice-mic-label').textContent='Stop';}if(status){status.classList.add('listening');status.textContent='🔴 Écoute en cours... parlez maintenant';}showToast('🎤 Dictée activée — parlez clairement','success',3000);};
-  rec.onresult=function(event){var finalText='';var interimText='';for(var i=event.resultIndex;i<event.results.length;i++){var r=event.results[i];if(r.isFinal)finalText+=r[0].transcript;else interimText+=r[0].transcript;}if(finalText){_voiceBaseText+=finalText.trim()+' ';ta.value=_voiceBaseText;}else{ta.value=_voiceBaseText+interimText;}if(status){if(interimText){status.innerHTML='🔴 Écoute... <span class="voice-interim">'+escapeHtml(interimText)+'</span>';}else{status.textContent='🔴 Écoute en cours...';}}};
+  rec.onresult=function(event){var newFinalText='';var interimText='';
+    for(var i=0;i<event.results.length;i++){var r=event.results[i];
+      if(r.isFinal){if(i>_voiceLastFinalIdx){newFinalText+=r[0].transcript;_voiceLastFinalIdx=i;}}
+      else{interimText+=r[0].transcript;}
+    }
+    if(newFinalText){_voiceBaseText+=newFinalText.trim()+' ';ta.value=_voiceBaseText;}
+    else{ta.value=_voiceBaseText+interimText;}
+    if(status){if(interimText){status.innerHTML='🔴 Écoute... <span class="voice-interim">'+escapeHtml(interimText)+'</span>';}else{status.textContent='🔴 Écoute en cours...';}}};
   rec.onerror=function(event){var msg='Erreur micro';if(event.error==='not-allowed')msg='⚠️ Microphone refusé — autorisez l\'accès dans les réglages du navigateur';else if(event.error==='no-speech')msg='⚠️ Aucune parole détectée';else if(event.error==='audio-capture')msg='⚠️ Pas de micro détecté';else if(event.error==='network')msg='⚠️ Connexion internet requise pour la dictée';else msg='⚠️ Erreur dictée : '+event.error;showToast(msg,'error',5000);};
-  rec.onend=function(){if(btn){btn.classList.remove('recording');btn.querySelector('.voice-mic-label').textContent='Dicter';}if(status){status.classList.remove('listening');status.textContent='';}_voiceRecognition=null;_voiceActiveTarget=null;ta.value=ta.value.trim();};
+  rec.onend=function(){if(btn){btn.classList.remove('recording');btn.querySelector('.voice-mic-label').textContent='Dicter';}if(status){status.classList.remove('listening');status.textContent='';}_voiceRecognition=null;_voiceActiveTarget=null;_voiceLastFinalIdx=-1;ta.value=ta.value.trim();};
   try{rec.start();_voiceRecognition=rec;}catch(e){showToast('⚠️ Impossible de démarrer la dictée : '+e.message,'error',5000);_voiceRecognition=null;}
 }
 
