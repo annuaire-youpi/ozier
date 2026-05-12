@@ -385,7 +385,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
       <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
     </div>
-    <span class="ver-tag">v10.29 — 2026</span>
+    <span class="ver-tag">v10.30 — 2026</span>
   </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
@@ -435,7 +435,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
           <div class="sc"><div class="sc-i">⚠️</div><div class="sc-v" id="plan-stat-incomplete" style="color:var(--wa)">0</div><div class="sc-l">À compléter</div></div>
           <div class="sc"><div class="sc-i">💰</div><div class="sc-v" id="plan-stat-ca">—</div><div class="sc-l">CA estimé</div></div>
         </div>
-        <div class="card" id="planLoadInfo" style="margin-bottom:10px;display:none"><div class="card-b" style="font-size:.75rem"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px"><span style="color:var(--t3);font-weight:800;min-width:130px">⚖️ Charge par camion :</span><div id="planLoadPills" style="display:flex;gap:6px;flex-wrap:wrap"></div></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;padding-top:6px;border-top:1px solid var(--bd)"><span style="color:var(--t3);font-weight:800;min-width:130px">👤 Charge par chauffeur :</span><div id="planLoadDriverPills" style="display:flex;gap:6px;flex-wrap:wrap"></div></div><div style="font-size:.68rem;color:var(--t4);display:flex;gap:14px;flex-wrap:wrap;padding-top:6px;border-top:1px solid var(--bd)"><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--sf2);border:1px solid var(--bd);vertical-align:middle;margin-right:4px"></span> Libre · pas encore affecté</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#F59E0B;vertical-align:middle;margin-right:4px"></span> Occupé · 1-2 commandes</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--er);vertical-align:middle;margin-right:4px"></span> Surchargé · 3+ commandes (risque)</span></div></div></div>
+        <div class="card" id="planLoadInfo" style="margin-bottom:10px;display:none"><div class="card-b" style="font-size:.75rem"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px"><span style="color:var(--t3);font-weight:800;min-width:130px">⚖️ Charge par camion :</span><div id="planLoadPills" style="display:flex;gap:6px;flex-wrap:wrap"></div></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;padding-top:6px;border-top:1px solid var(--bd)"><span style="color:var(--t3);font-weight:800;min-width:130px">👤 Charge par chauffeur :</span><div id="planLoadDriverPills" style="display:flex;gap:6px;flex-wrap:wrap"></div></div><div style="font-size:.68rem;color:var(--t4);display:flex;gap:14px;flex-wrap:wrap;padding-top:6px;border-top:1px solid var(--bd)"><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--sf2);border:1px solid var(--bd);vertical-align:middle;margin-right:4px"></span> Libre · pas encore affecté</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#F59E0B;vertical-align:middle;margin-right:4px"></span> Occupé · 1-4 rotations</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--er);vertical-align:middle;margin-right:4px"></span> Surchargé · 5+ rotations (risque)</span></div></div></div>
         <div id="planningContent"></div>
         <div id="planValidateBar" style="margin-top:16px;display:none"><button class="btn btn-p btn-w" id="planValidateBtn" onclick="validatePlanning()" style="background:var(--gn);width:100%;padding:14px;font-size:.9rem;font-weight:900;letter-spacing:.04em">✅ Valider le planning</button></div>
       </div>
@@ -827,8 +827,8 @@ function updatePlanningRowState(idx){var d=db.draftOrders[idx];if(!d)return;var 
 function renderPlanLoadPills(){var loadT=planningTruckLoad();var loadD=planningDriverLoad();var truckEntries=Object.keys(loadT);var driverEntries=Object.keys(loadD);
   var loadInfo=document.getElementById('planLoadInfo');var pillsT=document.getElementById('planLoadPills');var pillsD=document.getElementById('planLoadDriverPills');
   if((truckEntries.length>0||driverEntries.length>0)&&loadInfo){loadInfo.style.display='';
-    if(pillsT)pillsT.innerHTML=db.trucks.map(function(t){var n=loadT[t.id]||0;var cls=n===0?'free':(n<=2?'busy':'full');return '<span class="plan-load-pill '+cls+'">'+escapeHtml(t.plate)+(n>0?' · '+n+' cmd':' · libre')+'</span>';}).join('');
-    if(pillsD)pillsD.innerHTML=db.drivers.filter(function(x){return x.status==='actif'||!x.status;}).map(function(dr){var n=loadD[dr.id]||0;var cls=n===0?'free':(n<=2?'busy':'full');return '<span class="plan-load-pill '+cls+'">'+escapeHtml(dr.name)+(n>0?' · '+n+' cmd':' · libre')+'</span>';}).join('');
+    if(pillsT)pillsT.innerHTML=db.trucks.map(function(t){var n=loadT[t.id]||0;var cls=n===0?'free':(n<=4?'busy':'full');return '<span class="plan-load-pill '+cls+'">'+escapeHtml(t.plate)+(n>0?' · '+n+' rot':' · libre')+'</span>';}).join('');
+    if(pillsD)pillsD.innerHTML=db.drivers.filter(function(x){return x.status==='actif'||!x.status;}).map(function(dr){var n=loadD[dr.id]||0;var cls=n===0?'free':(n<=4?'busy':'full');return '<span class="plan-load-pill '+cls+'">'+escapeHtml(dr.name)+(n>0?' · '+n+' rot':' · libre')+'</span>';}).join('');
   }else if(loadInfo){loadInfo.style.display='none';}}
 
 function updatePlanningHeader(){var drafts=db.draftOrders||[];var ready=drafts.filter(isPlanLineReady);var incomplete=drafts.length-ready.length;var totalCA=ready.reduce(function(s,d){return s+planLineCA(d);},0);
@@ -839,8 +839,8 @@ function updatePlanningHeader(){var drafts=db.draftOrders||[];var ready=drafts.f
   var btn=document.getElementById('planValidateBtn');if(btn){btn.textContent='✅ Valider le planning — créer '+drafts.length+' commande'+(drafts.length>1?'s':'');if(incomplete>0){btn.style.background='var(--t3)';btn.style.opacity='.7';}else{btn.style.background='var(--gn)';btn.style.opacity='1';}}
   renderPlanLoadPills();}
 
-function planningTruckLoad(){var load={};(db.draftOrders||[]).forEach(function(d){if(d.truckId){load[d.truckId]=(load[d.truckId]||0)+1;}});return load;}
-function planningDriverLoad(){var load={};(db.draftOrders||[]).forEach(function(d){if(d.driverId){load[d.driverId]=(load[d.driverId]||0)+1;}});return load;}
+function planningTruckLoad(){var load={};(db.draftOrders||[]).forEach(function(d){if(d.truckId){load[d.truckId]=(load[d.truckId]||0)+(parseInt(d.nb)||0);}});return load;}
+function planningDriverLoad(){var load={};(db.draftOrders||[]).forEach(function(d){if(d.driverId){load[d.driverId]=(load[d.driverId]||0)+(parseInt(d.nb)||0);}});return load;}
 
 function computePlanGroups(){var map={};var idx=0;(db.draftOrders||[]).forEach(function(d){if(!d.clientId||!d.address)return;var key=d.clientId+'|'+(d.address||'').trim().toLowerCase();if(!(key in map)){map[key]=idx++;}});return map;}
 
