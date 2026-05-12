@@ -483,7 +483,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
       <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
     </div>
-    <span class="ver-tag">v10.39 — 2026</span>
+    <span class="ver-tag">v10.40 — 2026</span>
   </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
@@ -1282,9 +1282,10 @@ function renderSignalementHTML(f,compact){var v=String(f.voyants||'').split('|')
     }else{
       html+='<button class="btn btn-p btn-s" onclick="createRepairFromSignalement(\''+f.id+'\')">🛠️ Créer fiche réparation</button>';
     }
-    if(driver&&driver.phone){
+    if(driver&&driver.phone&&typeof driver.phone==='string'){
       var tel=driver.phone.replace(/\s/g,'');
-      html+='<a href="tel:'+tel+'" class="btn btn-o btn-s" style="text-decoration:none">📞 Appeler '+escapeHtml(driver.name.split(' ')[0])+'</a>';
+      var firstName=(driver.name&&typeof driver.name==='string')?driver.name.split(' ')[0]:'le chauffeur';
+      html+='<a href="tel:'+tel+'" class="btn btn-o btn-s" style="text-decoration:none">📞 Appeler '+escapeHtml(firstName)+'</a>';
     }
     html+='</div>';
   }
@@ -1306,7 +1307,14 @@ function renderMecaDashboard(){document.getElementById('mecaDashDate').textConte
   // Signalements chauffeurs
   var ob=document.getElementById('mecaObsRecent');
   if(signalements.length===0){ob.innerHTML='<div class="empty"><div class="empty-i">✅</div><div class="empty-t">Aucun signalement — tout va bien</div></div>';}
-  else{ob.innerHTML=signalements.slice(0,8).map(function(f){return renderSignalementHTML(f,false);}).join('');}
+  else{
+    var htmlOut='';
+    signalements.slice(0,8).forEach(function(f){
+      try{htmlOut+=renderSignalementHTML(f,false);}
+      catch(e){console.error('Erreur rendu signalement',f,e);htmlOut+='<div style="padding:10px;background:rgba(245,158,11,.1);border-left:3px solid var(--wa);border-radius:6px;margin-bottom:6px;font-size:.74rem;color:var(--t3)">⚠️ Signalement #'+(f.id||'?')+' — erreur d\'affichage</div>';}
+    });
+    ob.innerHTML=htmlOut||'<div class="empty"><div class="empty-i">📝</div><div class="empty-t">—</div></div>';
+  }
 }
 
 function renderMecaFlotte(search){var s=(search||'').toLowerCase();var list=db.trucks.filter(function(t){return !s||(t.plate||'').toLowerCase().includes(s);});document.getElementById('mecaTrucksTableBody').innerHTML=list.length?list.map(function(t){var ctExp=t.ct?(new Date(t.ct)<new Date()):false;var ctSoon=t.ct?isExpSoon(t.ct):false;return '<tr><td style="font-weight:800">'+t.plate+'</td><td>'+(t.type||'—')+'</td><td>'+((t.km||0).toLocaleString('fr-FR'))+' km</td><td>'+(t.ct?'<span class="badge '+(ctExp?'bg-rd':(ctSoon?'bg-yl':'bg-gn'))+'">'+fmtDate(t.ct)+'</span>':'<span class="badge bg-rd">—</span>')+'</td><td>'+(t.tachy?'<span class="badge '+(isExpSoon(t.tachy)?'bg-rd':'bg-gn')+'">'+fmtDate(t.tachy)+'</span>':'—')+'</td><td>'+(t.limiteur?'<span class="badge '+(isExpSoon(t.limiteur)?'bg-rd':'bg-gn')+'">'+fmtDate(t.limiteur)+'</span>':'—')+'</td><td><div class="ta"><button class="btn btn-g btn-s btn-i" onclick="editTruck(\''+t.id+'\')">✏️</button><button class="btn btn-x btn-s btn-i" onclick="deleteTruck(\''+t.id+'\')">🗑️</button></div></td></tr>';}).join(''):'<tr><td colspan="7"><div class="empty"><div class="empty-i">🚛</div><div class="empty-t">Aucun camion</div></div></td></tr>';}
@@ -1321,7 +1329,9 @@ function renderMecaFrais(){var truckSel=document.getElementById('mecaFraisTruck'
   document.getElementById('mecaFraisTableBody').innerHTML=list.length?list.map(function(e){var truck=db.trucks.find(function(t){return String(t.id)===String(e.truckId);});var type=(db.expenseTypes||[]).find(function(t){return String(t.id)===String(e.type);});return '<tr><td>'+(e.date?fmtDate(e.date):'—')+'</td><td style="font-weight:700">'+(truck?truck.plate:'—')+'</td><td>'+(type?type.label:e.type||'—')+'</td><td style="font-weight:800;color:var(--er)">'+fmt(parseFloat(e.amount)||0)+'</td><td style="font-size:.74rem;color:var(--t3)">'+(e.description||'—')+'</td><td><div class="ta"><button class="btn btn-g btn-s btn-i" onclick="editExpense(\''+e.id+'\')">✏️</button><button class="btn btn-x btn-s btn-i" onclick="deleteExpense(\''+e.id+'\')">🗑️</button></div></td></tr>';}).join(''):'<tr><td colspan="6"><div class="empty"><div class="empty-i">🛠️</div><div class="empty-t">Aucun frais</div></div></td></tr>';}
 
 function renderMecaObs(search){var s=(search||'').toLowerCase();var list=(db.dayReports||[]).filter(function(f){var v=String(f.voyants||'').split('|').filter(Boolean);var a=String(f.anomalies||'').split('|').filter(Boolean);var n=String(f.notes||'').trim();var hasContent=v.length>0||a.length>0||n.length>0;if(!hasContent)return false;if(!s)return true;return (f.driverName||'').toLowerCase().includes(s)||n.toLowerCase().includes(s);}).sort(function(a,b){return new Date(b.date||0)-new Date(a.date||0);});
-  document.getElementById('mecaObsTableBody').innerHTML=list.length?list.map(function(f){return renderSignalementHTML(f,false);}).join(''):'<div class="empty"><div class="empty-i">📝</div><div class="empty-t">Aucun signalement</div></div>';}
+  if(list.length===0){document.getElementById('mecaObsTableBody').innerHTML='<div class="empty"><div class="empty-i">📝</div><div class="empty-t">Aucun signalement</div></div>';return;}
+  var htmlOut='';list.forEach(function(f){try{htmlOut+=renderSignalementHTML(f,false);}catch(e){console.error('Erreur rendu signalement',f,e);}});
+  document.getElementById('mecaObsTableBody').innerHTML=htmlOut||'<div class="empty"><div class="empty-i">📝</div><div class="empty-t">Aucun signalement</div></div>';}
 
 // ═══════════════════════════════════════════════════════════════
 // 🛠️ FICHES DE RÉPARATION — v10.39
