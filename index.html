@@ -382,7 +382,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
       <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
     </div>
-    <span class="ver-tag">v10.26 — 2026</span>
+    <span class="ver-tag">v10.27 — 2026</span>
   </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
@@ -415,14 +415,24 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
         <div class="card"><div class="card-h"><span class="card-t">Commandes en cours</span><button class="btn btn-g btn-s" onclick="navigate('commandes')">Voir tout →</button></div><div class="card-b" id="recentOrders"><div class="empty"><div class="empty-i">📋</div><div class="empty-t">Aucune commande</div></div></div></div>
       </div>
       <div class="page" id="page-planning">
-        <div class="ph"><div><div class="pt">📋 Planning</div><div class="ps">Préparez vos commandes en lot puis validez tout en une fois</div></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-x btn-s" onclick="clearPlanningDraft()" id="planClearBtn" style="display:none">🗑️ Tout effacer</button><button class="btn btn-p btn-s" onclick="addPlanningLine()">+ Ligne</button></div></div>
+        <div class="ph"><div><div class="pt">📋 Planning</div><div class="ps">Préparez vos commandes en lot puis validez tout en une fois</div></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-o btn-s" id="planHelpBtn" onclick="togglePlanHelp()">💡 Aide</button><button class="btn btn-x btn-s" onclick="clearPlanningDraft()" id="planClearBtn" style="display:none">🗑️ Tout effacer</button><button class="btn btn-p btn-s" onclick="addPlanningLine()">+ Ligne</button></div></div>
+        <div class="card" id="planHelpBox" style="margin-bottom:10px;display:none;border-left:3px solid var(--bl)"><div class="card-b" style="font-size:.78rem;line-height:1.6">
+          <div style="font-weight:800;margin-bottom:6px;color:var(--bl)">💡 Comment ça marche ?</div>
+          <div style="color:var(--t2)">1️⃣ <b>Saisie rapide</b> : pour chaque commande reçue, clique sur <b>"+ Ligne"</b> et remplis les champs. Tu peux laisser le camion/chauffeur vides pour les compléter plus tard.</div>
+          <div style="color:var(--t2);margin-top:4px">2️⃣ <b>Dispatch</b> : une fois toutes les commandes saisies, attribue un camion + chauffeur à chaque ligne. La <b>charge par camion</b> en bas t'aide à équilibrer.</div>
+          <div style="color:var(--t2);margin-top:4px">3️⃣ <b>Validation</b> : clique sur le bouton vert en bas → toutes les commandes sont créées d'un coup et dispatchées aux chauffeurs.</div>
+          <div style="color:var(--t2);margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)"><b>💡 Astuces :</b></div>
+          <div style="color:var(--t2);margin-top:2px">• <b>Rotations</b> = nombre d'allers-retours du camion sur le chantier (pas le nombre de camions !)</div>
+          <div style="color:var(--t2);margin-top:2px">• Le bouton <b>📋</b> sur une ligne <b>duplique</b> la ligne (utile si un même chantier nécessite plusieurs camions)</div>
+          <div style="color:var(--t2);margin-top:2px">• Ton planning est <b>auto-sauvegardé</b> en local — tu peux fermer l'app et revenir plus tard</div>
+        </div></div>
         <div class="sg">
           <div class="sc"><div class="sc-i">📋</div><div class="sc-v" id="plan-stat-total">0</div><div class="sc-l">Lignes en attente</div></div>
           <div class="sc"><div class="sc-i">✅</div><div class="sc-v" id="plan-stat-ready" style="color:var(--gn)">0</div><div class="sc-l">Prêtes à valider</div></div>
           <div class="sc"><div class="sc-i">⚠️</div><div class="sc-v" id="plan-stat-incomplete" style="color:var(--wa)">0</div><div class="sc-l">À compléter</div></div>
           <div class="sc"><div class="sc-i">💰</div><div class="sc-v" id="plan-stat-ca">—</div><div class="sc-l">CA estimé</div></div>
         </div>
-        <div class="card" id="planLoadInfo" style="margin-bottom:10px;display:none"><div class="card-b" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.75rem"><span style="color:var(--t3);font-weight:700">⚖️ Charge :</span><div id="planLoadPills" style="display:flex;gap:6px;flex-wrap:wrap"></div></div></div>
+        <div class="card" id="planLoadInfo" style="margin-bottom:10px;display:none"><div class="card-b" style="font-size:.75rem"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px"><span style="color:var(--t3);font-weight:800">⚖️ Charge par camion :</span><div id="planLoadPills" style="display:flex;gap:6px;flex-wrap:wrap"></div></div><div style="font-size:.68rem;color:var(--t4);display:flex;gap:14px;flex-wrap:wrap;padding-top:6px;border-top:1px solid var(--bd)"><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--sf2);border:1px solid var(--bd);vertical-align:middle;margin-right:4px"></span> Libre · pas encore affecté</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#F59E0B;vertical-align:middle;margin-right:4px"></span> Occupé · 1-2 commandes</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--er);vertical-align:middle;margin-right:4px"></span> Surchargé · 3+ commandes (risque)</span></div></div></div>
         <div id="planningContent"></div>
         <div id="planValidateBar" style="margin-top:16px;display:none"><button class="btn btn-p btn-w" id="planValidateBtn" onclick="validatePlanning()" style="background:var(--gn);width:100%;padding:14px;font-size:.9rem;font-weight:900;letter-spacing:.04em">✅ Valider le planning</button></div>
       </div>
@@ -772,8 +782,10 @@ function renderDriverAlerts(){const el=document.getElementById('driverAlerts');i
 function renderDriverDay(){const d=new Date();renderDriverAlerts();document.getElementById('driverDayDate').textContent=d.toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});const did=state.currentUser.id;const tds=d.toISOString().split('T')[0];const orders=db.orders.filter(o=>String(o.driverId||'').split(/[|,]/).some(function(d){return d.trim()===String(did);})&&o.status==='en_cours');let all=[];orders.forEach(o=>{var myT=getTransportsForDriver(o,did);myT.forEach(t=>{all.push({...t,orderId:o.id,cn:clientName(o.clientId),addr:o.address,mat:o.materialId?materialName(o.materialId):null,od:o.date});});});const tot=all.length;const dn=all.filter(t=>t.done).length;const pct=tot>0?Math.round((dn/tot)*100):0;document.getElementById('driverProgress').textContent=dn+'/'+tot;const bar=document.getElementById('driverProgressBar');bar.style.width=pct+'%';bar.className='prog-fill'+(pct>=100?' full':'');const list=document.getElementById('driverTransportList');if(!all.length){list.innerHTML='<div class="empty"><div class="empty-i">🚛</div><div class="empty-t">Aucun transport</div></div>';return;}list.innerHTML=all.map((t,i)=>{const isT=t.od===tds;const db2=isT?'<span class="badge bg-gn" style="font-size:.6rem">Aujourd\'hui</span>':'<span class="badge bg-yl" style="font-size:.6rem">📅 '+fmtDate(t.od)+'</span>';return'<div class="tr-item'+(t.done?' done':'')+'" onclick="'+(t.done?'':'openTransportModal(\''+t.orderId+'\',\''+t.id+'\')')+'"><div class="tr-num">'+(i+1)+'</div><div class="tr-info"><div class="tr-client" style="display:flex;align-items:center;gap:5px">'+t.cn+' '+db2+'</div><div class="tr-meta">📍 '+t.addr+(t.mat?' · '+t.mat:'')+'</div>'+(t.done?'<div style="font-size:.76rem;color:var(--gn);margin-top:4px">✅ '+t.tonnage+'T — '+t.receiver+'</div>':'<div style="font-size:.72rem;color:var(--t4);margin-top:4px;font-style:italic">Appuyez pour valider</div>')+'<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-d btn-s" onclick="event.stopPropagation();openLDV(\''+t.orderId+'\',\''+t.id+'\')">📄 Lettre de voiture</button>'+(t.done?' <button class="btn btn-s" onclick="event.stopPropagation();openBDL(\''+t.orderId+'\',\''+t.id+'\')" style="background:var(--gn);color:#fff">📦 BDL ✓</button>':'')+'</div></div>'+(t.done?'<span style="font-size:1.2rem">✅</span>':'<span class="tr-arr">›</span>')+'</div>';}).join('');}
 function renderDriverProfile(){const d=db.drivers.find(x=>x.id===state.currentUser.id);if(!d){document.getElementById('driverProfileContent').innerHTML='—';return;}document.getElementById('driverProfileContent').innerHTML='<div style="display:flex;align-items:center;gap:14px;margin-bottom:16px"><div style="width:52px;height:52px;border-radius:var(--r2);background:var(--rd);display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:900;color:#fff">'+initials(d.name)+'</div><div><div style="font-size:1.05rem;font-weight:900">'+d.name+'</div><div style="font-size:.76rem;color:var(--t3)">Permis '+d.licence+'</div></div></div><div class="fg2"><div class="fg"><label class="fl">Téléphone</label><div class="fi" style="background:var(--sf2)">'+(d.phone||'—')+'</div></div><div class="fg"><label class="fl">Email</label><div class="fi" style="background:var(--sf2)">'+(d.email||'—')+'</div><div style="margin-top:16px"><button class="btn btn-d btn-w" onclick="openPinChange()">🔐 Changer mon code PIN</button></div></div></div>';}
 
+function togglePlanHelp(){var el=document.getElementById('planHelpBox');if(el)el.style.display=el.style.display==='none'?'':'none';}
+
 // ═══════════════════════════════════════════════════════════════
-// 📋 PLANNING — Préparation groupée de commandes — v10.26
+// 📋 PLANNING — Préparation groupée de commandes — v10.27
 // ═══════════════════════════════════════════════════════════════
 let _planSaveTimer=null;
 function savePlanningDraft(){if(_planSaveTimer)clearTimeout(_planSaveTimer);_planSaveTimer=setTimeout(function(){try{localStorage.setItem('sotransnord_planning_draft',JSON.stringify(db.draftOrders||[]));}catch(e){}},300);}
@@ -791,7 +803,31 @@ async function deletePlanningLine(idx){if(!db.draftOrders||!db.draftOrders[idx])
 
 async function clearPlanningDraft(){if(!db.draftOrders||!db.draftOrders.length)return;var ok=await showConfirm('Effacer tout le planning ?','Toutes les lignes seront perdues.','⚠️','Tout effacer');if(!ok)return;db.draftOrders=[];savePlanningDraft();renderPlanning();showToast('Planning effacé','warning',3000);}
 
-function updatePlanningField(idx,field,value){if(!db.draftOrders||!db.draftOrders[idx])return;db.draftOrders[idx][field]=value;if(field==='type'&&value==='journee')db.draftOrders[idx].materialId='';savePlanningDraft();renderPlanning();}
+function updatePlanningField(idx,field,value){if(!db.draftOrders||!db.draftOrders[idx])return;db.draftOrders[idx][field]=value;
+  if(field==='type'){if(value==='journee')db.draftOrders[idx].materialId='';savePlanningDraft();renderPlanning();return;}
+  savePlanningDraft();updatePlanningRowState(idx);updatePlanningHeader();}
+
+function updatePlanningRowState(idx){var d=db.draftOrders[idx];if(!d)return;var ready=isPlanLineReady(d);
+  var rows=document.querySelectorAll('#planningContent .plan-tbl tbody tr');var row=rows[idx];
+  if(row){row.classList.toggle('row-ready',ready);row.classList.toggle('row-incomplete',!ready);
+    var statusCell=row.querySelector('.pl-status');if(statusCell)statusCell.innerHTML=ready?'<span class="plan-status-ready">✅ Prête</span>':'<span class="plan-status-incomplete">⚠️ À compléter</span>';
+    ['clientId','address','date','truckId','driverId'].forEach(function(f){var el=row.querySelector('[data-field="'+f+'"]');if(el){el.classList.toggle('empty',!d[f]);}});
+    if(d.type==='materiaux'){var mEl=row.querySelector('[data-field="materialId"]');if(mEl)mEl.classList.toggle('empty',!d.materialId);}
+  }
+  var cards=document.querySelectorAll('#planningContent .plan-cards .plan-card');var card=cards[idx];
+  if(card){card.classList.toggle('row-ready',ready);card.classList.toggle('row-incomplete',!ready);
+    var badge=card.querySelector('.plan-card-head .plan-status-ready, .plan-card-head .plan-status-incomplete');if(badge){badge.outerHTML=ready?'<span class="plan-status-ready">✅ Prête</span>':'<span class="plan-status-incomplete">⚠️ À compléter</span>';}
+    ['clientId','address','date','truckId','driverId','materialId'].forEach(function(f){var el=card.querySelector('[data-field="'+f+'"]');if(el){el.classList.toggle('empty',!d[f]&&!(f==='materialId'&&d.type==='journee'));}});
+  }}
+
+function updatePlanningHeader(){var drafts=db.draftOrders||[];var ready=drafts.filter(isPlanLineReady);var incomplete=drafts.length-ready.length;var totalCA=ready.reduce(function(s,d){return s+planLineCA(d);},0);
+  var elT=document.getElementById('plan-stat-total');if(elT)elT.textContent=drafts.length;
+  var elR=document.getElementById('plan-stat-ready');if(elR)elR.textContent=ready.length;
+  var elI=document.getElementById('plan-stat-incomplete');if(elI)elI.textContent=incomplete;
+  var elC=document.getElementById('plan-stat-ca');if(elC)elC.textContent=totalCA>0?fmt(totalCA):'—';
+  var btn=document.getElementById('planValidateBtn');if(btn){btn.textContent='✅ Valider le planning — créer '+drafts.length+' commande'+(drafts.length>1?'s':'');if(incomplete>0){btn.style.background='var(--t3)';btn.style.opacity='.7';}else{btn.style.background='var(--gn)';btn.style.opacity='1';}}
+  var loadInfo=document.getElementById('planLoadInfo');var loadPills=document.getElementById('planLoadPills');var load=planningTruckLoad();var truckEntries=Object.keys(load);
+  if(truckEntries.length>0&&loadPills){loadInfo.style.display='';loadPills.innerHTML=db.trucks.map(function(t){var n=load[t.id]||0;var cls=n===0?'free':(n<=2?'busy':'full');return '<span class="plan-load-pill '+cls+'">'+escapeHtml(t.plate)+(n>0?' · '+n+' cmd':' · libre')+'</span>';}).join('');}else if(loadInfo){loadInfo.style.display='none';}}
 
 function planningTruckLoad(){var load={};(db.draftOrders||[]).forEach(function(d){if(d.truckId){load[d.truckId]=(load[d.truckId]||0)+1;}});return load;}
 
@@ -805,6 +841,7 @@ function buildPlanningOptions(d,field){var opts='<option value="">— Choisir �
 function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 
 function renderPlanning(){var drafts=db.draftOrders||[];var ready=drafts.filter(isPlanLineReady);var incomplete=drafts.length-ready.length;var totalCA=ready.reduce(function(s,d){return s+planLineCA(d);},0);
+  var helpSeen=localStorage.getItem('sotransnord_plan_help_seen');var helpBox=document.getElementById('planHelpBox');if(helpBox&&!helpSeen){helpBox.style.display='';localStorage.setItem('sotransnord_plan_help_seen','1');}
   document.getElementById('plan-stat-total').textContent=drafts.length;document.getElementById('plan-stat-ready').textContent=ready.length;document.getElementById('plan-stat-incomplete').textContent=incomplete;document.getElementById('plan-stat-ca').textContent=totalCA>0?fmt(totalCA):'—';
   document.getElementById('planClearBtn').style.display=drafts.length>0?'':'none';
   document.getElementById('planValidateBar').style.display=drafts.length>0?'':'none';
@@ -815,18 +852,18 @@ function renderPlanning(){var drafts=db.draftOrders||[];var ready=drafts.filter(
   if(drafts.length===0){container.innerHTML='<div class="card"><div class="card-b"><div class="empty"><div class="empty-i">📋</div><div class="empty-t">Aucune ligne au planning</div><div style="font-size:.75rem;color:var(--t3);margin-top:6px">Cliquez sur "+ Ligne" pour commencer à préparer vos commandes du jour</div></div></div></div>';return;}
   var tableRows=drafts.map(function(d,idx){return renderPlanningTableRow(d,idx);}).join('');
   var cardRows=drafts.map(function(d,idx){return renderPlanningCard(d,idx);}).join('');
-  container.innerHTML='<div class="plan-tbl-wrap"><table class="plan-tbl"><thead><tr><th>#</th><th>Client *</th><th>Adresse *</th><th>Date *</th><th>Type *</th><th>Matériau</th><th>Nb *</th><th>Camion *</th><th>Chauffeur *</th><th>Statut</th><th></th></tr></thead><tbody>'+tableRows+'</tbody></table></div><div class="plan-cards">'+cardRows+'</div>';}
+  container.innerHTML='<div class="plan-tbl-wrap"><table class="plan-tbl"><thead><tr><th>#</th><th>Client *</th><th>Adresse *</th><th>Date *</th><th>Type *</th><th>Matériau</th><th title="Nombre de rotations (allers-retours) du camion sur ce chantier">Rotations *</th><th>Camion *</th><th>Chauffeur *</th><th>Statut</th><th></th></tr></thead><tbody>'+tableRows+'</tbody></table></div><div class="plan-cards">'+cardRows+'</div>';}
 
 function renderPlanningTableRow(d,idx){var ready=isPlanLineReady(d);var cls=ready?'row-ready':'row-incomplete';var emptyCls=function(v){return v?'':' empty';};var matDisabled=d.type==='journee';
   return '<tr class="'+cls+'"><td class="pl-idx">'+(idx+1)+'</td>'+
-    '<td><select class="'+emptyCls(d.clientId).trim()+'" onchange="updatePlanningField('+idx+',\'clientId\',this.value)">'+buildPlanningOptions(d,'client')+'</select></td>'+
-    '<td><input type="text" class="'+emptyCls(d.address).trim()+'" placeholder="Adresse chantier" value="'+escapeHtml(d.address)+'" oninput="updatePlanningField('+idx+',\'address\',this.value)"></td>'+
-    '<td><input type="date" class="'+emptyCls(d.date).trim()+'" value="'+escapeHtml(d.date)+'" onchange="updatePlanningField('+idx+',\'date\',this.value)"></td>'+
-    '<td><select onchange="updatePlanningField('+idx+',\'type\',this.value)">'+buildPlanningOptions(d,'type')+'</select></td>'+
-    '<td>'+(matDisabled?'<span style="color:var(--t4);font-size:.7rem;font-style:italic">—</span>':'<select class="'+emptyCls(d.materialId).trim()+'" onchange="updatePlanningField('+idx+',\'materialId\',this.value)">'+buildPlanningOptions(d,'material')+'</select>')+'</td>'+
-    '<td><input type="number" min="1" max="50" value="'+(parseInt(d.nb)||1)+'" oninput="updatePlanningField('+idx+',\'nb\',parseInt(this.value)||1)"></td>'+
-    '<td><select class="'+emptyCls(d.truckId).trim()+'" onchange="updatePlanningField('+idx+',\'truckId\',this.value)">'+buildPlanningOptions(d,'truck')+'</select></td>'+
-    '<td><select class="'+emptyCls(d.driverId).trim()+'" onchange="updatePlanningField('+idx+',\'driverId\',this.value)">'+buildPlanningOptions(d,'driver')+'</select></td>'+
+    '<td><select data-field="clientId" class="'+emptyCls(d.clientId).trim()+'" onchange="updatePlanningField('+idx+',\'clientId\',this.value)">'+buildPlanningOptions(d,'client')+'</select></td>'+
+    '<td><input type="text" data-field="address" class="'+emptyCls(d.address).trim()+'" placeholder="Adresse chantier" value="'+escapeHtml(d.address)+'" oninput="updatePlanningField('+idx+',\'address\',this.value)"></td>'+
+    '<td><input type="date" data-field="date" class="'+emptyCls(d.date).trim()+'" value="'+escapeHtml(d.date)+'" onchange="updatePlanningField('+idx+',\'date\',this.value)"></td>'+
+    '<td><select data-field="type" onchange="updatePlanningField('+idx+',\'type\',this.value)">'+buildPlanningOptions(d,'type')+'</select></td>'+
+    '<td>'+(matDisabled?'<span style="color:var(--t4);font-size:.7rem;font-style:italic">—</span>':'<select data-field="materialId" class="'+emptyCls(d.materialId).trim()+'" onchange="updatePlanningField('+idx+',\'materialId\',this.value)">'+buildPlanningOptions(d,'material')+'</select>')+'</td>'+
+    '<td><input type="number" data-field="nb" min="1" max="50" value="'+(parseInt(d.nb)||1)+'" oninput="updatePlanningField('+idx+',\'nb\',parseInt(this.value)||1)"></td>'+
+    '<td><select data-field="truckId" class="'+emptyCls(d.truckId).trim()+'" onchange="updatePlanningField('+idx+',\'truckId\',this.value)">'+buildPlanningOptions(d,'truck')+'</select></td>'+
+    '<td><select data-field="driverId" class="'+emptyCls(d.driverId).trim()+'" onchange="updatePlanningField('+idx+',\'driverId\',this.value)">'+buildPlanningOptions(d,'driver')+'</select></td>'+
     '<td class="pl-status">'+(ready?'<span class="plan-status-ready">✅ Prête</span>':'<span class="plan-status-incomplete">⚠️ À compléter</span>')+'</td>'+
     '<td class="pl-actions"><button class="pl-act-btn" title="Dupliquer" onclick="duplicatePlanningLine('+idx+')">📋</button><button class="pl-act-btn" title="Supprimer" onclick="deletePlanningLine('+idx+')">🗑️</button></td>'+
   '</tr>';}
@@ -834,22 +871,23 @@ function renderPlanningTableRow(d,idx){var ready=isPlanLineReady(d);var cls=read
 function renderPlanningCard(d,idx){var ready=isPlanLineReady(d);var cls=ready?'row-ready':'row-incomplete';var emptyCls=function(v){return v?'':' empty';};var matDisabled=d.type==='journee';
   return '<div class="plan-card '+cls+'"><div class="plan-card-head"><span class="plan-card-num">Ligne #'+(idx+1)+'</span>'+(ready?'<span class="plan-status-ready">✅ Prête</span>':'<span class="plan-status-incomplete">⚠️ À compléter</span>')+'<div style="display:flex;gap:4px"><button class="pl-act-btn" title="Dupliquer" onclick="duplicatePlanningLine('+idx+')">📋</button><button class="pl-act-btn" title="Supprimer" onclick="deletePlanningLine('+idx+')">🗑️</button></div></div>'+
     '<div class="plan-card-grid">'+
-      '<div class="pcg-full"><label>Client *</label><select class="'+emptyCls(d.clientId).trim()+'" onchange="updatePlanningField('+idx+',\'clientId\',this.value)">'+buildPlanningOptions(d,'client')+'</select></div>'+
-      '<div class="pcg-full"><label>Adresse chantier *</label><input type="text" class="'+emptyCls(d.address).trim()+'" placeholder="Rue, ville..." value="'+escapeHtml(d.address)+'" oninput="updatePlanningField('+idx+',\'address\',this.value)"></div>'+
-      '<div><label>Date *</label><input type="date" class="'+emptyCls(d.date).trim()+'" value="'+escapeHtml(d.date)+'" onchange="updatePlanningField('+idx+',\'date\',this.value)"></div>'+
-      '<div><label>Type *</label><select onchange="updatePlanningField('+idx+',\'type\',this.value)">'+buildPlanningOptions(d,'type')+'</select></div>'+
-      (matDisabled?'':'<div class="pcg-full"><label>Matériau *</label><select class="'+emptyCls(d.materialId).trim()+'" onchange="updatePlanningField('+idx+',\'materialId\',this.value)">'+buildPlanningOptions(d,'material')+'</select></div>')+
-      '<div><label>Nb transports *</label><input type="number" min="1" max="50" value="'+(parseInt(d.nb)||1)+'" oninput="updatePlanningField('+idx+',\'nb\',parseInt(this.value)||1)"></div>'+
+      '<div class="pcg-full"><label>Client *</label><select data-field="clientId" class="'+emptyCls(d.clientId).trim()+'" onchange="updatePlanningField('+idx+',\'clientId\',this.value)">'+buildPlanningOptions(d,'client')+'</select></div>'+
+      '<div class="pcg-full"><label>Adresse chantier *</label><input type="text" data-field="address" class="'+emptyCls(d.address).trim()+'" placeholder="Rue, ville..." value="'+escapeHtml(d.address)+'" oninput="updatePlanningField('+idx+',\'address\',this.value)"></div>'+
+      '<div><label>Date *</label><input type="date" data-field="date" class="'+emptyCls(d.date).trim()+'" value="'+escapeHtml(d.date)+'" onchange="updatePlanningField('+idx+',\'date\',this.value)"></div>'+
+      '<div><label>Type *</label><select data-field="type" onchange="updatePlanningField('+idx+',\'type\',this.value)">'+buildPlanningOptions(d,'type')+'</select></div>'+
+      (matDisabled?'':'<div class="pcg-full"><label>Matériau *</label><select data-field="materialId" class="'+emptyCls(d.materialId).trim()+'" onchange="updatePlanningField('+idx+',\'materialId\',this.value)">'+buildPlanningOptions(d,'material')+'</select></div>')+
+      '<div><label>Nb rotations *</label><input type="number" data-field="nb" min="1" max="50" value="'+(parseInt(d.nb)||1)+'" oninput="updatePlanningField('+idx+',\'nb\',parseInt(this.value)||1)"></div>'+
       '<div></div>'+
-      '<div><label>Camion *</label><select class="'+emptyCls(d.truckId).trim()+'" onchange="updatePlanningField('+idx+',\'truckId\',this.value)">'+buildPlanningOptions(d,'truck')+'</select></div>'+
-      '<div><label>Chauffeur *</label><select class="'+emptyCls(d.driverId).trim()+'" onchange="updatePlanningField('+idx+',\'driverId\',this.value)">'+buildPlanningOptions(d,'driver')+'</select></div>'+
+      '<div><label>Camion *</label><select data-field="truckId" class="'+emptyCls(d.truckId).trim()+'" onchange="updatePlanningField('+idx+',\'truckId\',this.value)">'+buildPlanningOptions(d,'truck')+'</select></div>'+
+      '<div><label>Chauffeur *</label><select data-field="driverId" class="'+emptyCls(d.driverId).trim()+'" onchange="updatePlanningField('+idx+',\'driverId\',this.value)">'+buildPlanningOptions(d,'driver')+'</select></div>'+
     '</div></div>';}
 
-async function validatePlanning(){var drafts=db.draftOrders||[];if(!drafts.length){showToast('⚠️ Aucune ligne à valider','warning');return;}
+async function validatePlanning(){var drafts=db.draftOrders||[];if(!drafts.length){showToast('⚠️ Aucune ligne à valider — cliquez sur "+ Ligne" pour commencer','warning',5000);return;}
   var incomplete=drafts.filter(function(d){return !isPlanLineReady(d);});
-  if(incomplete.length>0){showToast('⚠️ '+incomplete.length+' ligne(s) incomplète(s) — complétez avant de valider','error',6000);
-    var firstIdx=drafts.findIndex(function(d){return !isPlanLineReady(d);});
-    setTimeout(function(){var el=document.querySelectorAll('.plan-tbl tbody tr')[firstIdx]||document.querySelectorAll('.plan-card')[firstIdx];if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},100);
+  if(incomplete.length>0){var firstIdx=drafts.findIndex(function(d){return !isPlanLineReady(d);});
+    var missing=[];var d=drafts[firstIdx];if(!d.clientId)missing.push('client');if(!d.address)missing.push('adresse');if(!d.date)missing.push('date');if(d.type==='materiaux'&&!d.materialId)missing.push('matériau');if(!d.nb||parseInt(d.nb)<1)missing.push('rotations');if(!d.truckId)missing.push('camion');if(!d.driverId)missing.push('chauffeur');
+    showToast('⚠️ Ligne #'+(firstIdx+1)+' incomplète — manque : '+missing.join(', '),'error',7000);
+    setTimeout(function(){var el=document.querySelectorAll('.plan-tbl tbody tr')[firstIdx]||document.querySelectorAll('.plan-card')[firstIdx];if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.transition='box-shadow .3s';el.style.boxShadow='0 0 0 3px rgba(245,158,11,.5)';setTimeout(function(){el.style.boxShadow='';},2000);}},100);
     return;}
   var ok=await showConfirm('Créer '+drafts.length+' commande(s) ?','Toutes les lignes prêtes seront envoyées dans Sheets et dispatchées aux chauffeurs.','📋','Valider tout');
   if(!ok)return;
