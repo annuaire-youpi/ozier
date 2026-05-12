@@ -415,6 +415,9 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
 .repair-status.s-en_cours{background:rgba(59,130,246,.15);color:#1E40AF;border:1px solid rgba(59,130,246,.4)}
 .repair-status.s-attente_piece{background:rgba(168,85,247,.15);color:#6B21A8;border:1px solid rgba(168,85,247,.4)}
 .repair-status.s-terminee{background:rgba(22,163,74,.15);color:#15803D;border:1px solid rgba(22,163,74,.4)}
+.repair-status.s-non_applicable{background:rgba(107,114,128,.15);color:#4B5563;border:1px solid rgba(107,114,128,.4);text-decoration:line-through}
+.repair-card.repair-archived{opacity:.5;background:repeating-linear-gradient(45deg,var(--sf),var(--sf) 10px,var(--sf2) 10px,var(--sf2) 20px)}
+.repair-card.repair-archived .repair-title{text-decoration:line-through;color:var(--t3)}
 .repair-priority{padding:2px 7px;border-radius:5px;font-size:.6rem;font-weight:800;letter-spacing:.04em;margin-left:6px}
 .repair-priority.p-haute{background:var(--er);color:#fff}
 .repair-priority.p-normale{background:var(--wa);color:#fff}
@@ -434,6 +437,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
 .repair-step.active.en_cours{background:#DBEAFE;color:#1E40AF}
 .repair-step.active.attente_piece{background:#F3E8FF;color:#6B21A8}
 .repair-step.active.terminee{background:#DCFCE7;color:#15803D}
+.repair-step.active.non_applicable{background:#F3F4F6;color:#4B5563;text-decoration:line-through}
 .repair-step:not(.active):hover{background:rgba(0,0,0,.04)}
 .plan-summary-tbl{display:flex;flex-direction:column;gap:6px}
 .plan-summary-row{display:grid;grid-template-columns:28px 1fr 40px 90px;gap:8px;align-items:center;padding:8px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);font-size:.72rem;cursor:pointer;transition:background .15s}
@@ -483,7 +487,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
       <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
     </div>
-    <span class="ver-tag">v10.40 — 2026</span>
+    <span class="ver-tag">v10.41 — 2026</span>
   </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
@@ -600,7 +604,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
           <div class="sc"><div class="sc-i">💰</div><div class="sc-v" id="grepair-stat-cost">—</div><div class="sc-l">Coût total (mois)</div></div>
           <div class="sc"><div class="sc-i">🚛</div><div class="sc-v" id="grepair-stat-truck">—</div><div class="sc-l">Camion + sollicité</div></div>
         </div>
-        <div class="tabs tabs-wrap" style="margin-top:10px"><button class="tab on" onclick="filterGRepairs('open',this)">🟡 Ouvertes</button><button class="tab" onclick="filterGRepairs('all',this)">Toutes</button><button class="tab" onclick="filterGRepairs('terminee',this)">✅ Terminées</button></div>
+        <div class="tabs tabs-wrap" style="margin-top:10px"><button class="tab on" onclick="filterGRepairs('open',this)">🟡 Ouvertes</button><button class="tab" onclick="filterGRepairs('all',this)">Toutes</button><button class="tab" onclick="filterGRepairs('terminee',this)">✅ Terminées</button><button class="tab" onclick="filterGRepairs('non_applicable',this)">❌ N/A</button></div>
         <div id="gRepairsList" style="margin-top:10px"></div>
       </div>
       <div class="page" id="page-rapports">
@@ -761,7 +765,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
           <div class="sc"><div class="sc-i">🟣</div><div class="sc-v" id="repair-stat-attente" style="color:#6B21A8">0</div><div class="sc-l">Attente pièce</div></div>
           <div class="sc"><div class="sc-i">✅</div><div class="sc-v" id="repair-stat-done" style="color:#15803D">0</div><div class="sc-l">Terminées (mois)</div></div>
         </div>
-        <div class="tabs tabs-wrap" style="margin-top:10px"><button class="tab on" onclick="filterRepairs('open',this)">🟡 Ouvertes</button><button class="tab" onclick="filterRepairs('all',this)">Toutes</button><button class="tab" onclick="filterRepairs('terminee',this)">✅ Terminées</button></div>
+        <div class="tabs tabs-wrap" style="margin-top:10px"><button class="tab on" onclick="filterRepairs('open',this)">🟡 Ouvertes</button><button class="tab" onclick="filterRepairs('all',this)">Toutes</button><button class="tab" onclick="filterRepairs('terminee',this)">✅ Terminées</button><button class="tab" onclick="filterRepairs('non_applicable',this)">❌ N/A</button></div>
         <div id="repairsList" style="margin-top:10px"></div>
       </div>
       <div class="page" id="page-meca-obs">
@@ -898,7 +902,7 @@ if(data.clients?.length)db.clients=data.clients.map(c=>({id:sid(c.id),company:c.
 if(data.commandes?.length)db.orders=data.commandes.map(o=>{const nbRaw=String(o.nb_estime||o.nbEstimated||'0');const nb=nbRaw.split(/[|,]/).reduce(function(s,v){return s+(parseInt(v)||0);},0);const done=parseInt(o.nb_fait||o.nbDone)||0;const oid=sid(o.id);const lt=(data.transports||[]).filter(t=>sid(t.commande_id)===oid);const transports=Array.from({length:nb},(_,i)=>{const transportId=i+1;var t=null;var hasValidNums=lt.some(function(x){var n=parseInt(x.transport_num||x.transportId);return!isNaN(n)&&n>0&&n<=1000;});if(hasValidNums){t=lt.find(function(x){var n=parseInt(x.transport_num||x.transportId);return!isNaN(n)&&n===transportId&&n<=1000;});}else{t=lt[i];}return t?{id:transportId,done:true,tonnage:(function(v){var n=parseFloat(String(v||'').replace(',','.'));return isNaN(n)?0:n;})(t.tonnage),receiver:t.receptionnaire||t.receiver,func:t.fonction||t.func,sig:'✓',ts:t.timestamp,paperPhotos:(function(p){if(!p)return [];return String(p).split('|').filter(Boolean).map(function(u){return {url:u,fileId:(u.match(/[-\w]{25,}/)||[''])[0]};});})(t.photo_papier_url||t.paperPhotos||t.photo_papier||'')}:{id:transportId,done:false,tonnage:null,receiver:null,func:null,sig:null,paperPhotos:[]};});return{id:oid,clientId:sid(o.client_id||o.clientId),address:o.adresse||o.address||'',date:cd(o.date_chantier||o.date),driverId:sid(o.chauffeur_id||o.driverId),truckId:sid(o.camion_id||o.truckId),type:o.type||'materiaux',materialId:o.materiau_id?sid(o.materiau_id):null,nbEstimated:nb,nbEstimatedRaw:nbRaw,nbDone:done,status:o.statut||o.status||'en_cours',invoiceSent:o.invoice_sent===true||o.invoice_sent==='true'||o.invoice_sent==='TRUE'||String(o.invoice_sent).toLowerCase()==='true',invoiceDate:o.invoice_date||o.invoiceDate||'',invoiceTo:o.invoice_to||o.invoiceTo||'',invoiceRef:o.invoice_ref||o.invoiceRef||'',paid:o.paid==='true'||o.paid===true||String(o.paid).toLowerCase()==='true',paidDate:o.paid_date||o.paidDate||'',transports};});
 if(data.frais?.length)db.expenses=data.frais.map(f=>({id:sid(f.id),truckId:sid(f.camion_id||f.truckId),date:cd(f.date),type:f.type_frais||f.type||'',amount:parseFloat(f.montant||f.amount)||0,desc:f.description||f.desc||'',repairId:String(f.repair_id||f.repairId||'')}));
 if(data.fiches_jour?.length)db.dayReports=data.fiches_jour.map(f=>({id:String(f.id||''),driverId:String(f.chauffeur_id||f.driverId||''),driverName:f.chauffeur_nom||f.driverName||'',date:f.date||'',km:parseInt(f.kilometrage||f.km)||0,kmStart:parseInt(f.km_debut||f.kmStart)||0,fuelLiters:parseFloat(f.carburant_litres||f.fuelLiters)||0,fuelPrice:parseFloat(f.carburant_prix||f.fuelPrice)||0,voyants:f.voyants||'',anomalies:f.anomalies||'',notes:f.observations||f.notes||'',hasIssues:(function(){var vo=String(f.voyants||'').split('|').filter(Boolean);var an=String(f.anomalies||'').split('|').filter(Boolean);var n=String(f.observations||f.notes||'').trim();return vo.length>0||an.length>0||n.length>0;})()}));
-if(data.reparations?.length)db.repairs=data.reparations.map(r=>({id:String(r.id||''),truckId:String(r.camion_id||r.truckId||''),dateConstat:cd(r.date_constat||r.dateConstat||''),dateDebut:cd(r.date_debut||r.dateDebut||''),dateFin:cd(r.date_fin||r.dateFin||''),sourceDriverId:String(r.source_chauffeur_id||r.sourceDriverId||''),voyants:r.voyants||'',anomalies:r.anomalies||'',notesChauffeur:r.notes_chauffeur||r.notesChauffeur||'',diagnostic:r.diagnostic||'',actions:r.actions||'',pieces:r.pieces||'',cout:parseFloat(r.cout)||0,status:r.statut||r.status||'a_diagnostiquer',priority:r.priorite||r.priority||'normale'}));else if(!db.repairs)db.repairs=[];
+if(data.reparations?.length)db.repairs=data.reparations.map(r=>({id:String(r.id||''),truckId:String(r.camion_id||r.truckId||''),dateConstat:cd(r.date_constat||r.dateConstat||''),dateDebut:cd(r.date_debut||r.dateDebut||''),dateFin:cd(r.date_fin||r.dateFin||''),sourceDriverId:String(r.source_chauffeur_id||r.sourceDriverId||''),voyants:r.voyants||'',anomalies:r.anomalies||'',notesChauffeur:r.notes_chauffeur||r.notesChauffeur||'',diagnostic:r.diagnostic||'',actions:r.actions||'',pieces:r.pieces||'',cout:parseFloat(r.cout)||0,status:r.statut||r.status||'a_diagnostiquer',priority:r.priorite||r.priority||'normale',naReason:r.na_reason||r.naReason||''}));else if(!db.repairs)db.repairs=[];
 if(data.materiaux?.length)db.materials=data.materiaux.map(m=>({id:String(m.id),name:m.nom||m.name||'',unit:m.unite||m.unit||'tonne'}));
 if(data.tarifs_clients?.length)db.clientTariffs=data.tarifs_clients.map(t=>{var typeVal=String(t.type||'').trim();var matVal=String(t.materiau_id||'').trim();if(/^\d{8,}$/.test(typeVal)&&(matVal==='journee'||matVal==='materiaux'||matVal===''))[typeVal,matVal]=[matVal,typeVal];return{id:String(t.id),clientId:String(t.client_id||t.clientId),type:typeVal||'materiaux',materialId:matVal?String(matVal):null,price:parseFloat(t.prix_unitaire||t.price)||0};});
 if(data.expense_types?.length){db.expenseTypes=data.expense_types.map(t=>({id:String(t.id),label:String(t.label||t.id)}));}else{db.expenseTypes=[];}
@@ -1342,7 +1346,8 @@ const REPAIR_STATUSES={
   a_diagnostiquer:{label:'À diagnostiquer',ico:'🟡'},
   en_cours:{label:'En cours',ico:'🔵'},
   attente_piece:{label:'Attente pièce',ico:'🟣'},
-  terminee:{label:'Terminée',ico:'✅'}
+  terminee:{label:'Terminée',ico:'✅'},
+  non_applicable:{label:'Non applicable',ico:'❌'}
 };
 
 // ── Déduction du camion depuis le chauffeur ──
@@ -1417,8 +1422,11 @@ function openRepairModal(repairId){
 
 function openRepairModalUI(){
   var r=_currentRepair;
+  var readonly=state.role==='gerant';
   // Titre
   document.getElementById('repairModalTitle').textContent=r.id?('🛠️ Fiche #'+r.id):'🛠️ Nouvelle fiche de réparation';
+  // Bandeau lecture seule pour gérant
+  document.getElementById('rep-readonly-banner').style.display=readonly?'':'none';
   // Select camions
   var sel=document.getElementById('rep-truck');
   sel.innerHTML='<option value="">— Choisir un camion —</option>'+db.trucks.map(function(t){return '<option value="'+t.id+'"'+(String(t.id)===String(r.truckId)?' selected':'')+'>'+escapeHtml(t.plate)+' — '+escapeHtml(t.type||'')+'</option>';}).join('');
@@ -1430,6 +1438,9 @@ function openRepairModalUI(){
   document.getElementById('rep-actions').value=r.actions||'';
   document.getElementById('rep-pieces').value=r.pieces||'';
   document.getElementById('rep-cout').value=r.cout||'';
+  document.getElementById('rep-na-reason').value=r.naReason||'';
+  // Affichage du bandeau N/A si statut non_applicable OU si on est en train de basculer
+  document.getElementById('rep-na-banner').style.display=(r.status==='non_applicable')?'':'none';
   // Source summary
   var src=document.getElementById('rep-source-summary');
   var v=String(r.voyants||'').split('|').filter(Boolean);
@@ -1439,16 +1450,14 @@ function openRepairModalUI(){
     src.innerHTML='<span style="color:var(--t4);font-style:italic">Aucun signalement source — fiche créée manuellement</span>';
   }else{
     var driver=db.drivers.find(function(d){return String(d.id)===String(r.sourceDriverId);});
-    var html=driver?'<div style="font-weight:700;color:var(--t2);margin-bottom:4px">👤 Signalé par '+escapeHtml(driver.name)+'</div>':'';
+    var html=driver?'<div style="font-weight:700;color:var(--t2);margin-bottom:4px">👤 Signalé par <b>'+escapeHtml(driver.name||'')+'</b></div>':'';
     if(v.length>0){html+='<div style="margin-bottom:4px"><b style="color:var(--er)">🚨 Voyants :</b> ';html+=v.map(function(vid){var vo=VOYANTS_LIST.find(function(x){return x.id===vid;});return vo?(vo.ico+' '+vo.label):vid;}).join(' · ');html+='</div>';}
     if(a.length>0){html+='<div style="margin-bottom:4px"><b style="color:#92400E">🔍 Anomalies :</b> ';html+=a.map(function(aid){var an=ANOMALIES_LIST.find(function(x){return x.id===aid;});return an?(an.ico+' '+an.label):aid;}).join(' · ');html+='</div>';}
-    if(n)html+='<div style="font-style:italic;color:var(--t2)">💬 '+escapeHtml(n)+'</div>';
+    if(n)html+='<div style="font-style:italic;color:var(--t2);margin-top:4px">💬 <b>Observation du chauffeur :</b> '+escapeHtml(n)+'</div>';
     src.innerHTML=html;
   }
   // Stepper
   setRepairStatusUI(r.status||'a_diagnostiquer');
-  // Bouton supprimer si édition
-  document.getElementById('repDeleteBtn').style.display=r.id?'':'none';
   // Frais liés
   var linkedExp=(db.expenses||[]).filter(function(e){return String(e.repairId||e.repair_id||'')===String(r.id||'');});
   var linkedBox=document.getElementById('rep-linked-expenses');
@@ -1459,11 +1468,27 @@ function openRepairModalUI(){
   }else{
     linkedBox.style.display='none';
   }
+  // Mode lecture seule pour gérant : désactiver tous les inputs et masquer save
+  applyRepairReadonly(readonly);
   openModal('repairModal');
+}
+
+function applyRepairReadonly(readonly){
+  var inputs=document.querySelectorAll('#repairModal input, #repairModal select, #repairModal textarea');
+  inputs.forEach(function(el){el.disabled=readonly;if(readonly){el.style.background='var(--sf2)';el.style.cursor='not-allowed';}else{el.style.background='';el.style.cursor='';}});
+  // Steps
+  document.querySelectorAll('.repair-step').forEach(function(b){b.disabled=readonly;b.style.cursor=readonly?'not-allowed':'pointer';b.style.opacity=readonly?'.85':'1';});
+  // Boutons save + frais
+  var saveBtn=document.getElementById('rep-save-btn');if(saveBtn)saveBtn.style.display=readonly?'none':'';
+  var fraisBtn=document.getElementById('rep-frais-btn');if(fraisBtn)fraisBtn.style.display=readonly?'none':'';
+  // Texte du bouton fermer
+  var actionsBar=document.getElementById('rep-actions-bar');
+  if(actionsBar){var btnClose=actionsBar.querySelector('.btn');if(btnClose)btnClose.textContent='Fermer';}
 }
 
 function setRepairStatus(status){
   if(!_currentRepair)return;
+  if(state.role==='gerant')return; // Pas de modif pour gérant
   _currentRepair.status=status;
   // Auto-fill date début si passage en cours et vide
   if(status==='en_cours'&&!document.getElementById('rep-date-debut').value){
@@ -1473,6 +1498,8 @@ function setRepairStatus(status){
   if(status==='terminee'&&!document.getElementById('rep-date-fin').value){
     document.getElementById('rep-date-fin').value=new Date().toISOString().split('T')[0];
   }
+  // Afficher/masquer bandeau N/A
+  document.getElementById('rep-na-banner').style.display=(status==='non_applicable')?'':'none';
   setRepairStatusUI(status);
 }
 
@@ -1496,6 +1523,14 @@ async function saveRepair(){
   _currentRepair.actions=document.getElementById('rep-actions').value.trim();
   _currentRepair.pieces=document.getElementById('rep-pieces').value.trim();
   _currentRepair.cout=parseFloat(document.getElementById('rep-cout').value)||0;
+  _currentRepair.naReason=document.getElementById('rep-na-reason').value.trim();
+  
+  // Validation : si statut = non_applicable, raison obligatoire
+  if(_currentRepair.status==='non_applicable'&&!_currentRepair.naReason){
+    showToast('⚠️ Justifiez le classement "Non applicable" — la raison est obligatoire','error',5000);
+    document.getElementById('rep-na-reason').focus();
+    return;
+  }
   
   showLoader();
   var isNew=!_currentRepair.id;
@@ -1518,7 +1553,8 @@ async function saveRepair(){
       pieces:_currentRepair.pieces,
       cout:_currentRepair.cout,
       statut:_currentRepair.status,
-      priorite:_currentRepair.priority
+      priorite:_currentRepair.priority,
+      na_reason:_currentRepair.naReason||''
     });
     addAudit('Fiche réparation créée','Camion '+(db.trucks.find(function(t){return String(t.id)===String(truckId);})||{plate:truckId}).plate);
   }else{
@@ -1535,13 +1571,14 @@ async function saveRepair(){
       pieces:_currentRepair.pieces,
       cout:_currentRepair.cout,
       statut:_currentRepair.status,
-      priorite:_currentRepair.priority
+      priorite:_currentRepair.priority,
+      na_reason:_currentRepair.naReason||''
     });
-    addAudit('Fiche réparation modifiée','Fiche #'+_currentRepair.id);
+    addAudit('Fiche réparation modifiée','Fiche #'+_currentRepair.id+(_currentRepair.status==='non_applicable'?' — classée N/A':''));
   }
   hideLoader();
   closeModal('repairModal');
-  showToast('✅ Fiche enregistrée','success',3500);
+  showToast(_currentRepair.status==='non_applicable'?'❌ Fiche classée "Non applicable"':'✅ Fiche enregistrée',_currentRepair.status==='non_applicable'?'warning':'success',3500);
   if(state.currentPage==='meca-repairs')renderMecaRepairs();
   if(state.currentPage==='reparations')renderRepairsGerant();
   if(state.currentPage==='meca-dashboard')renderMecaDashboard();
@@ -1582,10 +1619,12 @@ function openExpenseFromRepair(){
 function renderRepairCard(r,readonly){
   var truck=db.trucks.find(function(t){return String(t.id)===String(r.truckId);});
   var done=r.status==='terminee';
+  var isNA=r.status==='non_applicable';
   var statusInfo=REPAIR_STATUSES[r.status]||REPAIR_STATUSES.a_diagnostiquer;
   var v=String(r.voyants||'').split('|').filter(Boolean);
   var a=String(r.anomalies||'').split('|').filter(Boolean);
-  var html='<div class="repair-card priority-'+(r.priority||'normale')+(done?' repair-done':'')+'" '+(readonly?'':'onclick="openRepairModal(\''+r.id+'\')"')+'>';
+  // Toujours cliquable (gérant voit en lecture seule via state.role)
+  var html='<div class="repair-card priority-'+(r.priority||'normale')+(done?' repair-done':'')+(isNA?' repair-archived':'')+'" onclick="openRepairModal(\''+r.id+'\')">';
   html+='<div class="repair-head"><div style="min-width:0;flex:1">';
   html+='<div class="repair-title">🚛 '+(truck?escapeHtml(truck.plate):'(camion inconnu)')+' <span class="repair-priority p-'+(r.priority||'normale')+'">'+(r.priority==='haute'?'🔴 URGENT':(r.priority==='faible'?'🟢 FAIBLE':'🟡 NORMAL'))+'</span></div>';
   html+='<div class="repair-meta">Fiche #'+r.id+' · Constat '+fmtDate(r.dateConstat)+(r.dateFin?' · Terminée '+fmtDate(r.dateFin):'')+'</div>';
@@ -1596,7 +1635,11 @@ function renderRepairCard(r,readonly){
     a.forEach(function(aid){var an=ANOMALIES_LIST.find(function(x){return x.id===aid;});if(an)html+='<span class="repair-tag tag-anomalie">'+an.ico+' '+escapeHtml(an.label)+'</span>';});
     html+='</div>';
   }
-  if(r.diagnostic)html+='<div style="margin-top:8px;font-size:.74rem;color:var(--t2);line-height:1.4"><b>Diagnostic :</b> '+escapeHtml(r.diagnostic.substring(0,150))+(r.diagnostic.length>150?'…':'')+'</div>';
+  // Raison N/A si applicable (priorité absolue car c'est le truc important à voir)
+  if(isNA&&r.naReason){
+    html+='<div style="margin-top:8px;padding:8px 10px;background:rgba(107,114,128,.1);border-left:3px solid #6B7280;border-radius:6px;font-size:.72rem;color:#374151;line-height:1.4"><b>❌ Raison du rejet :</b> <i>'+escapeHtml(r.naReason.substring(0,180))+(r.naReason.length>180?'…':'')+'</i></div>';
+  }
+  if(r.diagnostic)html+='<div style="margin-top:8px;font-size:.74rem;color:var(--t2);line-height:1.4"><b style="color:var(--bl)">🔧 Diagnostic mécanicien :</b> '+escapeHtml(r.diagnostic.substring(0,150))+(r.diagnostic.length>150?'…':'')+'</div>';
   html+='<div class="repair-summary">';
   if(r.cout>0)html+='<span>💰 <b>'+fmt(r.cout)+'</b></span>';
   if(r.dateDebut&&r.dateFin){var d1=new Date(r.dateDebut);var d2=new Date(r.dateFin);var days=Math.round((d2-d1)/86400000);html+='<span>⏱️ '+days+' j</span>';}
@@ -1617,8 +1660,9 @@ function renderMecaRepairs(){
   document.getElementById('repair-stat-done').textContent=doneMonth.length;
   // Liste filtrée
   var filtered=repairs;
-  if(_currentRepairFilter==='open')filtered=repairs.filter(function(r){return r.status!=='terminee';});
+  if(_currentRepairFilter==='open')filtered=repairs.filter(function(r){return r.status!=='terminee'&&r.status!=='non_applicable';});
   else if(_currentRepairFilter==='terminee')filtered=repairs.filter(function(r){return r.status==='terminee';});
+  else if(_currentRepairFilter==='non_applicable')filtered=repairs.filter(function(r){return r.status==='non_applicable';});
   // Tri : priorité haute d'abord, puis date constat décroissante
   var priOrder={haute:0,normale:1,faible:2};
   filtered.sort(function(a,b){var pa=priOrder[a.priority]||1;var pb=priOrder[b.priority]||1;if(pa!==pb)return pa-pb;return (new Date(b.dateConstat||0))-(new Date(a.dateConstat||0));});
@@ -1637,9 +1681,10 @@ function filterRepairs(filter,btn){
 // ── Page gérant ──
 function renderRepairsGerant(){
   var repairs=db.repairs||[];
-  var open=repairs.filter(function(r){return r.status!=='terminee';});
+  // "Ouvertes" exclut terminée ET non_applicable
+  var open=repairs.filter(function(r){return r.status!=='terminee'&&r.status!=='non_applicable';});
   document.getElementById('grepair-stat-open').textContent=open.length;
-  // Durée moyenne (sur fiches terminées)
+  // Durée moyenne (sur fiches terminées, jamais N/A)
   var done=repairs.filter(function(r){return r.status==='terminee'&&r.dateDebut&&r.dateFin;});
   if(done.length>0){
     var totalDays=done.reduce(function(s,r){var d1=new Date(r.dateDebut);var d2=new Date(r.dateFin);return s+Math.max(0,Math.round((d2-d1)/86400000));},0);
@@ -1651,15 +1696,14 @@ function renderRepairsGerant(){
   var now=new Date();
   var monthExpRep=(db.expenses||[]).filter(function(e){if(!e.repairId&&!e.repair_id)return false;var d=new Date(e.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
   var totalCost=monthExpRep.reduce(function(s,e){return s+(parseFloat(e.amount)||0);},0);
-  // Si pas de frais liés trouvés, on prend le champ cout direct des fiches terminées ce mois
   if(totalCost===0){
     var doneMonth=repairs.filter(function(r){if(r.status!=='terminee'||!r.dateFin)return false;var d=new Date(r.dateFin);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
     totalCost=doneMonth.reduce(function(s,r){return s+(parseFloat(r.cout)||0);},0);
   }
   document.getElementById('grepair-stat-cost').textContent=totalCost>0?fmt(totalCost):'—';
-  // Camion le plus sollicité
+  // Camion le plus sollicité (exclut N/A car ce sont des erreurs)
   var truckCount={};
-  repairs.forEach(function(r){if(r.truckId)truckCount[r.truckId]=(truckCount[r.truckId]||0)+1;});
+  repairs.filter(function(r){return r.status!=='non_applicable';}).forEach(function(r){if(r.truckId)truckCount[r.truckId]=(truckCount[r.truckId]||0)+1;});
   var topTruck=null;var topCount=0;Object.keys(truckCount).forEach(function(t){if(truckCount[t]>topCount){topCount=truckCount[t];topTruck=t;}});
   if(topTruck){var tt=db.trucks.find(function(t){return String(t.id)===String(topTruck);});document.getElementById('grepair-stat-truck').textContent=tt?tt.plate:'—';}
   else document.getElementById('grepair-stat-truck').textContent='—';
@@ -1667,6 +1711,7 @@ function renderRepairsGerant(){
   var filtered=repairs;
   if(_currentGRepairFilter==='open')filtered=open;
   else if(_currentGRepairFilter==='terminee')filtered=repairs.filter(function(r){return r.status==='terminee';});
+  else if(_currentGRepairFilter==='non_applicable')filtered=repairs.filter(function(r){return r.status==='non_applicable';});
   var priOrder={haute:0,normale:1,faible:2};
   filtered.sort(function(a,b){var pa=priOrder[a.priority]||1;var pb=priOrder[b.priority]||1;if(pa!==pb)return pa-pb;return (new Date(b.dateConstat||0))-(new Date(a.dateConstat||0));});
   var list=document.getElementById('gRepairsList');
@@ -2419,33 +2464,44 @@ el.innerHTML=h;}
 <div class="mo" id="repairModal"><div class="modal" style="max-width:640px"><div class="modal-bar"></div>
   <div class="modal-title" id="repairModalTitle">🛠️ Fiche de réparation</div>
   
+  <!-- BANDEAU MODE LECTURE -->
+  <div id="rep-readonly-banner" style="display:none;padding:10px 12px;background:rgba(59,130,246,.08);border-left:3px solid var(--bl);border-radius:6px;font-size:.74rem;color:var(--bl);font-weight:700;margin-bottom:12px">👁️ Mode consultation — gérant en lecture seule</div>
+  
   <!-- STEPPER STATUTS -->
   <div class="repair-stepper" id="repairStepper">
     <button type="button" class="repair-step" data-status="a_diagnostiquer" onclick="setRepairStatus('a_diagnostiquer')">🟡 Diagnostic</button>
     <button type="button" class="repair-step" data-status="en_cours" onclick="setRepairStatus('en_cours')">🔵 En cours</button>
     <button type="button" class="repair-step" data-status="attente_piece" onclick="setRepairStatus('attente_piece')">🟣 Attente pièce</button>
     <button type="button" class="repair-step" data-status="terminee" onclick="setRepairStatus('terminee')">✅ Terminée</button>
+    <button type="button" class="repair-step" data-status="non_applicable" onclick="setRepairStatus('non_applicable')" title="Si signalement erroné ou sans suite">❌ Non applicable</button>
+  </div>
+  
+  <!-- BANDEAU JUSTIFICATION NON-APPLICABLE -->
+  <div id="rep-na-banner" style="display:none;margin-bottom:12px;padding:12px;background:rgba(107,114,128,.08);border-left:3px solid #6B7280;border-radius:6px">
+    <label class="fl" style="margin-bottom:6px;display:block;color:#4B5563">❌ Raison du classement "Non applicable" *</label>
+    <textarea class="ft" id="rep-na-reason" placeholder="Ex: signalement erroné — voyant ABS éteint après redémarrage / chauffeur a confondu avec un autre véhicule / ..." style="min-height:60px"></textarea>
+    <div style="font-size:.66rem;color:var(--t4);margin-top:4px;font-style:italic">💡 La fiche restera consultable dans l'historique avec cette justification</div>
   </div>
   
   <div class="fg2"><div class="fg"><label class="fl">🚛 Camion *</label><select class="fs" id="rep-truck"></select></div><div class="fg"><label class="fl">⚠️ Priorité</label><select class="fs" id="rep-priority"><option value="faible">🟢 Faible</option><option value="normale" selected>🟡 Normale</option><option value="haute">🔴 Haute / Urgent</option></select></div></div>
   
   <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">📅 Date constat</label><input type="date" class="fi" id="rep-date-constat"></div><div class="fg"><label class="fl">📅 Date début intervention</label><input type="date" class="fi" id="rep-date-debut"></div></div>
   
-  <div class="fg" style="margin-top:10px"><label class="fl">📝 Signalement initial (du chauffeur)</label>
-    <div id="rep-source-summary" style="background:var(--sf2);padding:10px;border-radius:8px;font-size:.74rem;color:var(--t3);min-height:30px;line-height:1.5">—</div>
+  <div class="fg" style="margin-top:10px"><label class="fl" style="color:var(--rd)">👤 SIGNALEMENT INITIAL — Observation du chauffeur</label>
+    <div id="rep-source-summary" style="background:rgba(220,38,38,.04);padding:10px;border:1px solid rgba(220,38,38,.15);border-left:3px solid var(--rd);border-radius:8px;font-size:.74rem;color:var(--t3);min-height:30px;line-height:1.5">—</div>
   </div>
   
-  <div class="fg" style="margin-top:10px"><label class="fl" style="display:flex;align-items:center;justify-content:space-between"><span>🔍 Diagnostic mécanicien</span><button type="button" class="voice-mic-btn" id="repDiagVoiceBtn" onclick="toggleVoiceDictation('rep-diagnostic','repDiagVoiceBtn','repDiagVoiceStatus')"><span class="voice-mic-ico">🎤</span><span class="voice-mic-label">Dicter</span></button></label><textarea class="ft" id="rep-diagnostic" placeholder="Décrivez le diagnostic après inspection..." style="min-height:60px"></textarea><div class="voice-status" id="repDiagVoiceStatus"></div></div>
+  <div class="fg" style="margin-top:14px"><label class="fl" style="display:flex;align-items:center;justify-content:space-between;color:var(--bl)"><span>🔧 DIAGNOSTIC MÉCANICIEN — Après inspection</span><button type="button" class="voice-mic-btn" id="repDiagVoiceBtn" onclick="toggleVoiceDictation('rep-diagnostic','repDiagVoiceBtn','repDiagVoiceStatus')"><span class="voice-mic-ico">🎤</span><span class="voice-mic-label">Dicter</span></button></label><textarea class="ft" id="rep-diagnostic" placeholder="Décrivez ce que vous avez constaté lors de l'inspection..." style="min-height:60px;border-left:3px solid var(--bl)"></textarea><div class="voice-status" id="repDiagVoiceStatus"></div></div>
   
-  <div class="fg" style="margin-top:10px"><label class="fl" style="display:flex;align-items:center;justify-content:space-between"><span>🔧 Actions effectuées</span><button type="button" class="voice-mic-btn" id="repActionsVoiceBtn" onclick="toggleVoiceDictation('rep-actions','repActionsVoiceBtn','repActionsVoiceStatus')"><span class="voice-mic-ico">🎤</span><span class="voice-mic-label">Dicter</span></button></label><textarea class="ft" id="rep-actions" placeholder="Vidange, remplacement, réparation..." style="min-height:60px"></textarea><div class="voice-status" id="repActionsVoiceStatus"></div></div>
+  <div class="fg" style="margin-top:10px"><label class="fl" style="display:flex;align-items:center;justify-content:space-between;color:var(--bl)"><span>🔧 ACTIONS RÉALISÉES PAR LE MÉCANICIEN</span><button type="button" class="voice-mic-btn" id="repActionsVoiceBtn" onclick="toggleVoiceDictation('rep-actions','repActionsVoiceBtn','repActionsVoiceStatus')"><span class="voice-mic-ico">🎤</span><span class="voice-mic-label">Dicter</span></button></label><textarea class="ft" id="rep-actions" placeholder="Vidange, remplacement, réparation..." style="min-height:60px;border-left:3px solid var(--bl)"></textarea><div class="voice-status" id="repActionsVoiceStatus"></div></div>
   
-  <div class="fg" style="margin-top:10px"><label class="fl">📦 Pièces commandées / utilisées</label><textarea class="ft" id="rep-pieces" placeholder="Référence des pièces, fournisseur..." style="min-height:50px"></textarea></div>
+  <div class="fg" style="margin-top:10px"><label class="fl" style="color:var(--bl)">📦 PIÈCES — Commandées / utilisées par le mécanicien</label><textarea class="ft" id="rep-pieces" placeholder="Référence des pièces, fournisseur..." style="min-height:50px;border-left:3px solid var(--bl)"></textarea></div>
   
-  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">📅 Date fin (terminée)</label><input type="date" class="fi" id="rep-date-fin"></div><div class="fg"><label class="fl">💰 Coût total (€)</label><div style="display:flex;gap:6px"><input type="number" class="fi" id="rep-cout" placeholder="0.00" step="0.01" style="flex:1"><button type="button" class="btn btn-o btn-s" onclick="openExpenseFromRepair()" title="Saisir un frais véhicule lié">💶 Frais</button></div></div></div>
+  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">📅 Date fin (terminée)</label><input type="date" class="fi" id="rep-date-fin"></div><div class="fg"><label class="fl">💰 Coût total (€)</label><div style="display:flex;gap:6px"><input type="number" class="fi" id="rep-cout" placeholder="0.00" step="0.01" style="flex:1"><button type="button" class="btn btn-o btn-s" id="rep-frais-btn" onclick="openExpenseFromRepair()" title="Saisir un frais véhicule lié">💶 Frais</button></div></div></div>
   
   <div id="rep-linked-expenses" style="margin-top:10px;display:none;padding:10px;background:rgba(22,163,74,.08);border-left:3px solid var(--gn);border-radius:6px;font-size:.72rem"></div>
   
-  <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('repairModal')">Annuler</button><button class="btn btn-x btn-w" id="repDeleteBtn" onclick="deleteRepair()" style="display:none">🗑️</button><button class="btn btn-p btn-w btn-l" onclick="saveRepair()">💾 Enregistrer</button></div>
+  <div style="display:flex;gap:8px;margin-top:18px" id="rep-actions-bar"><button class="btn btn-o btn-w" onclick="closeModal('repairModal')">Fermer</button><button class="btn btn-p btn-w btn-l" id="rep-save-btn" onclick="saveRepair()">💾 Enregistrer</button></div>
 </div></div>
 
 <div class="mo" id="emailLdvModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">📧 Envoyer la LDV par email</div>
