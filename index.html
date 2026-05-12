@@ -374,6 +374,31 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
 .voice-status{font-size:.7rem;color:var(--t3);margin-top:6px;min-height:18px;font-style:italic}
 .voice-status.listening{color:var(--er);font-weight:700}
 .voice-status .voice-interim{color:var(--t4);opacity:.7}
+
+.voyants-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.voyant-btn{background:var(--sf2);border:2px solid var(--bd);border-radius:10px;padding:12px 6px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;text-align:center;font-family:inherit}
+.voyant-btn:active{transform:scale(.96)}
+.voyant-ico{font-size:1.6rem;line-height:1;display:block;margin-bottom:4px;filter:grayscale(.5);opacity:.7;transition:all .15s}
+.voyant-label{font-size:.62rem;font-weight:800;color:var(--t3);line-height:1.2;letter-spacing:.02em}
+.voyant-btn.active{background:rgba(220,38,38,.12);border-color:var(--er);box-shadow:0 0 0 3px rgba(220,38,38,.12)}
+.voyant-btn.active .voyant-ico{filter:none;opacity:1;animation:voyantBlink 1.5s ease-in-out infinite}
+.voyant-btn.active .voyant-label{color:var(--er)}
+@keyframes voyantBlink{0%,100%{opacity:1}50%{opacity:.55}}
+
+.anomalies-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.anomalie-btn{background:var(--sf2);border:1.5px solid var(--bd);border-radius:8px;padding:10px 8px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;font-family:inherit;display:flex;align-items:center;gap:8px;font-size:.74rem;font-weight:700;color:var(--t2);text-align:left;min-height:44px}
+.anomalie-btn:active{transform:scale(.97)}
+.anomalie-ico{font-size:1.05rem;line-height:1;flex-shrink:0}
+.anomalie-btn.active{background:rgba(245,158,11,.12);border-color:var(--wa);color:#92400E}
+.anomalie-btn.active .anomalie-check{background:var(--wa);border-color:var(--wa);color:#fff}
+.anomalie-check{margin-left:auto;width:18px;height:18px;border-radius:5px;border:1.5px solid var(--bd);background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;line-height:1}
+
+@media(max-width:480px){
+  .voyants-grid{grid-template-columns:repeat(3,1fr);gap:6px}
+  .voyant-ico{font-size:1.4rem}
+  .voyant-label{font-size:.58rem}
+  .anomalies-grid{grid-template-columns:1fr}
+}
 .plan-summary-tbl{display:flex;flex-direction:column;gap:6px}
 .plan-summary-row{display:grid;grid-template-columns:28px 1fr 40px 90px;gap:8px;align-items:center;padding:8px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);font-size:.72rem;cursor:pointer;transition:background .15s}
 .plan-summary-row:active{background:var(--sf2)}
@@ -422,7 +447,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
       <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
     </div>
-    <span class="ver-tag">v10.37 — 2026</span>
+    <span class="ver-tag">v10.38 — 2026</span>
   </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
@@ -571,20 +596,50 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
         <div id="driverTransportList" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
       <div class="page" id="page-driver-fiche">
-        <div class="ph"><div><div class="pt">Fiche fin de journée</div></div><button class="btn btn-o btn-s" onclick="togglePageHelp('driver-fiche')">💡 Aide</button></div>
+        <div class="ph"><div><div class="pt">Fiche véhicule du jour</div><div class="ps">Point d'entrée du mécanicien — soyez précis</div></div><button class="btn btn-o btn-s" onclick="togglePageHelp('driver-fiche')">💡 Aide</button></div>
         <div class="card" id="help-driver-fiche" style="margin-bottom:10px;display:none;border-left:3px solid var(--bl)"><div class="card-b" style="font-size:.78rem;line-height:1.6">
-          <div style="font-weight:800;margin-bottom:6px;color:var(--bl)">💡 Pourquoi remplir cette fiche</div>
-          <div style="color:var(--t2)">• <b>Kilométrage</b> du soir : permet de suivre l'usage du camion et planifier les entretiens (vidange, pneus...)</div>
-          <div style="color:var(--t2);margin-top:3px">• <b>Carburant</b> (litres + prix payé) : intégré automatiquement dans le calcul de marge du gérant</div>
-          <div style="color:var(--t2);margin-top:3px">• <b>Observations</b> : tout problème mécanique (bruit, fuite, voyant...) — le <b>mécanicien</b> les verra dans son interface pour intervenir vite. Vous pouvez utiliser le bouton <b>🎤 Dicter</b> pour saisir à la voix (mains sales, pratique en cabine).</div>
-          <div style="color:var(--t2);margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)"><b>💡</b> Envoyez votre fiche <b>chaque soir</b> avant de quitter le camion — ça prend 30 secondes.</div>
+          <div style="font-weight:800;margin-bottom:6px;color:var(--bl)">💡 Cette fiche aide le mécanicien</div>
+          <div style="color:var(--t2)">Cette fiche est <b>le point d'entrée du travail du mécanicien</b>. Plus vous êtes précis, mieux le camion sera entretenu et plus vous éviterez les pannes en route.</div>
+          <div style="color:var(--t2);margin-top:6px"><b>3 manières de signaler :</b></div>
+          <div style="color:var(--t2);margin-top:2px">1️⃣ <b>Voyants</b> : touchez ceux qui se sont allumés dans votre cabine aujourd'hui</div>
+          <div style="color:var(--t2);margin-top:2px">2️⃣ <b>Anomalies</b> : cochez ce que vous avez remarqué (bruit, fuite, vibration...)</div>
+          <div style="color:var(--t2);margin-top:2px">3️⃣ <b>Observations détaillées</b> : précisez à la voix ou au texte</div>
+          <div style="color:var(--t2);margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)"><b>⚡ Tout va bien ?</b> Cliquez sur le bouton vert "RAS" en haut, votre fiche est envoyée en 5 secondes.</div>
         </div></div>
-        <div class="card"><div class="card-b">
-          <div class="fg2"><div class="fg"><label class="fl">Kilométrage</label><input type="number" class="fi" id="fiche-km" placeholder="154280"></div><div class="fg"><label class="fl">Carburant (L)</label><input type="number" class="fi" id="fiche-conso" placeholder="65"></div></div>
-          <div class="fg" style="margin-top:10px"><label class="fl">Carburant — Prix (€)</label><input type="number" class="fi" id="fiche-fuel-price" placeholder="110.50"></div>
-          <div class="fg" style="margin-top:10px"><label class="fl" style="display:flex;align-items:center;justify-content:space-between"><span>Observations</span><button type="button" class="voice-mic-btn" id="ficheVoiceBtn" onclick="toggleVoiceDictation('fiche-notes','ficheVoiceBtn','ficheVoiceStatus')" title="Dictée vocale"><span class="voice-mic-ico">🎤</span><span class="voice-mic-label">Dicter</span></button></label><textarea class="ft" id="fiche-notes" placeholder="Incidents, remarques... ou utilisez le micro 🎤"></textarea><div class="voice-status" id="ficheVoiceStatus"></div></div>
-          <button class="btn btn-p btn-w btn-l" style="margin-top:16px" onclick="submitFiche()">📤 Envoyer ma fiche</button>
+
+        <!-- Bouton URGENCE appel mécano -->
+        <div id="ficheMecanoPhone" style="margin-bottom:12px;display:none"><a href="#" id="ficheMecanoPhoneLink" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:linear-gradient(135deg,#DC2626,#B91C1C);color:#fff;border-radius:var(--r2);text-decoration:none;font-weight:800;box-shadow:0 4px 14px rgba(220,38,38,.3)"><span style="font-size:1.3rem">📞</span><span style="flex:1"><span style="display:block;font-size:.7rem;opacity:.85;font-weight:700;letter-spacing:.04em">URGENCE — APPELER LE MÉCANO</span><span id="ficheMecanoPhoneNumber" style="font-size:1rem;font-weight:900;letter-spacing:.06em"></span></span><span style="font-size:1.1rem">→</span></a></div>
+
+        <!-- BOUTON RAS -->
+        <div class="card" style="margin-bottom:14px;background:linear-gradient(135deg,#16A34A,#15803D);border:none;cursor:pointer" onclick="ficheRAS()"><div style="padding:18px 16px;color:#fff;display:flex;align-items:center;gap:12px"><span style="font-size:1.6rem">✅</span><div style="flex:1"><div style="font-size:.95rem;font-weight:900;letter-spacing:.02em">RAS — Aucun problème</div><div style="font-size:.72rem;opacity:.9;margin-top:2px">Camion en parfait état, je remplis juste km + carburant</div></div><span style="font-size:1.3rem">→</span></div></div>
+
+        <!-- SECTION 1 : KILOMÉTRAGE -->
+        <div class="card" style="margin-bottom:12px"><div class="card-h"><div class="card-t">📏 1. Kilométrage</div></div><div class="card-b">
+          <div class="fg2"><div class="fg"><label class="fl">Km début (auto)</label><input type="number" class="fi" id="fiche-km-start" placeholder="Ex: 152480" oninput="updateKmDelta()"></div><div class="fg"><label class="fl">Km fin *</label><input type="number" class="fi" id="fiche-km" placeholder="Ex: 152767" oninput="updateKmDelta()"></div></div>
+          <div id="kmDeltaDisplay" style="margin-top:10px;padding:10px;background:var(--sf2);border-radius:8px;font-size:.78rem;color:var(--t3);text-align:center"><span style="font-weight:700">Km parcourus aujourd'hui :</span> <span id="kmDeltaValue" style="font-weight:900;color:var(--rd)">—</span></div>
         </div></div>
+
+        <!-- SECTION 2 : CARBURANT -->
+        <div class="card" style="margin-bottom:12px"><div class="card-h"><div class="card-t">⛽ 2. Carburant</div></div><div class="card-b">
+          <div class="fg2"><div class="fg"><label class="fl">Litres consommés</label><input type="number" class="fi" id="fiche-conso" placeholder="Ex: 65" step="0.1" oninput="updateFuelConso()"></div><div class="fg"><label class="fl">Prix payé (€)</label><input type="number" class="fi" id="fiche-fuel-price" placeholder="Ex: 110.50" step="0.01"></div></div>
+          <div id="fuelConsoDisplay" style="margin-top:10px;padding:10px;background:var(--sf2);border-radius:8px;font-size:.78rem;color:var(--t3);text-align:center"><span style="font-weight:700">Consommation :</span> <span id="fuelConsoValue" style="font-weight:900;color:var(--rd)">—</span></div>
+        </div></div>
+
+        <!-- SECTION 3 : VOYANTS TABLEAU DE BORD -->
+        <div class="card" style="margin-bottom:12px"><div class="card-h"><div class="card-t">🚨 3. Voyants allumés au tableau de bord</div></div><div class="card-b">
+          <div style="font-size:.72rem;color:var(--t3);margin-bottom:10px;line-height:1.4">Touchez chaque voyant qui s'est allumé aujourd'hui (même brièvement)</div>
+          <div class="voyants-grid" id="voyantsGrid"></div>
+          <div id="voyantsSelected" style="margin-top:10px;padding:10px;background:rgba(220,38,38,.06);border-left:3px solid var(--er);border-radius:6px;font-size:.74rem;display:none"><b style="color:var(--er)">⚠️ Voyants signalés :</b> <span id="voyantsSelectedList"></span></div>
+        </div></div>
+
+        <!-- SECTION 4 : ANOMALIES VISIBLES -->
+        <div class="card" style="margin-bottom:12px"><div class="card-h"><div class="card-t">🔍 4. Anomalies remarquées</div></div><div class="card-b">
+          <div style="font-size:.72rem;color:var(--t3);margin-bottom:10px;line-height:1.4">Cochez ce que vous avez observé pendant votre journée</div>
+          <div class="anomalies-grid" id="anomaliesGrid"></div>
+          <div class="fg" style="margin-top:14px"><label class="fl" style="display:flex;align-items:center;justify-content:space-between"><span>📝 Observations détaillées</span><button type="button" class="voice-mic-btn" id="ficheVoiceBtn" onclick="toggleVoiceDictation('fiche-notes','ficheVoiceBtn','ficheVoiceStatus')" title="Dictée vocale"><span class="voice-mic-ico">🎤</span><span class="voice-mic-label">Dicter</span></button></label><textarea class="ft" id="fiche-notes" placeholder="Précisez : où, quand, comment... Plus c'est précis, mieux le mécanicien interviendra." style="min-height:80px"></textarea><div class="voice-status" id="ficheVoiceStatus"></div></div>
+        </div></div>
+
+        <button class="btn btn-p btn-w btn-l" style="margin-top:8px;padding:16px;font-size:.92rem;font-weight:900" onclick="submitFiche()">📤 Envoyer ma fiche au mécanicien</button>
       </div>
       <div class="page" id="page-driver-profile">
         <div class="ph"><div><div class="pt">Mon profil</div></div></div>
@@ -645,7 +700,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
           <div style="color:var(--t2);margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)"><b>💡 Workflow recommandé</b> : consultez cette page tous les matins. Si une observation est critique, contactez directement le chauffeur avant qu'il ne reparte.</div>
         </div></div>
         <div class="search" style="margin-bottom:10px"><input type="text" class="fi" placeholder="Rechercher chauffeur, observation..." oninput="renderMecaObs(this.value)"></div>
-        <div class="card"><div class="tw"><table><thead><tr><th>Date</th><th>Chauffeur</th><th>Km</th><th>Litres</th><th>Observation</th></tr></thead><tbody id="mecaObsTableBody"></tbody></table></div></div>
+        <div class="card"><div class="card-b" id="mecaObsTableBody" style="padding:10px"></div></div>
       </div>
     </main>
     <nav class="bnav" id="bottomNav"></nav>
@@ -769,11 +824,11 @@ if(data.camions?.length)db.trucks=data.camions.map(t=>({id:sid(t.id),plate:t.imm
 if(data.clients?.length)db.clients=data.clients.map(c=>({id:sid(c.id),company:c.entreprise||c.company||'',manager:c.gerant||c.manager||'',phone:c.telephone||c.phone||'',email:c.email||''}));
 if(data.commandes?.length)db.orders=data.commandes.map(o=>{const nbRaw=String(o.nb_estime||o.nbEstimated||'0');const nb=nbRaw.split(/[|,]/).reduce(function(s,v){return s+(parseInt(v)||0);},0);const done=parseInt(o.nb_fait||o.nbDone)||0;const oid=sid(o.id);const lt=(data.transports||[]).filter(t=>sid(t.commande_id)===oid);const transports=Array.from({length:nb},(_,i)=>{const transportId=i+1;var t=null;var hasValidNums=lt.some(function(x){var n=parseInt(x.transport_num||x.transportId);return!isNaN(n)&&n>0&&n<=1000;});if(hasValidNums){t=lt.find(function(x){var n=parseInt(x.transport_num||x.transportId);return!isNaN(n)&&n===transportId&&n<=1000;});}else{t=lt[i];}return t?{id:transportId,done:true,tonnage:(function(v){var n=parseFloat(String(v||'').replace(',','.'));return isNaN(n)?0:n;})(t.tonnage),receiver:t.receptionnaire||t.receiver,func:t.fonction||t.func,sig:'✓',ts:t.timestamp,paperPhotos:(function(p){if(!p)return [];return String(p).split('|').filter(Boolean).map(function(u){return {url:u,fileId:(u.match(/[-\w]{25,}/)||[''])[0]};});})(t.photo_papier_url||t.paperPhotos||t.photo_papier||'')}:{id:transportId,done:false,tonnage:null,receiver:null,func:null,sig:null,paperPhotos:[]};});return{id:oid,clientId:sid(o.client_id||o.clientId),address:o.adresse||o.address||'',date:cd(o.date_chantier||o.date),driverId:sid(o.chauffeur_id||o.driverId),truckId:sid(o.camion_id||o.truckId),type:o.type||'materiaux',materialId:o.materiau_id?sid(o.materiau_id):null,nbEstimated:nb,nbEstimatedRaw:nbRaw,nbDone:done,status:o.statut||o.status||'en_cours',invoiceSent:o.invoice_sent===true||o.invoice_sent==='true'||o.invoice_sent==='TRUE'||String(o.invoice_sent).toLowerCase()==='true',invoiceDate:o.invoice_date||o.invoiceDate||'',invoiceTo:o.invoice_to||o.invoiceTo||'',invoiceRef:o.invoice_ref||o.invoiceRef||'',paid:o.paid==='true'||o.paid===true||String(o.paid).toLowerCase()==='true',paidDate:o.paid_date||o.paidDate||'',transports};});
 if(data.frais?.length)db.expenses=data.frais.map(f=>({id:sid(f.id),truckId:sid(f.camion_id||f.truckId),date:cd(f.date),type:f.type_frais||f.type||'',amount:parseFloat(f.montant||f.amount)||0,desc:f.description||f.desc||''}));
-if(data.fiches_jour?.length)db.dayReports=data.fiches_jour.map(f=>({id:String(f.id||''),driverId:String(f.chauffeur_id||f.driverId||''),driverName:f.chauffeur_nom||f.driverName||'',date:f.date||'',km:parseInt(f.kilometrage||f.km)||0,fuelLiters:parseFloat(f.carburant_litres||f.fuelLiters)||0,fuelPrice:parseFloat(f.carburant_prix||f.fuelPrice)||0,notes:f.observations||f.notes||''}));
+if(data.fiches_jour?.length)db.dayReports=data.fiches_jour.map(f=>({id:String(f.id||''),driverId:String(f.chauffeur_id||f.driverId||''),driverName:f.chauffeur_nom||f.driverName||'',date:f.date||'',km:parseInt(f.kilometrage||f.km)||0,kmStart:parseInt(f.km_debut||f.kmStart)||0,fuelLiters:parseFloat(f.carburant_litres||f.fuelLiters)||0,fuelPrice:parseFloat(f.carburant_prix||f.fuelPrice)||0,voyants:f.voyants||'',anomalies:f.anomalies||'',notes:f.observations||f.notes||'',hasIssues:(function(){var vo=String(f.voyants||'').split('|').filter(Boolean);var an=String(f.anomalies||'').split('|').filter(Boolean);var n=String(f.observations||f.notes||'').trim();return vo.length>0||an.length>0||n.length>0;})()}));
 if(data.materiaux?.length)db.materials=data.materiaux.map(m=>({id:String(m.id),name:m.nom||m.name||'',unit:m.unite||m.unit||'tonne'}));
 if(data.tarifs_clients?.length)db.clientTariffs=data.tarifs_clients.map(t=>{var typeVal=String(t.type||'').trim();var matVal=String(t.materiau_id||'').trim();if(/^\d{8,}$/.test(typeVal)&&(matVal==='journee'||matVal==='materiaux'||matVal===''))[typeVal,matVal]=[matVal,typeVal];return{id:String(t.id),clientId:String(t.client_id||t.clientId),type:typeVal||'materiaux',materialId:matVal?String(matVal):null,price:parseFloat(t.prix_unitaire||t.price)||0};});
 if(data.expense_types?.length){db.expenseTypes=data.expense_types.map(t=>({id:String(t.id),label:String(t.label||t.id)}));}else{db.expenseTypes=[];}
-if(data.company){remoteConfig.company_name=data.company.name||data.company.raison_sociale||'';remoteConfig.company_address=data.company.address||data.company.adresse||'';remoteConfig.company_postal=data.company.postal||data.company.code_postal||'';remoteConfig.company_city=data.company.city||data.company.ville||'';remoteConfig.company_siret=data.company.siret||'';remoteConfig.company_licence=data.company.licence||'';remoteConfig.company_phone=data.company.phone||data.company.telephone||'';remoteConfig.company_email=data.company.email||'';if(data.company.gerant_pin)GERANT_PIN=String(data.company.gerant_pin);if(data.company.mecano_pin)MECANO_PIN=String(data.company.mecano_pin);remoteConfig.company_cnr_ref=data.company.cnr_ref||data.company.company_cnr_ref||0;remoteConfig.company_cnr_current=data.company.cnr_current||data.company.company_cnr_current||0;remoteConfig.company_cnr_weight=data.company.cnr_weight||data.company.company_cnr_weight||0;remoteConfig.company_tva=data.company.tva||data.company.company_tva||20;localStorage.setItem('sotransnord_config_cache',JSON.stringify(remoteConfig));}addAudit('Synchronisation',db.orders.length+' cmd · '+db.drivers.length+' chauffeurs');}
+if(data.company){remoteConfig.company_name=data.company.name||data.company.raison_sociale||'';remoteConfig.company_address=data.company.address||data.company.adresse||'';remoteConfig.company_postal=data.company.postal||data.company.code_postal||'';remoteConfig.company_city=data.company.city||data.company.ville||'';remoteConfig.company_siret=data.company.siret||'';remoteConfig.company_licence=data.company.licence||'';remoteConfig.company_phone=data.company.phone||data.company.telephone||'';remoteConfig.company_email=data.company.email||'';if(data.company.gerant_pin)GERANT_PIN=String(data.company.gerant_pin);if(data.company.mecano_pin)MECANO_PIN=String(data.company.mecano_pin);remoteConfig.company_mecano_phone=data.company.mecano_phone||data.company.company_mecano_phone||'';remoteConfig.company_cnr_ref=data.company.cnr_ref||data.company.company_cnr_ref||0;remoteConfig.company_cnr_current=data.company.cnr_current||data.company.company_cnr_current||0;remoteConfig.company_cnr_weight=data.company.cnr_weight||data.company.company_cnr_weight||0;remoteConfig.company_tva=data.company.tva||data.company.company_tva||20;localStorage.setItem('sotransnord_config_cache',JSON.stringify(remoteConfig));}addAudit('Synchronisation',db.orders.length+' cmd · '+db.drivers.length+' chauffeurs');}
 let demoSnapshot=null;
 function activateDemo(){
   state.mode='demo';loginRole='chauffeur';
@@ -824,13 +879,41 @@ if(valid){clearLockout();state.pinAttempts=0;state.currentUser=user;state.role=u
 else{const totalAttempts=recordFailedAttempt();logAuthAttempt(false,'pin='+pin.substring(0,2)+'****','PIN incorrect');state.pinValue='';for(let i=0;i<6;i++){const d=document.getElementById('d'+i);if(d)d.className='pin-dot error';}setTimeout(updatePinDots,600);const lockMin=getLockoutMinutes(totalAttempts);if(lockMin>0){state.pinLocked=true;document.getElementById('pinError').textContent='🔒 Bloqué '+(lockMin>=60?(lockMin/60)+' h':lockMin+' min')+' — '+totalAttempts+' échecs';document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=true);}else{const rem=5-totalAttempts;document.getElementById('pinError').textContent='❌ Code incorrect — '+rem+' essai(s) restant(s)';}}}
 function logout(){state.currentUser=null;state.role=null;state.pinValue='';state.pinAttempts=0;state.pinLocked=false;state.mode='real';demoSnapshot=null;document.getElementById('app').classList.remove('active');document.getElementById('screen-splash').classList.remove('hidden');document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=false);switchLoginRole('chauffeur');}
 const NAV_G=[{id:'dashboard',label:'Accueil',icon:'🏠',mob:'🏠',page:'page-dashboard'},{id:'planning',label:'Planning',icon:'📋',mob:'📋',page:'page-planning'},{id:'commandes',label:'Commandes',icon:'📦',mob:'📦',page:'page-commandes'},{id:'donnees',label:'Données',icon:'📂',mob:'📂',page:'page-donnees'},{id:'rapports',label:'Rapports',icon:'📊',mob:'📊',page:'page-rapports'},{id:'marge',label:'Marge',icon:'💹',mob:'💹',page:'page-marge'}];
+
+// Liste des voyants du tableau de bord (camions modernes)
+const VOYANTS_LIST=[
+  {id:'moteur',label:'Moteur',ico:'🔧',color:'#DC2626'},
+  {id:'abs',label:'ABS',ico:'🛞',color:'#F59E0B'},
+  {id:'adblue',label:'AdBlue',ico:'💧',color:'#3B82F6'},
+  {id:'frein',label:'Frein',ico:'🅿️',color:'#DC2626'},
+  {id:'huile',label:'Huile',ico:'🛢️',color:'#DC2626'},
+  {id:'batterie',label:'Batterie',ico:'🔋',color:'#DC2626'},
+  {id:'pneus',label:'Pression pneus',ico:'🔘',color:'#F59E0B'},
+  {id:'refroid',label:'Liq. refroid.',ico:'🌡️',color:'#DC2626'},
+  {id:'fap',label:'FAP / DPF',ico:'♻️',color:'#F59E0B'}
+];
+
+// Liste des anomalies visibles/audibles
+const ANOMALIES_LIST=[
+  {id:'bruit',label:'Bruit anormal',ico:'🔊'},
+  {id:'fuite',label:'Fuite visible',ico:'💧'},
+  {id:'vibration',label:'Vibration',ico:'📳'},
+  {id:'freinage',label:'Freinage faible',ico:'🛑'},
+  {id:'direction',label:'Direction dure',ico:'🎯'},
+  {id:'embrayage',label:'Embrayage',ico:'⚙️'},
+  {id:'phares',label:'Phare défaillant',ico:'💡'},
+  {id:'carrosserie',label:'Carrosserie',ico:'🚛'},
+  {id:'pneus_vis',label:'Pneu usé/abîmé',ico:'⚫'},
+  {id:'fumee',label:'Fumée échappement',ico:'💨'}
+];
+
 const NAV_C=[{id:'driver-day',label:'Transports',icon:'🚛',mob:'🚛',page:'page-driver-day'},{id:'driver-fiche',label:'Fiche jour',icon:'📝',mob:'📝',page:'page-driver-fiche'},{id:'driver-profile',label:'Profil',icon:'👤',mob:'👤',page:'page-driver-profile'}];
 const NAV_M=[{id:'meca-dashboard',label:'Atelier',icon:'🔧',mob:'🔧',page:'page-meca-dashboard'},{id:'meca-flotte',label:'Flotte',icon:'🚛',mob:'🚛',page:'page-meca-flotte'},{id:'meca-frais',label:'Entretien',icon:'🛠️',mob:'🛠️',page:'page-meca-frais'},{id:'meca-obs',label:'Observations',icon:'📝',mob:'📝',page:'page-meca-obs'}];
 const MOB_G_TABS=['dashboard','planning','commandes','donnees','marge'];
 function initApp(){const u=state.currentUser;document.getElementById('topbarAvatar').textContent=u.initials||'U';document.getElementById('topbarName').textContent=u.name;updateModeUI();const nav=u.role==='gerant'?NAV_G:(u.role==='mecano'?NAV_M:NAV_C);buildNav(nav,u.role);navigate(u.role==='gerant'?'dashboard':(u.role==='mecano'?'meca-dashboard':'driver-day'));}
 function buildNav(nav,role){const sn=document.getElementById('sidenav');sn.innerHTML='<div class="sn-logo"><div class="sn-mark">SN</div><div class="sn-name">SOTRANSNORD</div></div><div class="sn-sec"><div class="sn-lb">Navigation</div>'+nav.map(n=>'<button class="sn-it" id="sn-'+n.id+'" onclick="navigate(\''+n.id+'\')"><span class="ni">'+n.icon+'</span> '+n.label+'</button>').join('')+'</div><div class="sn-ft"><button class="sn-it" onclick="logout()" style="color:rgba(255,80,80,.5)"><span class="ni">⏻</span> Déconnexion</button></div>';const bn=document.getElementById('bottomNav');const tabs=role==='gerant'?MOB_G_TABS:nav.map(n=>n.id);bn.innerHTML=tabs.map(id=>{const n=nav.find(x=>x.id===id);if(!n)return'';return'<button class="bt" id="bt-'+n.id+'" onclick="navigate(\''+n.id+'\')"><span class="bt-i">'+n.mob+'</span><span class="bt-l">'+n.label+'</span></button>';}).join('');}
 function navigate(id){const nav=state.role==='gerant'?NAV_G:(state.role==='mecano'?NAV_M:NAV_C);const item=nav.find(n=>n.id===id);if(!item)return;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(item.page).classList.add('active');document.querySelectorAll('.sn-it').forEach(el=>el.classList.remove('on'));document.querySelectorAll('.bt').forEach(el=>el.classList.remove('on'));const s=document.getElementById('sn-'+id);if(s)s.classList.add('on');const b=document.getElementById('bt-'+id);if(b)b.classList.add('on');state.currentPage=id;renderPage(id);}
-function renderPage(id){switch(id){case'dashboard':renderDashboard();break;case'planning':renderPlanning();break;case'commandes':renderOrders();break;case'donnees':renderDonnees();break;case'rapports':renderRapports();break;case'marge':renderMarginTable();break;case'driver-day':renderDriverDay();break;case'driver-profile':renderDriverProfile();break;case'meca-dashboard':renderMecaDashboard();break;case'meca-flotte':renderMecaFlotte();break;case'meca-frais':renderMecaFrais();break;case'meca-obs':renderMecaObs();break;}}
+function renderPage(id){switch(id){case'dashboard':renderDashboard();break;case'planning':renderPlanning();break;case'commandes':renderOrders();break;case'donnees':renderDonnees();break;case'rapports':renderRapports();break;case'marge':renderMarginTable();break;case'driver-day':renderDriverDay();break;case'driver-fiche':renderDriverFiche();break;case'driver-profile':renderDriverProfile();break;case'meca-dashboard':renderMecaDashboard();break;case'meca-flotte':renderMecaFlotte();break;case'meca-frais':renderMecaFrais();break;case'meca-obs':renderMecaObs();break;}}
 function renderDonnees(){if(!db.expenseTypes)loadExpenseTypes();renderDriversTable();renderTrucks();renderClients();renderMaterials();renderExpenses();renderFiches();}
 function isExpSoon(d){if(!d)return false;const dt=new Date(d);const now=new Date();const diff=(dt-now)/(1000*60*60*24);return diff<=30;}
 function renderImpayes(){const el=document.getElementById('dashImpayes');if(!el)return;const impayes=db.orders.filter(o=>o.invoiceSent&&!o.paid);if(!impayes.length){el.innerHTML='';return;}let total=0;let oldest=999;impayes.forEach(o=>{const tarif=db.clientTariffs.find(t=>String(t.clientId)===String(o.clientId)&&t.type===o.type&&(o.type==='journee'||String(t.materialId)===String(o.materialId)));const doneT=o.transports.filter(t=>t.done);let st=0;const price=tarif?tarif.price:0;doneT.forEach(t=>{st+=(parseFloat(t.tonnage)||0)*price;});const co=getCompanyInfo()||{};const cnrRef=parseFloat(co.cnr_ref)||0;const cnrCur=parseFloat(co.cnr_current)||0;const cnrW=(parseFloat(co.cnr_weight)||16.3)/100;if(cnrRef>0&&cnrCur>0&&cnrCur!==cnrRef)st+=st*cnrW*(cnrCur-cnrRef)/cnrRef;total+=st*1.2;if(o.invoiceDate){const d=new Date(o.invoiceDate);if(!isNaN(d)){const days=Math.ceil((new Date()-d)/(1000*60*60*24));if(days>0&&days<oldest)oldest=days;}}});el.innerHTML='<div class="card" style="border-left:3px solid #D4A017;margin-bottom:0"><div class="card-h"><span class="card-t">💰 Factures impayees</span><span class="badge" style="background:#D4A017;color:#fff">'+impayes.length+'</span></div><div class="card-b" style="padding:12px 14px"><div style="display:flex;gap:20px;flex-wrap:wrap"><div><div style="font-size:1.3rem;font-weight:900;color:#D4A017">'+fmt(total)+'</div><div style="font-size:.68rem;color:var(--t3)">Total TTC a encaisser</div></div>'+(oldest<999?'<div><div style="font-size:1.3rem;font-weight:900;color:var(--er)">'+oldest+' j</div><div style="font-size:.68rem;color:var(--t3)">Plus ancienne facture</div></div>':'')+'<div><div style="font-size:1.3rem;font-weight:900">'+impayes.filter(o=>{const d=new Date(o.invoiceDate);return!isNaN(d)&&(new Date()-d)/(1000*60*60*24)>30;}).length+'</div><div style="font-size:.68rem;color:var(--t3)">A relancer (+30j)</div></div></div></div></div>';}
@@ -1078,11 +1161,40 @@ async function validatePlanning(){var drafts=db.draftOrders||[];if(!drafts.lengt
 // ═══════════════════════════════════════════════════════════════
 function mecaAlerts(){var alerts=[];var now=new Date();db.trucks.forEach(function(t){if(t.ct){var dt=new Date(t.ct);var diff=(dt-now)/(1000*60*60*24);if(diff<0)alerts.push({severity:'high',truck:t,type:'CT',label:'Contrôle technique EXPIRÉ',date:t.ct,days:Math.abs(Math.round(diff))});else if(diff<=30)alerts.push({severity:'med',truck:t,type:'CT',label:'Contrôle technique bientôt expiré',date:t.ct,days:Math.round(diff)});}if(t.tachy){var dt2=new Date(t.tachy);var diff2=(dt2-now)/(1000*60*60*24);if(diff2<0)alerts.push({severity:'high',truck:t,type:'TACHY',label:'Tachygraphe EXPIRÉ',date:t.tachy,days:Math.abs(Math.round(diff2))});else if(diff2<=30)alerts.push({severity:'med',truck:t,type:'TACHY',label:'Tachygraphe bientôt expiré',date:t.tachy,days:Math.round(diff2)});}if(t.limiteur){var dt3=new Date(t.limiteur);var diff3=(dt3-now)/(1000*60*60*24);if(diff3<0)alerts.push({severity:'high',truck:t,type:'LIM',label:'Limiteur EXPIRÉ',date:t.limiteur,days:Math.abs(Math.round(diff3))});else if(diff3<=30)alerts.push({severity:'med',truck:t,type:'LIM',label:'Limiteur bientôt expiré',date:t.limiteur,days:Math.round(diff3)});}});return alerts.sort(function(a,b){if(a.severity!==b.severity)return a.severity==='high'?-1:1;return new Date(a.date)-new Date(b.date);});}
 
+function getRecentSignalements(daysBack){var daysAgo=new Date();daysAgo.setDate(daysAgo.getDate()-(daysBack||7));return (db.dayReports||[]).filter(function(f){if(!f.date)return false;if(new Date(f.date)<daysAgo)return false;var v=String(f.voyants||'').split('|').filter(Boolean);var a=String(f.anomalies||'').split('|').filter(Boolean);var n=String(f.notes||'').trim();return v.length>0||a.length>0||n.length>0;}).sort(function(a,b){return new Date(b.date||0)-new Date(a.date||0);});}
+
+function renderSignalementHTML(f,compact){var v=String(f.voyants||'').split('|').filter(Boolean);var a=String(f.anomalies||'').split('|').filter(Boolean);var n=String(f.notes||'').trim();var truck=null;var driver=db.drivers.find(function(d){return String(d.id)===String(f.driverId);});var dn=f.driverName||(driver?driver.name:'—');
+  var severity=v.length>0?'high':(a.length>0||n?'med':'low');
+  var bgColor=severity==='high'?'rgba(220,38,38,.08)':(severity==='med'?'rgba(245,158,11,.06)':'rgba(0,0,0,.03)');
+  var borderColor=severity==='high'?'var(--er)':(severity==='med'?'var(--wa)':'var(--bd)');
+  var html='<div style="padding:12px;border-radius:8px;background:'+bgColor+';border-left:3px solid '+borderColor+';margin-bottom:8px">';
+  html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px"><div style="min-width:0;flex:1"><div style="font-weight:800;font-size:.84rem">'+escapeHtml(dn)+'</div><div style="font-size:.68rem;color:var(--t3);margin-top:1px">'+(f.date?fmtDate(f.date):'—')+(f.km?' · '+(parseInt(f.km).toLocaleString('fr-FR'))+' km':'')+'</div></div>';
+  if(severity==='high')html+='<span style="background:var(--er);color:#fff;font-size:.6rem;font-weight:900;padding:2px 7px;border-radius:99px;white-space:nowrap;letter-spacing:.04em">🚨 URGENT</span>';
+  else if(severity==='med')html+='<span style="background:var(--wa);color:#fff;font-size:.6rem;font-weight:900;padding:2px 7px;border-radius:99px;white-space:nowrap;letter-spacing:.04em">⚠️ À VOIR</span>';
+  html+='</div>';
+  if(v.length>0){html+='<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px"><span style="font-size:.66rem;color:var(--er);font-weight:800;align-self:center;margin-right:4px">🚨 Voyants :</span>';v.forEach(function(vid){var vo=VOYANTS_LIST.find(function(x){return x.id===vid;});if(vo)html+='<span style="background:rgba(220,38,38,.15);color:var(--er);font-size:.66rem;font-weight:800;padding:3px 8px;border-radius:99px;border:1px solid rgba(220,38,38,.3)">'+vo.ico+' '+escapeHtml(vo.label)+'</span>';});html+='</div>';}
+  if(a.length>0){html+='<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px"><span style="font-size:.66rem;color:#92400E;font-weight:800;align-self:center;margin-right:4px">🔍 Anomalies :</span>';a.forEach(function(aid){var an=ANOMALIES_LIST.find(function(x){return x.id===aid;});if(an)html+='<span style="background:rgba(245,158,11,.15);color:#92400E;font-size:.66rem;font-weight:700;padding:3px 8px;border-radius:99px;border:1px solid rgba(245,158,11,.3)">'+an.ico+' '+escapeHtml(an.label)+'</span>';});html+='</div>';}
+  if(n)html+='<div style="margin-top:8px;padding:8px 10px;background:rgba(0,0,0,.04);border-radius:6px;font-size:.74rem;color:var(--t2);font-style:italic;line-height:1.4">💬 '+escapeHtml(n)+'</div>';
+  html+='</div>';
+  return html;
+}
+
 function renderMecaDashboard(){document.getElementById('mecaDashDate').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});document.getElementById('meca-stat-trucks').textContent=db.trucks.length;var alerts=mecaAlerts();document.getElementById('meca-stat-alerts').textContent=alerts.length;
   var now=new Date();var monthExp=db.expenses.filter(function(e){var d=new Date(e.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce(function(s,e){return s+(parseFloat(e.amount)||0);},0);document.getElementById('meca-stat-cost').textContent=fmt(monthExp);
-  var sevenDaysAgo=new Date();sevenDaysAgo.setDate(sevenDaysAgo.getDate()-7);var recentObs=(db.dayReports||[]).filter(function(f){return f.notes&&f.notes.trim()&&new Date(f.date)>=sevenDaysAgo;});document.getElementById('meca-stat-obs').textContent=recentObs.length;
+  
+  // Signalements urgents (7 derniers jours)
+  var signalements=getRecentSignalements(7);
+  var urgents=signalements.filter(function(f){return String(f.voyants||'').split('|').filter(Boolean).length>0;});
+  document.getElementById('meca-stat-obs').textContent=signalements.length;
+  if(urgents.length>0){document.getElementById('meca-stat-obs').style.color='var(--er)';}else if(signalements.length>0){document.getElementById('meca-stat-obs').style.color='var(--wa)';}else{document.getElementById('meca-stat-obs').style.color='';}
+  
   var al=document.getElementById('mecaAlertsList');al.innerHTML=alerts.length?alerts.slice(0,8).map(function(a){var color=a.severity==='high'?'var(--er)':'var(--wa)';var ic=a.severity==='high'?'🔴':'🟡';var when=a.severity==='high'?'il y a '+a.days+' j':'dans '+a.days+' j';return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:8px;background:rgba(239,68,68,'+(a.severity==='high'?'.1':'.05')+');margin-bottom:6px;border-left:3px solid '+color+'"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:1.1rem">'+ic+'</span><div><div style="font-weight:800;font-size:.85rem">'+a.truck.plate+' — '+a.label+'</div><div style="font-size:.72rem;color:var(--t3)">'+fmtDate(a.date)+' · '+when+'</div></div></div><button class="btn btn-d btn-s" onclick="editTruck(\''+a.truck.id+'\')">✏️</button></div>';}).join(''):'<div class="empty"><div class="empty-i">✅</div><div class="empty-t">Aucune alerte — flotte à jour</div></div>';
-  var ob=document.getElementById('mecaObsRecent');ob.innerHTML=recentObs.length?recentObs.slice(0,5).map(function(f){return '<div style="padding:10px;border-radius:8px;background:var(--sf2);margin-bottom:6px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-weight:800;font-size:.85rem">'+(f.driverName||'—')+'</span><span style="font-size:.7rem;color:var(--t3)">'+(f.date?fmtDate(f.date):'—')+'</span></div><div style="font-size:.78rem;color:var(--t2)">'+f.notes+'</div></div>';}).join(''):'<div class="empty"><div class="empty-i">📝</div><div class="empty-t">Aucune observation récente</div></div>';}
+  
+  // Signalements chauffeurs
+  var ob=document.getElementById('mecaObsRecent');
+  if(signalements.length===0){ob.innerHTML='<div class="empty"><div class="empty-i">✅</div><div class="empty-t">Aucun signalement — tout va bien</div></div>';}
+  else{ob.innerHTML=signalements.slice(0,8).map(function(f){return renderSignalementHTML(f,false);}).join('');}
+}
 
 function renderMecaFlotte(search){var s=(search||'').toLowerCase();var list=db.trucks.filter(function(t){return !s||(t.plate||'').toLowerCase().includes(s);});document.getElementById('mecaTrucksTableBody').innerHTML=list.length?list.map(function(t){var ctExp=t.ct?(new Date(t.ct)<new Date()):false;var ctSoon=t.ct?isExpSoon(t.ct):false;return '<tr><td style="font-weight:800">'+t.plate+'</td><td>'+(t.type||'—')+'</td><td>'+((t.km||0).toLocaleString('fr-FR'))+' km</td><td>'+(t.ct?'<span class="badge '+(ctExp?'bg-rd':(ctSoon?'bg-yl':'bg-gn'))+'">'+fmtDate(t.ct)+'</span>':'<span class="badge bg-rd">—</span>')+'</td><td>'+(t.tachy?'<span class="badge '+(isExpSoon(t.tachy)?'bg-rd':'bg-gn')+'">'+fmtDate(t.tachy)+'</span>':'—')+'</td><td>'+(t.limiteur?'<span class="badge '+(isExpSoon(t.limiteur)?'bg-rd':'bg-gn')+'">'+fmtDate(t.limiteur)+'</span>':'—')+'</td><td><div class="ta"><button class="btn btn-g btn-s btn-i" onclick="editTruck(\''+t.id+'\')">✏️</button><button class="btn btn-x btn-s btn-i" onclick="deleteTruck(\''+t.id+'\')">🗑️</button></div></td></tr>';}).join(''):'<tr><td colspan="7"><div class="empty"><div class="empty-i">🚛</div><div class="empty-t">Aucun camion</div></div></td></tr>';}
 
@@ -1095,8 +1207,8 @@ function renderMecaFrais(){var truckSel=document.getElementById('mecaFraisTruck'
   document.getElementById('mecaFraisTotal').textContent=fmt(total);document.getElementById('mecaFraisCount').textContent=list.length;
   document.getElementById('mecaFraisTableBody').innerHTML=list.length?list.map(function(e){var truck=db.trucks.find(function(t){return String(t.id)===String(e.truckId);});var type=(db.expenseTypes||[]).find(function(t){return String(t.id)===String(e.type);});return '<tr><td>'+(e.date?fmtDate(e.date):'—')+'</td><td style="font-weight:700">'+(truck?truck.plate:'—')+'</td><td>'+(type?type.label:e.type||'—')+'</td><td style="font-weight:800;color:var(--er)">'+fmt(parseFloat(e.amount)||0)+'</td><td style="font-size:.74rem;color:var(--t3)">'+(e.description||'—')+'</td><td><div class="ta"><button class="btn btn-g btn-s btn-i" onclick="editExpense(\''+e.id+'\')">✏️</button><button class="btn btn-x btn-s btn-i" onclick="deleteExpense(\''+e.id+'\')">🗑️</button></div></td></tr>';}).join(''):'<tr><td colspan="6"><div class="empty"><div class="empty-i">🛠️</div><div class="empty-t">Aucun frais</div></div></td></tr>';}
 
-function renderMecaObs(search){var s=(search||'').toLowerCase();var list=(db.dayReports||[]).filter(function(f){if(!f.notes||!f.notes.trim())return false;if(!s)return true;return (f.driverName||'').toLowerCase().includes(s)||(f.notes||'').toLowerCase().includes(s);}).sort(function(a,b){return new Date(b.date||0)-new Date(a.date||0);});
-  document.getElementById('mecaObsTableBody').innerHTML=list.length?list.map(function(f){return '<tr><td>'+(f.date?fmtDate(f.date):'—')+'</td><td style="font-weight:700">'+(f.driverName||driverName(f.driverId)||'—')+'</td><td>'+(parseInt(f.km)||0).toLocaleString('fr-FR')+' km</td><td>'+(parseFloat(f.fuelLiters)||0)+' L</td><td style="font-size:.78rem;font-style:italic;color:var(--t2)">'+f.notes+'</td></tr>';}).join(''):'<tr><td colspan="5"><div class="empty"><div class="empty-i">📝</div><div class="empty-t">Aucune observation à traiter</div></div></td></tr>';}
+function renderMecaObs(search){var s=(search||'').toLowerCase();var list=(db.dayReports||[]).filter(function(f){var v=String(f.voyants||'').split('|').filter(Boolean);var a=String(f.anomalies||'').split('|').filter(Boolean);var n=String(f.notes||'').trim();var hasContent=v.length>0||a.length>0||n.length>0;if(!hasContent)return false;if(!s)return true;return (f.driverName||'').toLowerCase().includes(s)||n.toLowerCase().includes(s);}).sort(function(a,b){return new Date(b.date||0)-new Date(a.date||0);});
+  document.getElementById('mecaObsTableBody').innerHTML=list.length?list.map(function(f){return renderSignalementHTML(f,false);}).join(''):'<div class="empty"><div class="empty-i">📝</div><div class="empty-t">Aucun signalement</div></div>';}
 
 function openTransportModal(oid,tid){const o=db.orders.find(x=>String(x.id)===String(oid));if(!o)return;const t=o.transports.find(x=>String(x.id)===String(tid));if(!t||t.done)return;state.currentOrder=o;state.currentTransport=t;state.paperPhotos=[];const isJournee=o.type==='journee';document.getElementById('transportModalTitle').textContent=isJournee?'Validation journée':'Transport #'+tid;document.getElementById('transportModalInfo').innerHTML='<div style="display:flex;flex-wrap:wrap;gap:5px"><span class="oc-m">🏢 '+clientName(o.clientId)+'</span><span class="oc-m">📍 '+o.address+'</span>'+(o.materialId?'<span class="oc-m">⚙️ '+materialName(o.materialId)+'</span>':'')+'<span class="oc-m">'+(isJournee?'📅 Prestation à la journée':'')+'</span></div>';document.getElementById('tm-tonnage-group').style.display=isJournee?'none':'';document.getElementById('tm-tonnage').value='';document.getElementById('tm-receiver-name').value='';document.getElementById('tm-receiver-func').value='';document.getElementById('tm-photo-preview').innerHTML='';document.getElementById('tm-photo-count').textContent='';document.getElementById('tm-photo-input').value='';initSigPad();openModal('transportModal');}
 
@@ -1133,35 +1245,210 @@ function renderPaperPhotosPreview(){var box=document.getElementById('tm-photo-pr
 function removePaperPhoto(idx){if(!state.paperPhotos)return;state.paperPhotos.splice(idx,1);renderPaperPhotosPreview();}
 function confirmTransport(){const o=state.currentOrder;const isJournee=o&&o.type==='journee';const ton=isJournee?0:parseFloat(document.getElementById('tm-tonnage').value);const rec=document.getElementById('tm-receiver-name').value.trim();const fn=document.getElementById('tm-receiver-func').value.trim();if(!isJournee&&(!ton||isNaN(ton))){showToast('⚠️ Tonnage requis','error');return;}if(!rec){showToast('⚠️ Réceptionnaire requis','error');return;}const sig=getSigData();if(!sig){showToast('⚠️ Signature requise','error');return;}const t=state.currentTransport;const photos=state.paperPhotos||[];t.done=true;t.tonnage=ton;t.receiver=rec;t.func=fn;t.sig=sig;t.ts=new Date().toLocaleString('fr-FR');t.paperPhotos=photos.map(function(p){return {url:p.url,fileId:p.fileId,filename:p.filename};});o.nbDone=o.transports.filter(x=>x.done).length;if(o.nbDone>=o.nbEstimated)o.status='termine';addAudit(isJournee?'Journée validée':'Transport validé',clientName(o.clientId)+(isJournee?'':' — '+ton+'T')+(photos.length?' · '+photos.length+' photo(s) bon papier':''));syncSheets('transportDone',{orderId:o.id,transportId:t.id,tonnage:ton,receiver:rec,func:fn,timestamp:new Date().toISOString(),nbDone:o.nbDone,nbEstimated:o.nbEstimated,status:o.status,paperPhotos:t.paperPhotos.map(function(p){return p.url;})});closeModal('transportModal');renderDriverDay();showToast('✅ '+(isJournee?'Journée validée':'Transport validé'),'success',4000);autoSendBDL(o,t);}
 // ═══════════════════════════════════════════════════════════════
-// 🎤 DICTÉE VOCALE — Web Speech API — v10.35
+// 🎤 DICTÉE VOCALE — Web Speech API — v10.38 (fix duplication mobile)
+// Stratégie : continuous=false, redémarrage auto à chaque segment
+// → Évite définitivement la duplication sur Chrome Android / Safari iOS
 // ═══════════════════════════════════════════════════════════════
-var _voiceRecognition=null;var _voiceActiveTarget=null;var _voiceActiveBtnId=null;var _voiceActiveStatusId=null;var _voiceBaseText='';var _voiceLastFinalIdx=-1;
+var _voiceRecognition=null;var _voiceActiveTarget=null;var _voiceActiveBtnId=null;var _voiceActiveStatusId=null;var _voiceBaseText='';var _voiceManualStop=false;
 function isVoiceSupported(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition);}
-function toggleVoiceDictation(targetId,btnId,statusId){
-  if(!isVoiceSupported()){showToast('⚠️ Dictée vocale non supportée sur ce navigateur (essayez Chrome ou Safari)','warning',6000);return;}
-  var btn=document.getElementById(btnId);
-  if(_voiceRecognition&&_voiceActiveTarget===targetId){try{_voiceRecognition.stop();}catch(e){}return;}
-  if(_voiceRecognition){try{_voiceRecognition.stop();}catch(e){}}
-  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;var rec=new SR();
-  rec.lang='fr-FR';rec.continuous=true;rec.interimResults=true;rec.maxAlternatives=1;
-  var ta=document.getElementById(targetId);var status=document.getElementById(statusId);
-  _voiceBaseText=(ta.value||'').trim();if(_voiceBaseText&&!_voiceBaseText.match(/[.!?]\s*$/))_voiceBaseText+='. ';else if(_voiceBaseText)_voiceBaseText+=' ';
-  _voiceActiveTarget=targetId;_voiceActiveBtnId=btnId;_voiceActiveStatusId=statusId;_voiceLastFinalIdx=-1;
-  rec.onstart=function(){if(btn){btn.classList.add('recording');btn.querySelector('.voice-mic-label').textContent='Stop';}if(status){status.classList.add('listening');status.textContent='🔴 Écoute en cours... parlez maintenant';}showToast('🎤 Dictée activée — parlez clairement','success',3000);};
-  rec.onresult=function(event){var newFinalText='';var interimText='';
-    for(var i=0;i<event.results.length;i++){var r=event.results[i];
-      if(r.isFinal){if(i>_voiceLastFinalIdx){newFinalText+=r[0].transcript;_voiceLastFinalIdx=i;}}
-      else{interimText+=r[0].transcript;}
-    }
-    if(newFinalText){_voiceBaseText+=newFinalText.trim()+' ';ta.value=_voiceBaseText;}
-    else{ta.value=_voiceBaseText+interimText;}
-    if(status){if(interimText){status.innerHTML='🔴 Écoute... <span class="voice-interim">'+escapeHtml(interimText)+'</span>';}else{status.textContent='🔴 Écoute en cours...';}}};
-  rec.onerror=function(event){var msg='Erreur micro';if(event.error==='not-allowed')msg='⚠️ Microphone refusé — autorisez l\'accès dans les réglages du navigateur';else if(event.error==='no-speech')msg='⚠️ Aucune parole détectée';else if(event.error==='audio-capture')msg='⚠️ Pas de micro détecté';else if(event.error==='network')msg='⚠️ Connexion internet requise pour la dictée';else msg='⚠️ Erreur dictée : '+event.error;showToast(msg,'error',5000);};
-  rec.onend=function(){if(btn){btn.classList.remove('recording');btn.querySelector('.voice-mic-label').textContent='Dicter';}if(status){status.classList.remove('listening');status.textContent='';}_voiceRecognition=null;_voiceActiveTarget=null;_voiceLastFinalIdx=-1;ta.value=ta.value.trim();};
-  try{rec.start();_voiceRecognition=rec;}catch(e){showToast('⚠️ Impossible de démarrer la dictée : '+e.message,'error',5000);_voiceRecognition=null;}
+
+function _voiceCreateRecognizer(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var rec=new SR();
+  rec.lang='fr-FR';
+  rec.continuous=false;
+  rec.interimResults=true;
+  rec.maxAlternatives=1;
+  return rec;
 }
 
-async function submitFiche(){const km=document.getElementById('fiche-km').value;if(!km){showToast('⚠️ Kilométrage requis','error');return;}if(_voiceRecognition){try{_voiceRecognition.stop();}catch(e){}}showLoader();await new Promise(r=>setTimeout(r,800));const p={driverId:state.currentUser.id,driverName:state.currentUser.name,km:parseInt(km),fuelLiters:parseFloat(document.getElementById('fiche-conso').value)||0,fuelPrice:parseFloat(document.getElementById('fiche-fuel-price').value)||0,notes:document.getElementById('fiche-notes').value.trim(),date:new Date().toISOString()};syncSheets('endOfDay',p);addAudit('Fiche jour',state.currentUser.name+' — '+km+' km');hideLoader();['fiche-km','fiche-conso','fiche-fuel-price','fiche-notes'].forEach(f=>document.getElementById(f).value='');showToast('📤 Fiche envoyée','success',4000);}
+function _voiceAttachHandlers(rec,targetId,btnId,statusId){
+  var ta=document.getElementById(targetId);
+  var btn=document.getElementById(btnId);
+  var status=document.getElementById(statusId);
+  rec.onstart=function(){
+    if(btn){btn.classList.add('recording');var lbl=btn.querySelector('.voice-mic-label');if(lbl)lbl.textContent='Stop';}
+    if(status){status.classList.add('listening');status.textContent='🔴 Écoute en cours... parlez maintenant';}
+  };
+  rec.onresult=function(event){
+    var finalText='';var interimText='';
+    for(var i=0;i<event.results.length;i++){
+      var r=event.results[i];
+      if(r.isFinal)finalText+=r[0].transcript;
+      else interimText+=r[0].transcript;
+    }
+    if(finalText){
+      _voiceBaseText+=finalText.trim()+' ';
+      ta.value=_voiceBaseText;
+    }else{
+      ta.value=_voiceBaseText+interimText;
+    }
+    if(status){
+      if(interimText){status.innerHTML='🔴 Écoute... <span class="voice-interim">'+escapeHtml(interimText)+'</span>';}
+      else{status.textContent='🔴 Écoute en cours...';}
+    }
+  };
+  rec.onerror=function(event){
+    if(event.error==='no-speech'||event.error==='aborted')return;
+    var msg='Erreur micro';
+    if(event.error==='not-allowed')msg='⚠️ Microphone refusé — autorisez l\'accès dans les réglages du navigateur';
+    else if(event.error==='audio-capture')msg='⚠️ Pas de micro détecté';
+    else if(event.error==='network')msg='⚠️ Connexion internet requise pour la dictée';
+    else msg='⚠️ Erreur dictée : '+event.error;
+    showToast(msg,'error',5000);
+    _voiceManualStop=true;
+  };
+  rec.onend=function(){
+    if(_voiceManualStop){
+      if(btn){btn.classList.remove('recording');var lbl=btn.querySelector('.voice-mic-label');if(lbl)lbl.textContent='Dicter';}
+      if(status){status.classList.remove('listening');status.textContent='';}
+      _voiceRecognition=null;_voiceActiveTarget=null;_voiceBaseText='';
+      ta.value=ta.value.trim();
+      return;
+    }
+    try{
+      var newRec=_voiceCreateRecognizer();
+      _voiceAttachHandlers(newRec,targetId,btnId,statusId);
+      newRec.start();
+      _voiceRecognition=newRec;
+    }catch(e){
+      _voiceManualStop=true;
+      if(btn){btn.classList.remove('recording');var lbl2=btn.querySelector('.voice-mic-label');if(lbl2)lbl2.textContent='Dicter';}
+      if(status){status.classList.remove('listening');status.textContent='';}
+      _voiceRecognition=null;
+    }
+  };
+}
+
+function toggleVoiceDictation(targetId,btnId,statusId){
+  if(!isVoiceSupported()){showToast('⚠️ Dictée vocale non supportée sur ce navigateur (essayez Chrome ou Safari)','warning',6000);return;}
+  if(_voiceRecognition&&_voiceActiveTarget===targetId){_voiceManualStop=true;try{_voiceRecognition.stop();}catch(e){}return;}
+  if(_voiceRecognition){_voiceManualStop=true;try{_voiceRecognition.stop();}catch(e){}}
+  var ta=document.getElementById(targetId);
+  _voiceBaseText=(ta.value||'').trim();
+  if(_voiceBaseText&&!_voiceBaseText.match(/[.!?]\s*$/))_voiceBaseText+='. ';
+  else if(_voiceBaseText)_voiceBaseText+=' ';
+  _voiceActiveTarget=targetId;
+  _voiceActiveBtnId=btnId;
+  _voiceActiveStatusId=statusId;
+  _voiceManualStop=false;
+  try{
+    var rec=_voiceCreateRecognizer();
+    _voiceAttachHandlers(rec,targetId,btnId,statusId);
+    rec.start();
+    _voiceRecognition=rec;
+    showToast('🎤 Dictée activée — parlez clairement','success',3000);
+  }catch(e){
+    showToast('⚠️ Impossible de démarrer la dictée : '+e.message,'error',5000);
+    _voiceRecognition=null;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 📝 FICHE VÉHICULE DU JOUR (chauffeur) — v10.38
+// ═══════════════════════════════════════════════════════════════
+var _ficheVoyants={};var _ficheAnomalies={};
+
+function renderDriverFiche(){
+  // Récupérer le dernier km de fin du chauffeur pour pré-remplir km début
+  var driverId=state.currentUser?state.currentUser.id:null;
+  var lastKm=0;
+  if(driverId){
+    var myReports=(db.dayReports||[]).filter(function(f){return String(f.driverId)===String(driverId);}).sort(function(a,b){return new Date(b.date||0)-new Date(a.date||0);});
+    if(myReports.length>0)lastKm=parseInt(myReports[0].km)||0;
+  }
+  var kmStartInput=document.getElementById('fiche-km-start');
+  if(kmStartInput&&!kmStartInput.value&&lastKm>0)kmStartInput.value=lastKm;
+  
+  // Render voyants grid
+  var vg=document.getElementById('voyantsGrid');
+  if(vg)vg.innerHTML=VOYANTS_LIST.map(function(v){var on=_ficheVoyants[v.id]?' active':'';return '<button type="button" class="voyant-btn'+on+'" data-voyant="'+v.id+'" onclick="toggleVoyant(\''+v.id+'\')"><span class="voyant-ico">'+v.ico+'</span><span class="voyant-label">'+escapeHtml(v.label)+'</span></button>';}).join('');
+  
+  // Render anomalies grid
+  var ag=document.getElementById('anomaliesGrid');
+  if(ag)ag.innerHTML=ANOMALIES_LIST.map(function(a){var on=_ficheAnomalies[a.id]?' active':'';return '<button type="button" class="anomalie-btn'+on+'" data-anomalie="'+a.id+'" onclick="toggleAnomalie(\''+a.id+'\')"><span class="anomalie-ico">'+a.ico+'</span><span>'+escapeHtml(a.label)+'</span><span class="anomalie-check">'+(_ficheAnomalies[a.id]?'✓':'')+'</span></button>';}).join('');
+  
+  // Numéro mécano si disponible
+  var mecanoPhone=remoteConfig.company_mecano_phone||'';
+  var phoneBox=document.getElementById('ficheMecanoPhone');
+  if(phoneBox){
+    if(mecanoPhone){
+      var link=document.getElementById('ficheMecanoPhoneLink');
+      link.href='tel:'+mecanoPhone.replace(/\s/g,'');
+      document.getElementById('ficheMecanoPhoneNumber').textContent=mecanoPhone;
+      phoneBox.style.display='';
+    }else{
+      phoneBox.style.display='none';
+    }
+  }
+  
+  updateVoyantsSelected();updateKmDelta();updateFuelConso();
+}
+
+function toggleVoyant(id){_ficheVoyants[id]=!_ficheVoyants[id];if(!_ficheVoyants[id])delete _ficheVoyants[id];var btn=document.querySelector('[data-voyant="'+id+'"]');if(btn)btn.classList.toggle('active',!!_ficheVoyants[id]);updateVoyantsSelected();}
+function toggleAnomalie(id){_ficheAnomalies[id]=!_ficheAnomalies[id];if(!_ficheAnomalies[id])delete _ficheAnomalies[id];var btn=document.querySelector('[data-anomalie="'+id+'"]');if(btn){btn.classList.toggle('active',!!_ficheAnomalies[id]);var chk=btn.querySelector('.anomalie-check');if(chk)chk.textContent=_ficheAnomalies[id]?'✓':'';}}
+
+function updateVoyantsSelected(){var keys=Object.keys(_ficheVoyants).filter(function(k){return _ficheVoyants[k];});var box=document.getElementById('voyantsSelected');var list=document.getElementById('voyantsSelectedList');if(!box||!list)return;if(keys.length===0){box.style.display='none';return;}box.style.display='';list.innerHTML=keys.map(function(k){var v=VOYANTS_LIST.find(function(x){return x.id===k;});return v?(v.ico+' '+v.label):k;}).join(' · ');}
+
+function updateKmDelta(){var s=parseInt(document.getElementById('fiche-km-start').value)||0;var e=parseInt(document.getElementById('fiche-km').value)||0;var d=e-s;var el=document.getElementById('kmDeltaValue');if(!el)return;if(s>0&&e>0&&d>=0&&d<2000)el.textContent=d+' km';else if(s>0&&e>0&&d<0)el.textContent='⚠️ Km fin < Km début';else el.textContent='—';updateFuelConso();}
+
+function updateFuelConso(){var s=parseInt(document.getElementById('fiche-km-start').value)||0;var e=parseInt(document.getElementById('fiche-km').value)||0;var d=e-s;var l=parseFloat(document.getElementById('fiche-conso').value)||0;var el=document.getElementById('fuelConsoValue');if(!el)return;if(d>0&&l>0){var conso=(l/d)*100;el.textContent=conso.toFixed(1)+' L/100km';if(conso>50)el.style.color='var(--er)';else if(conso>40)el.style.color='var(--wa)';else el.style.color='var(--gn)';}else{el.textContent='—';el.style.color='var(--rd)';}}
+
+function ficheRAS(){
+  // Vide tous les voyants et anomalies
+  _ficheVoyants={};_ficheAnomalies={};
+  // Vide la note
+  document.getElementById('fiche-notes').value='';
+  // Re-render
+  renderDriverFiche();
+  // Scroll vers km
+  var el=document.getElementById('fiche-km-start');if(el){el.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){document.getElementById('fiche-km').focus();},400);}
+  showToast('✅ Mode RAS — remplissez juste km + carburant','success',3500);
+}
+
+async function submitFiche(){
+  const kmStart=parseInt(document.getElementById('fiche-km-start').value)||0;
+  const kmEnd=parseInt(document.getElementById('fiche-km').value)||0;
+  if(!kmEnd){showToast('⚠️ Km de fin requis','error');return;}
+  if(kmStart>0&&kmEnd<kmStart){showToast('⚠️ Km fin ne peut pas être inférieur au km début','error',5000);return;}
+  if(_voiceRecognition){try{_voiceRecognition.stop();}catch(e){}}
+  
+  var voyants=Object.keys(_ficheVoyants).filter(function(k){return _ficheVoyants[k];});
+  var anomalies=Object.keys(_ficheAnomalies).filter(function(k){return _ficheAnomalies[k];});
+  var hasIssues=voyants.length>0||anomalies.length>0||document.getElementById('fiche-notes').value.trim().length>0;
+  
+  showLoader();await new Promise(r=>setTimeout(r,400));
+  const p={
+    driverId:state.currentUser.id,
+    driverName:state.currentUser.name,
+    kmStart:kmStart,
+    km:kmEnd,
+    kmDelta:kmStart>0?(kmEnd-kmStart):0,
+    fuelLiters:parseFloat(document.getElementById('fiche-conso').value)||0,
+    fuelPrice:parseFloat(document.getElementById('fiche-fuel-price').value)||0,
+    voyants:voyants.join('|'),
+    anomalies:anomalies.join('|'),
+    notes:document.getElementById('fiche-notes').value.trim(),
+    hasIssues:hasIssues,
+    date:new Date().toISOString()
+  };
+  syncSheets('endOfDay',p);
+  addAudit('Fiche jour',state.currentUser.name+' — '+kmEnd+' km'+(hasIssues?' · '+(voyants.length+anomalies.length)+' signalement(s)':''));
+  
+  // Ajouter à db.dayReports local pour le mécano (si jamais il est connecté en même temps en démo)
+  if(!db.dayReports)db.dayReports=[];
+  db.dayReports.unshift({id:'local-'+Date.now(),driverId:state.currentUser.id,driverName:state.currentUser.name,date:new Date().toISOString().split('T')[0],km:kmEnd,kmStart:kmStart,fuelLiters:p.fuelLiters,fuelPrice:p.fuelPrice,voyants:p.voyants,anomalies:p.anomalies,notes:p.notes,hasIssues:hasIssues});
+  
+  hideLoader();
+  
+  // Reset
+  _ficheVoyants={};_ficheAnomalies={};
+  ['fiche-km-start','fiche-km','fiche-conso','fiche-fuel-price','fiche-notes'].forEach(f=>document.getElementById(f).value='');
+  renderDriverFiche();
+  
+  if(hasIssues){showToast('📤 Fiche envoyée — '+(voyants.length+anomalies.length)+' signalement(s) transmis au mécanicien','success',6000);}
+  else{showToast('✅ Fiche envoyée — RAS','success',4000);}
+}
 let sigCtx,sigDraw=false,sigHas=false;
 function initSigPad(){const c=document.getElementById('sigPad');const w=c.parentElement;c.width=w.offsetWidth||320;c.height=140;sigCtx=c.getContext('2d');sigCtx.fillStyle='#f0f0f0';sigCtx.fillRect(0,0,c.width,c.height);sigCtx.strokeStyle='#0A0A0A';sigCtx.lineWidth=2.5;sigCtx.lineCap='round';sigCtx.lineJoin='round';sigHas=false;sigDraw=false;const pos=(e,el)=>{const r=el.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top};};c.onmousedown=e=>{sigDraw=true;const p=pos(e,c);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);};c.onmousemove=e=>{if(!sigDraw)return;const p=pos(e,c);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();sigHas=true;};c.onmouseup=()=>{sigDraw=false;};c.ontouchstart=e=>{e.preventDefault();sigDraw=true;const p=pos(e,c);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);};c.ontouchmove=e=>{e.preventDefault();if(!sigDraw)return;const p=pos(e,c);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();sigHas=true;};c.ontouchend=()=>{sigDraw=false;};}
 function clearSig(){if(sigCtx){sigCtx.fillStyle='#f0f0f0';sigCtx.fillRect(0,0,sigCtx.canvas.width,sigCtx.canvas.height);sigHas=false;}}
@@ -1184,8 +1471,8 @@ document.addEventListener('DOMContentLoaded',async()=>{document.getElementById('
 async function preloadDrivers(){try{const url=getSheetsBase()||SHEETS_BASE;if(!url)return;const r=await fetch(url,{method:'POST',body:JSON.stringify({action:'getAll'})});const data=await r.json();if(data.chauffeurs?.length)db.drivers=data.chauffeurs.map(d=>({id:String(d.id),name:d.nom||d.name||'',phone:d.telephone||d.phone||'',email:d.email||'',licence:d.permis||d.licence||'C',pin:String(d.pin||''),status:d.statut||d.status||'actif',birth:cd(d.date_naissance||d.birth||''),cqc:cd(d.cqc||''),medical:cd(d.medical||''),docs:[]}));if(data.company&&data.company.gerant_pin)GERANT_PIN=String(data.company.gerant_pin);if(data.company&&data.company.mecano_pin)MECANO_PIN=String(data.company.mecano_pin);
 if(data.materiaux?.length)db.materials=data.materiaux.map(m=>({id:String(m.id),name:m.nom||m.name||'',unit:m.unite||m.unit||'tonne'}));if(data.tarifs_clients?.length)db.clientTariffs=data.tarifs_clients.map(t=>{var typeVal=String(t.type||'').trim();var matVal=String(t.materiau_id||'').trim();if(/^\d{8,}$/.test(typeVal)&&(matVal==='journee'||matVal==='materiaux'||matVal===''))[typeVal,matVal]=[matVal,typeVal];return{id:String(t.id),clientId:String(t.client_id||t.clientId),type:typeVal||'materiaux',materialId:matVal?String(matVal):null,price:parseFloat(t.prix_unitaire||t.price)||0};});}catch(e){}}
 /* COMPANY INFO */
-function getCompanyInfo(){if(remoteConfig.company_name){return{name:remoteConfig.company_name||'',address:remoteConfig.company_address||'',postal:remoteConfig.company_postal||'',city:remoteConfig.company_city||'',siret:remoteConfig.company_siret||'',licence:remoteConfig.company_licence||'',phone:remoteConfig.company_phone||'',email:remoteConfig.company_email||'',cnr_ref:parseFloat(remoteConfig.company_cnr_ref)||0,cnr_current:parseFloat(remoteConfig.company_cnr_current)||0,cnr_weight:parseFloat(remoteConfig.company_cnr_weight)||19.2,tva:parseFloat(remoteConfig.company_tva)||20};}const c=localStorage.getItem('sotransnord_company');return c?JSON.parse(c):null;}
-function saveCompanyInfo(){const data={name:document.getElementById('co-name').value.trim(),address:document.getElementById('co-address').value.trim(),postal:document.getElementById('co-postal').value.trim(),city:document.getElementById('co-city').value.trim(),siret:document.getElementById('co-siret').value.trim(),licence:document.getElementById('co-licence').value.trim(),phone:document.getElementById('co-phone').value.trim(),email:document.getElementById('co-email').value.trim(),cnr_ref:parseFloat(document.getElementById('co-cnr-ref').value)||0,cnr_current:parseFloat(document.getElementById('co-cnr-current').value)||0,cnr_weight:parseFloat(document.getElementById('co-cnr-weight').value)||19.2,tva:parseFloat(document.getElementById('co-tva').value)||20};if(!data.name||!data.address||!data.postal||!data.city||!data.siret){showToast('⚠️ Champs obligatoires manquants','error');return;}localStorage.setItem('sotransnord_company',JSON.stringify(data));remoteConfig.company_name=data.name;remoteConfig.company_address=data.address;remoteConfig.company_postal=data.postal;remoteConfig.company_city=data.city;remoteConfig.company_siret=data.siret;remoteConfig.company_licence=data.licence;remoteConfig.company_phone=data.phone;remoteConfig.company_email=data.email;remoteConfig.company_cnr_ref=data.cnr_ref;remoteConfig.company_cnr_current=data.cnr_current;remoteConfig.company_cnr_weight=data.cnr_weight;remoteConfig.company_tva=data.tva;localStorage.setItem('sotransnord_config_cache',JSON.stringify(remoteConfig));syncSheets('saveCompany',data);closeModal('companyModal');showToast('✅ Informations société enregistrées','success');if(window._ldvPendingAfterCompany){window._ldvPendingAfterCompany();window._ldvPendingAfterCompany=null;}}
+function getCompanyInfo(){if(remoteConfig.company_name){return{name:remoteConfig.company_name||'',address:remoteConfig.company_address||'',postal:remoteConfig.company_postal||'',city:remoteConfig.company_city||'',siret:remoteConfig.company_siret||'',licence:remoteConfig.company_licence||'',phone:remoteConfig.company_phone||'',email:remoteConfig.company_email||'',mecano_phone:remoteConfig.company_mecano_phone||'',cnr_ref:parseFloat(remoteConfig.company_cnr_ref)||0,cnr_current:parseFloat(remoteConfig.company_cnr_current)||0,cnr_weight:parseFloat(remoteConfig.company_cnr_weight)||19.2,tva:parseFloat(remoteConfig.company_tva)||20};}const c=localStorage.getItem('sotransnord_company');return c?JSON.parse(c):null;}
+function saveCompanyInfo(){const data={name:document.getElementById('co-name').value.trim(),address:document.getElementById('co-address').value.trim(),postal:document.getElementById('co-postal').value.trim(),city:document.getElementById('co-city').value.trim(),siret:document.getElementById('co-siret').value.trim(),licence:document.getElementById('co-licence').value.trim(),phone:document.getElementById('co-phone').value.trim(),email:document.getElementById('co-email').value.trim(),mecano_phone:document.getElementById('co-mecano-phone').value.trim(),cnr_ref:parseFloat(document.getElementById('co-cnr-ref').value)||0,cnr_current:parseFloat(document.getElementById('co-cnr-current').value)||0,cnr_weight:parseFloat(document.getElementById('co-cnr-weight').value)||19.2,tva:parseFloat(document.getElementById('co-tva').value)||20};if(!data.name||!data.address||!data.postal||!data.city||!data.siret){showToast('⚠️ Champs obligatoires manquants','error');return;}localStorage.setItem('sotransnord_company',JSON.stringify(data));remoteConfig.company_name=data.name;remoteConfig.company_address=data.address;remoteConfig.company_postal=data.postal;remoteConfig.company_city=data.city;remoteConfig.company_siret=data.siret;remoteConfig.company_licence=data.licence;remoteConfig.company_phone=data.phone;remoteConfig.company_email=data.email;remoteConfig.company_mecano_phone=data.mecano_phone;remoteConfig.company_cnr_ref=data.cnr_ref;remoteConfig.company_cnr_current=data.cnr_current;remoteConfig.company_cnr_weight=data.cnr_weight;remoteConfig.company_tva=data.tva;localStorage.setItem('sotransnord_config_cache',JSON.stringify(remoteConfig));syncSheets('saveCompany',data);closeModal('companyModal');showToast('✅ Informations société enregistrées','success');if(window._ldvPendingAfterCompany){window._ldvPendingAfterCompany();window._ldvPendingAfterCompany=null;}}
 function updateCnrPreview(){const ref=parseFloat(document.getElementById('co-cnr-ref').value);const cur=parseFloat(document.getElementById('co-cnr-current').value);const w=parseFloat(document.getElementById('co-cnr-weight').value)||19.2;const prev=document.getElementById('cnr-preview');if(!ref||!cur||ref<=0){prev.style.display='none';return;}const variation=((cur-ref)/ref)*100;const surcharge=variation*(w/100);prev.style.display='block';const sign=variation>=0?'+':'';const color=variation>=0?'var(--rd)':'var(--gn)';prev.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:800">📊 Prévisualisation</span><span style="font-size:.68rem;color:var(--t4)">Régional EA · CNR 2026 : 19,2%</span></div><div style="margin-top:6px;display:flex;gap:16px;flex-wrap:wrap"><div><span style="color:var(--t3)">Variation indice</span><br><span style="font-weight:900;color:'+color+'">'+sign+variation.toFixed(2)+'%</span></div><div><span style="color:var(--t3)">Surcharge facture</span><br><span style="font-weight:900;color:'+color+'">'+sign+surcharge.toFixed(2)+'%</span></div><div><span style="color:var(--t3)">Exemple sur 1 000 €</span><br><span style="font-weight:900;color:'+color+'">'+sign+(10*surcharge).toFixed(0)+' €</span></div></div>';}
 function openPinChange(){document.getElementById('pin-old').value='';document.getElementById('pin-new').value='';document.getElementById('pin-confirm').value='';openModal('pinChangeModal');}
 async function changePin(){var oldPin=document.getElementById('pin-old').value.trim();var newPin=document.getElementById('pin-new').value.trim();var confirmPin=document.getElementById('pin-confirm').value.trim();if(!isPinFormatValid(newPin)){showToast('⚠️ Le PIN doit faire 6 caractères (chiffres ou #)','error',5000);return;}if(newPin!==confirmPin){showToast('⚠️ Les codes ne correspondent pas','error');return;}if(isPinWeak(newPin)){showToast('⚠️ Ce PIN est trop simple — choisissez-en un moins évident','error',6000);return;}var excludeId=state.role==='gerant'?'gerant':(state.role==='mecano'?'mecano':state.currentUser.id);if(!isPinUnique(newPin,excludeId)){showToast('⚠️ Ce PIN est déjà utilisé par un autre utilisateur','error',6000);return;}
@@ -1193,7 +1480,7 @@ async function changePin(){var oldPin=document.getElementById('pin-old').value.t
   else if(state.role==='mecano'){if(oldPin!==MECANO_PIN){showToast('⚠️ Code actuel incorrect','error');return;}MECANO_PIN=newPin;await fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'saveCompany',data:{mecano_pin:newPin}})});showToast('✅ PIN mécanicien modifié','success');addAudit('PIN mécanicien modifié','');}
   else{var d=db.drivers.find(function(x){return x.id===state.currentUser.id;});if(!d||String(d.pin)!==oldPin){showToast('⚠️ Code actuel incorrect','error');return;}d.pin=newPin;fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'updateDriver',data:{id:d.id,pin:newPin}})});showToast('✅ PIN modifié avec succès','success');addAudit('PIN modifié',state.currentUser.name);}
   closeModal('pinChangeModal');}
-function openCompanyModal(){const co=getCompanyInfo();if(co){document.getElementById('co-name').value=co.name||'SOTRANSNORD';document.getElementById('co-address').value=co.address||'';document.getElementById('co-postal').value=co.postal||'';document.getElementById('co-city').value=co.city||'';document.getElementById('co-siret').value=co.siret||'';document.getElementById('co-licence').value=co.licence||'';document.getElementById('co-phone').value=co.phone||'';document.getElementById('co-email').value=co.email||'';document.getElementById('co-cnr-ref').value=co.cnr_ref||'';document.getElementById('co-cnr-current').value=co.cnr_current||'';document.getElementById('co-cnr-weight').value=co.cnr_weight||19.2;document.getElementById('co-tva').value=co.tva||20;}openModal('companyModal');setTimeout(updateCnrPreview,100);}
+function openCompanyModal(){const co=getCompanyInfo();if(co){document.getElementById('co-name').value=co.name||'SOTRANSNORD';document.getElementById('co-address').value=co.address||'';document.getElementById('co-postal').value=co.postal||'';document.getElementById('co-city').value=co.city||'';document.getElementById('co-siret').value=co.siret||'';document.getElementById('co-licence').value=co.licence||'';document.getElementById('co-phone').value=co.phone||'';document.getElementById('co-email').value=co.email||'';document.getElementById('co-mecano-phone').value=co.mecano_phone||remoteConfig.company_mecano_phone||'';document.getElementById('co-cnr-ref').value=co.cnr_ref||'';document.getElementById('co-cnr-current').value=co.cnr_current||'';document.getElementById('co-cnr-weight').value=co.cnr_weight||19.2;document.getElementById('co-tva').value=co.tva||20;}openModal('companyModal');setTimeout(updateCnrPreview,100);}
 
 /* LDV GENERATION */
 function ldvRef(orderId,transportId){const d=new Date();const y=d.getFullYear();const m=String(d.getMonth()+1).padStart(2,'0');const day=String(d.getDate()).padStart(2,'0');return'LDV-'+y+m+day+'-'+orderId+'-T'+transportId;}
@@ -1648,6 +1935,7 @@ el.innerHTML=h;}
   <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Code postal *</label><input type="text" class="fi" id="co-postal" placeholder="59000"></div><div class="fg"><label class="fl">Ville *</label><input type="text" class="fi" id="co-city" placeholder="Lille"></div></div>
   <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">SIRET *</label><input type="text" class="fi" id="co-siret" placeholder="123 456 789 00012"></div><div class="fg"><label class="fl">N° Licence transport</label><input type="text" class="fi" id="co-licence" placeholder="2024/59/0001234"></div></div>
   <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Téléphone</label><input type="tel" class="fi" id="co-phone" placeholder="03 20 00 00 00"></div><div class="fg"><label class="fl">Email</label><input type="email" class="fi" id="co-email" placeholder="contact@sotransnord.fr"></div></div>
+  <div class="fg" style="margin-top:10px"><label class="fl">📞 Téléphone du mécanicien (urgences chauffeurs)</label><input type="tel" class="fi" id="co-mecano-phone" placeholder="06 12 34 56 78"><div style="font-size:.62rem;color:var(--t4);margin-top:3px">Ce numéro s'affichera sur l'app mobile des chauffeurs pour appeler en cas d'urgence (voyant moteur, panne...)</div></div>
   <div class="div"></div>
   <div style="font-size:.86rem;font-weight:900;margin-bottom:8px">⛽ Indexation gazole (CNR)</div>
   <div style="font-size:.7rem;color:var(--bl);margin-bottom:10px;padding:6px 10px;background:var(--blb);border-radius:6px">Seul le champ « Indice CNR actuel » est à mettre à jour chaque mois. Le reste est automatique.</div>
