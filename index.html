@@ -363,6 +363,17 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
 @media(max-width:900px){.plan-tbl-wrap{display:none}.plan-cards{display:block}}
 
 .plan-mobile-bottom{display:none}
+
+.voice-mic-btn{display:inline-flex;align-items:center;gap:6px;background:var(--sf2);border:1px solid var(--bd);color:var(--t2);padding:5px 10px;border-radius:99px;font-family:inherit;font-size:.7rem;font-weight:800;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.voice-mic-btn:hover{background:var(--bd);color:var(--t1)}
+.voice-mic-btn .voice-mic-ico{font-size:.9rem;line-height:1}
+.voice-mic-btn.recording{background:var(--er);border-color:var(--er);color:#fff;animation:voicePulse 1.4s ease-in-out infinite}
+.voice-mic-btn.recording:hover{background:#B91C1C}
+.voice-mic-btn.disabled{opacity:.45;cursor:not-allowed}
+@keyframes voicePulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}50%{box-shadow:0 0 0 8px rgba(239,68,68,0)}}
+.voice-status{font-size:.7rem;color:var(--t3);margin-top:6px;min-height:18px;font-style:italic}
+.voice-status.listening{color:var(--er);font-weight:700}
+.voice-status .voice-interim{color:var(--t4);opacity:.7}
 .plan-summary-tbl{display:flex;flex-direction:column;gap:6px}
 .plan-summary-row{display:grid;grid-template-columns:28px 1fr 40px 90px;gap:8px;align-items:center;padding:8px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);font-size:.72rem;cursor:pointer;transition:background .15s}
 .plan-summary-row:active{background:var(--sf2)}
@@ -411,7 +422,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
       <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
     </div>
-    <span class="ver-tag">v10.33 — 2026</span>
+    <span class="ver-tag">v10.34 — 2026</span>
   </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
@@ -565,13 +576,13 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
           <div style="font-weight:800;margin-bottom:6px;color:var(--bl)">💡 Pourquoi remplir cette fiche</div>
           <div style="color:var(--t2)">• <b>Kilométrage</b> du soir : permet de suivre l'usage du camion et planifier les entretiens (vidange, pneus...)</div>
           <div style="color:var(--t2);margin-top:3px">• <b>Carburant</b> (litres + prix payé) : intégré automatiquement dans le calcul de marge du gérant</div>
-          <div style="color:var(--t2);margin-top:3px">• <b>Observations</b> : tout problème mécanique (bruit, fuite, voyant...) — le <b>mécanicien</b> les verra dans son interface pour intervenir vite</div>
+          <div style="color:var(--t2);margin-top:3px">• <b>Observations</b> : tout problème mécanique (bruit, fuite, voyant...) — le <b>mécanicien</b> les verra dans son interface pour intervenir vite. Vous pouvez utiliser le bouton <b>🎤 Dicter</b> pour saisir à la voix (mains sales, pratique en cabine).</div>
           <div style="color:var(--t2);margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)"><b>💡</b> Envoyez votre fiche <b>chaque soir</b> avant de quitter le camion — ça prend 30 secondes.</div>
         </div></div>
         <div class="card"><div class="card-b">
           <div class="fg2"><div class="fg"><label class="fl">Kilométrage</label><input type="number" class="fi" id="fiche-km" placeholder="154280"></div><div class="fg"><label class="fl">Carburant (L)</label><input type="number" class="fi" id="fiche-conso" placeholder="65"></div></div>
           <div class="fg" style="margin-top:10px"><label class="fl">Carburant — Prix (€)</label><input type="number" class="fi" id="fiche-fuel-price" placeholder="110.50"></div>
-          <div class="fg" style="margin-top:10px"><label class="fl">Observations</label><textarea class="ft" id="fiche-notes" placeholder="Incidents, remarques..."></textarea></div>
+          <div class="fg" style="margin-top:10px"><label class="fl" style="display:flex;align-items:center;justify-content:space-between"><span>Observations</span><button type="button" class="voice-mic-btn" id="ficheVoiceBtn" onclick="toggleVoiceDictation('fiche-notes','ficheVoiceBtn','ficheVoiceStatus')" title="Dictée vocale"><span class="voice-mic-ico">🎤</span><span class="voice-mic-label">Dicter</span></button></label><textarea class="ft" id="fiche-notes" placeholder="Incidents, remarques... ou utilisez le micro 🎤"></textarea><div class="voice-status" id="ficheVoiceStatus"></div></div>
           <button class="btn btn-p btn-w btn-l" style="margin-top:16px" onclick="submitFiche()">📤 Envoyer ma fiche</button>
         </div></div>
       </div>
@@ -1082,7 +1093,29 @@ function renderMecaObs(search){var s=(search||'').toLowerCase();var list=(db.day
 
 function openTransportModal(oid,tid){const o=db.orders.find(x=>String(x.id)===String(oid));if(!o)return;const t=o.transports.find(x=>String(x.id)===String(tid));if(!t||t.done)return;state.currentOrder=o;state.currentTransport=t;const isJournee=o.type==='journee';document.getElementById('transportModalTitle').textContent=isJournee?'Validation journée':'Transport #'+tid;document.getElementById('transportModalInfo').innerHTML='<div style="display:flex;flex-wrap:wrap;gap:5px"><span class="oc-m">🏢 '+clientName(o.clientId)+'</span><span class="oc-m">📍 '+o.address+'</span>'+(o.materialId?'<span class="oc-m">⚙️ '+materialName(o.materialId)+'</span>':'')+'<span class="oc-m">'+(isJournee?'📅 Prestation à la journée':'')+'</span></div>';document.getElementById('tm-tonnage-group').style.display=isJournee?'none':'';document.getElementById('tm-tonnage').value='';document.getElementById('tm-receiver-name').value='';document.getElementById('tm-receiver-func').value='';initSigPad();openModal('transportModal');}
 function confirmTransport(){const o=state.currentOrder;const isJournee=o&&o.type==='journee';const ton=isJournee?0:parseFloat(document.getElementById('tm-tonnage').value);const rec=document.getElementById('tm-receiver-name').value.trim();const fn=document.getElementById('tm-receiver-func').value.trim();if(!isJournee&&(!ton||isNaN(ton))){showToast('⚠️ Tonnage requis','error');return;}if(!rec){showToast('⚠️ Réceptionnaire requis','error');return;}const sig=getSigData();if(!sig){showToast('⚠️ Signature requise','error');return;}const t=state.currentTransport;t.done=true;t.tonnage=ton;t.receiver=rec;t.func=fn;t.sig=sig;t.ts=new Date().toLocaleString('fr-FR');o.nbDone=o.transports.filter(x=>x.done).length;if(o.nbDone>=o.nbEstimated)o.status='termine';addAudit(isJournee?'Journée validée':'Transport validé',clientName(o.clientId)+(isJournee?'':' — '+ton+'T'));syncSheets('transportDone',{orderId:o.id,transportId:t.id,tonnage:ton,receiver:rec,func:fn,timestamp:new Date().toISOString(),nbDone:o.nbDone,nbEstimated:o.nbEstimated,status:o.status});closeModal('transportModal');renderDriverDay();showToast('✅ '+(isJournee?'Journée validée':'Transport validé'),'success',4000);autoSendBDL(o,t);}
-async function submitFiche(){const km=document.getElementById('fiche-km').value;if(!km){showToast('⚠️ Kilométrage requis','error');return;}showLoader();await new Promise(r=>setTimeout(r,800));const p={driverId:state.currentUser.id,driverName:state.currentUser.name,km:parseInt(km),fuelLiters:parseFloat(document.getElementById('fiche-conso').value)||0,fuelPrice:parseFloat(document.getElementById('fiche-fuel-price').value)||0,notes:document.getElementById('fiche-notes').value.trim(),date:new Date().toISOString()};syncSheets('endOfDay',p);addAudit('Fiche jour',state.currentUser.name+' — '+km+' km');hideLoader();['fiche-km','fiche-conso','fiche-fuel-price','fiche-notes'].forEach(f=>document.getElementById(f).value='');showToast('📤 Fiche envoyée','success',4000);}
+// ═══════════════════════════════════════════════════════════════
+// 🎤 DICTÉE VOCALE — Web Speech API — v10.34
+// ═══════════════════════════════════════════════════════════════
+var _voiceRecognition=null;var _voiceActiveTarget=null;var _voiceActiveBtnId=null;var _voiceActiveStatusId=null;var _voiceBaseText='';
+function isVoiceSupported(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition);}
+function toggleVoiceDictation(targetId,btnId,statusId){
+  if(!isVoiceSupported()){showToast('⚠️ Dictée vocale non supportée sur ce navigateur (essayez Chrome ou Safari)','warning',6000);return;}
+  var btn=document.getElementById(btnId);
+  if(_voiceRecognition&&_voiceActiveTarget===targetId){try{_voiceRecognition.stop();}catch(e){}return;}
+  if(_voiceRecognition){try{_voiceRecognition.stop();}catch(e){}}
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;var rec=new SR();
+  rec.lang='fr-FR';rec.continuous=true;rec.interimResults=true;rec.maxAlternatives=1;
+  var ta=document.getElementById(targetId);var status=document.getElementById(statusId);
+  _voiceBaseText=(ta.value||'').trim();if(_voiceBaseText&&!_voiceBaseText.match(/[.!?]\s*$/))_voiceBaseText+='. ';else if(_voiceBaseText)_voiceBaseText+=' ';
+  _voiceActiveTarget=targetId;_voiceActiveBtnId=btnId;_voiceActiveStatusId=statusId;
+  rec.onstart=function(){if(btn){btn.classList.add('recording');btn.querySelector('.voice-mic-label').textContent='Stop';}if(status){status.classList.add('listening');status.textContent='🔴 Écoute en cours... parlez maintenant';}showToast('🎤 Dictée activée — parlez clairement','success',3000);};
+  rec.onresult=function(event){var finalText='';var interimText='';for(var i=event.resultIndex;i<event.results.length;i++){var r=event.results[i];if(r.isFinal)finalText+=r[0].transcript;else interimText+=r[0].transcript;}if(finalText){_voiceBaseText+=finalText.trim()+' ';ta.value=_voiceBaseText;}else{ta.value=_voiceBaseText+interimText;}if(status){if(interimText){status.innerHTML='🔴 Écoute... <span class="voice-interim">'+escapeHtml(interimText)+'</span>';}else{status.textContent='🔴 Écoute en cours...';}}};
+  rec.onerror=function(event){var msg='Erreur micro';if(event.error==='not-allowed')msg='⚠️ Microphone refusé — autorisez l\'accès dans les réglages du navigateur';else if(event.error==='no-speech')msg='⚠️ Aucune parole détectée';else if(event.error==='audio-capture')msg='⚠️ Pas de micro détecté';else if(event.error==='network')msg='⚠️ Connexion internet requise pour la dictée';else msg='⚠️ Erreur dictée : '+event.error;showToast(msg,'error',5000);};
+  rec.onend=function(){if(btn){btn.classList.remove('recording');btn.querySelector('.voice-mic-label').textContent='Dicter';}if(status){status.classList.remove('listening');status.textContent='';}_voiceRecognition=null;_voiceActiveTarget=null;ta.value=ta.value.trim();};
+  try{rec.start();_voiceRecognition=rec;}catch(e){showToast('⚠️ Impossible de démarrer la dictée : '+e.message,'error',5000);_voiceRecognition=null;}
+}
+
+async function submitFiche(){const km=document.getElementById('fiche-km').value;if(!km){showToast('⚠️ Kilométrage requis','error');return;}if(_voiceRecognition){try{_voiceRecognition.stop();}catch(e){}}showLoader();await new Promise(r=>setTimeout(r,800));const p={driverId:state.currentUser.id,driverName:state.currentUser.name,km:parseInt(km),fuelLiters:parseFloat(document.getElementById('fiche-conso').value)||0,fuelPrice:parseFloat(document.getElementById('fiche-fuel-price').value)||0,notes:document.getElementById('fiche-notes').value.trim(),date:new Date().toISOString()};syncSheets('endOfDay',p);addAudit('Fiche jour',state.currentUser.name+' — '+km+' km');hideLoader();['fiche-km','fiche-conso','fiche-fuel-price','fiche-notes'].forEach(f=>document.getElementById(f).value='');showToast('📤 Fiche envoyée','success',4000);}
 let sigCtx,sigDraw=false,sigHas=false;
 function initSigPad(){const c=document.getElementById('sigPad');const w=c.parentElement;c.width=w.offsetWidth||320;c.height=140;sigCtx=c.getContext('2d');sigCtx.fillStyle='#f0f0f0';sigCtx.fillRect(0,0,c.width,c.height);sigCtx.strokeStyle='#0A0A0A';sigCtx.lineWidth=2.5;sigCtx.lineCap='round';sigCtx.lineJoin='round';sigHas=false;sigDraw=false;const pos=(e,el)=>{const r=el.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top};};c.onmousedown=e=>{sigDraw=true;const p=pos(e,c);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);};c.onmousemove=e=>{if(!sigDraw)return;const p=pos(e,c);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();sigHas=true;};c.onmouseup=()=>{sigDraw=false;};c.ontouchstart=e=>{e.preventDefault();sigDraw=true;const p=pos(e,c);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);};c.ontouchmove=e=>{e.preventDefault();if(!sigDraw)return;const p=pos(e,c);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();sigHas=true;};c.ontouchend=()=>{sigDraw=false;};}
 function clearSig(){if(sigCtx){sigCtx.fillStyle='#f0f0f0';sigCtx.fillRect(0,0,sigCtx.canvas.width,sigCtx.canvas.height);sigHas=false;}}
@@ -1101,7 +1134,7 @@ function handleDragLeave(zid){document.getElementById(zid)?.classList.remove('dr
 function handleDrop(e,tid,prefix){e.preventDefault();document.getElementById(prefix==='dm'?'dm-upload-zone':'tm-upload-zone')?.classList.remove('drag-over');handleFiles({files:e.dataTransfer.files,value:''},tid,prefix);}
 function loadExistingDocs(docs,prefix,tid){pendingDocs[prefix]=docs?[...docs]:[];renderAllChips(tid,prefix);}
 function collectDocs(prefix){return[...(pendingDocs[prefix]||[])];}
-document.addEventListener('DOMContentLoaded',async()=>{document.getElementById('dashDate').textContent=today();renderAlerts();renderImpayes();document.querySelectorAll('.mo').forEach(mo=>{mo.addEventListener('click',e=>{if(e.target===mo)closeModal(mo.id);});});switchLoginRole('chauffeur');loadPlanningDraft();await loadRemoteConfig();await preloadDrivers();});
+document.addEventListener('DOMContentLoaded',async()=>{document.getElementById('dashDate').textContent=today();renderAlerts();renderImpayes();document.querySelectorAll('.mo').forEach(mo=>{mo.addEventListener('click',e=>{if(e.target===mo)closeModal(mo.id);});});switchLoginRole('chauffeur');loadPlanningDraft();if(!isVoiceSupported()){var vb=document.getElementById('ficheVoiceBtn');if(vb){vb.style.display='none';}}await loadRemoteConfig();await preloadDrivers();});
 async function preloadDrivers(){try{const url=getSheetsBase()||SHEETS_BASE;if(!url)return;const r=await fetch(url,{method:'POST',body:JSON.stringify({action:'getAll'})});const data=await r.json();if(data.chauffeurs?.length)db.drivers=data.chauffeurs.map(d=>({id:String(d.id),name:d.nom||d.name||'',phone:d.telephone||d.phone||'',email:d.email||'',licence:d.permis||d.licence||'C',pin:String(d.pin||''),status:d.statut||d.status||'actif',birth:cd(d.date_naissance||d.birth||''),cqc:cd(d.cqc||''),medical:cd(d.medical||''),docs:[]}));if(data.company&&data.company.gerant_pin)GERANT_PIN=String(data.company.gerant_pin);if(data.company&&data.company.mecano_pin)MECANO_PIN=String(data.company.mecano_pin);
 if(data.materiaux?.length)db.materials=data.materiaux.map(m=>({id:String(m.id),name:m.nom||m.name||'',unit:m.unite||m.unit||'tonne'}));if(data.tarifs_clients?.length)db.clientTariffs=data.tarifs_clients.map(t=>{var typeVal=String(t.type||'').trim();var matVal=String(t.materiau_id||'').trim();if(/^\d{8,}$/.test(typeVal)&&(matVal==='journee'||matVal==='materiaux'||matVal===''))[typeVal,matVal]=[matVal,typeVal];return{id:String(t.id),clientId:String(t.client_id||t.clientId),type:typeVal||'materiaux',materialId:matVal?String(matVal):null,price:parseFloat(t.prix_unitaire||t.price)||0};});}catch(e){}}
 /* COMPANY INFO */
