@@ -6,7 +6,6 @@
 <title>SOTRANSNORD</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -88,6 +87,14 @@ td{padding:10px 12px;vertical-align:middle}
 .role-tabs{display:flex;background:rgba(255,255,255,.08);border-radius:var(--r);padding:3px;gap:2px;margin-bottom:40px;position:relative;z-index:1;border:1px solid rgba(255,255,255,.1);animation:fi .5s .08s ease both}
 .role-tab{padding:12px 28px;border-radius:8px;border:none;font-family:var(--f);font-size:.82rem;font-weight:800;color:rgba(255,255,255,.45);background:transparent;cursor:pointer;transition:all .2s var(--ease);-webkit-tap-highlight-color:transparent}
 .role-tab.on{background:var(--rd);color:#fff;box-shadow:0 4px 20px rgba(215,38,61,.4)}
+.access-badge{display:none;align-items:center;gap:8px;padding:8px 16px;border-radius:99px;font-size:.74rem;font-weight:800;letter-spacing:.04em;margin-bottom:20px;position:relative;z-index:1;border:1px solid;animation:bdgIn .25s var(--ease) both;-webkit-tap-highlight-color:transparent}
+.access-badge.show{display:inline-flex}
+.access-badge .ab-ico{font-size:.95rem;line-height:1}
+.access-badge .ab-close{margin-left:4px;opacity:.55;font-size:.85rem;line-height:1;cursor:pointer;transition:opacity .15s}
+.access-badge .ab-close:hover{opacity:1}
+.access-badge--gerant{background:linear-gradient(135deg,rgba(245,158,11,.18),rgba(245,158,11,.08));border-color:rgba(245,158,11,.5);color:#FCD34D;box-shadow:0 4px 18px rgba(245,158,11,.18),inset 0 1px 0 rgba(255,255,255,.08)}
+.access-badge--mecano{background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(59,130,246,.08));border-color:rgba(59,130,246,.55);color:#93C5FD;box-shadow:0 4px 18px rgba(59,130,246,.2),inset 0 1px 0 rgba(255,255,255,.08)}
+@keyframes bdgIn{from{opacity:0;transform:translateY(-6px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
 .pin-dots{display:flex;gap:18px;margin-bottom:28px;position:relative;z-index:1;animation:fi .5s .12s ease both}
 .pin-dot{width:14px;height:14px;border-radius:50%;border:2.5px solid rgba(255,255,255,.35);transition:all .15s;background:rgba(255,255,255,.05)}
 .pin-dot.filled{background:var(--rd);border-color:var(--rd);box-shadow:0 0 16px rgba(215,38,61,.7)}
@@ -103,10 +110,17 @@ td{padding:10px 12px;vertical-align:middle}
 .pin-btn.hash{font-size:1.6rem;color:rgba(255,255,255,.85)}
 .pin-btn.empty{border-color:transparent;background:transparent;pointer-events:none}
 .pin-info{color:rgba(255,255,255,.35);font-size:.7rem;text-align:center;margin-top:14px;position:relative;z-index:1}
-.sp-foot{margin-top:36px;display:flex;flex-direction:column;align-items:center;gap:10px;position:relative;z-index:1;animation:fi .5s .24s ease both}
-.demo-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.35);padding:8px 20px;border-radius:99px;font-size:.68rem;cursor:pointer;font-family:var(--f);font-weight:800;letter-spacing:.06em;transition:all .2s}
-.demo-btn:hover{background:rgba(255,255,255,.12);color:rgba(255,255,255,.5)}
-.ver-tag{color:rgba(255,255,255,.35);font-size:.62rem;letter-spacing:.16em;font-weight:800}
+.sp-foot{margin-top:32px;display:flex;flex-direction:column;align-items:center;gap:14px;position:relative;z-index:1;animation:fi .5s .24s ease both;width:100%;max-width:280px}
+.access-pills{display:flex;gap:8px;width:100%;justify-content:center}
+.access-pill{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);padding:10px 6px;border-radius:14px;font-family:var(--f);font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .18s var(--ease);-webkit-tap-highlight-color:transparent;min-height:54px}
+.access-pill .ap-ico{font-size:1.15rem;line-height:1}
+.access-pill:hover{background:rgba(255,255,255,.09);color:rgba(255,255,255,.8);transform:translateY(-1px)}
+.access-pill:active{transform:translateY(0) scale(.97)}
+.access-pill.on{transform:translateY(-1px)}
+.access-pill--demo.on{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);color:#fff}
+.access-pill--gerant.on{background:linear-gradient(135deg,#F59E0B,#D97706);border-color:#F59E0B;color:#fff;box-shadow:0 6px 20px rgba(245,158,11,.45)}
+.access-pill--mecano.on{background:linear-gradient(135deg,#3B82F6,#1D4ED8);border-color:#3B82F6;color:#fff;box-shadow:0 6px 20px rgba(59,130,246,.45)}
+.ver-tag{color:rgba(255,255,255,.3);font-size:.6rem;letter-spacing:.18em;font-weight:800}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 #app{display:none;height:100%;flex-direction:column}
 #app.active{display:flex}
@@ -312,7 +326,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
 <div class="co" id="confirmOverlay"><div class="cb"><div class="cb-icon" id="confirmIcon">⚠️</div><div class="cb-title" id="confirmTitle">Confirmation</div><div class="cb-text" id="confirmText">Êtes-vous sûr ?</div><div class="cb-btns"><button class="btn btn-o btn-w" onclick="closeConfirm(false)">Annuler</button><button class="btn btn-x btn-w" id="confirmOk" onclick="closeConfirm(true)">Confirmer</button></div></div></div>
 <div id="screen-splash">
   <div class="sp-brand"><div class="sp-name">SOTRANSNORD</div><div class="sp-sub">Transport BTP</div></div>
-  <div class="role-tabs"><button class="role-tab on" id="roleBtn-gerant" onclick="switchLoginRole('gerant')">👔 Gérant</button><button class="role-tab" id="roleBtn-chauffeur" onclick="switchLoginRole('chauffeur')">🚛 Chauffeur</button></div>
+  <div class="access-badge" id="accessModeBadge" onclick="switchLoginRole('chauffeur')"><span class="ab-ico" id="accessModeIco">👔</span><span id="accessModeText">Accès Gérant</span><span class="ab-close" title="Annuler">✕</span></div>
   <div class="pin-dots" id="pinDots"><div class="pin-dot" id="d0"></div><div class="pin-dot" id="d1"></div><div class="pin-dot" id="d2"></div><div class="pin-dot" id="d3"></div><div class="pin-dot" id="d4"></div><div class="pin-dot" id="d5"></div></div>
   <div class="pin-err" id="pinError"></div>
   <div class="pin-grid">
@@ -322,7 +336,14 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
     <button class="pin-btn hash" onclick="pinKey('#')">#</button><button class="pin-btn" onclick="pinKey('0')">0</button><button class="pin-btn del" onclick="pinDel()">⌫</button>
   </div>
   <div class="pin-info" id="pinAttempts"></div>
-  <div class="sp-foot"><button class="demo-btn" onclick="activateDemo()">🎭 Mode Démonstration</button><span class="ver-tag">v10.21 — 2026</span></div>
+  <div class="sp-foot">
+    <div class="access-pills">
+      <button class="access-pill access-pill--demo" id="apill-demo" onclick="activateDemo()"><span class="ap-ico">🎭</span><span>Démo</span></button>
+      <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
+      <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
+    </div>
+    <span class="ver-tag">v10.22 — 2026</span>
+  </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
 <div id="ldvOverlay">
@@ -406,6 +427,33 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
         <div class="ph"><div><div class="pt">Mon profil</div></div></div>
         <div class="card"><div class="card-b" id="driverProfileContent">—</div></div>
       </div>
+      <div class="page" id="page-meca-dashboard">
+        <div class="ph"><div><div class="pt">🔧 Atelier</div><div class="ps" id="mecaDashDate">—</div></div><button class="btn btn-o btn-s" onclick="openPinChange()">🔐 Changer PIN</button></div>
+        <div class="stats">
+          <div class="card stat"><div class="stat-l">Camions</div><div class="stat-v" id="meca-stat-trucks">0</div><div class="stat-d">flotte active</div></div>
+          <div class="card stat"><div class="stat-l">⚠️ Alertes</div><div class="stat-v" id="meca-stat-alerts" style="color:var(--er)">0</div><div class="stat-d">à traiter</div></div>
+          <div class="card stat"><div class="stat-l">Entretien (mois)</div><div class="stat-v" id="meca-stat-cost">—</div><div class="stat-d">dépenses</div></div>
+          <div class="card stat"><div class="stat-l">Obs. chauffeurs</div><div class="stat-v" id="meca-stat-obs">0</div><div class="stat-d">7 derniers jours</div></div>
+        </div>
+        <div class="card" style="margin-top:14px"><div class="card-h"><div class="card-t">⚠️ Alertes maintenance</div></div><div class="card-b" id="mecaAlertsList">—</div></div>
+        <div class="card" style="margin-top:14px"><div class="card-h"><div class="card-t">📝 Dernières observations chauffeurs</div></div><div class="card-b" id="mecaObsRecent">—</div></div>
+      </div>
+      <div class="page" id="page-meca-flotte">
+        <div class="ph"><div><div class="pt">🚛 Flotte camions</div><div class="ps">CT, tachygraphe, limiteur, kilométrage</div></div><button class="btn btn-p btn-s" onclick="openTruckModal()">+ Ajouter</button></div>
+        <div class="search" style="margin-bottom:10px"><input type="text" class="fi" placeholder="Rechercher immat..." oninput="renderMecaFlotte(this.value)"></div>
+        <div class="card"><div class="tw"><table id="mecaTrucksTable"><thead><tr><th>Immat.</th><th>Type</th><th>Km</th><th>CT</th><th>Tachy.</th><th>Limiteur</th><th>Actions</th></tr></thead><tbody id="mecaTrucksTableBody"></tbody></table></div></div>
+      </div>
+      <div class="page" id="page-meca-frais">
+        <div class="ph"><div><div class="pt">🛠️ Entretien & Réparation</div><div class="ps">Saisie et historique des frais véhicules</div></div><button class="btn btn-p btn-s" onclick="openExpenseModal()">+ Frais</button></div>
+        <div class="fg2" style="margin-bottom:10px"><div class="fg"><label class="fl">Camion</label><select class="fs" id="mecaFraisTruck" onchange="renderMecaFrais()"><option value="">Tous</option></select></div><div class="fg"><label class="fl">Type</label><select class="fs" id="mecaFraisType" onchange="renderMecaFrais()"><option value="">Tous</option></select></div></div>
+        <div class="card" style="margin-bottom:10px"><div class="card-b"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px"><div><div style="font-size:.7rem;color:var(--t3);font-weight:700">Total filtré</div><div style="font-size:1.4rem;font-weight:900;color:var(--er)" id="mecaFraisTotal">—</div></div><div style="text-align:right"><div style="font-size:.7rem;color:var(--t3);font-weight:700">Nombre de frais</div><div style="font-size:1.4rem;font-weight:900" id="mecaFraisCount">0</div></div></div></div></div>
+        <div class="card"><div class="tw"><table><thead><tr><th>Date</th><th>Camion</th><th>Type</th><th>Montant</th><th>Description</th><th>Actions</th></tr></thead><tbody id="mecaFraisTableBody"></tbody></table></div></div>
+      </div>
+      <div class="page" id="page-meca-obs">
+        <div class="ph"><div><div class="pt">📝 Observations chauffeurs</div><div class="ps">Remontées issues des fiches journalières</div></div></div>
+        <div class="search" style="margin-bottom:10px"><input type="text" class="fi" placeholder="Rechercher chauffeur, observation..." oninput="renderMecaObs(this.value)"></div>
+        <div class="card"><div class="tw"><table><thead><tr><th>Date</th><th>Chauffeur</th><th>Km</th><th>Litres</th><th>Observation</th></tr></thead><tbody id="mecaObsTableBody"></tbody></table></div></div>
+      </div>
     </main>
     <nav class="bnav" id="bottomNav"></nav>
   </div>
@@ -472,13 +520,13 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
 </div></div>
 <script>(function(){try{var m={name:'SOTRANSNORD',short_name:'SOTRANSNORD',start_url:window.location.href.split('?')[0].split('#')[0],scope:window.location.href.replace(/[^/]*$/,''),display:'standalone',background_color:'#0A0A0A',theme_color:'#0A0A0A',orientation:'portrait'};var b=new Blob([JSON.stringify(m)],{type:'application/json'});var u=URL.createObjectURL(b);var l=document.createElement('link');l.rel='manifest';l.href=u;document.head.appendChild(l);}catch(e){}})();
 
-let GERANT_PIN='#2026#';const CURRENT_YEAR=new Date().getFullYear();const CURRENT_MONTH=new Date().getMonth();const MONTHS=['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+let GERANT_PIN='#2026#';let MECANO_PIN='#5050#';const CURRENT_YEAR=new Date().getFullYear();const CURRENT_MONTH=new Date().getMonth();const MONTHS=['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
 const WEAK_PINS=['000000','111111','222222','333333','444444','555555','666666','777777','888888','999999','123456','234567','345678','456789','567890','098765','987654','876543','765432','654321','121212','212121','123123','456456','789789','141414','252525','363636','474747','585858','696969','010101','020202','030303','111222','222111','000111','111000','#####0','######','000000'];
 function isPinFormatValid(p){return /^[0-9#]{6}$/.test(p);}
 function isPinWeak(p){if(WEAK_PINS.indexOf(p)>=0)return true;if(/^(.)\1{5}$/.test(p))return true;return false;}
-function isPinUnique(p,excludeUserId){if(p===GERANT_PIN&&String(excludeUserId)!=='gerant')return false;return !db.drivers.some(function(d){return String(d.pin)===p&&String(d.id)!==String(excludeUserId);});}
+function isPinUnique(p,excludeUserId){if(p===GERANT_PIN&&String(excludeUserId)!=='gerant')return false;if(p===MECANO_PIN&&String(excludeUserId)!=='mecano')return false;return !db.drivers.some(function(d){return String(d.pin)===p&&String(d.id)!==String(excludeUserId);});}
 function getLockoutMinutes(attempts){if(attempts<5)return 0;if(attempts<10)return 5;if(attempts<15)return 60;return 1440;}
-function getLockoutKey(){return loginRole==='gerant'?'lockout_gerant':'lockout_chauffeur';}
+function getLockoutKey(){return loginRole==='gerant'?'lockout_gerant':(loginRole==='mecano'?'lockout_mecano':'lockout_chauffeur');}
 function checkLockout(){try{const raw=localStorage.getItem(getLockoutKey());if(!raw)return null;const data=JSON.parse(raw);const mins=getLockoutMinutes(data.attempts||0);if(!mins)return null;const elapsed=(Date.now()-data.lastAttempt)/60000;if(elapsed>=mins){return null;}return{remaining:Math.ceil(mins-elapsed),attempts:data.attempts};}catch(e){return null;}}
 function recordFailedAttempt(){try{const k=getLockoutKey();const raw=localStorage.getItem(k);const data=raw?JSON.parse(raw):{attempts:0,lastAttempt:0};data.attempts=(data.attempts||0)+1;data.lastAttempt=Date.now();localStorage.setItem(k,JSON.stringify(data));return data.attempts;}catch(e){return 0;}}
 function clearLockout(){try{localStorage.removeItem(getLockoutKey());}catch(e){}}
@@ -488,8 +536,8 @@ let db={drivers:[],trucks:[],clients:[],materials:[],tariffs:[{id:1,type:'materi
 (function(){const now=new Date();[now.getFullYear()-1,now.getFullYear()].forEach(yr=>{db.annualData[yr]={};const s=[0.55,0.60,0.80,1.10,1.25,1.30,1.20,0.90,1.15,1.10,0.75,0.50];for(let m=0;m<12;m++){if(yr===now.getFullYear()&&m>now.getMonth()){db.annualData[yr][m]=null;continue;}const ca=Math.round((28000+Math.random()*8000)*s[m]);const byType={carburant:Math.round(1400+Math.random()*600+s[m]*400),vidange:[2,5,8,11].includes(m)?Math.round(150+Math.random()*80):0,reparation:Math.round(Math.random()<0.35?200+Math.random()*900:0),pneus:Math.round(Math.random()<0.2?400+Math.random()*600:0),assurance:580,autre:Math.round(Math.random()*200)};const total_dep=Object.values(byType).reduce((s,v)=>s+v,0);const marge=ca-total_dep;db.annualData[yr][m]={ca,byType,total_dep,marge,pct_marge:ca>0?Math.round((marge/ca)*100):0};}});})();
 const SHEETS_BASE='https://script.google.com/macros/s/AKfycbzfYAn6rlb01517GoR8PYQUqdSIsbl6Px0PRlsZYEIlq_T6wE8TikxE8_qW92BobLLekQ/exec';
 let remoteConfig={};
-async function loadRemoteConfig(){try{const r=await fetch(SHEETS_BASE,{method:'POST',body:JSON.stringify({action:'getConfig'})});const cfg=await r.json();if(cfg&&typeof cfg==='object'&&!cfg.error){delete cfg.sheets_base;remoteConfig=cfg;localStorage.setItem('sotransnord_config_cache',JSON.stringify(cfg));}else throw new Error();}catch(e){const c=localStorage.getItem('sotransnord_config_cache');if(c){try{const parsed=JSON.parse(c);delete parsed.sheets_base;remoteConfig=parsed;}catch(_){}}}console.log('[SOTRANSNORD] Apps Script URL:',SHEETS_BASE);}
-function getConfig(k){return remoteConfig[k]||'';}function getMakeWebhook(k){return getConfig('webhook_'+k)||'';}function getSheetsBase(){return SHEETS_BASE;}function loadConfig(){const c=localStorage.getItem('sotransnord_config_cache');return c?JSON.parse(c):remoteConfig;}function saveConfig(cfg){remoteConfig={...remoteConfig,...cfg};localStorage.setItem('sotransnord_config_cache',JSON.stringify(remoteConfig));}
+async function loadRemoteConfig(){try{const r=await fetch(SHEETS_BASE,{method:'POST',body:JSON.stringify({action:'getConfig'})});const cfg=await r.json();if(cfg&&typeof cfg==='object'&&!cfg.error){remoteConfig=cfg;localStorage.setItem('sotransnord_config_cache',JSON.stringify(cfg));}else throw new Error();}catch(e){const c=localStorage.getItem('sotransnord_config_cache');if(c)remoteConfig=JSON.parse(c);}}
+function getConfig(k){return remoteConfig[k]||'';}function getMakeWebhook(k){return getConfig('webhook_'+k)||'';}function getSheetsBase(){return getConfig('sheets_base')||SHEETS_BASE;}function loadConfig(){const c=localStorage.getItem('sotransnord_config_cache');return c?JSON.parse(c):remoteConfig;}function saveConfig(cfg){remoteConfig={...remoteConfig,...cfg};localStorage.setItem('sotransnord_config_cache',JSON.stringify(remoteConfig));}
 async function triggerMake(key,payload){if(state.mode!=='real')return{ok:true,demo:true};const url=getMakeWebhook(key);if(!url){showToast('⚠️ Webhook "'+key+'" manquant','warning',5000);return{ok:false};}try{const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,timestamp:new Date().toISOString(),mode:'real'})});return{ok:r.ok};}catch(e){showToast('⚠️ Make indisponible','warning');return{ok:false};}}
 async function syncSheets(action,data){if(state.mode!=='real')return;const url=getSheetsBase();if(!url)return;try{await fetch(url,{method:'POST',body:JSON.stringify({action,data})});}catch(e){}}
 function uid(){return Date.now()+Math.floor(Math.random()*1000);}
@@ -521,60 +569,43 @@ if(data.camions?.length)db.trucks=data.camions.map(t=>({id:sid(t.id),plate:t.imm
 if(data.clients?.length)db.clients=data.clients.map(c=>({id:sid(c.id),company:c.entreprise||c.company||'',manager:c.gerant||c.manager||'',phone:c.telephone||c.phone||'',email:c.email||''}));
 if(data.commandes?.length)db.orders=data.commandes.map(o=>{const nbRaw=String(o.nb_estime||o.nbEstimated||'0');const nb=nbRaw.split(/[|,]/).reduce(function(s,v){return s+(parseInt(v)||0);},0);const done=parseInt(o.nb_fait||o.nbDone)||0;const oid=sid(o.id);const lt=(data.transports||[]).filter(t=>sid(t.commande_id)===oid);const transports=Array.from({length:nb},(_,i)=>{const transportId=i+1;var t=null;var hasValidNums=lt.some(function(x){var n=parseInt(x.transport_num||x.transportId);return!isNaN(n)&&n>0&&n<=1000;});if(hasValidNums){t=lt.find(function(x){var n=parseInt(x.transport_num||x.transportId);return!isNaN(n)&&n===transportId&&n<=1000;});}else{t=lt[i];}return t?{id:transportId,done:true,tonnage:(function(v){var n=parseFloat(String(v||'').replace(',','.'));return isNaN(n)?0:n;})(t.tonnage),receiver:t.receptionnaire||t.receiver,func:t.fonction||t.func,sig:'✓',ts:t.timestamp}:{id:transportId,done:false,tonnage:null,receiver:null,func:null,sig:null};});return{id:oid,clientId:sid(o.client_id||o.clientId),address:o.adresse||o.address||'',date:cd(o.date_chantier||o.date),driverId:sid(o.chauffeur_id||o.driverId),truckId:sid(o.camion_id||o.truckId),type:o.type||'materiaux',materialId:o.materiau_id?sid(o.materiau_id):null,nbEstimated:nb,nbEstimatedRaw:nbRaw,nbDone:done,status:o.statut||o.status||'en_cours',invoiceSent:o.invoice_sent===true||o.invoice_sent==='true'||o.invoice_sent==='TRUE'||String(o.invoice_sent).toLowerCase()==='true',invoiceDate:o.invoice_date||o.invoiceDate||'',invoiceTo:o.invoice_to||o.invoiceTo||'',invoiceRef:o.invoice_ref||o.invoiceRef||'',paid:o.paid==='true'||o.paid===true||String(o.paid).toLowerCase()==='true',paidDate:o.paid_date||o.paidDate||'',transports};});
 if(data.frais?.length)db.expenses=data.frais.map(f=>({id:sid(f.id),truckId:sid(f.camion_id||f.truckId),date:cd(f.date),type:f.type_frais||f.type||'',amount:parseFloat(f.montant||f.amount)||0,desc:f.description||f.desc||''}));
-if(data.fiches_jour?.length)db.dayReports=data.fiches_jour.map(f=>({id:String(f.id||''),driverId:String(f.chauffeur_id||f.driverId||''),driverName:f.chauffeur_nom||f.driverName||'',date:f.date||'',km:parseInt(f.kilometrage||f.km)||0,fuelLiters:parseFloat(f.carburant_litres||f.fuelLiters)||0,fuelPrice:parseFloat(f.carburant_prix||f.fuelPrice)||0}));
+if(data.fiches_jour?.length)db.dayReports=data.fiches_jour.map(f=>({id:String(f.id||''),driverId:String(f.chauffeur_id||f.driverId||''),driverName:f.chauffeur_nom||f.driverName||'',date:f.date||'',km:parseInt(f.kilometrage||f.km)||0,fuelLiters:parseFloat(f.carburant_litres||f.fuelLiters)||0,fuelPrice:parseFloat(f.carburant_prix||f.fuelPrice)||0,notes:f.observations||f.notes||''}));
 if(data.materiaux?.length)db.materials=data.materiaux.map(m=>({id:String(m.id),name:m.nom||m.name||'',unit:m.unite||m.unit||'tonne'}));
 if(data.tarifs_clients?.length)db.clientTariffs=data.tarifs_clients.map(t=>{var typeVal=String(t.type||'').trim();var matVal=String(t.materiau_id||'').trim();if(/^\d{8,}$/.test(typeVal)&&(matVal==='journee'||matVal==='materiaux'||matVal===''))[typeVal,matVal]=[matVal,typeVal];return{id:String(t.id),clientId:String(t.client_id||t.clientId),type:typeVal||'materiaux',materialId:matVal?String(matVal):null,price:parseFloat(t.prix_unitaire||t.price)||0};});
 if(data.expense_types?.length){db.expenseTypes=data.expense_types.map(t=>({id:String(t.id),label:String(t.label||t.id)}));}else{db.expenseTypes=[];}
-if(data.company){remoteConfig.company_name=data.company.name||data.company.raison_sociale||'';remoteConfig.company_address=data.company.address||data.company.adresse||'';remoteConfig.company_postal=data.company.postal||data.company.code_postal||'';remoteConfig.company_city=data.company.city||data.company.ville||'';remoteConfig.company_siret=data.company.siret||'';remoteConfig.company_licence=data.company.licence||'';remoteConfig.company_phone=data.company.phone||data.company.telephone||'';remoteConfig.company_email=data.company.email||'';if(data.company.gerant_pin)GERANT_PIN=String(data.company.gerant_pin);remoteConfig.company_cnr_ref=data.company.cnr_ref||data.company.company_cnr_ref||0;remoteConfig.company_cnr_current=data.company.cnr_current||data.company.company_cnr_current||0;remoteConfig.company_cnr_weight=data.company.cnr_weight||data.company.company_cnr_weight||0;remoteConfig.company_tva=data.company.tva||data.company.company_tva||20;localStorage.setItem('sotransnord_config_cache',JSON.stringify(remoteConfig));}addAudit('Synchronisation',db.orders.length+' cmd · '+db.drivers.length+' chauffeurs');}
+if(data.company){remoteConfig.company_name=data.company.name||data.company.raison_sociale||'';remoteConfig.company_address=data.company.address||data.company.adresse||'';remoteConfig.company_postal=data.company.postal||data.company.code_postal||'';remoteConfig.company_city=data.company.city||data.company.ville||'';remoteConfig.company_siret=data.company.siret||'';remoteConfig.company_licence=data.company.licence||'';remoteConfig.company_phone=data.company.phone||data.company.telephone||'';remoteConfig.company_email=data.company.email||'';if(data.company.gerant_pin)GERANT_PIN=String(data.company.gerant_pin);if(data.company.mecano_pin)MECANO_PIN=String(data.company.mecano_pin);remoteConfig.company_cnr_ref=data.company.cnr_ref||data.company.company_cnr_ref||0;remoteConfig.company_cnr_current=data.company.cnr_current||data.company.company_cnr_current||0;remoteConfig.company_cnr_weight=data.company.cnr_weight||data.company.company_cnr_weight||0;remoteConfig.company_tva=data.company.tva||data.company.company_tva||20;localStorage.setItem('sotransnord_config_cache',JSON.stringify(remoteConfig));}addAudit('Synchronisation',db.orders.length+' cmd · '+db.drivers.length+' chauffeurs');}
 let demoSnapshot=null;
 function activateDemo(){state.mode='demo';saveDemoSnapshot();restoreDemoSnapshot();showToast('🎭 Gérant:123456 | Thomas:111111 | Kevin:222222','warning',6000);}
 function updateModeUI(){const s=document.getElementById('syncCmdBtn');if(s)s.style.display=state.mode==='real'?'':'none';const i=document.getElementById('modeIndicator');if(i){i.textContent=state.mode==='demo'?'🎭 DÉMO':'';i.style.display=state.mode==='demo'?'':'none';}}
 function saveDemoSnapshot(){if(!demoSnapshot){const T=new Date().toISOString().split('T')[0];const Y=new Date(Date.now()-86400000).toISOString().split('T')[0];demoSnapshot={drivers:[{id:1,name:'Thomas Leroy',birth:'1985-03-14',phone:'06 12 34 56 78',email:'t.leroy@mail.fr',licence:'CE',pin:'111111',status:'actif',docs:[]},{id:2,name:'Kevin Martin',birth:'1990-07-22',phone:'06 98 76 54 32',email:'k.martin@mail.fr',licence:'C',pin:'222222',status:'actif',docs:[]},{id:3,name:'Sébastien Dubois',birth:'1978-11-05',phone:'06 55 44 33 22',email:'s.dubois@mail.fr',licence:'CE',pin:'333333',status:'actif',docs:[]}],trucks:[{id:1,plate:'AB-123-CD',type:'Benne 8x4',km:152430,ct:'2025-09-15',status:'actif',docs:[]},{id:2,plate:'EF-456-GH',type:'Benne 6x4',km:98200,ct:'2025-12-01',status:'actif',docs:[]},{id:3,plate:'IJ-789-KL',type:'Ampliroll',km:203100,ct:'2024-11-30',status:'ct_expire',docs:[]}],clients:[{id:1,company:'SARL Dupont BTP',manager:'Jean Dupont',phone:'03 20 11 22 33',email:'contact@dupont-btp.fr'},{id:2,company:'Entreprise Moreau',manager:'Pierre Moreau',phone:'03 21 44 55 66',email:'p.moreau@moreau-tp.fr'},{id:3,company:'Constructions Bernard',manager:'Marc Bernard',phone:'06 70 80 90 10',email:'m.bernard@bernard-constr.fr'}],orders:[{id:1,clientId:1,address:"ZAC du Moulin, Villeneuve d'Ascq",date:T,truckId:1,driverId:1,type:'materiaux',materialId:1,nbEstimated:4,nbDone:2,status:'en_cours',transports:[{id:1,done:true,tonnage:18.5,receiver:'M. Gautier',func:'Chef chantier',sig:'✓'},{id:2,done:true,tonnage:19.0,receiver:'M. Gautier',func:'Chef chantier',sig:'✓'},{id:3,done:false,tonnage:null,receiver:null,func:null,sig:null},{id:4,done:false,tonnage:null,receiver:null,func:null,sig:null}]},{id:2,clientId:2,address:'Rue des Acacias, Lille',date:T,truckId:2,driverId:2,type:'journee',materialId:null,nbEstimated:1,nbDone:0,status:'en_cours',transports:[{id:1,done:false,tonnage:null,receiver:null,func:null,sig:null}]},{id:3,clientId:3,address:'Avenue de la Gare, Roubaix',date:Y,truckId:1,driverId:3,type:'materiaux',materialId:2,nbEstimated:3,nbDone:3,status:'termine',transports:[{id:1,done:true,tonnage:20.0,receiver:'M. Simon',func:'Conducteur',sig:'✓'},{id:2,done:true,tonnage:19.5,receiver:'M. Simon',func:'Conducteur',sig:'✓'},{id:3,done:true,tonnage:21.0,receiver:'M. Simon',func:'Conducteur',sig:'✓'}]}],expenses:[{id:1,truckId:1,date:T,type:'carburant',amount:210.00,desc:'Plein complet'},{id:2,truckId:2,date:T,type:'carburant',amount:185.50,desc:'Plein complet'}],materials:JSON.parse(JSON.stringify(db.materials)),tariffs:JSON.parse(JSON.stringify(db.tariffs))};}}
 function restoreDemoSnapshot(){if(demoSnapshot){db.drivers=JSON.parse(JSON.stringify(demoSnapshot.drivers));db.trucks=JSON.parse(JSON.stringify(demoSnapshot.trucks));db.clients=JSON.parse(JSON.stringify(demoSnapshot.clients));db.orders=JSON.parse(JSON.stringify(demoSnapshot.orders));db.expenses=JSON.parse(JSON.stringify(demoSnapshot.expenses));db.materials=JSON.parse(JSON.stringify(demoSnapshot.materials));db.tariffs=JSON.parse(JSON.stringify(demoSnapshot.tariffs));}}
-let loginRole='gerant';
-function switchLoginRole(r){loginRole=r;state.pinValue='';state.pinAttempts=0;state.pinLocked=false;updatePinDots();document.getElementById('pinError').textContent='';document.getElementById('pinAttempts').textContent='';document.getElementById('roleBtn-gerant').classList.toggle('on',r==='gerant');document.getElementById('roleBtn-chauffeur').classList.toggle('on',r==='chauffeur');document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=false);const lock=checkLockout();if(lock){state.pinLocked=true;document.getElementById('pinError').textContent='🔒 Bloqué — réessayez dans '+lock.remaining+' min';document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=true);}}
+let loginRole='chauffeur';
+function switchLoginRole(r){loginRole=r;state.pinValue='';state.pinAttempts=0;state.pinLocked=false;updatePinDots();document.getElementById('pinError').textContent='';document.getElementById('pinAttempts').textContent='';
+  ['demo','gerant','mecano'].forEach(function(k){var b=document.getElementById('apill-'+k);if(b)b.classList.toggle('on',r===k);});
+  var badge=document.getElementById('accessModeBadge');var ico=document.getElementById('accessModeIco');var txt=document.getElementById('accessModeText');
+  if(badge){badge.classList.remove('access-badge--gerant','access-badge--mecano','show');
+    if(r==='gerant'){badge.classList.add('access-badge--gerant','show');if(ico)ico.textContent='👔';if(txt)txt.textContent='Accès Gérant';}
+    else if(r==='mecano'){badge.classList.add('access-badge--mecano','show');if(ico)ico.textContent='🔧';if(txt)txt.textContent='Accès Mécanicien';}
+  }
+  document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=false);const lock=checkLockout();if(lock){state.pinLocked=true;document.getElementById('pinError').textContent='🔒 Bloqué — réessayez dans '+lock.remaining+' min';document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=true);}}
 function pinKey(d){if(state.pinLocked||state.pinValue.length>=6)return;state.pinValue+=d;updatePinDots();if(state.pinValue.length===6)setTimeout(validatePin,120);}
 function pinDel(){state.pinValue=state.pinValue.slice(0,-1);updatePinDots();document.getElementById('pinError').textContent='';}
 function updatePinDots(){for(let i=0;i<6;i++){const d=document.getElementById('d'+i);if(d)d.className='pin-dot'+(i<state.pinValue.length?' filled':'');}}
-async function validatePin(){
-  const lock=checkLockout();
-  if(lock){state.pinValue='';updatePinDots();state.pinLocked=true;document.getElementById('pinError').textContent='🔒 Bloqué — réessayez dans '+lock.remaining+' min';document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=true);return;}
-  const pin=state.pinValue;
-  let valid=false,user=null;
-  if(loginRole==='gerant'){
-    if(pin===GERANT_PIN){valid=true;user={id:0,name:'Gérant',role:'gerant',initials:'GE'};}
-  }else{
-    // Mode démo : utilise demoSnapshot. Mode réel : utilise db.drivers, avec retry preload si rien ne matche
-    if(state.mode==='demo'&&demoSnapshot){
-      const dr=demoSnapshot.drivers.find(d=>String(d.pin)===pin);
-      if(dr){valid=true;user={id:dr.id,name:dr.name,role:'chauffeur',initials:initials(dr.name)};}
-    }else{
-      let dr=db.drivers.find(d=>String(d.pin)===pin);
-      // Si aucun match : peut-être db.drivers stale ou jamais chargé. Force un reload et retry.
-      if(!dr){
-        document.getElementById('pinError').textContent='🔄 Vérification…';
-        try{
-          await preloadDrivers();
-          dr=db.drivers.find(d=>String(d.pin)===pin);
-        }catch(e){
-          console.error('preloadDrivers retry failed:',e);
-          showToast('⚠️ Impossible de charger les chauffeurs : '+e.message,'error',6000);
-        }
-      }
-      if(dr){valid=true;user={id:dr.id,name:dr.name,role:'chauffeur',initials:initials(dr.name)};}
-    }
-  }
-  if(valid){clearLockout();state.pinAttempts=0;state.currentUser=user;state.role=user.role;logAuthAttempt(true,user.name,'');document.getElementById('screen-splash').classList.add('hidden');document.getElementById('app').classList.add('active');if(state.mode!=='demo'){state.mode='real';showLoader();try{await loadRealData();}catch(e){console.error('loadRealData error:',e);showToast('⚠️ Erreur sync: '+e.message,'warning',6000);}hideLoader();}addAudit('Connexion',user.name);initApp();}
-  else{const totalAttempts=recordFailedAttempt();logAuthAttempt(false,'pin='+pin.substring(0,2)+'****','PIN incorrect');state.pinValue='';for(let i=0;i<6;i++){const d=document.getElementById('d'+i);if(d)d.className='pin-dot error';}setTimeout(updatePinDots,600);const lockMin=getLockoutMinutes(totalAttempts);if(lockMin>0){state.pinLocked=true;document.getElementById('pinError').textContent='🔒 Bloqué '+(lockMin>=60?(lockMin/60)+' h':lockMin+' min')+' — '+totalAttempts+' échecs';document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=true);}else{const rem=5-totalAttempts;document.getElementById('pinError').textContent='❌ Code incorrect — '+rem+' essai(s) restant(s)';}}
-}
-function logout(){state.currentUser=null;state.role=null;state.pinValue='';state.pinAttempts=0;state.pinLocked=false;state.mode='real';demoSnapshot=null;document.getElementById('app').classList.remove('active');document.getElementById('screen-splash').classList.remove('hidden');document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=false);switchLoginRole('gerant');}
+async function validatePin(){const lock=checkLockout();if(lock){state.pinValue='';updatePinDots();state.pinLocked=true;document.getElementById('pinError').textContent='🔒 Bloqué — réessayez dans '+lock.remaining+' min';document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=true);return;}const pin=state.pinValue;let valid=false,user=null;
+  if(loginRole==='gerant'){if(pin===GERANT_PIN){valid=true;user={id:0,name:'Gérant',role:'gerant',initials:'GE'};}}
+  else if(loginRole==='mecano'){if(pin===MECANO_PIN){valid=true;user={id:'mecano',name:'Mécanicien',role:'mecano',initials:'MK'};}}
+  else{const list=db.drivers.length>0?db.drivers:(demoSnapshot?demoSnapshot.drivers:[]);const dr=list.find(d=>String(d.pin)===pin);if(dr){valid=true;user={id:dr.id,name:dr.name,role:'chauffeur',initials:initials(dr.name)};}}
+if(valid){clearLockout();state.pinAttempts=0;state.currentUser=user;state.role=user.role;logAuthAttempt(true,user.name,'');document.getElementById('screen-splash').classList.add('hidden');document.getElementById('app').classList.add('active');if(state.mode!=='demo'){state.mode='real';showLoader();try{await loadRealData();}catch(e){console.error('loadRealData error:',e);showToast('⚠️ Erreur sync: '+e.message,'warning',6000);}hideLoader();}addAudit('Connexion',user.name);initApp();}
+else{const totalAttempts=recordFailedAttempt();logAuthAttempt(false,'pin='+pin.substring(0,2)+'****','PIN incorrect');state.pinValue='';for(let i=0;i<6;i++){const d=document.getElementById('d'+i);if(d)d.className='pin-dot error';}setTimeout(updatePinDots,600);const lockMin=getLockoutMinutes(totalAttempts);if(lockMin>0){state.pinLocked=true;document.getElementById('pinError').textContent='🔒 Bloqué '+(lockMin>=60?(lockMin/60)+' h':lockMin+' min')+' — '+totalAttempts+' échecs';document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=true);}else{const rem=5-totalAttempts;document.getElementById('pinError').textContent='❌ Code incorrect — '+rem+' essai(s) restant(s)';}}}
+function logout(){state.currentUser=null;state.role=null;state.pinValue='';state.pinAttempts=0;state.pinLocked=false;state.mode='real';demoSnapshot=null;document.getElementById('app').classList.remove('active');document.getElementById('screen-splash').classList.remove('hidden');document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=false);switchLoginRole('chauffeur');}
 const NAV_G=[{id:'dashboard',label:'Accueil',icon:'🏠',mob:'🏠',page:'page-dashboard'},{id:'commandes',label:'Commandes',icon:'📋',mob:'📋',page:'page-commandes'},{id:'donnees',label:'Données',icon:'📂',mob:'📂',page:'page-donnees'},{id:'rapports',label:'Rapports',icon:'📊',mob:'📊',page:'page-rapports'},{id:'marge',label:'Marge',icon:'💹',mob:'💹',page:'page-marge'}];
 const NAV_C=[{id:'driver-day',label:'Transports',icon:'🚛',mob:'🚛',page:'page-driver-day'},{id:'driver-fiche',label:'Fiche jour',icon:'📝',mob:'📝',page:'page-driver-fiche'},{id:'driver-profile',label:'Profil',icon:'👤',mob:'👤',page:'page-driver-profile'}];
+const NAV_M=[{id:'meca-dashboard',label:'Atelier',icon:'🔧',mob:'🔧',page:'page-meca-dashboard'},{id:'meca-flotte',label:'Flotte',icon:'🚛',mob:'🚛',page:'page-meca-flotte'},{id:'meca-frais',label:'Entretien',icon:'🛠️',mob:'🛠️',page:'page-meca-frais'},{id:'meca-obs',label:'Observations',icon:'📝',mob:'📝',page:'page-meca-obs'}];
 const MOB_G_TABS=['dashboard','commandes','donnees','rapports','marge'];
-function initApp(){const u=state.currentUser;document.getElementById('topbarAvatar').textContent=u.initials||'U';document.getElementById('topbarName').textContent=u.name;updateModeUI();const nav=u.role==='gerant'?NAV_G:NAV_C;buildNav(nav,u.role);navigate(u.role==='gerant'?'dashboard':'driver-day');}
+function initApp(){const u=state.currentUser;document.getElementById('topbarAvatar').textContent=u.initials||'U';document.getElementById('topbarName').textContent=u.name;updateModeUI();const nav=u.role==='gerant'?NAV_G:(u.role==='mecano'?NAV_M:NAV_C);buildNav(nav,u.role);navigate(u.role==='gerant'?'dashboard':(u.role==='mecano'?'meca-dashboard':'driver-day'));}
 function buildNav(nav,role){const sn=document.getElementById('sidenav');sn.innerHTML='<div class="sn-logo"><div class="sn-mark">SN</div><div class="sn-name">SOTRANSNORD</div></div><div class="sn-sec"><div class="sn-lb">Navigation</div>'+nav.map(n=>'<button class="sn-it" id="sn-'+n.id+'" onclick="navigate(\''+n.id+'\')"><span class="ni">'+n.icon+'</span> '+n.label+'</button>').join('')+'</div><div class="sn-ft"><button class="sn-it" onclick="logout()" style="color:rgba(255,80,80,.5)"><span class="ni">⏻</span> Déconnexion</button></div>';const bn=document.getElementById('bottomNav');const tabs=role==='gerant'?MOB_G_TABS:nav.map(n=>n.id);bn.innerHTML=tabs.map(id=>{const n=nav.find(x=>x.id===id);if(!n)return'';return'<button class="bt" id="bt-'+n.id+'" onclick="navigate(\''+n.id+'\')"><span class="bt-i">'+n.mob+'</span><span class="bt-l">'+n.label+'</span></button>';}).join('');}
-function navigate(id){const nav=state.role==='gerant'?NAV_G:NAV_C;const item=nav.find(n=>n.id===id);if(!item)return;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(item.page).classList.add('active');document.querySelectorAll('.sn-it').forEach(el=>el.classList.remove('on'));document.querySelectorAll('.bt').forEach(el=>el.classList.remove('on'));const s=document.getElementById('sn-'+id);if(s)s.classList.add('on');const b=document.getElementById('bt-'+id);if(b)b.classList.add('on');state.currentPage=id;renderPage(id);}
-function renderPage(id){switch(id){case'dashboard':renderDashboard();break;case'commandes':renderOrders();break;case'donnees':renderDonnees();break;case'rapports':renderRapports();break;case'marge':renderMarginTable();break;case'driver-day':renderDriverDay();break;case'driver-profile':renderDriverProfile();break;}}
+function navigate(id){const nav=state.role==='gerant'?NAV_G:(state.role==='mecano'?NAV_M:NAV_C);const item=nav.find(n=>n.id===id);if(!item)return;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(item.page).classList.add('active');document.querySelectorAll('.sn-it').forEach(el=>el.classList.remove('on'));document.querySelectorAll('.bt').forEach(el=>el.classList.remove('on'));const s=document.getElementById('sn-'+id);if(s)s.classList.add('on');const b=document.getElementById('bt-'+id);if(b)b.classList.add('on');state.currentPage=id;renderPage(id);}
+function renderPage(id){switch(id){case'dashboard':renderDashboard();break;case'commandes':renderOrders();break;case'donnees':renderDonnees();break;case'rapports':renderRapports();break;case'marge':renderMarginTable();break;case'driver-day':renderDriverDay();break;case'driver-profile':renderDriverProfile();break;case'meca-dashboard':renderMecaDashboard();break;case'meca-flotte':renderMecaFlotte();break;case'meca-frais':renderMecaFrais();break;case'meca-obs':renderMecaObs();break;}}
 function renderDonnees(){if(!db.expenseTypes)loadExpenseTypes();renderDriversTable();renderTrucks();renderClients();renderMaterials();renderExpenses();renderFiches();}
 function isExpSoon(d){if(!d)return false;const dt=new Date(d);const now=new Date();const diff=(dt-now)/(1000*60*60*24);return diff<=30;}
 function renderImpayes(){const el=document.getElementById('dashImpayes');if(!el)return;const impayes=db.orders.filter(o=>o.invoiceSent&&!o.paid);if(!impayes.length){el.innerHTML='';return;}let total=0;let oldest=999;impayes.forEach(o=>{const tarif=db.clientTariffs.find(t=>String(t.clientId)===String(o.clientId)&&t.type===o.type&&(o.type==='journee'||String(t.materialId)===String(o.materialId)));const doneT=o.transports.filter(t=>t.done);let st=0;const price=tarif?tarif.price:0;doneT.forEach(t=>{st+=(parseFloat(t.tonnage)||0)*price;});const co=getCompanyInfo()||{};const cnrRef=parseFloat(co.cnr_ref)||0;const cnrCur=parseFloat(co.cnr_current)||0;const cnrW=(parseFloat(co.cnr_weight)||16.3)/100;if(cnrRef>0&&cnrCur>0&&cnrCur!==cnrRef)st+=st*cnrW*(cnrCur-cnrRef)/cnrRef;total+=st*1.2;if(o.invoiceDate){const d=new Date(o.invoiceDate);if(!isNaN(d)){const days=Math.ceil((new Date()-d)/(1000*60*60*24));if(days>0&&days<oldest)oldest=days;}}});el.innerHTML='<div class="card" style="border-left:3px solid #D4A017;margin-bottom:0"><div class="card-h"><span class="card-t">💰 Factures impayees</span><span class="badge" style="background:#D4A017;color:#fff">'+impayes.length+'</span></div><div class="card-b" style="padding:12px 14px"><div style="display:flex;gap:20px;flex-wrap:wrap"><div><div style="font-size:1.3rem;font-weight:900;color:#D4A017">'+fmt(total)+'</div><div style="font-size:.68rem;color:var(--t3)">Total TTC a encaisser</div></div>'+(oldest<999?'<div><div style="font-size:1.3rem;font-weight:900;color:var(--er)">'+oldest+' j</div><div style="font-size:.68rem;color:var(--t3)">Plus ancienne facture</div></div>':'')+'<div><div style="font-size:1.3rem;font-weight:900">'+impayes.filter(o=>{const d=new Date(o.invoiceDate);return!isNaN(d)&&(new Date()-d)/(1000*60*60*24)>30;}).length+'</div><div style="font-size:.68rem;color:var(--t3)">A relancer (+30j)</div></div></div></div></div>';}
@@ -663,6 +694,32 @@ async function clearAudit(){const ok=await showConfirm('Vider ?','','🗑️','V
 function renderDriverAlerts(){const el=document.getElementById('driverAlerts');if(!el)return;const d=db.drivers.find(x=>x.id===state.currentUser.id);if(!d){el.innerHTML='';return;}const alerts=[];const now=new Date();function chk(date,label,icon){if(!date)return;const dt=new Date(date);const diff=Math.ceil((dt-now)/(1000*60*60*24));if(diff<0)alerts.push({icon,label,msg:'Expiré depuis '+Math.abs(diff)+' jour(s)',urgent:true});else if(diff<=30)alerts.push({icon,label,msg:'Expire dans '+diff+' jour(s)',urgent:diff<=7});}chk(d.cqc,'Carte CQC (FIMO/FCO)','🎓');chk(d.medical,'Visite médicale','🏥');if(!alerts.length){el.innerHTML='';return;}el.innerHTML='<div class="card" style="border-left:3px solid var(--er)"><div class="card-h"><span class="card-t">⚠️ Mes échéances</span><span class="badge bg-rd">'+alerts.length+'</span></div><div class="card-b" style="padding:8px 12px;display:flex;flex-direction:column;gap:6px">'+alerts.map(a=>'<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);background:'+(a.urgent?'var(--erb)':'var(--wab)')+'"><span style="font-size:1.1rem">'+a.icon+'</span><div style="flex:1"><div style="font-weight:800;font-size:.8rem">'+a.label+'</div><div style="font-size:.72rem;color:'+(a.urgent?'var(--er)':'var(--wa)')+'">'+a.msg+'</div></div></div>').join('')+'</div></div>';}
 function renderDriverDay(){const d=new Date();renderDriverAlerts();document.getElementById('driverDayDate').textContent=d.toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});const did=state.currentUser.id;const tds=d.toISOString().split('T')[0];const orders=db.orders.filter(o=>String(o.driverId||'').split(/[|,]/).some(function(d){return d.trim()===String(did);})&&o.status==='en_cours');let all=[];orders.forEach(o=>{var myT=getTransportsForDriver(o,did);myT.forEach(t=>{all.push({...t,orderId:o.id,cn:clientName(o.clientId),addr:o.address,mat:o.materialId?materialName(o.materialId):null,od:o.date});});});const tot=all.length;const dn=all.filter(t=>t.done).length;const pct=tot>0?Math.round((dn/tot)*100):0;document.getElementById('driverProgress').textContent=dn+'/'+tot;const bar=document.getElementById('driverProgressBar');bar.style.width=pct+'%';bar.className='prog-fill'+(pct>=100?' full':'');const list=document.getElementById('driverTransportList');if(!all.length){list.innerHTML='<div class="empty"><div class="empty-i">🚛</div><div class="empty-t">Aucun transport</div></div>';return;}list.innerHTML=all.map((t,i)=>{const isT=t.od===tds;const db2=isT?'<span class="badge bg-gn" style="font-size:.6rem">Aujourd\'hui</span>':'<span class="badge bg-yl" style="font-size:.6rem">📅 '+fmtDate(t.od)+'</span>';return'<div class="tr-item'+(t.done?' done':'')+'" onclick="'+(t.done?'':'openTransportModal(\''+t.orderId+'\',\''+t.id+'\')')+'"><div class="tr-num">'+(i+1)+'</div><div class="tr-info"><div class="tr-client" style="display:flex;align-items:center;gap:5px">'+t.cn+' '+db2+'</div><div class="tr-meta">📍 '+t.addr+(t.mat?' · '+t.mat:'')+'</div>'+(t.done?'<div style="font-size:.76rem;color:var(--gn);margin-top:4px">✅ '+t.tonnage+'T — '+t.receiver+'</div>':'<div style="font-size:.72rem;color:var(--t4);margin-top:4px;font-style:italic">Appuyez pour valider</div>')+'<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-d btn-s" onclick="event.stopPropagation();openLDV(\''+t.orderId+'\',\''+t.id+'\')">📄 Lettre de voiture</button>'+(t.done?' <button class="btn btn-s" onclick="event.stopPropagation();openBDL(\''+t.orderId+'\',\''+t.id+'\')" style="background:var(--gn);color:#fff">📦 BDL ✓</button>':'')+'</div></div>'+(t.done?'<span style="font-size:1.2rem">✅</span>':'<span class="tr-arr">›</span>')+'</div>';}).join('');}
 function renderDriverProfile(){const d=db.drivers.find(x=>x.id===state.currentUser.id);if(!d){document.getElementById('driverProfileContent').innerHTML='—';return;}document.getElementById('driverProfileContent').innerHTML='<div style="display:flex;align-items:center;gap:14px;margin-bottom:16px"><div style="width:52px;height:52px;border-radius:var(--r2);background:var(--rd);display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:900;color:#fff">'+initials(d.name)+'</div><div><div style="font-size:1.05rem;font-weight:900">'+d.name+'</div><div style="font-size:.76rem;color:var(--t3)">Permis '+d.licence+'</div></div></div><div class="fg2"><div class="fg"><label class="fl">Téléphone</label><div class="fi" style="background:var(--sf2)">'+(d.phone||'—')+'</div></div><div class="fg"><label class="fl">Email</label><div class="fi" style="background:var(--sf2)">'+(d.email||'—')+'</div><div style="margin-top:16px"><button class="btn btn-d btn-w" onclick="openPinChange()">🔐 Changer mon code PIN</button></div></div></div>';}
+
+// ═══════════════════════════════════════════════════════════════
+// 🔧 INTERFACE MÉCANICIEN — v10.22
+// ═══════════════════════════════════════════════════════════════
+function mecaAlerts(){var alerts=[];var now=new Date();db.trucks.forEach(function(t){if(t.ct){var dt=new Date(t.ct);var diff=(dt-now)/(1000*60*60*24);if(diff<0)alerts.push({severity:'high',truck:t,type:'CT',label:'Contrôle technique EXPIRÉ',date:t.ct,days:Math.abs(Math.round(diff))});else if(diff<=30)alerts.push({severity:'med',truck:t,type:'CT',label:'Contrôle technique bientôt expiré',date:t.ct,days:Math.round(diff)});}if(t.tachy){var dt2=new Date(t.tachy);var diff2=(dt2-now)/(1000*60*60*24);if(diff2<0)alerts.push({severity:'high',truck:t,type:'TACHY',label:'Tachygraphe EXPIRÉ',date:t.tachy,days:Math.abs(Math.round(diff2))});else if(diff2<=30)alerts.push({severity:'med',truck:t,type:'TACHY',label:'Tachygraphe bientôt expiré',date:t.tachy,days:Math.round(diff2)});}if(t.limiteur){var dt3=new Date(t.limiteur);var diff3=(dt3-now)/(1000*60*60*24);if(diff3<0)alerts.push({severity:'high',truck:t,type:'LIM',label:'Limiteur EXPIRÉ',date:t.limiteur,days:Math.abs(Math.round(diff3))});else if(diff3<=30)alerts.push({severity:'med',truck:t,type:'LIM',label:'Limiteur bientôt expiré',date:t.limiteur,days:Math.round(diff3)});}});return alerts.sort(function(a,b){if(a.severity!==b.severity)return a.severity==='high'?-1:1;return new Date(a.date)-new Date(b.date);});}
+
+function renderMecaDashboard(){document.getElementById('mecaDashDate').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});document.getElementById('meca-stat-trucks').textContent=db.trucks.length;var alerts=mecaAlerts();document.getElementById('meca-stat-alerts').textContent=alerts.length;
+  var now=new Date();var monthExp=db.expenses.filter(function(e){var d=new Date(e.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce(function(s,e){return s+(parseFloat(e.amount)||0);},0);document.getElementById('meca-stat-cost').textContent=fmt(monthExp);
+  var sevenDaysAgo=new Date();sevenDaysAgo.setDate(sevenDaysAgo.getDate()-7);var recentObs=(db.dayReports||[]).filter(function(f){return f.notes&&f.notes.trim()&&new Date(f.date)>=sevenDaysAgo;});document.getElementById('meca-stat-obs').textContent=recentObs.length;
+  var al=document.getElementById('mecaAlertsList');al.innerHTML=alerts.length?alerts.slice(0,8).map(function(a){var color=a.severity==='high'?'var(--er)':'var(--wa)';var ic=a.severity==='high'?'🔴':'🟡';var when=a.severity==='high'?'il y a '+a.days+' j':'dans '+a.days+' j';return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:8px;background:rgba(239,68,68,'+(a.severity==='high'?'.1':'.05')+');margin-bottom:6px;border-left:3px solid '+color+'"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:1.1rem">'+ic+'</span><div><div style="font-weight:800;font-size:.85rem">'+a.truck.plate+' — '+a.label+'</div><div style="font-size:.72rem;color:var(--t3)">'+fmtDate(a.date)+' · '+when+'</div></div></div><button class="btn btn-d btn-s" onclick="editTruck(\''+a.truck.id+'\')">✏️</button></div>';}).join(''):'<div class="empty"><div class="empty-i">✅</div><div class="empty-t">Aucune alerte — flotte à jour</div></div>';
+  var ob=document.getElementById('mecaObsRecent');ob.innerHTML=recentObs.length?recentObs.slice(0,5).map(function(f){return '<div style="padding:10px;border-radius:8px;background:var(--sf2);margin-bottom:6px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-weight:800;font-size:.85rem">'+(f.driverName||'—')+'</span><span style="font-size:.7rem;color:var(--t3)">'+(f.date?fmtDate(f.date):'—')+'</span></div><div style="font-size:.78rem;color:var(--t2)">'+f.notes+'</div></div>';}).join(''):'<div class="empty"><div class="empty-i">📝</div><div class="empty-t">Aucune observation récente</div></div>';}
+
+function renderMecaFlotte(search){var s=(search||'').toLowerCase();var list=db.trucks.filter(function(t){return !s||(t.plate||'').toLowerCase().includes(s);});document.getElementById('mecaTrucksTableBody').innerHTML=list.length?list.map(function(t){var ctExp=t.ct?(new Date(t.ct)<new Date()):false;var ctSoon=t.ct?isExpSoon(t.ct):false;return '<tr><td style="font-weight:800">'+t.plate+'</td><td>'+(t.type||'—')+'</td><td>'+((t.km||0).toLocaleString('fr-FR'))+' km</td><td>'+(t.ct?'<span class="badge '+(ctExp?'bg-rd':(ctSoon?'bg-yl':'bg-gn'))+'">'+fmtDate(t.ct)+'</span>':'<span class="badge bg-rd">—</span>')+'</td><td>'+(t.tachy?'<span class="badge '+(isExpSoon(t.tachy)?'bg-rd':'bg-gn')+'">'+fmtDate(t.tachy)+'</span>':'—')+'</td><td>'+(t.limiteur?'<span class="badge '+(isExpSoon(t.limiteur)?'bg-rd':'bg-gn')+'">'+fmtDate(t.limiteur)+'</span>':'—')+'</td><td><div class="ta"><button class="btn btn-g btn-s btn-i" onclick="editTruck(\''+t.id+'\')">✏️</button><button class="btn btn-x btn-s btn-i" onclick="deleteTruck(\''+t.id+'\')">🗑️</button></div></td></tr>';}).join(''):'<tr><td colspan="7"><div class="empty"><div class="empty-i">🚛</div><div class="empty-t">Aucun camion</div></div></td></tr>';}
+
+function renderMecaFrais(){var truckSel=document.getElementById('mecaFraisTruck');var typeSel=document.getElementById('mecaFraisType');
+  if(truckSel&&truckSel.options.length<=1){truckSel.innerHTML='<option value="">Tous</option>'+db.trucks.map(function(t){return '<option value="'+t.id+'">'+t.plate+'</option>';}).join('');}
+  if(typeSel&&typeSel.options.length<=1){var types=db.expenseTypes||[];typeSel.innerHTML='<option value="">Tous</option>'+types.map(function(t){return '<option value="'+t.id+'">'+t.label+'</option>';}).join('');}
+  var tFilter=truckSel?truckSel.value:'';var tyFilter=typeSel?typeSel.value:'';
+  var list=db.expenses.filter(function(e){if(tFilter&&String(e.truckId)!==String(tFilter))return false;if(tyFilter&&String(e.type)!==String(tyFilter))return false;return true;}).sort(function(a,b){return new Date(b.date)-new Date(a.date);});
+  var total=list.reduce(function(s,e){return s+(parseFloat(e.amount)||0);},0);
+  document.getElementById('mecaFraisTotal').textContent=fmt(total);document.getElementById('mecaFraisCount').textContent=list.length;
+  document.getElementById('mecaFraisTableBody').innerHTML=list.length?list.map(function(e){var truck=db.trucks.find(function(t){return String(t.id)===String(e.truckId);});var type=(db.expenseTypes||[]).find(function(t){return String(t.id)===String(e.type);});return '<tr><td>'+(e.date?fmtDate(e.date):'—')+'</td><td style="font-weight:700">'+(truck?truck.plate:'—')+'</td><td>'+(type?type.label:e.type||'—')+'</td><td style="font-weight:800;color:var(--er)">'+fmt(parseFloat(e.amount)||0)+'</td><td style="font-size:.74rem;color:var(--t3)">'+(e.description||'—')+'</td><td><div class="ta"><button class="btn btn-g btn-s btn-i" onclick="editExpense(\''+e.id+'\')">✏️</button><button class="btn btn-x btn-s btn-i" onclick="deleteExpense(\''+e.id+'\')">🗑️</button></div></td></tr>';}).join(''):'<tr><td colspan="6"><div class="empty"><div class="empty-i">🛠️</div><div class="empty-t">Aucun frais</div></div></td></tr>';}
+
+function renderMecaObs(search){var s=(search||'').toLowerCase();var list=(db.dayReports||[]).filter(function(f){if(!f.notes||!f.notes.trim())return false;if(!s)return true;return (f.driverName||'').toLowerCase().includes(s)||(f.notes||'').toLowerCase().includes(s);}).sort(function(a,b){return new Date(b.date||0)-new Date(a.date||0);});
+  document.getElementById('mecaObsTableBody').innerHTML=list.length?list.map(function(f){return '<tr><td>'+(f.date?fmtDate(f.date):'—')+'</td><td style="font-weight:700">'+(f.driverName||driverName(f.driverId)||'—')+'</td><td>'+(parseInt(f.km)||0).toLocaleString('fr-FR')+' km</td><td>'+(parseFloat(f.fuelLiters)||0)+' L</td><td style="font-size:.78rem;font-style:italic;color:var(--t2)">'+f.notes+'</td></tr>';}).join(''):'<tr><td colspan="5"><div class="empty"><div class="empty-i">📝</div><div class="empty-t">Aucune observation à traiter</div></div></td></tr>';}
+
 function openTransportModal(oid,tid){const o=db.orders.find(x=>String(x.id)===String(oid));if(!o)return;const t=o.transports.find(x=>String(x.id)===String(tid));if(!t||t.done)return;state.currentOrder=o;state.currentTransport=t;const isJournee=o.type==='journee';document.getElementById('transportModalTitle').textContent=isJournee?'Validation journée':'Transport #'+tid;document.getElementById('transportModalInfo').innerHTML='<div style="display:flex;flex-wrap:wrap;gap:5px"><span class="oc-m">🏢 '+clientName(o.clientId)+'</span><span class="oc-m">📍 '+o.address+'</span>'+(o.materialId?'<span class="oc-m">⚙️ '+materialName(o.materialId)+'</span>':'')+'<span class="oc-m">'+(isJournee?'📅 Prestation à la journée':'')+'</span></div>';document.getElementById('tm-tonnage-group').style.display=isJournee?'none':'';document.getElementById('tm-tonnage').value='';document.getElementById('tm-receiver-name').value='';document.getElementById('tm-receiver-func').value='';initSigPad();openModal('transportModal');}
 function confirmTransport(){const o=state.currentOrder;const isJournee=o&&o.type==='journee';const ton=isJournee?0:parseFloat(document.getElementById('tm-tonnage').value);const rec=document.getElementById('tm-receiver-name').value.trim();const fn=document.getElementById('tm-receiver-func').value.trim();if(!isJournee&&(!ton||isNaN(ton))){showToast('⚠️ Tonnage requis','error');return;}if(!rec){showToast('⚠️ Réceptionnaire requis','error');return;}const sig=getSigData();if(!sig){showToast('⚠️ Signature requise','error');return;}const t=state.currentTransport;t.done=true;t.tonnage=ton;t.receiver=rec;t.func=fn;t.sig=sig;t.ts=new Date().toLocaleString('fr-FR');o.nbDone=o.transports.filter(x=>x.done).length;if(o.nbDone>=o.nbEstimated)o.status='termine';addAudit(isJournee?'Journée validée':'Transport validé',clientName(o.clientId)+(isJournee?'':' — '+ton+'T'));syncSheets('transportDone',{orderId:o.id,transportId:t.id,tonnage:ton,receiver:rec,func:fn,timestamp:new Date().toISOString(),nbDone:o.nbDone,nbEstimated:o.nbEstimated,status:o.status});closeModal('transportModal');renderDriverDay();showToast('✅ '+(isJournee?'Journée validée':'Transport validé'),'success',4000);autoSendBDL(o,t);}
 async function submitFiche(){const km=document.getElementById('fiche-km').value;if(!km){showToast('⚠️ Kilométrage requis','error');return;}showLoader();await new Promise(r=>setTimeout(r,800));const p={driverId:state.currentUser.id,driverName:state.currentUser.name,km:parseInt(km),fuelLiters:parseFloat(document.getElementById('fiche-conso').value)||0,fuelPrice:parseFloat(document.getElementById('fiche-fuel-price').value)||0,notes:document.getElementById('fiche-notes').value.trim(),date:new Date().toISOString()};syncSheets('endOfDay',p);addAudit('Fiche jour',state.currentUser.name+' — '+km+' km');hideLoader();['fiche-km','fiche-conso','fiche-fuel-price','fiche-notes'].forEach(f=>document.getElementById(f).value='');showToast('📤 Fiche envoyée','success',4000);}
@@ -684,63 +741,19 @@ function handleDragLeave(zid){document.getElementById(zid)?.classList.remove('dr
 function handleDrop(e,tid,prefix){e.preventDefault();document.getElementById(prefix==='dm'?'dm-upload-zone':'tm-upload-zone')?.classList.remove('drag-over');handleFiles({files:e.dataTransfer.files,value:''},tid,prefix);}
 function loadExistingDocs(docs,prefix,tid){pendingDocs[prefix]=docs?[...docs]:[];renderAllChips(tid,prefix);}
 function collectDocs(prefix){return[...(pendingDocs[prefix]||[])];}
-document.addEventListener('DOMContentLoaded',async()=>{document.getElementById('dashDate').textContent=today();renderAlerts();renderImpayes();document.querySelectorAll('.mo').forEach(mo=>{mo.addEventListener('click',e=>{if(e.target===mo)closeModal(mo.id);});});await loadRemoteConfig();const fromCache=loadDriversCache();try{await preloadDrivers();}catch(e){console.error('preloadDrivers failed:',e);if(fromCache){showToast('📡 Connexion lente — utilisation du cache local. Réessayez votre PIN, l\'app retentera la synchro.','warning',7000);}else{showToast('⚠️ Synchro impossible : '+e.message+'. Vérifiez votre connexion.','error',8000);}}});
-/* CACHE LOCAL DES CHAUFFEURS — fallback si réseau down au démarrage */
-function saveDriversCache(){
-  try{
-    localStorage.setItem('sotransnord_drivers_cache',JSON.stringify({
-      drivers:db.drivers.map(d=>({id:d.id,name:d.name,pin:d.pin,licence:d.licence||'C',status:d.status||'actif',email:d.email||'',phone:d.phone||'',birth:d.birth||'',cqc:d.cqc||'',medical:d.medical||''})),
-      gerantPin:GERANT_PIN,
-      ts:Date.now()
-    }));
-  }catch(e){}
-}
-function loadDriversCache(){
-  try{
-    const raw=localStorage.getItem('sotransnord_drivers_cache');
-    if(!raw)return false;
-    const data=JSON.parse(raw);
-    if(data.drivers&&data.drivers.length){
-      db.drivers=data.drivers.map(d=>({...d,docs:[]}));
-    }
-    if(data.gerantPin)GERANT_PIN=data.gerantPin;
-    return true;
-  }catch(e){return false;}
-}
-
-async function preloadDrivers(){
-  const url=getSheetsBase()||SHEETS_BASE;
-  if(!url)throw new Error('URL Google Sheets non configurée');
-  // Retry avec backoff exponentiel : 300ms, 800ms, 2000ms
-  let lastError=null;
-  for(let attempt=1;attempt<=3;attempt++){
-    try{
-      const r=await fetch(url,{method:'POST',body:JSON.stringify({action:'getAll'})});
-      if(!r.ok)throw new Error('Erreur réseau '+r.status);
-      const data=await r.json();
-      if(data.error)throw new Error(data.error);
-      if(data.chauffeurs&&data.chauffeurs.length){
-        db.drivers=data.chauffeurs.map(d=>({id:String(d.id),name:d.nom||d.name||'',phone:d.telephone||d.phone||'',email:d.email||'',licence:d.permis||d.licence||'C',pin:String(d.pin||''),status:d.statut||d.status||'actif',birth:cd(d.date_naissance||d.birth||''),cqc:cd(d.cqc||''),medical:cd(d.medical||''),docs:[]}));
-      }
-      if(data.company&&data.company.gerant_pin)GERANT_PIN=String(data.company.gerant_pin);
-      if(data.materiaux?.length)db.materials=data.materiaux.map(m=>({id:String(m.id),name:m.nom||m.name||'',unit:m.unite||m.unit||'tonne'}));
-      if(data.tarifs_clients?.length)db.clientTariffs=data.tarifs_clients.map(t=>{var typeVal=String(t.type||'').trim();var matVal=String(t.materiau_id||'').trim();if(/^\d{8,}$/.test(typeVal)&&(matVal==='journee'||matVal==='materiaux'||matVal===''))[typeVal,matVal]=[matVal,typeVal];return{id:String(t.id),clientId:String(t.client_id||t.clientId),type:typeVal||'materiaux',materialId:matVal?String(matVal):null,price:parseFloat(t.prix_unitaire||t.price)||0};});
-      saveDriversCache();
-      return;
-    }catch(e){
-      lastError=e;
-      console.warn('preloadDrivers tentative '+attempt+'/3 échouée:',e.message);
-      if(attempt<3)await new Promise(r=>setTimeout(r,300*Math.pow(2,attempt-1)));
-    }
-  }
-  throw lastError;
-}
+document.addEventListener('DOMContentLoaded',async()=>{document.getElementById('dashDate').textContent=today();renderAlerts();renderImpayes();document.querySelectorAll('.mo').forEach(mo=>{mo.addEventListener('click',e=>{if(e.target===mo)closeModal(mo.id);});});switchLoginRole('chauffeur');await loadRemoteConfig();await preloadDrivers();});
+async function preloadDrivers(){try{const url=getSheetsBase()||SHEETS_BASE;if(!url)return;const r=await fetch(url,{method:'POST',body:JSON.stringify({action:'getAll'})});const data=await r.json();if(data.chauffeurs?.length)db.drivers=data.chauffeurs.map(d=>({id:String(d.id),name:d.nom||d.name||'',phone:d.telephone||d.phone||'',email:d.email||'',licence:d.permis||d.licence||'C',pin:String(d.pin||''),status:d.statut||d.status||'actif',birth:cd(d.date_naissance||d.birth||''),cqc:cd(d.cqc||''),medical:cd(d.medical||''),docs:[]}));if(data.company&&data.company.gerant_pin)GERANT_PIN=String(data.company.gerant_pin);if(data.company&&data.company.mecano_pin)MECANO_PIN=String(data.company.mecano_pin);
+if(data.materiaux?.length)db.materials=data.materiaux.map(m=>({id:String(m.id),name:m.nom||m.name||'',unit:m.unite||m.unit||'tonne'}));if(data.tarifs_clients?.length)db.clientTariffs=data.tarifs_clients.map(t=>{var typeVal=String(t.type||'').trim();var matVal=String(t.materiau_id||'').trim();if(/^\d{8,}$/.test(typeVal)&&(matVal==='journee'||matVal==='materiaux'||matVal===''))[typeVal,matVal]=[matVal,typeVal];return{id:String(t.id),clientId:String(t.client_id||t.clientId),type:typeVal||'materiaux',materialId:matVal?String(matVal):null,price:parseFloat(t.prix_unitaire||t.price)||0};});}catch(e){}}
 /* COMPANY INFO */
 function getCompanyInfo(){if(remoteConfig.company_name){return{name:remoteConfig.company_name||'',address:remoteConfig.company_address||'',postal:remoteConfig.company_postal||'',city:remoteConfig.company_city||'',siret:remoteConfig.company_siret||'',licence:remoteConfig.company_licence||'',phone:remoteConfig.company_phone||'',email:remoteConfig.company_email||'',cnr_ref:parseFloat(remoteConfig.company_cnr_ref)||0,cnr_current:parseFloat(remoteConfig.company_cnr_current)||0,cnr_weight:parseFloat(remoteConfig.company_cnr_weight)||19.2,tva:parseFloat(remoteConfig.company_tva)||20};}const c=localStorage.getItem('sotransnord_company');return c?JSON.parse(c):null;}
 function saveCompanyInfo(){const data={name:document.getElementById('co-name').value.trim(),address:document.getElementById('co-address').value.trim(),postal:document.getElementById('co-postal').value.trim(),city:document.getElementById('co-city').value.trim(),siret:document.getElementById('co-siret').value.trim(),licence:document.getElementById('co-licence').value.trim(),phone:document.getElementById('co-phone').value.trim(),email:document.getElementById('co-email').value.trim(),cnr_ref:parseFloat(document.getElementById('co-cnr-ref').value)||0,cnr_current:parseFloat(document.getElementById('co-cnr-current').value)||0,cnr_weight:parseFloat(document.getElementById('co-cnr-weight').value)||19.2,tva:parseFloat(document.getElementById('co-tva').value)||20};if(!data.name||!data.address||!data.postal||!data.city||!data.siret){showToast('⚠️ Champs obligatoires manquants','error');return;}localStorage.setItem('sotransnord_company',JSON.stringify(data));remoteConfig.company_name=data.name;remoteConfig.company_address=data.address;remoteConfig.company_postal=data.postal;remoteConfig.company_city=data.city;remoteConfig.company_siret=data.siret;remoteConfig.company_licence=data.licence;remoteConfig.company_phone=data.phone;remoteConfig.company_email=data.email;remoteConfig.company_cnr_ref=data.cnr_ref;remoteConfig.company_cnr_current=data.cnr_current;remoteConfig.company_cnr_weight=data.cnr_weight;remoteConfig.company_tva=data.tva;localStorage.setItem('sotransnord_config_cache',JSON.stringify(remoteConfig));syncSheets('saveCompany',data);closeModal('companyModal');showToast('✅ Informations société enregistrées','success');if(window._ldvPendingAfterCompany){window._ldvPendingAfterCompany();window._ldvPendingAfterCompany=null;}}
 function updateCnrPreview(){const ref=parseFloat(document.getElementById('co-cnr-ref').value);const cur=parseFloat(document.getElementById('co-cnr-current').value);const w=parseFloat(document.getElementById('co-cnr-weight').value)||19.2;const prev=document.getElementById('cnr-preview');if(!ref||!cur||ref<=0){prev.style.display='none';return;}const variation=((cur-ref)/ref)*100;const surcharge=variation*(w/100);prev.style.display='block';const sign=variation>=0?'+':'';const color=variation>=0?'var(--rd)':'var(--gn)';prev.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:800">📊 Prévisualisation</span><span style="font-size:.68rem;color:var(--t4)">Régional EA · CNR 2026 : 19,2%</span></div><div style="margin-top:6px;display:flex;gap:16px;flex-wrap:wrap"><div><span style="color:var(--t3)">Variation indice</span><br><span style="font-weight:900;color:'+color+'">'+sign+variation.toFixed(2)+'%</span></div><div><span style="color:var(--t3)">Surcharge facture</span><br><span style="font-weight:900;color:'+color+'">'+sign+surcharge.toFixed(2)+'%</span></div><div><span style="color:var(--t3)">Exemple sur 1 000 €</span><br><span style="font-weight:900;color:'+color+'">'+sign+(10*surcharge).toFixed(0)+' €</span></div></div>';}
 function openPinChange(){document.getElementById('pin-old').value='';document.getElementById('pin-new').value='';document.getElementById('pin-confirm').value='';openModal('pinChangeModal');}
-async function changePin(){var oldPin=document.getElementById('pin-old').value.trim();var newPin=document.getElementById('pin-new').value.trim();var confirmPin=document.getElementById('pin-confirm').value.trim();if(!isPinFormatValid(newPin)){showToast('⚠️ Le PIN doit faire 6 caractères (chiffres ou #)','error',5000);return;}if(newPin!==confirmPin){showToast('⚠️ Les codes ne correspondent pas','error');return;}if(isPinWeak(newPin)){showToast('⚠️ Ce PIN est trop simple — choisissez-en un moins évident','error',6000);return;}var excludeId=state.role==='gerant'?'gerant':state.currentUser.id;if(!isPinUnique(newPin,excludeId)){showToast('⚠️ Ce PIN est déjà utilisé par un autre utilisateur','error',6000);return;}if(state.role==='gerant'){if(oldPin!==GERANT_PIN){showToast('⚠️ Code actuel incorrect','error');return;}GERANT_PIN=newPin;await fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'saveCompany',data:{gerant_pin:newPin}})});showToast('✅ PIN gérant modifié','success');addAudit('PIN gérant modifié','');}else{var d=db.drivers.find(function(x){return x.id===state.currentUser.id;});if(!d||String(d.pin)!==oldPin){showToast('⚠️ Code actuel incorrect','error');return;}d.pin=newPin;fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'updateDriver',data:{id:d.id,pin:newPin}})});showToast('✅ PIN modifié avec succès','success');addAudit('PIN modifié',state.currentUser.name);}closeModal('pinChangeModal');}
+async function changePin(){var oldPin=document.getElementById('pin-old').value.trim();var newPin=document.getElementById('pin-new').value.trim();var confirmPin=document.getElementById('pin-confirm').value.trim();if(!isPinFormatValid(newPin)){showToast('⚠️ Le PIN doit faire 6 caractères (chiffres ou #)','error',5000);return;}if(newPin!==confirmPin){showToast('⚠️ Les codes ne correspondent pas','error');return;}if(isPinWeak(newPin)){showToast('⚠️ Ce PIN est trop simple — choisissez-en un moins évident','error',6000);return;}var excludeId=state.role==='gerant'?'gerant':(state.role==='mecano'?'mecano':state.currentUser.id);if(!isPinUnique(newPin,excludeId)){showToast('⚠️ Ce PIN est déjà utilisé par un autre utilisateur','error',6000);return;}
+  if(state.role==='gerant'){if(oldPin!==GERANT_PIN){showToast('⚠️ Code actuel incorrect','error');return;}GERANT_PIN=newPin;await fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'saveCompany',data:{gerant_pin:newPin}})});showToast('✅ PIN gérant modifié','success');addAudit('PIN gérant modifié','');}
+  else if(state.role==='mecano'){if(oldPin!==MECANO_PIN){showToast('⚠️ Code actuel incorrect','error');return;}MECANO_PIN=newPin;await fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'saveCompany',data:{mecano_pin:newPin}})});showToast('✅ PIN mécanicien modifié','success');addAudit('PIN mécanicien modifié','');}
+  else{var d=db.drivers.find(function(x){return x.id===state.currentUser.id;});if(!d||String(d.pin)!==oldPin){showToast('⚠️ Code actuel incorrect','error');return;}d.pin=newPin;fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'updateDriver',data:{id:d.id,pin:newPin}})});showToast('✅ PIN modifié avec succès','success');addAudit('PIN modifié',state.currentUser.name);}
+  closeModal('pinChangeModal');}
 function openCompanyModal(){const co=getCompanyInfo();if(co){document.getElementById('co-name').value=co.name||'SOTRANSNORD';document.getElementById('co-address').value=co.address||'';document.getElementById('co-postal').value=co.postal||'';document.getElementById('co-city').value=co.city||'';document.getElementById('co-siret').value=co.siret||'';document.getElementById('co-licence').value=co.licence||'';document.getElementById('co-phone').value=co.phone||'';document.getElementById('co-email').value=co.email||'';document.getElementById('co-cnr-ref').value=co.cnr_ref||'';document.getElementById('co-cnr-current').value=co.cnr_current||'';document.getElementById('co-cnr-weight').value=co.cnr_weight||19.2;document.getElementById('co-tva').value=co.tva||20;}openModal('companyModal');setTimeout(updateCnrPreview,100);}
 
 /* LDV GENERATION */
@@ -843,46 +856,7 @@ function printLDV(){window.print();}
 
 /* LDV EMAIL */
 function showEmailLDV(){if(!currentLDVData)return;const o=currentLDVData.order;const _firstDid=String(o.driverId||'').split(/[|,]/)[0];const dr=db.drivers.find(d=>String(d.id)===String(_firstDid));const cl=db.clients.find(c=>String(c.id)===String(o.clientId));const co=getCompanyInfo()||{};const choices=[];if(dr&&dr.email)choices.push({label:'👤 '+(dr.name||'Chauffeur'),email:dr.email});if(cl&&cl.email)choices.push({label:'🏢 '+(cl.company||'Client'),email:cl.email});if(co.email)choices.push({label:'🏠 Gérant',email:co.email});const quick=document.getElementById('ldv-email-quick');if(quick){let html=choices.map(c=>'<button type="button" class="btn btn-o btn-s" style="flex:0 1 auto;font-size:.72rem;padding:6px 10px" onclick="document.getElementById(\'ldv-email-to\').value=\''+c.email.replace(/'/g,"\\'")+'\';document.getElementById(\'ldv-email-to\').focus()">'+c.label+'</button>').join('');html+='<button type="button" class="btn btn-s" style="flex:0 1 auto;font-size:.72rem;padding:6px 10px;background:#374151;color:#fff;border:none" onclick="document.getElementById(\'ldv-email-to\').value=\'\';document.getElementById(\'ldv-email-to\').focus()">✏️ Autre (saisie libre)</button>';quick.innerHTML=html;}document.getElementById('ldv-email-to').value=dr?.email||cl?.email||'';openModal('emailLdvModal');setTimeout(()=>{const inp=document.getElementById('ldv-email-to');if(inp)inp.focus();},150);}
-/* DOM Element → PDF base64 (rendu pixel-perfect via html2pdf.js) */
-async function elementToPdfBase64(element,filename){
-  if(!element)throw new Error('Element introuvable pour la capture PDF');
-  if(document.fonts&&document.fonts.ready){try{await document.fonts.ready;}catch(e){}}
-  await new Promise(r=>setTimeout(r,80));
-  const opt={
-    margin:[8,8,8,8],
-    filename:(filename||'document')+'.pdf',
-    image:{type:'jpeg',quality:0.95},
-    html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false,letterRendering:true},
-    jsPDF:{unit:'mm',format:'a4',orientation:'portrait',compress:true},
-    pagebreak:{mode:['avoid-all','css','legacy']}
-  };
-  const blob=await html2pdf().set(opt).from(element).outputPdf('blob');
-  return await new Promise((resolve,reject)=>{
-    const reader=new FileReader();
-    reader.onload=()=>resolve(String(reader.result).split(',')[1]);
-    reader.onerror=reject;
-    reader.readAsDataURL(blob);
-  });
-}
-
-/* HTML string → PDF base64 (pour cas sans UI visible, ex. autoSendBDL) */
-async function htmlToPdfBase64(htmlString,filename){
-  const container=document.createElement('div');
-  // position:absolute (pas fixed), top:0 (pas négatif), pas de z-index ni opacity:
-  // sinon certains navigateurs ne layoutent pas le contenu et la capture est blanche
-  container.style.cssText='position:absolute;left:-9999px;top:0;width:794px;background:#fff;padding:0;margin:0';
-  container.innerHTML=htmlString;
-  document.body.appendChild(container);
-  void container.offsetHeight; // force reflow
-  await new Promise(r=>setTimeout(r,150));
-  try{
-    return await elementToPdfBase64(container,filename);
-  }finally{
-    if(container.parentNode)document.body.removeChild(container);
-  }
-}
-
-async function sendLDVEmail(){const email=document.getElementById('ldv-email-to').value.trim();if(!email||!email.includes('@')){showToast('⚠️ Email invalide','error');return;}if(!currentLDVData)return;showLoader();showToast('📄 Génération du PDF…','info',2500);const ref=ldvRef(currentLDVData.order.id,currentLDVData.transport.id);const cl=db.clients.find(c=>String(c.id)===String(currentLDVData.order.clientId));const filename='LDV-'+(cl?cl.company.replace(/[^a-zA-Z0-9]/g,''):'')+'-'+ref;try{const ldvEl=document.getElementById('ldvContent');const pdfBase64=await elementToPdfBase64(ldvEl,filename);const r=await fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'sendLDV',data:{to:email,subject:'Lettre de voiture '+ref+' — SOTRANSNORD',pdfBase64:pdfBase64,ref:filename,orderId:currentLDVData.order.id,transportId:currentLDVData.transport.id}})});const res=await r.json();hideLoader();if(res.success){closeModal('emailLdvModal');showToast('📧 Email envoyé à '+email+' (PDF joint)','success',4500);addAudit('LDV envoyée',ref+' → '+email);}else{showToast('⚠️ Erreur: '+(res.error||'Envoi échoué'),'error',5000);}}catch(e){hideLoader();showToast('⚠️ Erreur PDF: '+e.message,'error',5000);}}
+async function sendLDVEmail(){const email=document.getElementById('ldv-email-to').value.trim();if(!email||!email.includes('@')){showToast('⚠️ Email invalide','error');return;}if(!currentLDVData)return;showLoader();const html=generateLDVHTML(currentLDVData.order,currentLDVData.transport);const ref=ldvRef(currentLDVData.order.id,currentLDVData.transport.id);const cl=db.clients.find(c=>String(c.id)===String(currentLDVData.order.clientId));const filename='LDV-'+(cl?cl.company.replace(/[^a-zA-Z0-9]/g,''):'')+'-'+ref;try{const r=await fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'sendLDV',data:{to:email,subject:'Lettre de voiture '+ref+' — SOTRANSNORD',html:html,ref:filename,orderId:currentLDVData.order.id,transportId:currentLDVData.transport.id}})});const res=await r.json();hideLoader();if(res.success){closeModal('emailLdvModal');showToast('📧 Email envoyé à '+email+' (PDF joint)','success',4500);addAudit('LDV envoyée',ref+' → '+email);}else{showToast('⚠️ Erreur: '+(res.error||'Envoi échoué'),'error',5000);}}catch(e){hideLoader();showToast('⚠️ Erreur: '+e.message,'error',5000);}}
 
 /* INVOICE GENERATION */
 function invoiceRef(orderId){const d=new Date();return'FAC-'+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+'-'+orderId;}
@@ -1005,8 +979,7 @@ return{html:h,ref:ref,totalHT:totalHT,totalTTC:totalTTC};
 }
 
 function handleEmailClick(){if(!currentLDVData)return;if(currentLDVData.docType==='facture'){sendInvoiceToClient();}else{showEmailLDV();}}
-async function sendInvoiceToClient(){if(!currentLDVData||!currentLDVData.order)return;const order=currentLDVData.order;const cl=db.clients.find(c=>String(c.id)===String(order.clientId));if(!cl||!cl.email){showToast('⚠️ Aucune adresse email pour ce client','error',5000);return;}const co=getCompanyInfo();if(!co)return;const ref=currentLDVData.invoiceRef;const sentInfo={date:new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}),to:cl.email};const invoiceHTML=generateInvoiceHTML(order,sentInfo);const filename='Facture-'+(cl.company.replace(/[^a-zA-Z0-9]/g,''))+'-'+ref;showLoader();showToast('📄 Génération du PDF…','info',2500);const url=getSheetsBase();try{// Injecter le HTML facture dans ldvContent AVANT capture (visible dans l'overlay si ouvert, sinon dans le DOM rendu)
-document.getElementById('ldvContent').innerHTML=invoiceHTML.html;await new Promise(r=>setTimeout(r,100));const pdfBase64=await elementToPdfBase64(document.getElementById('ldvContent'),filename);const r1=await fetch(url,{method:'POST',body:JSON.stringify({action:'sendInvoice',data:{to:cl.email,subject:'Facture '+ref+' — '+(co.name||'SOTRANSNORD'),pdfBase64:pdfBase64,ref:filename,clientName:cl.company,totalTTC:currentLDVData.totalTTC,orderId:order.id}})});const res1=await r1.json();if(!res1.success){hideLoader();showToast('⚠️ Erreur: '+(res1.error||'Envoi échoué'),'error',5000);return;}order.invoiceSent=true;order.invoiceDate=sentInfo.date;order.invoiceTo=cl.email;order.invoiceRef=ref;await fetch(url,{method:'POST',body:JSON.stringify({action:'updateOrder',data:{id:order.id,invoiceSent:'true',invoiceDate:sentInfo.date,invoiceTo:cl.email,invoiceRef:ref}})});hideLoader();showToast('📧 Facture envoyée à '+cl.email+' (PDF joint)','success',5000);addAudit('Facture envoyée',ref+' → '+cl.email+' — '+fmt(currentLDVData.totalTTC));}catch(e){hideLoader();showToast('⚠️ Erreur PDF: '+e.message,'error',5000);}}
+async function sendInvoiceToClient(){if(!currentLDVData||!currentLDVData.order)return;const order=currentLDVData.order;const cl=db.clients.find(c=>String(c.id)===String(order.clientId));if(!cl||!cl.email){showToast('⚠️ Aucune adresse email pour ce client','error',5000);return;}const co=getCompanyInfo();if(!co)return;const ref=currentLDVData.invoiceRef;const sentInfo={date:new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}),to:cl.email};const invoiceHTML=generateInvoiceHTML(order,sentInfo);const filename='Facture-'+(cl.company.replace(/[^a-zA-Z0-9]/g,''))+'-'+ref;showLoader();const url=getSheetsBase();try{const r1=await fetch(url,{method:'POST',body:JSON.stringify({action:'sendInvoice',data:{to:cl.email,subject:'Facture '+ref+' — '+(co.name||'SOTRANSNORD'),html:invoiceHTML.html,ref:filename,clientName:cl.company,totalTTC:currentLDVData.totalTTC,orderId:order.id}})});const res1=await r1.json();if(!res1.success){hideLoader();showToast('⚠️ Erreur: '+(res1.error||'Envoi échoué'),'error',5000);return;}order.invoiceSent=true;order.invoiceDate=sentInfo.date;order.invoiceTo=cl.email;order.invoiceRef=ref;await fetch(url,{method:'POST',body:JSON.stringify({action:'updateOrder',data:{id:order.id,invoiceSent:'true',invoiceDate:sentInfo.date,invoiceTo:cl.email,invoiceRef:ref}})});document.getElementById('ldvContent').innerHTML=invoiceHTML.html;hideLoader();showToast('📧 Facture envoyée à '+cl.email+' (PDF joint)','success',5000);addAudit('Facture envoyée',ref+' → '+cl.email+' — '+fmt(currentLDVData.totalTTC));}catch(e){hideLoader();showToast('⚠️ Erreur: '+e.message,'error',5000);}}
 function openInvoice(orderId){
 const co=getCompanyInfo();
 if(!co||!co.cnr_ref||!co.cnr_current){
@@ -1081,49 +1054,7 @@ h+='</div>';
 return{html:h,ref:ref};
 }
 
-async function autoSendBDL(order,transport){
-  const co=getCompanyInfo();if(!co)return;
-  const cl=db.clients.find(c=>String(c.id)===String(order.clientId));if(!cl||!cl.email)return;
-  const result=generateBDLHTML(order,transport);if(!result)return;
-  const filename='BDL-'+(cl.company.replace(/[^a-zA-Z0-9]/g,''))+'-'+result.ref;
-  
-  // Ouvrir temporairement l'overlay BDL pour que html2canvas capture un DOM réellement peint.
-  // Le container caché en position:absolute n'est pas peint par les navigateurs mobiles
-  // (optimisation), résultat = capture blanche. Solution: utiliser le viewer existant.
-  const ldvContent=document.getElementById('ldvContent');
-  const ldvOverlay=document.getElementById('ldvOverlay');
-  const ldvBarTitle=document.getElementById('ldvBarTitle');
-  const savedHTML=ldvContent.innerHTML;
-  const savedTitle=ldvBarTitle.textContent;
-  const wasActive=ldvOverlay.classList.contains('active');
-  const savedBodyOverflow=document.body.style.overflow;
-  
-  ldvContent.innerHTML=result.html;
-  ldvBarTitle.textContent='BDL — '+result.ref;
-  if(!wasActive){
-    ldvOverlay.classList.add('active');
-    document.body.style.overflow='hidden';
-  }
-  
-  try{
-    void ldvContent.offsetHeight;
-    await new Promise(r=>setTimeout(r,200));
-    const pdfBase64=await elementToPdfBase64(ldvContent,filename);
-    await fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'sendBDL',data:{to:cl.email,subject:'Bon de livraison '+result.ref+' — '+(co.name||'SOTRANSNORD'),pdfBase64:pdfBase64,ref:filename,clientName:cl.company,tonnage:transport.tonnage}})});
-    showToast('📦 BDL envoyé à '+cl.email+' (PDF joint)','success',4000);
-  }catch(e){
-    console.error('autoSendBDL error:',e);
-    showToast('⚠️ Erreur envoi BDL: '+e.message,'warning',5000);
-  }finally{
-    if(!wasActive){
-      // Fermer l'overlay si on l'avait ouvert nous-mêmes
-      ldvOverlay.classList.remove('active');
-      document.body.style.overflow=savedBodyOverflow;
-      ldvContent.innerHTML=savedHTML;
-      ldvBarTitle.textContent=savedTitle;
-    }
-  }
-}
+async function autoSendBDL(order,transport){const co=getCompanyInfo();if(!co)return;const cl=db.clients.find(c=>String(c.id)===String(order.clientId));if(!cl||!cl.email)return;const result=generateBDLHTML(order,transport);if(!result)return;const filename='BDL-'+(cl.company.replace(/[^a-zA-Z0-9]/g,''))+'-'+result.ref;const url=getSheetsBase();try{await fetch(url,{method:'POST',body:JSON.stringify({action:'sendBDL',data:{to:cl.email,subject:'Bon de livraison '+result.ref+' — '+(co.name||'SOTRANSNORD'),html:result.html,ref:filename,clientName:cl.company,tonnage:transport.tonnage}})});showToast('📦 BDL envoyé à '+cl.email+' (PDF joint)','success',4000);}catch(e){}}
 function openBDL(orderId,transportId){
 const co=getCompanyInfo();
 if(!co){window._ldvPendingAfterCompany=function(){openBDL(orderId,transportId);};openCompanyModal();return;}
