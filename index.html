@@ -343,7 +343,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
       <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
     </div>
-    <span class="ver-tag">v10.23 — 2026</span>
+    <span class="ver-tag">v10.24 — 2026</span>
   </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
@@ -430,11 +430,11 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       </div>
       <div class="page" id="page-meca-dashboard">
         <div class="ph"><div><div class="pt">🔧 Atelier</div><div class="ps" id="mecaDashDate">—</div></div><button class="btn btn-o btn-s" onclick="openPinChange()">🔐 Changer PIN</button></div>
-        <div class="stats">
-          <div class="card stat"><div class="stat-l">Camions</div><div class="stat-v" id="meca-stat-trucks">0</div><div class="stat-d">flotte active</div></div>
-          <div class="card stat"><div class="stat-l">⚠️ Alertes</div><div class="stat-v" id="meca-stat-alerts" style="color:var(--er)">0</div><div class="stat-d">à traiter</div></div>
-          <div class="card stat"><div class="stat-l">Entretien (mois)</div><div class="stat-v" id="meca-stat-cost">—</div><div class="stat-d">dépenses</div></div>
-          <div class="card stat"><div class="stat-l">Obs. chauffeurs</div><div class="stat-v" id="meca-stat-obs">0</div><div class="stat-d">7 derniers jours</div></div>
+        <div class="sg">
+          <div class="sc"><div class="sc-i">🚛</div><div class="sc-v" id="meca-stat-trucks">0</div><div class="sc-l">Camions en flotte</div></div>
+          <div class="sc"><div class="sc-i">⚠️</div><div class="sc-v" id="meca-stat-alerts" style="color:var(--er)">0</div><div class="sc-l">Alertes à traiter</div></div>
+          <div class="sc"><div class="sc-i">🛠️</div><div class="sc-v" id="meca-stat-cost">—</div><div class="sc-l">Entretien ce mois</div></div>
+          <div class="sc"><div class="sc-i">📝</div><div class="sc-v" id="meca-stat-obs">0</div><div class="sc-l">Obs. chauffeurs (7j)</div></div>
         </div>
         <div class="card" style="margin-top:14px"><div class="card-h"><div class="card-t">⚠️ Alertes maintenance</div></div><div class="card-b" id="mecaAlertsList">—</div></div>
         <div class="card" style="margin-top:14px"><div class="card-h"><div class="card-t">📝 Dernières observations chauffeurs</div></div><div class="card-b" id="mecaObsRecent">—</div></div>
@@ -586,7 +586,7 @@ function activateDemo(){
   var badge=document.getElementById('accessModeBadge');var ico=document.getElementById('accessModeIco');var txt=document.getElementById('accessModeText');
   if(badge){badge.classList.remove('access-badge--gerant','access-badge--mecano','access-badge--demo');badge.classList.add('access-badge--demo','show');if(ico)ico.textContent='🎭';if(txt)txt.textContent='Accès Démo';}
   document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=false);
-  showToast('🎭 Gérant:123456 | Thomas:111111 | Kevin:222222','warning',6000);
+  showToast('🎭 Gérant:123456 · Mécano:444444 · Chauffeurs:111111/222222/333333','warning',8000);
 }
 function exitDemoMode(){
   if(state.mode!=='demo')return;
@@ -613,7 +613,12 @@ function pinKey(d){if(state.pinLocked||state.pinValue.length>=6)return;state.pin
 function pinDel(){state.pinValue=state.pinValue.slice(0,-1);updatePinDots();document.getElementById('pinError').textContent='';}
 function updatePinDots(){for(let i=0;i<6;i++){const d=document.getElementById('d'+i);if(d)d.className='pin-dot'+(i<state.pinValue.length?' filled':'');}}
 async function validatePin(){const lock=checkLockout();if(lock){state.pinValue='';updatePinDots();state.pinLocked=true;document.getElementById('pinError').textContent='🔒 Bloqué — réessayez dans '+lock.remaining+' min';document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=true);return;}const pin=state.pinValue;let valid=false,user=null;
-  if(loginRole==='gerant'){if(pin===GERANT_PIN){valid=true;user={id:0,name:'Gérant',role:'gerant',initials:'GE'};}}
+  if(state.mode==='demo'){
+    if(pin==='123456'){valid=true;user={id:'demo-gerant',name:'Gérant (Démo)',role:'gerant',initials:'GE'};}
+    else if(pin==='444444'){valid=true;user={id:'demo-mecano',name:'Mécanicien (Démo)',role:'mecano',initials:'MK'};}
+    else{const list=db.drivers.length>0?db.drivers:(demoSnapshot?demoSnapshot.drivers:[]);const dr=list.find(d=>String(d.pin)===pin);if(dr){valid=true;user={id:dr.id,name:dr.name+' (Démo)',role:'chauffeur',initials:initials(dr.name)};}}
+  }
+  else if(loginRole==='gerant'){if(pin===GERANT_PIN){valid=true;user={id:0,name:'Gérant',role:'gerant',initials:'GE'};}}
   else if(loginRole==='mecano'){if(pin===MECANO_PIN){valid=true;user={id:'mecano',name:'Mécanicien',role:'mecano',initials:'MK'};}}
   else{const list=db.drivers.length>0?db.drivers:(demoSnapshot?demoSnapshot.drivers:[]);const dr=list.find(d=>String(d.pin)===pin);if(dr){valid=true;user={id:dr.id,name:dr.name,role:'chauffeur',initials:initials(dr.name)};}}
 if(valid){clearLockout();state.pinAttempts=0;state.currentUser=user;state.role=user.role;logAuthAttempt(true,user.name,'');document.getElementById('screen-splash').classList.add('hidden');document.getElementById('app').classList.add('active');if(state.mode!=='demo'){state.mode='real';showLoader();try{await loadRealData();}catch(e){console.error('loadRealData error:',e);showToast('⚠️ Erreur sync: '+e.message,'warning',6000);}hideLoader();}addAudit('Connexion',user.name);initApp();}
