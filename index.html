@@ -312,6 +312,45 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
 .ldv-email-form .fi{flex:1}
 
 @media(max-width:600px){.sg{grid-template-columns:repeat(2,1fr) !important}}
+
+.plan-tbl-wrap{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r2);overflow-x:auto;overflow-y:visible}
+.plan-tbl{width:100%;min-width:1100px;border-collapse:separate;border-spacing:0;font-size:.74rem}
+.plan-tbl thead th{background:var(--sf2);color:var(--t3);font-weight:800;font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;padding:10px 8px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap}
+.plan-tbl tbody tr{border-bottom:1px solid var(--bd);transition:background .15s}
+.plan-tbl tbody tr:hover{background:var(--sf2)}
+.plan-tbl tbody tr.row-ready{border-left:3px solid var(--gn)}
+.plan-tbl tbody tr.row-incomplete{border-left:3px solid var(--wa)}
+.plan-tbl td{padding:6px 6px;vertical-align:middle}
+.plan-tbl .pl-idx{width:32px;color:var(--t4);font-weight:800;text-align:center;font-size:.7rem}
+.plan-tbl select,.plan-tbl input{width:100%;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--sf);font-family:inherit;font-size:.74rem;font-weight:600;color:var(--t1);outline:none;transition:border-color .15s,background .15s}
+.plan-tbl select:focus,.plan-tbl input:focus{border-color:var(--rd);background:#fff}
+.plan-tbl select.empty,.plan-tbl input.empty{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.06)}
+.plan-tbl input[type="number"]{text-align:center}
+.plan-tbl .pl-actions{white-space:nowrap;text-align:right}
+.plan-tbl .pl-act-btn{background:transparent;border:none;cursor:pointer;padding:6px;font-size:.95rem;opacity:.55;transition:opacity .15s}
+.plan-tbl .pl-act-btn:hover{opacity:1}
+.plan-tbl .pl-status{text-align:center;white-space:nowrap}
+.plan-status-ready{background:var(--gn);color:#fff;padding:3px 8px;border-radius:99px;font-size:.6rem;font-weight:800;letter-spacing:.04em}
+.plan-status-incomplete{background:var(--wa);color:#fff;padding:3px 8px;border-radius:99px;font-size:.6rem;font-weight:800;letter-spacing:.04em}
+
+.plan-cards{display:none}
+.plan-card{background:var(--sf);border:1px solid var(--bd);border-left:3px solid var(--bd);border-radius:var(--r2);padding:12px;margin-bottom:10px}
+.plan-card.row-ready{border-left-color:var(--gn)}
+.plan-card.row-incomplete{border-left-color:var(--wa)}
+.plan-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px}
+.plan-card-num{font-size:.7rem;color:var(--t3);font-weight:800}
+.plan-card-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.plan-card-grid .pcg-full{grid-column:1 / -1}
+.plan-card label{display:block;font-size:.62rem;color:var(--t3);font-weight:700;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.plan-card select,.plan-card input{width:100%;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--sf);font-family:inherit;font-size:.8rem;font-weight:600;color:var(--t1);outline:none}
+.plan-card select:focus,.plan-card input:focus{border-color:var(--rd)}
+.plan-card select.empty,.plan-card input.empty{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.06)}
+.plan-load-pill{padding:3px 10px;border-radius:99px;font-weight:800;font-size:.66rem;letter-spacing:.02em}
+.plan-load-pill.full{background:var(--er);color:#fff}
+.plan-load-pill.busy{background:rgba(245,158,11,.15);color:#92400E;border:1px solid rgba(245,158,11,.4)}
+.plan-load-pill.free{background:var(--sf2);color:var(--t3);border:1px solid var(--bd)}
+
+@media(max-width:900px){.plan-tbl-wrap{display:none}.plan-cards{display:block}}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -343,7 +382,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
       <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
     </div>
-    <span class="ver-tag">v10.25 — 2026</span>
+    <span class="ver-tag">v10.26 — 2026</span>
   </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
@@ -374,6 +413,18 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
         <div id="dashImpayes" style="margin-bottom:14px"></div>
         <div class="sg"><div class="sc"><div class="sc-i">📦</div><div class="sc-v" id="stat-commandes">0</div><div class="sc-l">Commandes actives</div></div><div class="sc"><div class="sc-i">🚛</div><div class="sc-v" id="stat-transports">0</div><div class="sc-l">Transports du jour</div></div><div class="sc"><div class="sc-i">💰</div><div class="sc-v" id="stat-ca">0€</div><div class="sc-l">CA ce mois</div></div><div class="sc"><div class="sc-i">🔧</div><div class="sc-v" id="stat-frais">0€</div><div class="sc-l">Frais ce mois</div></div></div>
         <div class="card"><div class="card-h"><span class="card-t">Commandes en cours</span><button class="btn btn-g btn-s" onclick="navigate('commandes')">Voir tout →</button></div><div class="card-b" id="recentOrders"><div class="empty"><div class="empty-i">📋</div><div class="empty-t">Aucune commande</div></div></div></div>
+      </div>
+      <div class="page" id="page-planning">
+        <div class="ph"><div><div class="pt">📋 Planning</div><div class="ps">Préparez vos commandes en lot puis validez tout en une fois</div></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-x btn-s" onclick="clearPlanningDraft()" id="planClearBtn" style="display:none">🗑️ Tout effacer</button><button class="btn btn-p btn-s" onclick="addPlanningLine()">+ Ligne</button></div></div>
+        <div class="sg">
+          <div class="sc"><div class="sc-i">📋</div><div class="sc-v" id="plan-stat-total">0</div><div class="sc-l">Lignes en attente</div></div>
+          <div class="sc"><div class="sc-i">✅</div><div class="sc-v" id="plan-stat-ready" style="color:var(--gn)">0</div><div class="sc-l">Prêtes à valider</div></div>
+          <div class="sc"><div class="sc-i">⚠️</div><div class="sc-v" id="plan-stat-incomplete" style="color:var(--wa)">0</div><div class="sc-l">À compléter</div></div>
+          <div class="sc"><div class="sc-i">💰</div><div class="sc-v" id="plan-stat-ca">—</div><div class="sc-l">CA estimé</div></div>
+        </div>
+        <div class="card" id="planLoadInfo" style="margin-bottom:10px;display:none"><div class="card-b" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.75rem"><span style="color:var(--t3);font-weight:700">⚖️ Charge :</span><div id="planLoadPills" style="display:flex;gap:6px;flex-wrap:wrap"></div></div></div>
+        <div id="planningContent"></div>
+        <div id="planValidateBar" style="margin-top:16px;display:none"><button class="btn btn-p btn-w" id="planValidateBtn" onclick="validatePlanning()" style="background:var(--gn);width:100%;padding:14px;font-size:.9rem;font-weight:900;letter-spacing:.04em">✅ Valider le planning</button></div>
       </div>
       <div class="page" id="page-commandes">
         <div class="ph"><div><div class="pt">Commandes</div><div class="ps">Gestion et suivi</div></div><div style="display:flex;gap:6px"><button class="btn btn-o btn-s hidden" id="syncCmdBtn" onclick="syncNow()">🔄</button><button class="btn btn-p" onclick="openOrderModal()">+ Commande</button></div></div>
@@ -533,7 +584,7 @@ function recordFailedAttempt(){try{const k=getLockoutKey();const raw=localStorag
 function clearLockout(){try{localStorage.removeItem(getLockoutKey());}catch(e){}}
 function logAuthAttempt(success,who,reason){const entry={ts:new Date().toISOString(),success:success,who:who||'inconnu',role:loginRole,reason:reason||'',ua:(navigator.userAgent||'').substring(0,80)};try{const raw=localStorage.getItem('sotransnord_auth_log')||'[]';const arr=JSON.parse(raw);arr.push(entry);if(arr.length>200)arr.splice(0,arr.length-200);localStorage.setItem('sotransnord_auth_log',JSON.stringify(arr));}catch(e){}if(state.mode==='real'){try{fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'logAuth',data:entry})});}catch(e){}}}
 let state={mode:'real',role:null,currentUser:null,currentPage:null,pinValue:'',pinAttempts:0,pinLocked:false,editingId:null,currentTransport:null,currentOrder:null,filterOrders:'all'};
-let db={drivers:[],trucks:[],clients:[],materials:[],tariffs:[{id:1,type:'materiaux',name:'Sable 0/4 — Standard',price:18.50},{id:2,type:'materiaux',name:'Gravier 4/6 — Standard',price:22.00},{id:3,type:'journee',name:'Journée chauffeur + camion',price:950.00},{id:4,type:'materiaux',name:'Remblais — Standard',price:12.00}],expenses:[],dayReports:[],orders:[],audit:[],clientTariffs:[],annualData:{}};
+let db={drivers:[],trucks:[],clients:[],materials:[],tariffs:[{id:1,type:'materiaux',name:'Sable 0/4 — Standard',price:18.50},{id:2,type:'materiaux',name:'Gravier 4/6 — Standard',price:22.00},{id:3,type:'journee',name:'Journée chauffeur + camion',price:950.00},{id:4,type:'materiaux',name:'Remblais — Standard',price:12.00}],expenses:[],dayReports:[],orders:[],audit:[],clientTariffs:[],annualData:{},draftOrders:[]};
 (function(){const now=new Date();[now.getFullYear()-1,now.getFullYear()].forEach(yr=>{db.annualData[yr]={};const s=[0.55,0.60,0.80,1.10,1.25,1.30,1.20,0.90,1.15,1.10,0.75,0.50];for(let m=0;m<12;m++){if(yr===now.getFullYear()&&m>now.getMonth()){db.annualData[yr][m]=null;continue;}const ca=Math.round((28000+Math.random()*8000)*s[m]);const byType={carburant:Math.round(1400+Math.random()*600+s[m]*400),vidange:[2,5,8,11].includes(m)?Math.round(150+Math.random()*80):0,reparation:Math.round(Math.random()<0.35?200+Math.random()*900:0),pneus:Math.round(Math.random()<0.2?400+Math.random()*600:0),assurance:580,autre:Math.round(Math.random()*200)};const total_dep=Object.values(byType).reduce((s,v)=>s+v,0);const marge=ca-total_dep;db.annualData[yr][m]={ca,byType,total_dep,marge,pct_marge:ca>0?Math.round((marge/ca)*100):0};}});})();
 const SHEETS_BASE='https://script.google.com/macros/s/AKfycbzfYAn6rlb01517GoR8PYQUqdSIsbl6Px0PRlsZYEIlq_T6wE8TikxE8_qW92BobLLekQ/exec';
 let remoteConfig={};
@@ -624,14 +675,14 @@ async function validatePin(){const lock=checkLockout();if(lock){state.pinValue='
 if(valid){clearLockout();state.pinAttempts=0;state.currentUser=user;state.role=user.role;logAuthAttempt(true,user.name,'');document.getElementById('screen-splash').classList.add('hidden');document.getElementById('app').classList.add('active');if(state.mode!=='demo'){state.mode='real';showLoader();try{await loadRealData();}catch(e){console.error('loadRealData error:',e);showToast('⚠️ Erreur sync: '+e.message,'warning',6000);}hideLoader();}addAudit('Connexion',user.name);initApp();}
 else{const totalAttempts=recordFailedAttempt();logAuthAttempt(false,'pin='+pin.substring(0,2)+'****','PIN incorrect');state.pinValue='';for(let i=0;i<6;i++){const d=document.getElementById('d'+i);if(d)d.className='pin-dot error';}setTimeout(updatePinDots,600);const lockMin=getLockoutMinutes(totalAttempts);if(lockMin>0){state.pinLocked=true;document.getElementById('pinError').textContent='🔒 Bloqué '+(lockMin>=60?(lockMin/60)+' h':lockMin+' min')+' — '+totalAttempts+' échecs';document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=true);}else{const rem=5-totalAttempts;document.getElementById('pinError').textContent='❌ Code incorrect — '+rem+' essai(s) restant(s)';}}}
 function logout(){state.currentUser=null;state.role=null;state.pinValue='';state.pinAttempts=0;state.pinLocked=false;state.mode='real';demoSnapshot=null;document.getElementById('app').classList.remove('active');document.getElementById('screen-splash').classList.remove('hidden');document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=false);switchLoginRole('chauffeur');}
-const NAV_G=[{id:'dashboard',label:'Accueil',icon:'🏠',mob:'🏠',page:'page-dashboard'},{id:'commandes',label:'Commandes',icon:'📋',mob:'📋',page:'page-commandes'},{id:'donnees',label:'Données',icon:'📂',mob:'📂',page:'page-donnees'},{id:'rapports',label:'Rapports',icon:'📊',mob:'📊',page:'page-rapports'},{id:'marge',label:'Marge',icon:'💹',mob:'💹',page:'page-marge'}];
+const NAV_G=[{id:'dashboard',label:'Accueil',icon:'🏠',mob:'🏠',page:'page-dashboard'},{id:'planning',label:'Planning',icon:'📋',mob:'📋',page:'page-planning'},{id:'commandes',label:'Commandes',icon:'📦',mob:'📦',page:'page-commandes'},{id:'donnees',label:'Données',icon:'📂',mob:'📂',page:'page-donnees'},{id:'rapports',label:'Rapports',icon:'📊',mob:'📊',page:'page-rapports'},{id:'marge',label:'Marge',icon:'💹',mob:'💹',page:'page-marge'}];
 const NAV_C=[{id:'driver-day',label:'Transports',icon:'🚛',mob:'🚛',page:'page-driver-day'},{id:'driver-fiche',label:'Fiche jour',icon:'📝',mob:'📝',page:'page-driver-fiche'},{id:'driver-profile',label:'Profil',icon:'👤',mob:'👤',page:'page-driver-profile'}];
 const NAV_M=[{id:'meca-dashboard',label:'Atelier',icon:'🔧',mob:'🔧',page:'page-meca-dashboard'},{id:'meca-flotte',label:'Flotte',icon:'🚛',mob:'🚛',page:'page-meca-flotte'},{id:'meca-frais',label:'Entretien',icon:'🛠️',mob:'🛠️',page:'page-meca-frais'},{id:'meca-obs',label:'Observations',icon:'📝',mob:'📝',page:'page-meca-obs'}];
-const MOB_G_TABS=['dashboard','commandes','donnees','rapports','marge'];
+const MOB_G_TABS=['dashboard','planning','commandes','donnees','marge'];
 function initApp(){const u=state.currentUser;document.getElementById('topbarAvatar').textContent=u.initials||'U';document.getElementById('topbarName').textContent=u.name;updateModeUI();const nav=u.role==='gerant'?NAV_G:(u.role==='mecano'?NAV_M:NAV_C);buildNav(nav,u.role);navigate(u.role==='gerant'?'dashboard':(u.role==='mecano'?'meca-dashboard':'driver-day'));}
 function buildNav(nav,role){const sn=document.getElementById('sidenav');sn.innerHTML='<div class="sn-logo"><div class="sn-mark">SN</div><div class="sn-name">SOTRANSNORD</div></div><div class="sn-sec"><div class="sn-lb">Navigation</div>'+nav.map(n=>'<button class="sn-it" id="sn-'+n.id+'" onclick="navigate(\''+n.id+'\')"><span class="ni">'+n.icon+'</span> '+n.label+'</button>').join('')+'</div><div class="sn-ft"><button class="sn-it" onclick="logout()" style="color:rgba(255,80,80,.5)"><span class="ni">⏻</span> Déconnexion</button></div>';const bn=document.getElementById('bottomNav');const tabs=role==='gerant'?MOB_G_TABS:nav.map(n=>n.id);bn.innerHTML=tabs.map(id=>{const n=nav.find(x=>x.id===id);if(!n)return'';return'<button class="bt" id="bt-'+n.id+'" onclick="navigate(\''+n.id+'\')"><span class="bt-i">'+n.mob+'</span><span class="bt-l">'+n.label+'</span></button>';}).join('');}
 function navigate(id){const nav=state.role==='gerant'?NAV_G:(state.role==='mecano'?NAV_M:NAV_C);const item=nav.find(n=>n.id===id);if(!item)return;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(item.page).classList.add('active');document.querySelectorAll('.sn-it').forEach(el=>el.classList.remove('on'));document.querySelectorAll('.bt').forEach(el=>el.classList.remove('on'));const s=document.getElementById('sn-'+id);if(s)s.classList.add('on');const b=document.getElementById('bt-'+id);if(b)b.classList.add('on');state.currentPage=id;renderPage(id);}
-function renderPage(id){switch(id){case'dashboard':renderDashboard();break;case'commandes':renderOrders();break;case'donnees':renderDonnees();break;case'rapports':renderRapports();break;case'marge':renderMarginTable();break;case'driver-day':renderDriverDay();break;case'driver-profile':renderDriverProfile();break;case'meca-dashboard':renderMecaDashboard();break;case'meca-flotte':renderMecaFlotte();break;case'meca-frais':renderMecaFrais();break;case'meca-obs':renderMecaObs();break;}}
+function renderPage(id){switch(id){case'dashboard':renderDashboard();break;case'planning':renderPlanning();break;case'commandes':renderOrders();break;case'donnees':renderDonnees();break;case'rapports':renderRapports();break;case'marge':renderMarginTable();break;case'driver-day':renderDriverDay();break;case'driver-profile':renderDriverProfile();break;case'meca-dashboard':renderMecaDashboard();break;case'meca-flotte':renderMecaFlotte();break;case'meca-frais':renderMecaFrais();break;case'meca-obs':renderMecaObs();break;}}
 function renderDonnees(){if(!db.expenseTypes)loadExpenseTypes();renderDriversTable();renderTrucks();renderClients();renderMaterials();renderExpenses();renderFiches();}
 function isExpSoon(d){if(!d)return false;const dt=new Date(d);const now=new Date();const diff=(dt-now)/(1000*60*60*24);return diff<=30;}
 function renderImpayes(){const el=document.getElementById('dashImpayes');if(!el)return;const impayes=db.orders.filter(o=>o.invoiceSent&&!o.paid);if(!impayes.length){el.innerHTML='';return;}let total=0;let oldest=999;impayes.forEach(o=>{const tarif=db.clientTariffs.find(t=>String(t.clientId)===String(o.clientId)&&t.type===o.type&&(o.type==='journee'||String(t.materialId)===String(o.materialId)));const doneT=o.transports.filter(t=>t.done);let st=0;const price=tarif?tarif.price:0;doneT.forEach(t=>{st+=(parseFloat(t.tonnage)||0)*price;});const co=getCompanyInfo()||{};const cnrRef=parseFloat(co.cnr_ref)||0;const cnrCur=parseFloat(co.cnr_current)||0;const cnrW=(parseFloat(co.cnr_weight)||16.3)/100;if(cnrRef>0&&cnrCur>0&&cnrCur!==cnrRef)st+=st*cnrW*(cnrCur-cnrRef)/cnrRef;total+=st*1.2;if(o.invoiceDate){const d=new Date(o.invoiceDate);if(!isNaN(d)){const days=Math.ceil((new Date()-d)/(1000*60*60*24));if(days>0&&days<oldest)oldest=days;}}});el.innerHTML='<div class="card" style="border-left:3px solid #D4A017;margin-bottom:0"><div class="card-h"><span class="card-t">💰 Factures impayees</span><span class="badge" style="background:#D4A017;color:#fff">'+impayes.length+'</span></div><div class="card-b" style="padding:12px 14px"><div style="display:flex;gap:20px;flex-wrap:wrap"><div><div style="font-size:1.3rem;font-weight:900;color:#D4A017">'+fmt(total)+'</div><div style="font-size:.68rem;color:var(--t3)">Total TTC a encaisser</div></div>'+(oldest<999?'<div><div style="font-size:1.3rem;font-weight:900;color:var(--er)">'+oldest+' j</div><div style="font-size:.68rem;color:var(--t3)">Plus ancienne facture</div></div>':'')+'<div><div style="font-size:1.3rem;font-weight:900">'+impayes.filter(o=>{const d=new Date(o.invoiceDate);return!isNaN(d)&&(new Date()-d)/(1000*60*60*24)>30;}).length+'</div><div style="font-size:.68rem;color:var(--t3)">A relancer (+30j)</div></div></div></div></div>';}
@@ -722,6 +773,104 @@ function renderDriverDay(){const d=new Date();renderDriverAlerts();document.getE
 function renderDriverProfile(){const d=db.drivers.find(x=>x.id===state.currentUser.id);if(!d){document.getElementById('driverProfileContent').innerHTML='—';return;}document.getElementById('driverProfileContent').innerHTML='<div style="display:flex;align-items:center;gap:14px;margin-bottom:16px"><div style="width:52px;height:52px;border-radius:var(--r2);background:var(--rd);display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:900;color:#fff">'+initials(d.name)+'</div><div><div style="font-size:1.05rem;font-weight:900">'+d.name+'</div><div style="font-size:.76rem;color:var(--t3)">Permis '+d.licence+'</div></div></div><div class="fg2"><div class="fg"><label class="fl">Téléphone</label><div class="fi" style="background:var(--sf2)">'+(d.phone||'—')+'</div></div><div class="fg"><label class="fl">Email</label><div class="fi" style="background:var(--sf2)">'+(d.email||'—')+'</div><div style="margin-top:16px"><button class="btn btn-d btn-w" onclick="openPinChange()">🔐 Changer mon code PIN</button></div></div></div>';}
 
 // ═══════════════════════════════════════════════════════════════
+// 📋 PLANNING — Préparation groupée de commandes — v10.26
+// ═══════════════════════════════════════════════════════════════
+let _planSaveTimer=null;
+function savePlanningDraft(){if(_planSaveTimer)clearTimeout(_planSaveTimer);_planSaveTimer=setTimeout(function(){try{localStorage.setItem('sotransnord_planning_draft',JSON.stringify(db.draftOrders||[]));}catch(e){}},300);}
+function loadPlanningDraft(){try{var raw=localStorage.getItem('sotransnord_planning_draft');if(raw){var arr=JSON.parse(raw);if(Array.isArray(arr))db.draftOrders=arr;}}catch(e){}}
+
+function isPlanLineReady(d){if(!d)return false;if(!d.clientId||!d.address||!d.date||!d.type||!d.truckId||!d.driverId)return false;if(!d.nb||parseInt(d.nb)<1)return false;if(d.type==='materiaux'&&!d.materialId)return false;return true;}
+
+function planLineCA(d){if(!isPlanLineReady(d))return 0;var t=db.clientTariffs.find(function(x){return String(x.clientId)===String(d.clientId)&&x.type===d.type&&(d.type==='journee'||String(x.materialId)===String(d.materialId));});if(!t)return 0;if(d.type==='journee')return (parseInt(d.nb)||0)*t.price;return (parseInt(d.nb)||0)*20*t.price;}
+
+function addPlanningLine(){if(!db.draftOrders)db.draftOrders=[];var todayStr=new Date().toISOString().split('T')[0];db.draftOrders.push({id:'draft-'+Date.now()+'-'+Math.floor(Math.random()*1000),clientId:'',address:'',date:todayStr,type:'materiaux',materialId:'',truckId:'',driverId:'',nb:1});savePlanningDraft();renderPlanning();}
+
+function duplicatePlanningLine(idx){if(!db.draftOrders||!db.draftOrders[idx])return;var src=db.draftOrders[idx];var copy={id:'draft-'+Date.now()+'-'+Math.floor(Math.random()*1000),clientId:src.clientId,address:src.address,date:src.date,type:src.type,materialId:src.materialId,truckId:'',driverId:'',nb:src.nb};db.draftOrders.splice(idx+1,0,copy);savePlanningDraft();renderPlanning();showToast('📋 Ligne dupliquée — choisissez camion + chauffeur','success',3500);}
+
+async function deletePlanningLine(idx){if(!db.draftOrders||!db.draftOrders[idx])return;var ok=await showConfirm('Supprimer cette ligne du planning ?','','🗑️','Supprimer');if(!ok)return;db.draftOrders.splice(idx,1);savePlanningDraft();renderPlanning();}
+
+async function clearPlanningDraft(){if(!db.draftOrders||!db.draftOrders.length)return;var ok=await showConfirm('Effacer tout le planning ?','Toutes les lignes seront perdues.','⚠️','Tout effacer');if(!ok)return;db.draftOrders=[];savePlanningDraft();renderPlanning();showToast('Planning effacé','warning',3000);}
+
+function updatePlanningField(idx,field,value){if(!db.draftOrders||!db.draftOrders[idx])return;db.draftOrders[idx][field]=value;if(field==='type'&&value==='journee')db.draftOrders[idx].materialId='';savePlanningDraft();renderPlanning();}
+
+function planningTruckLoad(){var load={};(db.draftOrders||[]).forEach(function(d){if(d.truckId){load[d.truckId]=(load[d.truckId]||0)+1;}});return load;}
+
+function buildPlanningOptions(d,field){var opts='<option value="">— Choisir —</option>';if(field==='client'){opts+=db.clients.map(function(c){return '<option value="'+c.id+'"'+(String(d.clientId)===String(c.id)?' selected':'')+'>'+escapeHtml(c.company)+'</option>';}).join('');}
+  else if(field==='type'){opts='<option value="materiaux"'+(d.type==='materiaux'?' selected':'')+'>Matériaux (tonne)</option><option value="journee"'+(d.type==='journee'?' selected':'')+'>Journée</option>';}
+  else if(field==='material'){opts+=db.materials.map(function(m){return '<option value="'+m.id+'"'+(String(d.materialId)===String(m.id)?' selected':'')+'>'+escapeHtml(m.name)+'</option>';}).join('');}
+  else if(field==='truck'){opts+=db.trucks.map(function(t){return '<option value="'+t.id+'"'+(String(d.truckId)===String(t.id)?' selected':'')+'>'+escapeHtml(t.plate)+'</option>';}).join('');}
+  else if(field==='driver'){opts+=db.drivers.filter(function(x){return x.status==='actif'||!x.status;}).map(function(dr){return '<option value="'+dr.id+'"'+(String(d.driverId)===String(dr.id)?' selected':'')+'>'+escapeHtml(dr.name)+'</option>';}).join('');}
+  return opts;}
+
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+function renderPlanning(){var drafts=db.draftOrders||[];var ready=drafts.filter(isPlanLineReady);var incomplete=drafts.length-ready.length;var totalCA=ready.reduce(function(s,d){return s+planLineCA(d);},0);
+  document.getElementById('plan-stat-total').textContent=drafts.length;document.getElementById('plan-stat-ready').textContent=ready.length;document.getElementById('plan-stat-incomplete').textContent=incomplete;document.getElementById('plan-stat-ca').textContent=totalCA>0?fmt(totalCA):'—';
+  document.getElementById('planClearBtn').style.display=drafts.length>0?'':'none';
+  document.getElementById('planValidateBar').style.display=drafts.length>0?'':'none';
+  var btn=document.getElementById('planValidateBtn');if(btn){btn.textContent='✅ Valider le planning — créer '+drafts.length+' commande'+(drafts.length>1?'s':'');if(incomplete>0){btn.style.background='var(--t3)';btn.style.opacity='.7';btn.disabled=false;}else{btn.style.background='var(--gn)';btn.style.opacity='1';btn.disabled=false;}}
+  var loadInfo=document.getElementById('planLoadInfo');var loadPills=document.getElementById('planLoadPills');var load=planningTruckLoad();var truckEntries=Object.keys(load);
+  if(truckEntries.length>0){loadInfo.style.display='';loadPills.innerHTML=db.trucks.map(function(t){var n=load[t.id]||0;var cls=n===0?'free':(n<=2?'busy':'full');return '<span class="plan-load-pill '+cls+'">'+escapeHtml(t.plate)+(n>0?' · '+n+' cmd':' · libre')+'</span>';}).join('');}else{loadInfo.style.display='none';}
+  var container=document.getElementById('planningContent');
+  if(drafts.length===0){container.innerHTML='<div class="card"><div class="card-b"><div class="empty"><div class="empty-i">📋</div><div class="empty-t">Aucune ligne au planning</div><div style="font-size:.75rem;color:var(--t3);margin-top:6px">Cliquez sur "+ Ligne" pour commencer à préparer vos commandes du jour</div></div></div></div>';return;}
+  var tableRows=drafts.map(function(d,idx){return renderPlanningTableRow(d,idx);}).join('');
+  var cardRows=drafts.map(function(d,idx){return renderPlanningCard(d,idx);}).join('');
+  container.innerHTML='<div class="plan-tbl-wrap"><table class="plan-tbl"><thead><tr><th>#</th><th>Client *</th><th>Adresse *</th><th>Date *</th><th>Type *</th><th>Matériau</th><th>Nb *</th><th>Camion *</th><th>Chauffeur *</th><th>Statut</th><th></th></tr></thead><tbody>'+tableRows+'</tbody></table></div><div class="plan-cards">'+cardRows+'</div>';}
+
+function renderPlanningTableRow(d,idx){var ready=isPlanLineReady(d);var cls=ready?'row-ready':'row-incomplete';var emptyCls=function(v){return v?'':' empty';};var matDisabled=d.type==='journee';
+  return '<tr class="'+cls+'"><td class="pl-idx">'+(idx+1)+'</td>'+
+    '<td><select class="'+emptyCls(d.clientId).trim()+'" onchange="updatePlanningField('+idx+',\'clientId\',this.value)">'+buildPlanningOptions(d,'client')+'</select></td>'+
+    '<td><input type="text" class="'+emptyCls(d.address).trim()+'" placeholder="Adresse chantier" value="'+escapeHtml(d.address)+'" oninput="updatePlanningField('+idx+',\'address\',this.value)"></td>'+
+    '<td><input type="date" class="'+emptyCls(d.date).trim()+'" value="'+escapeHtml(d.date)+'" onchange="updatePlanningField('+idx+',\'date\',this.value)"></td>'+
+    '<td><select onchange="updatePlanningField('+idx+',\'type\',this.value)">'+buildPlanningOptions(d,'type')+'</select></td>'+
+    '<td>'+(matDisabled?'<span style="color:var(--t4);font-size:.7rem;font-style:italic">—</span>':'<select class="'+emptyCls(d.materialId).trim()+'" onchange="updatePlanningField('+idx+',\'materialId\',this.value)">'+buildPlanningOptions(d,'material')+'</select>')+'</td>'+
+    '<td><input type="number" min="1" max="50" value="'+(parseInt(d.nb)||1)+'" oninput="updatePlanningField('+idx+',\'nb\',parseInt(this.value)||1)"></td>'+
+    '<td><select class="'+emptyCls(d.truckId).trim()+'" onchange="updatePlanningField('+idx+',\'truckId\',this.value)">'+buildPlanningOptions(d,'truck')+'</select></td>'+
+    '<td><select class="'+emptyCls(d.driverId).trim()+'" onchange="updatePlanningField('+idx+',\'driverId\',this.value)">'+buildPlanningOptions(d,'driver')+'</select></td>'+
+    '<td class="pl-status">'+(ready?'<span class="plan-status-ready">✅ Prête</span>':'<span class="plan-status-incomplete">⚠️ À compléter</span>')+'</td>'+
+    '<td class="pl-actions"><button class="pl-act-btn" title="Dupliquer" onclick="duplicatePlanningLine('+idx+')">📋</button><button class="pl-act-btn" title="Supprimer" onclick="deletePlanningLine('+idx+')">🗑️</button></td>'+
+  '</tr>';}
+
+function renderPlanningCard(d,idx){var ready=isPlanLineReady(d);var cls=ready?'row-ready':'row-incomplete';var emptyCls=function(v){return v?'':' empty';};var matDisabled=d.type==='journee';
+  return '<div class="plan-card '+cls+'"><div class="plan-card-head"><span class="plan-card-num">Ligne #'+(idx+1)+'</span>'+(ready?'<span class="plan-status-ready">✅ Prête</span>':'<span class="plan-status-incomplete">⚠️ À compléter</span>')+'<div style="display:flex;gap:4px"><button class="pl-act-btn" title="Dupliquer" onclick="duplicatePlanningLine('+idx+')">📋</button><button class="pl-act-btn" title="Supprimer" onclick="deletePlanningLine('+idx+')">🗑️</button></div></div>'+
+    '<div class="plan-card-grid">'+
+      '<div class="pcg-full"><label>Client *</label><select class="'+emptyCls(d.clientId).trim()+'" onchange="updatePlanningField('+idx+',\'clientId\',this.value)">'+buildPlanningOptions(d,'client')+'</select></div>'+
+      '<div class="pcg-full"><label>Adresse chantier *</label><input type="text" class="'+emptyCls(d.address).trim()+'" placeholder="Rue, ville..." value="'+escapeHtml(d.address)+'" oninput="updatePlanningField('+idx+',\'address\',this.value)"></div>'+
+      '<div><label>Date *</label><input type="date" class="'+emptyCls(d.date).trim()+'" value="'+escapeHtml(d.date)+'" onchange="updatePlanningField('+idx+',\'date\',this.value)"></div>'+
+      '<div><label>Type *</label><select onchange="updatePlanningField('+idx+',\'type\',this.value)">'+buildPlanningOptions(d,'type')+'</select></div>'+
+      (matDisabled?'':'<div class="pcg-full"><label>Matériau *</label><select class="'+emptyCls(d.materialId).trim()+'" onchange="updatePlanningField('+idx+',\'materialId\',this.value)">'+buildPlanningOptions(d,'material')+'</select></div>')+
+      '<div><label>Nb transports *</label><input type="number" min="1" max="50" value="'+(parseInt(d.nb)||1)+'" oninput="updatePlanningField('+idx+',\'nb\',parseInt(this.value)||1)"></div>'+
+      '<div></div>'+
+      '<div><label>Camion *</label><select class="'+emptyCls(d.truckId).trim()+'" onchange="updatePlanningField('+idx+',\'truckId\',this.value)">'+buildPlanningOptions(d,'truck')+'</select></div>'+
+      '<div><label>Chauffeur *</label><select class="'+emptyCls(d.driverId).trim()+'" onchange="updatePlanningField('+idx+',\'driverId\',this.value)">'+buildPlanningOptions(d,'driver')+'</select></div>'+
+    '</div></div>';}
+
+async function validatePlanning(){var drafts=db.draftOrders||[];if(!drafts.length){showToast('⚠️ Aucune ligne à valider','warning');return;}
+  var incomplete=drafts.filter(function(d){return !isPlanLineReady(d);});
+  if(incomplete.length>0){showToast('⚠️ '+incomplete.length+' ligne(s) incomplète(s) — complétez avant de valider','error',6000);
+    var firstIdx=drafts.findIndex(function(d){return !isPlanLineReady(d);});
+    setTimeout(function(){var el=document.querySelectorAll('.plan-tbl tbody tr')[firstIdx]||document.querySelectorAll('.plan-card')[firstIdx];if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},100);
+    return;}
+  var ok=await showConfirm('Créer '+drafts.length+' commande(s) ?','Toutes les lignes prêtes seront envoyées dans Sheets et dispatchées aux chauffeurs.','📋','Valider tout');
+  if(!ok)return;
+  showLoader();var created=0;var errors=0;
+  for(var i=0;i<drafts.length;i++){var d=drafts[i];
+    try{var nb=parseInt(d.nb)||1;var tr=Array.from({length:nb},function(_,j){return {id:j+1,done:false,tonnage:null,receiver:null,func:null,sig:null};});
+      var order={id:uid(),clientId:d.clientId,date:d.date,address:d.address,truckId:String(d.truckId),driverId:String(d.driverId),type:d.type,materialId:d.materialId||null,nbEstimated:nb,nbEstimatedRaw:String(nb),nbDone:0,status:'en_cours',transports:tr};
+      db.orders.unshift(order);
+      var payload=Object.assign({},order,{nbEstimated:String(nb),nb_estime:String(nb),chauffeur_id:String(d.driverId),camion_id:String(d.truckId),client_id:d.clientId,adresse:d.address,date_chantier:d.date,materiau_id:d.materialId||'',statut:'en_cours',nb_fait:0});
+      await syncSheets('newOrder',payload);
+      created++;
+      addAudit('Planning → commande',clientName(d.clientId));
+    }catch(e){errors++;console.error('Planning validation error:',e);}
+  }
+  hideLoader();
+  db.draftOrders=[];savePlanningDraft();
+  if(errors===0){showToast('✅ '+created+' commande(s) créée(s) avec succès','success',5000);}
+  else{showToast('⚠️ '+created+' créées, '+errors+' en erreur','warning',6000);}
+  navigate('commandes');}
+
+// ═══════════════════════════════════════════════════════════════
 // 🔧 INTERFACE MÉCANICIEN — v10.22
 // ═══════════════════════════════════════════════════════════════
 function mecaAlerts(){var alerts=[];var now=new Date();db.trucks.forEach(function(t){if(t.ct){var dt=new Date(t.ct);var diff=(dt-now)/(1000*60*60*24);if(diff<0)alerts.push({severity:'high',truck:t,type:'CT',label:'Contrôle technique EXPIRÉ',date:t.ct,days:Math.abs(Math.round(diff))});else if(diff<=30)alerts.push({severity:'med',truck:t,type:'CT',label:'Contrôle technique bientôt expiré',date:t.ct,days:Math.round(diff)});}if(t.tachy){var dt2=new Date(t.tachy);var diff2=(dt2-now)/(1000*60*60*24);if(diff2<0)alerts.push({severity:'high',truck:t,type:'TACHY',label:'Tachygraphe EXPIRÉ',date:t.tachy,days:Math.abs(Math.round(diff2))});else if(diff2<=30)alerts.push({severity:'med',truck:t,type:'TACHY',label:'Tachygraphe bientôt expiré',date:t.tachy,days:Math.round(diff2)});}if(t.limiteur){var dt3=new Date(t.limiteur);var diff3=(dt3-now)/(1000*60*60*24);if(diff3<0)alerts.push({severity:'high',truck:t,type:'LIM',label:'Limiteur EXPIRÉ',date:t.limiteur,days:Math.abs(Math.round(diff3))});else if(diff3<=30)alerts.push({severity:'med',truck:t,type:'LIM',label:'Limiteur bientôt expiré',date:t.limiteur,days:Math.round(diff3)});}});return alerts.sort(function(a,b){if(a.severity!==b.severity)return a.severity==='high'?-1:1;return new Date(a.date)-new Date(b.date);});}
@@ -767,7 +916,7 @@ function handleDragLeave(zid){document.getElementById(zid)?.classList.remove('dr
 function handleDrop(e,tid,prefix){e.preventDefault();document.getElementById(prefix==='dm'?'dm-upload-zone':'tm-upload-zone')?.classList.remove('drag-over');handleFiles({files:e.dataTransfer.files,value:''},tid,prefix);}
 function loadExistingDocs(docs,prefix,tid){pendingDocs[prefix]=docs?[...docs]:[];renderAllChips(tid,prefix);}
 function collectDocs(prefix){return[...(pendingDocs[prefix]||[])];}
-document.addEventListener('DOMContentLoaded',async()=>{document.getElementById('dashDate').textContent=today();renderAlerts();renderImpayes();document.querySelectorAll('.mo').forEach(mo=>{mo.addEventListener('click',e=>{if(e.target===mo)closeModal(mo.id);});});switchLoginRole('chauffeur');await loadRemoteConfig();await preloadDrivers();});
+document.addEventListener('DOMContentLoaded',async()=>{document.getElementById('dashDate').textContent=today();renderAlerts();renderImpayes();document.querySelectorAll('.mo').forEach(mo=>{mo.addEventListener('click',e=>{if(e.target===mo)closeModal(mo.id);});});switchLoginRole('chauffeur');loadPlanningDraft();await loadRemoteConfig();await preloadDrivers();});
 async function preloadDrivers(){try{const url=getSheetsBase()||SHEETS_BASE;if(!url)return;const r=await fetch(url,{method:'POST',body:JSON.stringify({action:'getAll'})});const data=await r.json();if(data.chauffeurs?.length)db.drivers=data.chauffeurs.map(d=>({id:String(d.id),name:d.nom||d.name||'',phone:d.telephone||d.phone||'',email:d.email||'',licence:d.permis||d.licence||'C',pin:String(d.pin||''),status:d.statut||d.status||'actif',birth:cd(d.date_naissance||d.birth||''),cqc:cd(d.cqc||''),medical:cd(d.medical||''),docs:[]}));if(data.company&&data.company.gerant_pin)GERANT_PIN=String(data.company.gerant_pin);if(data.company&&data.company.mecano_pin)MECANO_PIN=String(data.company.mecano_pin);
 if(data.materiaux?.length)db.materials=data.materiaux.map(m=>({id:String(m.id),name:m.nom||m.name||'',unit:m.unite||m.unit||'tonne'}));if(data.tarifs_clients?.length)db.clientTariffs=data.tarifs_clients.map(t=>{var typeVal=String(t.type||'').trim();var matVal=String(t.materiau_id||'').trim();if(/^\d{8,}$/.test(typeVal)&&(matVal==='journee'||matVal==='materiaux'||matVal===''))[typeVal,matVal]=[matVal,typeVal];return{id:String(t.id),clientId:String(t.client_id||t.clientId),type:typeVal||'materiaux',materialId:matVal?String(matVal):null,price:parseFloat(t.prix_unitaire||t.price)||0};});}catch(e){}}
 /* COMPANY INFO */
