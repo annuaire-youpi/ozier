@@ -399,6 +399,42 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
   .voyant-label{font-size:.58rem}
   .anomalies-grid{grid-template-columns:1fr}
 }
+
+/* ──── FICHES DE RÉPARATION ──── */
+.repair-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r2);padding:14px;margin-bottom:10px;cursor:pointer;transition:all .15s}
+.repair-card:hover{border-color:var(--bk);box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.repair-card.priority-haute{border-left:4px solid var(--er)}
+.repair-card.priority-normale{border-left:4px solid var(--wa)}
+.repair-card.priority-faible{border-left:4px solid var(--bd)}
+.repair-card.repair-done{opacity:.55;background:var(--sf2)}
+.repair-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+.repair-title{font-weight:900;font-size:.92rem;color:var(--t1);min-width:0}
+.repair-meta{font-size:.7rem;color:var(--t3);margin-top:2px}
+.repair-status{padding:3px 9px;border-radius:99px;font-size:.62rem;font-weight:900;letter-spacing:.04em;white-space:nowrap}
+.repair-status.s-a_diagnostiquer{background:rgba(245,158,11,.15);color:#92400E;border:1px solid rgba(245,158,11,.4)}
+.repair-status.s-en_cours{background:rgba(59,130,246,.15);color:#1E40AF;border:1px solid rgba(59,130,246,.4)}
+.repair-status.s-attente_piece{background:rgba(168,85,247,.15);color:#6B21A8;border:1px solid rgba(168,85,247,.4)}
+.repair-status.s-terminee{background:rgba(22,163,74,.15);color:#15803D;border:1px solid rgba(22,163,74,.4)}
+.repair-priority{padding:2px 7px;border-radius:5px;font-size:.6rem;font-weight:800;letter-spacing:.04em;margin-left:6px}
+.repair-priority.p-haute{background:var(--er);color:#fff}
+.repair-priority.p-normale{background:var(--wa);color:#fff}
+.repair-priority.p-faible{background:var(--t4);color:#fff}
+.repair-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.repair-tag{font-size:.66rem;padding:2px 8px;border-radius:99px;font-weight:700}
+.repair-tag.tag-voyant{background:rgba(220,38,38,.12);color:var(--er);border:1px solid rgba(220,38,38,.3)}
+.repair-tag.tag-anomalie{background:rgba(245,158,11,.12);color:#92400E;border:1px solid rgba(245,158,11,.3)}
+
+.repair-summary{display:flex;gap:10px;margin-top:8px;font-size:.7rem;color:var(--t3);flex-wrap:wrap}
+.repair-summary span{display:inline-flex;align-items:center;gap:4px}
+
+/* Workflow stepper modal */
+.repair-stepper{display:flex;gap:4px;margin:8px 0 16px;padding:8px;background:var(--sf2);border-radius:8px}
+.repair-step{flex:1;text-align:center;padding:8px 4px;border-radius:6px;font-size:.65rem;font-weight:800;color:var(--t4);cursor:pointer;transition:all .15s;background:transparent;border:none;font-family:inherit}
+.repair-step.active.a_diagnostiquer{background:#FEF3C7;color:#92400E}
+.repair-step.active.en_cours{background:#DBEAFE;color:#1E40AF}
+.repair-step.active.attente_piece{background:#F3E8FF;color:#6B21A8}
+.repair-step.active.terminee{background:#DCFCE7;color:#15803D}
+.repair-step:not(.active):hover{background:rgba(0,0,0,.04)}
 .plan-summary-tbl{display:flex;flex-direction:column;gap:6px}
 .plan-summary-row{display:grid;grid-template-columns:28px 1fr 40px 90px;gap:8px;align-items:center;padding:8px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);font-size:.72rem;cursor:pointer;transition:background .15s}
 .plan-summary-row:active{background:var(--sf2)}
@@ -447,7 +483,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
       <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
     </div>
-    <span class="ver-tag">v10.38 — 2026</span>
+    <span class="ver-tag">v10.39 — 2026</span>
   </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
@@ -549,6 +585,24 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       </div>
       
       
+      <div class="page" id="page-reparations">
+        <div class="ph"><div><div class="pt">🛠️ Réparations</div><div class="ps">Suivi des interventions sur la flotte</div></div><button class="btn btn-o btn-s" onclick="togglePageHelp('reparations')">💡 Aide</button></div>
+        <div class="card" id="help-reparations" style="margin-bottom:10px;display:none;border-left:3px solid var(--bl)"><div class="card-b" style="font-size:.78rem;line-height:1.6">
+          <div style="font-weight:800;margin-bottom:6px;color:var(--bl)">💡 Suivi des réparations</div>
+          <div style="color:var(--t2)">Cette page vous donne une vue d'ensemble en <b>lecture seule</b> de toutes les interventions mécaniques. Les fiches sont créées par le mécanicien à partir des signalements chauffeurs ou manuellement.</div>
+          <div style="color:var(--t2);margin-top:6px"><b>4 statuts possibles :</b></div>
+          <div style="color:var(--t2);margin-top:2px">• 🟡 <b>À diagnostiquer</b> · 🔵 <b>En cours</b> · 🟣 <b>Attente pièce</b> · ✅ <b>Terminée</b></div>
+          <div style="color:var(--t2);margin-top:6px">Le <b>coût total</b> remonte automatiquement dans la marge si le mécanicien a saisi les frais associés à la fiche.</div>
+        </div></div>
+        <div class="sg">
+          <div class="sc"><div class="sc-i">🟡</div><div class="sc-v" id="grepair-stat-open" style="color:#92400E">0</div><div class="sc-l">Ouvertes</div></div>
+          <div class="sc"><div class="sc-i">⏱️</div><div class="sc-v" id="grepair-stat-avg">—</div><div class="sc-l">Durée moyenne (j)</div></div>
+          <div class="sc"><div class="sc-i">💰</div><div class="sc-v" id="grepair-stat-cost">—</div><div class="sc-l">Coût total (mois)</div></div>
+          <div class="sc"><div class="sc-i">🚛</div><div class="sc-v" id="grepair-stat-truck">—</div><div class="sc-l">Camion + sollicité</div></div>
+        </div>
+        <div class="tabs tabs-wrap" style="margin-top:10px"><button class="tab on" onclick="filterGRepairs('open',this)">🟡 Ouvertes</button><button class="tab" onclick="filterGRepairs('all',this)">Toutes</button><button class="tab" onclick="filterGRepairs('terminee',this)">✅ Terminées</button></div>
+        <div id="gRepairsList" style="margin-top:10px"></div>
+      </div>
       <div class="page" id="page-rapports">
         <div class="ph"><div><div class="pt">Rapports</div><div class="ps">Pilotage et suivi</div></div><button class="btn btn-o btn-s" onclick="togglePageHelp('rapports')">💡 Aide</button></div>
         <div class="card" id="help-rapports" style="margin-bottom:10px;display:none;border-left:3px solid var(--bl)"><div class="card-b" style="font-size:.78rem;line-height:1.6">
@@ -691,6 +745,25 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
         <div class="card" style="margin-bottom:10px"><div class="card-b"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px"><div><div style="font-size:.7rem;color:var(--t3);font-weight:700">Total filtré</div><div style="font-size:1.4rem;font-weight:900;color:var(--er)" id="mecaFraisTotal">—</div></div><div style="text-align:right"><div style="font-size:.7rem;color:var(--t3);font-weight:700">Nombre de frais</div><div style="font-size:1.4rem;font-weight:900" id="mecaFraisCount">0</div></div></div></div></div>
         <div class="card"><div class="tw"><table><thead><tr><th>Date</th><th>Camion</th><th>Type</th><th>Montant</th><th>Description</th><th>Actions</th></tr></thead><tbody id="mecaFraisTableBody"></tbody></table></div></div>
       </div>
+      <div class="page" id="page-meca-repairs">
+        <div class="ph"><div><div class="pt">🛠️ Fiches de réparation</div><div class="ps">Suivi complet des interventions</div></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-o btn-s" onclick="togglePageHelp('meca-repairs')">💡 Aide</button><button class="btn btn-p btn-s" onclick="openRepairModal()">+ Fiche</button></div></div>
+        <div class="card" id="help-meca-repairs" style="margin-bottom:10px;display:none;border-left:3px solid var(--bl)"><div class="card-b" style="font-size:.78rem;line-height:1.6">
+          <div style="font-weight:800;margin-bottom:6px;color:var(--bl)">💡 Workflow d'une fiche de réparation</div>
+          <div style="color:var(--t2)">1️⃣ <b>🟡 À diagnostiquer</b> — créée depuis un signalement chauffeur ou manuellement</div>
+          <div style="color:var(--t2);margin-top:3px">2️⃣ <b>🔵 En cours</b> — vous démarrez l'intervention (diagnostic + actions)</div>
+          <div style="color:var(--t2);margin-top:3px">3️⃣ <b>🟣 En attente pièce</b> — bloqué en attendant une commande</div>
+          <div style="color:var(--t2);margin-top:3px">4️⃣ <b>🟢 Terminée</b> — réparation finie, coût saisi</div>
+          <div style="color:var(--t2);margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)"><b>💡</b> Le bouton <b>"💶 Saisir le coût"</b> dans une fiche ouvre directement le formulaire de frais véhicule pré-rempli.</div>
+        </div></div>
+        <div class="sg">
+          <div class="sc"><div class="sc-i">🟡</div><div class="sc-v" id="repair-stat-a-diag" style="color:#92400E">0</div><div class="sc-l">À diagnostiquer</div></div>
+          <div class="sc"><div class="sc-i">🔵</div><div class="sc-v" id="repair-stat-en-cours" style="color:#1E40AF">0</div><div class="sc-l">En cours</div></div>
+          <div class="sc"><div class="sc-i">🟣</div><div class="sc-v" id="repair-stat-attente" style="color:#6B21A8">0</div><div class="sc-l">Attente pièce</div></div>
+          <div class="sc"><div class="sc-i">✅</div><div class="sc-v" id="repair-stat-done" style="color:#15803D">0</div><div class="sc-l">Terminées (mois)</div></div>
+        </div>
+        <div class="tabs tabs-wrap" style="margin-top:10px"><button class="tab on" onclick="filterRepairs('open',this)">🟡 Ouvertes</button><button class="tab" onclick="filterRepairs('all',this)">Toutes</button><button class="tab" onclick="filterRepairs('terminee',this)">✅ Terminées</button></div>
+        <div id="repairsList" style="margin-top:10px"></div>
+      </div>
       <div class="page" id="page-meca-obs">
         <div class="ph"><div><div class="pt">📝 Observations chauffeurs</div><div class="ps">Remontées issues des fiches journalières</div></div><button class="btn btn-o btn-s" onclick="togglePageHelp('meca-obs')">💡 Aide</button></div>
         <div class="card" id="help-meca-obs" style="margin-bottom:10px;display:none;border-left:3px solid var(--bl)"><div class="card-b" style="font-size:.78rem;line-height:1.6">
@@ -787,7 +860,7 @@ function recordFailedAttempt(){try{const k=getLockoutKey();const raw=localStorag
 function clearLockout(){try{localStorage.removeItem(getLockoutKey());}catch(e){}}
 function logAuthAttempt(success,who,reason){const entry={ts:new Date().toISOString(),success:success,who:who||'inconnu',role:loginRole,reason:reason||'',ua:(navigator.userAgent||'').substring(0,80)};try{const raw=localStorage.getItem('sotransnord_auth_log')||'[]';const arr=JSON.parse(raw);arr.push(entry);if(arr.length>200)arr.splice(0,arr.length-200);localStorage.setItem('sotransnord_auth_log',JSON.stringify(arr));}catch(e){}if(state.mode==='real'){try{fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'logAuth',data:entry})});}catch(e){}}}
 let state={mode:'real',role:null,currentUser:null,currentPage:null,pinValue:'',pinAttempts:0,pinLocked:false,editingId:null,currentTransport:null,currentOrder:null,filterOrders:'all'};
-let db={drivers:[],trucks:[],clients:[],materials:[],tariffs:[{id:1,type:'materiaux',name:'Sable 0/4 — Standard',price:18.50},{id:2,type:'materiaux',name:'Gravier 4/6 — Standard',price:22.00},{id:3,type:'journee',name:'Journée chauffeur + camion',price:950.00},{id:4,type:'materiaux',name:'Remblais — Standard',price:12.00}],expenses:[],dayReports:[],orders:[],audit:[],clientTariffs:[],annualData:{},draftOrders:[]};
+let db={drivers:[],trucks:[],clients:[],materials:[],tariffs:[{id:1,type:'materiaux',name:'Sable 0/4 — Standard',price:18.50},{id:2,type:'materiaux',name:'Gravier 4/6 — Standard',price:22.00},{id:3,type:'journee',name:'Journée chauffeur + camion',price:950.00},{id:4,type:'materiaux',name:'Remblais — Standard',price:12.00}],expenses:[],dayReports:[],orders:[],audit:[],clientTariffs:[],annualData:{},draftOrders:[],repairs:[]};
 (function(){const now=new Date();[now.getFullYear()-1,now.getFullYear()].forEach(yr=>{db.annualData[yr]={};const s=[0.55,0.60,0.80,1.10,1.25,1.30,1.20,0.90,1.15,1.10,0.75,0.50];for(let m=0;m<12;m++){if(yr===now.getFullYear()&&m>now.getMonth()){db.annualData[yr][m]=null;continue;}const ca=Math.round((28000+Math.random()*8000)*s[m]);const byType={carburant:Math.round(1400+Math.random()*600+s[m]*400),vidange:[2,5,8,11].includes(m)?Math.round(150+Math.random()*80):0,reparation:Math.round(Math.random()<0.35?200+Math.random()*900:0),pneus:Math.round(Math.random()<0.2?400+Math.random()*600:0),assurance:580,autre:Math.round(Math.random()*200)};const total_dep=Object.values(byType).reduce((s,v)=>s+v,0);const marge=ca-total_dep;db.annualData[yr][m]={ca,byType,total_dep,marge,pct_marge:ca>0?Math.round((marge/ca)*100):0};}});})();
 const SHEETS_BASE='https://script.google.com/macros/s/AKfycbzfYAn6rlb01517GoR8PYQUqdSIsbl6Px0PRlsZYEIlq_T6wE8TikxE8_qW92BobLLekQ/exec';
 let remoteConfig={};
@@ -823,8 +896,9 @@ if(data.chauffeurs?.length)db.drivers=data.chauffeurs.map(d=>({id:sid(d.id),name
 if(data.camions?.length)db.trucks=data.camions.map(t=>({id:sid(t.id),plate:t.immatriculation||t.plate||'',type:t.type||'',km:parseInt(t.kilometrage||t.km)||0,ct:cd(t.date_ct||t.ct),tachy:cd(t.tachygraphe||t.tachy||''),limiteur:cd(t.limiteur||''),status:t.statut||t.status||'actif',docs:[]}));
 if(data.clients?.length)db.clients=data.clients.map(c=>({id:sid(c.id),company:c.entreprise||c.company||'',manager:c.gerant||c.manager||'',phone:c.telephone||c.phone||'',email:c.email||''}));
 if(data.commandes?.length)db.orders=data.commandes.map(o=>{const nbRaw=String(o.nb_estime||o.nbEstimated||'0');const nb=nbRaw.split(/[|,]/).reduce(function(s,v){return s+(parseInt(v)||0);},0);const done=parseInt(o.nb_fait||o.nbDone)||0;const oid=sid(o.id);const lt=(data.transports||[]).filter(t=>sid(t.commande_id)===oid);const transports=Array.from({length:nb},(_,i)=>{const transportId=i+1;var t=null;var hasValidNums=lt.some(function(x){var n=parseInt(x.transport_num||x.transportId);return!isNaN(n)&&n>0&&n<=1000;});if(hasValidNums){t=lt.find(function(x){var n=parseInt(x.transport_num||x.transportId);return!isNaN(n)&&n===transportId&&n<=1000;});}else{t=lt[i];}return t?{id:transportId,done:true,tonnage:(function(v){var n=parseFloat(String(v||'').replace(',','.'));return isNaN(n)?0:n;})(t.tonnage),receiver:t.receptionnaire||t.receiver,func:t.fonction||t.func,sig:'✓',ts:t.timestamp,paperPhotos:(function(p){if(!p)return [];return String(p).split('|').filter(Boolean).map(function(u){return {url:u,fileId:(u.match(/[-\w]{25,}/)||[''])[0]};});})(t.photo_papier_url||t.paperPhotos||t.photo_papier||'')}:{id:transportId,done:false,tonnage:null,receiver:null,func:null,sig:null,paperPhotos:[]};});return{id:oid,clientId:sid(o.client_id||o.clientId),address:o.adresse||o.address||'',date:cd(o.date_chantier||o.date),driverId:sid(o.chauffeur_id||o.driverId),truckId:sid(o.camion_id||o.truckId),type:o.type||'materiaux',materialId:o.materiau_id?sid(o.materiau_id):null,nbEstimated:nb,nbEstimatedRaw:nbRaw,nbDone:done,status:o.statut||o.status||'en_cours',invoiceSent:o.invoice_sent===true||o.invoice_sent==='true'||o.invoice_sent==='TRUE'||String(o.invoice_sent).toLowerCase()==='true',invoiceDate:o.invoice_date||o.invoiceDate||'',invoiceTo:o.invoice_to||o.invoiceTo||'',invoiceRef:o.invoice_ref||o.invoiceRef||'',paid:o.paid==='true'||o.paid===true||String(o.paid).toLowerCase()==='true',paidDate:o.paid_date||o.paidDate||'',transports};});
-if(data.frais?.length)db.expenses=data.frais.map(f=>({id:sid(f.id),truckId:sid(f.camion_id||f.truckId),date:cd(f.date),type:f.type_frais||f.type||'',amount:parseFloat(f.montant||f.amount)||0,desc:f.description||f.desc||''}));
+if(data.frais?.length)db.expenses=data.frais.map(f=>({id:sid(f.id),truckId:sid(f.camion_id||f.truckId),date:cd(f.date),type:f.type_frais||f.type||'',amount:parseFloat(f.montant||f.amount)||0,desc:f.description||f.desc||'',repairId:String(f.repair_id||f.repairId||'')}));
 if(data.fiches_jour?.length)db.dayReports=data.fiches_jour.map(f=>({id:String(f.id||''),driverId:String(f.chauffeur_id||f.driverId||''),driverName:f.chauffeur_nom||f.driverName||'',date:f.date||'',km:parseInt(f.kilometrage||f.km)||0,kmStart:parseInt(f.km_debut||f.kmStart)||0,fuelLiters:parseFloat(f.carburant_litres||f.fuelLiters)||0,fuelPrice:parseFloat(f.carburant_prix||f.fuelPrice)||0,voyants:f.voyants||'',anomalies:f.anomalies||'',notes:f.observations||f.notes||'',hasIssues:(function(){var vo=String(f.voyants||'').split('|').filter(Boolean);var an=String(f.anomalies||'').split('|').filter(Boolean);var n=String(f.observations||f.notes||'').trim();return vo.length>0||an.length>0||n.length>0;})()}));
+if(data.reparations?.length)db.repairs=data.reparations.map(r=>({id:String(r.id||''),truckId:String(r.camion_id||r.truckId||''),dateConstat:cd(r.date_constat||r.dateConstat||''),dateDebut:cd(r.date_debut||r.dateDebut||''),dateFin:cd(r.date_fin||r.dateFin||''),sourceDriverId:String(r.source_chauffeur_id||r.sourceDriverId||''),voyants:r.voyants||'',anomalies:r.anomalies||'',notesChauffeur:r.notes_chauffeur||r.notesChauffeur||'',diagnostic:r.diagnostic||'',actions:r.actions||'',pieces:r.pieces||'',cout:parseFloat(r.cout)||0,status:r.statut||r.status||'a_diagnostiquer',priority:r.priorite||r.priority||'normale'}));else if(!db.repairs)db.repairs=[];
 if(data.materiaux?.length)db.materials=data.materiaux.map(m=>({id:String(m.id),name:m.nom||m.name||'',unit:m.unite||m.unit||'tonne'}));
 if(data.tarifs_clients?.length)db.clientTariffs=data.tarifs_clients.map(t=>{var typeVal=String(t.type||'').trim();var matVal=String(t.materiau_id||'').trim();if(/^\d{8,}$/.test(typeVal)&&(matVal==='journee'||matVal==='materiaux'||matVal===''))[typeVal,matVal]=[matVal,typeVal];return{id:String(t.id),clientId:String(t.client_id||t.clientId),type:typeVal||'materiaux',materialId:matVal?String(matVal):null,price:parseFloat(t.prix_unitaire||t.price)||0};});
 if(data.expense_types?.length){db.expenseTypes=data.expense_types.map(t=>({id:String(t.id),label:String(t.label||t.id)}));}else{db.expenseTypes=[];}
@@ -878,7 +952,7 @@ async function validatePin(){const lock=checkLockout();if(lock){state.pinValue='
 if(valid){clearLockout();state.pinAttempts=0;state.currentUser=user;state.role=user.role;logAuthAttempt(true,user.name,'');document.getElementById('screen-splash').classList.add('hidden');document.getElementById('app').classList.add('active');if(state.mode!=='demo'){state.mode='real';showLoader();try{await loadRealData();}catch(e){console.error('loadRealData error:',e);showToast('⚠️ Erreur sync: '+e.message,'warning',6000);}hideLoader();}addAudit('Connexion',user.name);initApp();}
 else{const totalAttempts=recordFailedAttempt();logAuthAttempt(false,'pin='+pin.substring(0,2)+'****','PIN incorrect');state.pinValue='';for(let i=0;i<6;i++){const d=document.getElementById('d'+i);if(d)d.className='pin-dot error';}setTimeout(updatePinDots,600);const lockMin=getLockoutMinutes(totalAttempts);if(lockMin>0){state.pinLocked=true;document.getElementById('pinError').textContent='🔒 Bloqué '+(lockMin>=60?(lockMin/60)+' h':lockMin+' min')+' — '+totalAttempts+' échecs';document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=true);}else{const rem=5-totalAttempts;document.getElementById('pinError').textContent='❌ Code incorrect — '+rem+' essai(s) restant(s)';}}}
 function logout(){state.currentUser=null;state.role=null;state.pinValue='';state.pinAttempts=0;state.pinLocked=false;state.mode='real';demoSnapshot=null;document.getElementById('app').classList.remove('active');document.getElementById('screen-splash').classList.remove('hidden');document.querySelectorAll('.pin-btn').forEach(k=>k.disabled=false);switchLoginRole('chauffeur');}
-const NAV_G=[{id:'dashboard',label:'Accueil',icon:'🏠',mob:'🏠',page:'page-dashboard'},{id:'planning',label:'Planning',icon:'📋',mob:'📋',page:'page-planning'},{id:'commandes',label:'Commandes',icon:'📦',mob:'📦',page:'page-commandes'},{id:'donnees',label:'Données',icon:'📂',mob:'📂',page:'page-donnees'},{id:'rapports',label:'Rapports',icon:'📊',mob:'📊',page:'page-rapports'},{id:'marge',label:'Marge',icon:'💹',mob:'💹',page:'page-marge'}];
+const NAV_G=[{id:'dashboard',label:'Accueil',icon:'🏠',mob:'🏠',page:'page-dashboard'},{id:'planning',label:'Planning',icon:'📋',mob:'📋',page:'page-planning'},{id:'commandes',label:'Commandes',icon:'📦',mob:'📦',page:'page-commandes'},{id:'donnees',label:'Données',icon:'📂',mob:'📂',page:'page-donnees'},{id:'reparations',label:'Réparations',icon:'🛠️',mob:'🛠️',page:'page-reparations'},{id:'rapports',label:'Rapports',icon:'📊',mob:'📊',page:'page-rapports'},{id:'marge',label:'Marge',icon:'💹',mob:'💹',page:'page-marge'}];
 
 // Liste des voyants du tableau de bord (camions modernes)
 const VOYANTS_LIST=[
@@ -908,12 +982,12 @@ const ANOMALIES_LIST=[
 ];
 
 const NAV_C=[{id:'driver-day',label:'Transports',icon:'🚛',mob:'🚛',page:'page-driver-day'},{id:'driver-fiche',label:'Fiche jour',icon:'📝',mob:'📝',page:'page-driver-fiche'},{id:'driver-profile',label:'Profil',icon:'👤',mob:'👤',page:'page-driver-profile'}];
-const NAV_M=[{id:'meca-dashboard',label:'Atelier',icon:'🔧',mob:'🔧',page:'page-meca-dashboard'},{id:'meca-flotte',label:'Flotte',icon:'🚛',mob:'🚛',page:'page-meca-flotte'},{id:'meca-frais',label:'Entretien',icon:'🛠️',mob:'🛠️',page:'page-meca-frais'},{id:'meca-obs',label:'Observations',icon:'📝',mob:'📝',page:'page-meca-obs'}];
+const NAV_M=[{id:'meca-dashboard',label:'Atelier',icon:'🔧',mob:'🔧',page:'page-meca-dashboard'},{id:'meca-flotte',label:'Flotte',icon:'🚛',mob:'🚛',page:'page-meca-flotte'},{id:'meca-repairs',label:'Réparations',icon:'🛠️',mob:'🛠️',page:'page-meca-repairs'},{id:'meca-frais',label:'Entretien',icon:'💸',mob:'💸',page:'page-meca-frais'},{id:'meca-obs',label:'Signalements',icon:'📝',mob:'📝',page:'page-meca-obs'}];
 const MOB_G_TABS=['dashboard','planning','commandes','donnees','marge'];
 function initApp(){const u=state.currentUser;document.getElementById('topbarAvatar').textContent=u.initials||'U';document.getElementById('topbarName').textContent=u.name;updateModeUI();const nav=u.role==='gerant'?NAV_G:(u.role==='mecano'?NAV_M:NAV_C);buildNav(nav,u.role);navigate(u.role==='gerant'?'dashboard':(u.role==='mecano'?'meca-dashboard':'driver-day'));}
 function buildNav(nav,role){const sn=document.getElementById('sidenav');sn.innerHTML='<div class="sn-logo"><div class="sn-mark">SN</div><div class="sn-name">SOTRANSNORD</div></div><div class="sn-sec"><div class="sn-lb">Navigation</div>'+nav.map(n=>'<button class="sn-it" id="sn-'+n.id+'" onclick="navigate(\''+n.id+'\')"><span class="ni">'+n.icon+'</span> '+n.label+'</button>').join('')+'</div><div class="sn-ft"><button class="sn-it" onclick="logout()" style="color:rgba(255,80,80,.5)"><span class="ni">⏻</span> Déconnexion</button></div>';const bn=document.getElementById('bottomNav');const tabs=role==='gerant'?MOB_G_TABS:nav.map(n=>n.id);bn.innerHTML=tabs.map(id=>{const n=nav.find(x=>x.id===id);if(!n)return'';return'<button class="bt" id="bt-'+n.id+'" onclick="navigate(\''+n.id+'\')"><span class="bt-i">'+n.mob+'</span><span class="bt-l">'+n.label+'</span></button>';}).join('');}
 function navigate(id){const nav=state.role==='gerant'?NAV_G:(state.role==='mecano'?NAV_M:NAV_C);const item=nav.find(n=>n.id===id);if(!item)return;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(item.page).classList.add('active');document.querySelectorAll('.sn-it').forEach(el=>el.classList.remove('on'));document.querySelectorAll('.bt').forEach(el=>el.classList.remove('on'));const s=document.getElementById('sn-'+id);if(s)s.classList.add('on');const b=document.getElementById('bt-'+id);if(b)b.classList.add('on');state.currentPage=id;renderPage(id);}
-function renderPage(id){switch(id){case'dashboard':renderDashboard();break;case'planning':renderPlanning();break;case'commandes':renderOrders();break;case'donnees':renderDonnees();break;case'rapports':renderRapports();break;case'marge':renderMarginTable();break;case'driver-day':renderDriverDay();break;case'driver-fiche':renderDriverFiche();break;case'driver-profile':renderDriverProfile();break;case'meca-dashboard':renderMecaDashboard();break;case'meca-flotte':renderMecaFlotte();break;case'meca-frais':renderMecaFrais();break;case'meca-obs':renderMecaObs();break;}}
+function renderPage(id){switch(id){case'dashboard':renderDashboard();break;case'planning':renderPlanning();break;case'commandes':renderOrders();break;case'donnees':renderDonnees();break;case'rapports':renderRapports();break;case'marge':renderMarginTable();break;case'reparations':renderRepairsGerant();break;case'driver-day':renderDriverDay();break;case'driver-fiche':renderDriverFiche();break;case'driver-profile':renderDriverProfile();break;case'meca-dashboard':renderMecaDashboard();break;case'meca-flotte':renderMecaFlotte();break;case'meca-frais':renderMecaFrais();break;case'meca-obs':renderMecaObs();break;case'meca-repairs':renderMecaRepairs();break;}}
 function renderDonnees(){if(!db.expenseTypes)loadExpenseTypes();renderDriversTable();renderTrucks();renderClients();renderMaterials();renderExpenses();renderFiches();}
 function isExpSoon(d){if(!d)return false;const dt=new Date(d);const now=new Date();const diff=(dt-now)/(1000*60*60*24);return diff<=30;}
 function renderImpayes(){const el=document.getElementById('dashImpayes');if(!el)return;const impayes=db.orders.filter(o=>o.invoiceSent&&!o.paid);if(!impayes.length){el.innerHTML='';return;}let total=0;let oldest=999;impayes.forEach(o=>{const tarif=db.clientTariffs.find(t=>String(t.clientId)===String(o.clientId)&&t.type===o.type&&(o.type==='journee'||String(t.materialId)===String(o.materialId)));const doneT=o.transports.filter(t=>t.done);let st=0;const price=tarif?tarif.price:0;doneT.forEach(t=>{st+=(parseFloat(t.tonnage)||0)*price;});const co=getCompanyInfo()||{};const cnrRef=parseFloat(co.cnr_ref)||0;const cnrCur=parseFloat(co.cnr_current)||0;const cnrW=(parseFloat(co.cnr_weight)||16.3)/100;if(cnrRef>0&&cnrCur>0&&cnrCur!==cnrRef)st+=st*cnrW*(cnrCur-cnrRef)/cnrRef;total+=st*1.2;if(o.invoiceDate){const d=new Date(o.invoiceDate);if(!isNaN(d)){const days=Math.ceil((new Date()-d)/(1000*60*60*24));if(days>0&&days<oldest)oldest=days;}}});el.innerHTML='<div class="card" style="border-left:3px solid #D4A017;margin-bottom:0"><div class="card-h"><span class="card-t">💰 Factures impayees</span><span class="badge" style="background:#D4A017;color:#fff">'+impayes.length+'</span></div><div class="card-b" style="padding:12px 14px"><div style="display:flex;gap:20px;flex-wrap:wrap"><div><div style="font-size:1.3rem;font-weight:900;color:#D4A017">'+fmt(total)+'</div><div style="font-size:.68rem;color:var(--t3)">Total TTC a encaisser</div></div>'+(oldest<999?'<div><div style="font-size:1.3rem;font-weight:900;color:var(--er)">'+oldest+' j</div><div style="font-size:.68rem;color:var(--t3)">Plus ancienne facture</div></div>':'')+'<div><div style="font-size:1.3rem;font-weight:900">'+impayes.filter(o=>{const d=new Date(o.invoiceDate);return!isNaN(d)&&(new Date()-d)/(1000*60*60*24)>30;}).length+'</div><div style="font-size:.68rem;color:var(--t3)">A relancer (+30j)</div></div></div></div></div>';}
@@ -972,8 +1046,31 @@ function editTariff(id){openTariffModal(id);}
 async function deleteTariff(id){const ok=await showConfirm('Supprimer ?','','💰','Supprimer');if(!ok)return;db.tariffs=db.tariffs.filter(t=>String(t.id)!==String(id));renderTariffs();showToast('Supprimé','error');}
 function renderExpenses(){document.getElementById('expensesTableBody').innerHTML=db.expenses.length?db.expenses.slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).map(e=>'<tr><td>'+fmtDate(e.date)+'</td><td>'+truckPlate(e.truckId)+'</td><td><span class="badge bg-gr">'+(expenseTypeLabel(e.type)||e.type)+'</span></td><td style="font-weight:800">'+fmt(e.amount)+'</td><td style="font-size:.78rem;color:var(--t3)">'+(e.desc||'—')+'</td><td><div class="ta"><button class="btn btn-x btn-s btn-i" onclick="deleteExpense(\''+e.id+'\')">🗑️</button></div></td></tr>').join(''):'<tr><td colspan="6"><div class="empty"><div class="empty-i">💸</div><div class="empty-t">Aucun frais saisi</div></div></td></tr>';}
 function expenseTypeLabel(t){const types=(state.mode==='demo'?(db.expenseTypes||defaultExpenseTypes()):(db.expenseTypes||[]));const found=types.find(x=>x.id===t||x.label===t);return found?found.label:t;}
-function openExpenseModal(){if(!db.expenseTypes)loadExpenseTypes();document.getElementById('exp-truck').innerHTML=db.trucks.map(t=>'<option value="'+t.id+'">'+t.plate+'</option>').join('');document.getElementById('exp-type').innerHTML=((state.mode==='demo'?(db.expenseTypes||defaultExpenseTypes()):(db.expenseTypes||[]))).map(t=>'<option value="'+t.id+'">'+t.label+'</option>').join('');document.getElementById('exp-date').value=new Date().toISOString().split('T')[0];document.getElementById('exp-amount').value='';document.getElementById('exp-desc').value='';openModal('expenseModal');}
-function saveExpense(){const amt=parseFloat(document.getElementById('exp-amount').value);if(isNaN(amt)||amt<=0){showToast('⚠️ Montant invalide','error');return;}const data={id:uid(),truckId:parseInt(document.getElementById('exp-truck').value),date:document.getElementById('exp-date').value,type:document.getElementById('exp-type').value,amount:amt,desc:document.getElementById('exp-desc').value.trim()};db.expenses.push(data);showToast('✅ OK','success');syncSheets('expense',data);closeModal('expenseModal');renderExpenses();}
+function openExpenseModal(){if(!db.expenseTypes)loadExpenseTypes();document.getElementById('exp-truck').innerHTML=db.trucks.map(t=>'<option value="'+t.id+'">'+t.plate+'</option>').join('');document.getElementById('exp-type').innerHTML=((state.mode==='demo'?(db.expenseTypes||defaultExpenseTypes()):(db.expenseTypes||[]))).map(t=>'<option value="'+t.id+'">'+t.label+'</option>').join('');document.getElementById('exp-date').value=new Date().toISOString().split('T')[0];document.getElementById('exp-amount').value='';document.getElementById('exp-desc').value='';
+  // Pré-remplir si on vient d'une fiche réparation
+  if(window._pendingRepairLink){
+    document.getElementById('exp-truck').value=window._pendingRepairLink.truckId;
+    document.getElementById('exp-desc').value=window._pendingRepairLink.desc;
+    // Bandeau visuel pour signaler le lien
+    var bannerId='exp-repair-banner';var existing=document.getElementById(bannerId);if(existing)existing.remove();
+    var modal=document.getElementById('expenseModal').querySelector('.modal');
+    var banner=document.createElement('div');banner.id=bannerId;
+    banner.style.cssText='padding:10px 12px;background:rgba(22,163,74,.1);border-left:3px solid var(--gn);border-radius:6px;font-size:.76rem;color:var(--gn);font-weight:700;margin-bottom:10px';
+    banner.innerHTML='🔗 Frais lié à la fiche réparation #'+window._pendingRepairLink.repairId;
+    modal.insertBefore(banner,modal.children[2]);
+  }else{
+    var existing2=document.getElementById('exp-repair-banner');if(existing2)existing2.remove();
+  }
+  openModal('expenseModal');}
+function saveExpense(){const amt=parseFloat(document.getElementById('exp-amount').value);if(isNaN(amt)||amt<=0){showToast('⚠️ Montant invalide','error');return;}const data={id:uid(),truckId:parseInt(document.getElementById('exp-truck').value),date:document.getElementById('exp-date').value,type:document.getElementById('exp-type').value,amount:amt,desc:document.getElementById('exp-desc').value.trim()};
+  // Si lien avec fiche réparation
+  if(window._pendingRepairLink){data.repairId=window._pendingRepairLink.repairId;data.repair_id=window._pendingRepairLink.repairId;}
+  db.expenses.push(data);showToast('✅ OK','success');syncSheets('expense',data);closeModal('expenseModal');
+  // Nettoyage et réouverture éventuelle de la fiche réparation
+  var reopenRid=window._afterExpenseReopenRepair;
+  window._pendingRepairLink=null;window._afterExpenseReopenRepair=null;
+  if(reopenRid){setTimeout(function(){openRepairModal(reopenRid);},200);}
+  else{renderExpenses();}}
 async function deleteExpense(id){const ok=await showConfirm('Supprimer ?','','💸','Supprimer');if(!ok)return;db.expenses=db.expenses.filter(e=>String(e.id)!==String(id));deleteFromSheets('deleteExpense',id);renderExpenses();showToast('Supprimé','error');}
 function renderReports(){const now=new Date();const me=db.expenses.filter(e=>{const d=new Date(e.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});const tf=me.filter(e=>e.type==='carburant').reduce((s,e)=>s+e.amount,0);const ta=me.reduce((s,e)=>s+e.amount,0);document.getElementById('rpt-conso').textContent=(db.trucks.length>0?(tf/db.trucks.length).toFixed(0):0)+' L';document.getElementById('rpt-frais').textContent=fmt(ta);document.getElementById('truckExpenseReport').innerHTML=db.trucks.map(t=>{const te=me.filter(e=>e.truckId===t.id);const c=te.filter(e=>e.type==='carburant').reduce((s,e)=>s+e.amount,0);const v=te.filter(e=>e.type==='vidange').reduce((s,e)=>s+e.amount,0);const r=te.filter(e=>e.type==='reparation').reduce((s,e)=>s+e.amount,0);const p=te.filter(e=>e.type==='pneus').reduce((s,e)=>s+e.amount,0);const a=te.filter(e=>e.type==='assurance').reduce((s,e)=>s+e.amount,0);return'<tr><td style="font-weight:800">'+t.plate+'</td><td>'+fmt(c)+'</td><td>'+fmt(v)+'</td><td>'+fmt(r)+'</td><td>'+fmt(p)+'</td><td>'+fmt(a)+'</td><td style="font-weight:800">'+fmt(c+v+r+p+a)+'</td></tr>';}).join('');}
 const WH={newOrder:{l:'Nouvelle commande',i:'📋'},updateOrder:{l:'Modifier commande',i:'✏️'},transportDone:{l:'Transport validé',i:'✅'},endOfDay:{l:'Fiche jour',i:'📝'},newDriver:{l:'Nouveau chauffeur',i:'👤'},newTruck:{l:'Nouveau camion',i:'🚛'},expense:{l:'Frais',i:'💸'},newClient:{l:'Client',i:'🏢'},newMaterial:{l:'Matériau',i:'⚙️'},newTariffClient:{l:'Tarif client',i:'💰'},sendLDV:{l:'Lettre de voiture email',i:'📧'}};
@@ -1167,6 +1264,8 @@ function renderSignalementHTML(f,compact){var v=String(f.voyants||'').split('|')
   var severity=v.length>0?'high':(a.length>0||n?'med':'low');
   var bgColor=severity==='high'?'rgba(220,38,38,.08)':(severity==='med'?'rgba(245,158,11,.06)':'rgba(0,0,0,.03)');
   var borderColor=severity==='high'?'var(--er)':(severity==='med'?'var(--wa)':'var(--bd)');
+  // Vérifier si une fiche réparation a déjà été créée à partir de ce signalement
+  var existingRepair=(db.repairs||[]).find(function(r){return String(r.sourceDriverId)===String(f.driverId)&&r.dateConstat===(f.date||'').split('T')[0];});
   var html='<div style="padding:12px;border-radius:8px;background:'+bgColor+';border-left:3px solid '+borderColor+';margin-bottom:8px">';
   html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px"><div style="min-width:0;flex:1"><div style="font-weight:800;font-size:.84rem">'+escapeHtml(dn)+'</div><div style="font-size:.68rem;color:var(--t3);margin-top:1px">'+(f.date?fmtDate(f.date):'—')+(f.km?' · '+(parseInt(f.km).toLocaleString('fr-FR'))+' km':'')+'</div></div>';
   if(severity==='high')html+='<span style="background:var(--er);color:#fff;font-size:.6rem;font-weight:900;padding:2px 7px;border-radius:99px;white-space:nowrap;letter-spacing:.04em">🚨 URGENT</span>';
@@ -1175,6 +1274,20 @@ function renderSignalementHTML(f,compact){var v=String(f.voyants||'').split('|')
   if(v.length>0){html+='<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px"><span style="font-size:.66rem;color:var(--er);font-weight:800;align-self:center;margin-right:4px">🚨 Voyants :</span>';v.forEach(function(vid){var vo=VOYANTS_LIST.find(function(x){return x.id===vid;});if(vo)html+='<span style="background:rgba(220,38,38,.15);color:var(--er);font-size:.66rem;font-weight:800;padding:3px 8px;border-radius:99px;border:1px solid rgba(220,38,38,.3)">'+vo.ico+' '+escapeHtml(vo.label)+'</span>';});html+='</div>';}
   if(a.length>0){html+='<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px"><span style="font-size:.66rem;color:#92400E;font-weight:800;align-self:center;margin-right:4px">🔍 Anomalies :</span>';a.forEach(function(aid){var an=ANOMALIES_LIST.find(function(x){return x.id===aid;});if(an)html+='<span style="background:rgba(245,158,11,.15);color:#92400E;font-size:.66rem;font-weight:700;padding:3px 8px;border-radius:99px;border:1px solid rgba(245,158,11,.3)">'+an.ico+' '+escapeHtml(an.label)+'</span>';});html+='</div>';}
   if(n)html+='<div style="margin-top:8px;padding:8px 10px;background:rgba(0,0,0,.04);border-radius:6px;font-size:.74rem;color:var(--t2);font-style:italic;line-height:1.4">💬 '+escapeHtml(n)+'</div>';
+  // Boutons d'action (uniquement côté mécanicien)
+  if(state.role==='mecano'){
+    html+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(0,0,0,.06);display:flex;gap:6px;flex-wrap:wrap">';
+    if(existingRepair){
+      html+='<button class="btn btn-g btn-s" onclick="openRepairModal(\''+existingRepair.id+'\')" style="background:rgba(22,163,74,.12);color:var(--gn);border:1px solid rgba(22,163,74,.3)">✅ Fiche existante #'+existingRepair.id+' →</button>';
+    }else{
+      html+='<button class="btn btn-p btn-s" onclick="createRepairFromSignalement(\''+f.id+'\')">🛠️ Créer fiche réparation</button>';
+    }
+    if(driver&&driver.phone){
+      var tel=driver.phone.replace(/\s/g,'');
+      html+='<a href="tel:'+tel+'" class="btn btn-o btn-s" style="text-decoration:none">📞 Appeler '+escapeHtml(driver.name.split(' ')[0])+'</a>';
+    }
+    html+='</div>';
+  }
   html+='</div>';
   return html;
 }
@@ -1209,6 +1322,354 @@ function renderMecaFrais(){var truckSel=document.getElementById('mecaFraisTruck'
 
 function renderMecaObs(search){var s=(search||'').toLowerCase();var list=(db.dayReports||[]).filter(function(f){var v=String(f.voyants||'').split('|').filter(Boolean);var a=String(f.anomalies||'').split('|').filter(Boolean);var n=String(f.notes||'').trim();var hasContent=v.length>0||a.length>0||n.length>0;if(!hasContent)return false;if(!s)return true;return (f.driverName||'').toLowerCase().includes(s)||n.toLowerCase().includes(s);}).sort(function(a,b){return new Date(b.date||0)-new Date(a.date||0);});
   document.getElementById('mecaObsTableBody').innerHTML=list.length?list.map(function(f){return renderSignalementHTML(f,false);}).join(''):'<div class="empty"><div class="empty-i">📝</div><div class="empty-t">Aucun signalement</div></div>';}
+
+// ═══════════════════════════════════════════════════════════════
+// 🛠️ FICHES DE RÉPARATION — v10.39
+// ═══════════════════════════════════════════════════════════════
+var _currentRepair=null;var _currentRepairFilter='open';var _currentGRepairFilter='open';
+
+const REPAIR_STATUSES={
+  a_diagnostiquer:{label:'À diagnostiquer',ico:'🟡'},
+  en_cours:{label:'En cours',ico:'🔵'},
+  attente_piece:{label:'Attente pièce',ico:'🟣'},
+  terminee:{label:'Terminée',ico:'✅'}
+};
+
+// ── Déduction du camion depuis le chauffeur ──
+function guessTruckFromDriverSignalement(driverId,dateISO){
+  if(!driverId)return null;
+  var dateStr=(dateISO||'').split('T')[0];
+  // 1) Chercher dans les commandes du jour avec ce chauffeur
+  var todayOrders=db.orders.filter(function(o){
+    if(o.date!==dateStr)return false;
+    var drivers=String(o.driverId||'').split(/[|,]/).map(function(x){return x.trim();});
+    return drivers.indexOf(String(driverId))!==-1;
+  });
+  // Récupérer les camions uniques
+  var trucks={};
+  todayOrders.forEach(function(o){
+    String(o.truckId||'').split(/[|,]/).forEach(function(t){var tt=t.trim();if(tt)trucks[tt]=true;});
+  });
+  var keys=Object.keys(trucks);
+  // Si un seul → retour direct (déduction certaine)
+  if(keys.length===1)return keys[0];
+  // Si plusieurs ou aucun → null (le mécano devra choisir)
+  return null;
+}
+
+// ── Création depuis signalement ──
+function createRepairFromSignalement(ficheId){
+  var f=(db.dayReports||[]).find(function(x){return String(x.id)===String(ficheId);});
+  if(!f){showToast('⚠️ Signalement introuvable','error');return;}
+  // Pré-remplir l'état
+  var guessedTruck=guessTruckFromDriverSignalement(f.driverId,f.date);
+  _currentRepair={
+    id:null,
+    truckId:guessedTruck||'',
+    dateConstat:(f.date||'').split('T')[0]||new Date().toISOString().split('T')[0],
+    dateDebut:'',
+    dateFin:'',
+    sourceDriverId:String(f.driverId||''),
+    sourceFicheId:String(f.id||''),
+    voyants:f.voyants||'',
+    anomalies:f.anomalies||'',
+    notesChauffeur:f.notes||'',
+    diagnostic:'',
+    actions:'',
+    pieces:'',
+    cout:0,
+    status:'a_diagnostiquer',
+    priority:(String(f.voyants||'').split('|').filter(Boolean).length>0)?'haute':'normale'
+  };
+  openRepairModalUI();
+  if(!guessedTruck){
+    showToast('💡 Choisissez le camion concerné (impossible à déduire automatiquement)','warning',5000);
+  }
+}
+
+// ── Ouverture modal (création ou édition) ──
+function openRepairModal(repairId){
+  if(repairId){
+    var r=(db.repairs||[]).find(function(x){return String(x.id)===String(repairId);});
+    if(!r){showToast('⚠️ Fiche introuvable','error');return;}
+    _currentRepair=Object.assign({},r);
+  }else{
+    _currentRepair={
+      id:null,truckId:'',dateConstat:new Date().toISOString().split('T')[0],
+      dateDebut:'',dateFin:'',sourceDriverId:'',sourceFicheId:'',
+      voyants:'',anomalies:'',notesChauffeur:'',
+      diagnostic:'',actions:'',pieces:'',cout:0,
+      status:'a_diagnostiquer',priority:'normale'
+    };
+  }
+  openRepairModalUI();
+}
+
+function openRepairModalUI(){
+  var r=_currentRepair;
+  // Titre
+  document.getElementById('repairModalTitle').textContent=r.id?('🛠️ Fiche #'+r.id):'🛠️ Nouvelle fiche de réparation';
+  // Select camions
+  var sel=document.getElementById('rep-truck');
+  sel.innerHTML='<option value="">— Choisir un camion —</option>'+db.trucks.map(function(t){return '<option value="'+t.id+'"'+(String(t.id)===String(r.truckId)?' selected':'')+'>'+escapeHtml(t.plate)+' — '+escapeHtml(t.type||'')+'</option>';}).join('');
+  document.getElementById('rep-priority').value=r.priority||'normale';
+  document.getElementById('rep-date-constat').value=r.dateConstat||'';
+  document.getElementById('rep-date-debut').value=r.dateDebut||'';
+  document.getElementById('rep-date-fin').value=r.dateFin||'';
+  document.getElementById('rep-diagnostic').value=r.diagnostic||'';
+  document.getElementById('rep-actions').value=r.actions||'';
+  document.getElementById('rep-pieces').value=r.pieces||'';
+  document.getElementById('rep-cout').value=r.cout||'';
+  // Source summary
+  var src=document.getElementById('rep-source-summary');
+  var v=String(r.voyants||'').split('|').filter(Boolean);
+  var a=String(r.anomalies||'').split('|').filter(Boolean);
+  var n=String(r.notesChauffeur||'').trim();
+  if(v.length===0&&a.length===0&&!n){
+    src.innerHTML='<span style="color:var(--t4);font-style:italic">Aucun signalement source — fiche créée manuellement</span>';
+  }else{
+    var driver=db.drivers.find(function(d){return String(d.id)===String(r.sourceDriverId);});
+    var html=driver?'<div style="font-weight:700;color:var(--t2);margin-bottom:4px">👤 Signalé par '+escapeHtml(driver.name)+'</div>':'';
+    if(v.length>0){html+='<div style="margin-bottom:4px"><b style="color:var(--er)">🚨 Voyants :</b> ';html+=v.map(function(vid){var vo=VOYANTS_LIST.find(function(x){return x.id===vid;});return vo?(vo.ico+' '+vo.label):vid;}).join(' · ');html+='</div>';}
+    if(a.length>0){html+='<div style="margin-bottom:4px"><b style="color:#92400E">🔍 Anomalies :</b> ';html+=a.map(function(aid){var an=ANOMALIES_LIST.find(function(x){return x.id===aid;});return an?(an.ico+' '+an.label):aid;}).join(' · ');html+='</div>';}
+    if(n)html+='<div style="font-style:italic;color:var(--t2)">💬 '+escapeHtml(n)+'</div>';
+    src.innerHTML=html;
+  }
+  // Stepper
+  setRepairStatusUI(r.status||'a_diagnostiquer');
+  // Bouton supprimer si édition
+  document.getElementById('repDeleteBtn').style.display=r.id?'':'none';
+  // Frais liés
+  var linkedExp=(db.expenses||[]).filter(function(e){return String(e.repairId||e.repair_id||'')===String(r.id||'');});
+  var linkedBox=document.getElementById('rep-linked-expenses');
+  if(linkedExp.length>0&&r.id){
+    var totalLinked=linkedExp.reduce(function(s,e){return s+(parseFloat(e.amount)||0);},0);
+    linkedBox.style.display='';
+    linkedBox.innerHTML='<b style="color:var(--gn)">💰 '+linkedExp.length+' frais véhicule lié(s) à cette fiche</b><br>Total : <b>'+fmt(totalLinked)+'</b>';
+  }else{
+    linkedBox.style.display='none';
+  }
+  openModal('repairModal');
+}
+
+function setRepairStatus(status){
+  if(!_currentRepair)return;
+  _currentRepair.status=status;
+  // Auto-fill date début si passage en cours et vide
+  if(status==='en_cours'&&!document.getElementById('rep-date-debut').value){
+    document.getElementById('rep-date-debut').value=new Date().toISOString().split('T')[0];
+  }
+  // Auto-fill date fin si passage en terminée et vide
+  if(status==='terminee'&&!document.getElementById('rep-date-fin').value){
+    document.getElementById('rep-date-fin').value=new Date().toISOString().split('T')[0];
+  }
+  setRepairStatusUI(status);
+}
+
+function setRepairStatusUI(status){
+  document.querySelectorAll('.repair-step').forEach(function(btn){
+    btn.classList.remove('active','a_diagnostiquer','en_cours','attente_piece','terminee');
+    if(btn.dataset.status===status){btn.classList.add('active',status);}
+  });
+}
+
+async function saveRepair(){
+  if(!_currentRepair)return;
+  var truckId=document.getElementById('rep-truck').value;
+  if(!truckId){showToast('⚠️ Sélectionnez un camion','error');return;}
+  _currentRepair.truckId=truckId;
+  _currentRepair.priority=document.getElementById('rep-priority').value;
+  _currentRepair.dateConstat=document.getElementById('rep-date-constat').value;
+  _currentRepair.dateDebut=document.getElementById('rep-date-debut').value;
+  _currentRepair.dateFin=document.getElementById('rep-date-fin').value;
+  _currentRepair.diagnostic=document.getElementById('rep-diagnostic').value.trim();
+  _currentRepair.actions=document.getElementById('rep-actions').value.trim();
+  _currentRepair.pieces=document.getElementById('rep-pieces').value.trim();
+  _currentRepair.cout=parseFloat(document.getElementById('rep-cout').value)||0;
+  
+  showLoader();
+  var isNew=!_currentRepair.id;
+  if(isNew){
+    var newId=uid();
+    _currentRepair.id=newId;
+    db.repairs.unshift(Object.assign({},_currentRepair));
+    await syncSheets('newRepair',{
+      id:newId,
+      camion_id:_currentRepair.truckId,
+      date_constat:_currentRepair.dateConstat,
+      date_debut:_currentRepair.dateDebut,
+      date_fin:_currentRepair.dateFin,
+      source_chauffeur_id:_currentRepair.sourceDriverId||'',
+      voyants:_currentRepair.voyants||'',
+      anomalies:_currentRepair.anomalies||'',
+      notes_chauffeur:_currentRepair.notesChauffeur||'',
+      diagnostic:_currentRepair.diagnostic,
+      actions:_currentRepair.actions,
+      pieces:_currentRepair.pieces,
+      cout:_currentRepair.cout,
+      statut:_currentRepair.status,
+      priorite:_currentRepair.priority
+    });
+    addAudit('Fiche réparation créée','Camion '+(db.trucks.find(function(t){return String(t.id)===String(truckId);})||{plate:truckId}).plate);
+  }else{
+    var idx=db.repairs.findIndex(function(r){return String(r.id)===String(_currentRepair.id);});
+    if(idx>=0)db.repairs[idx]=Object.assign({},_currentRepair);
+    await syncSheets('updateRepair',{
+      id:_currentRepair.id,
+      camion_id:_currentRepair.truckId,
+      date_constat:_currentRepair.dateConstat,
+      date_debut:_currentRepair.dateDebut,
+      date_fin:_currentRepair.dateFin,
+      diagnostic:_currentRepair.diagnostic,
+      actions:_currentRepair.actions,
+      pieces:_currentRepair.pieces,
+      cout:_currentRepair.cout,
+      statut:_currentRepair.status,
+      priorite:_currentRepair.priority
+    });
+    addAudit('Fiche réparation modifiée','Fiche #'+_currentRepair.id);
+  }
+  hideLoader();
+  closeModal('repairModal');
+  showToast('✅ Fiche enregistrée','success',3500);
+  if(state.currentPage==='meca-repairs')renderMecaRepairs();
+  if(state.currentPage==='reparations')renderRepairsGerant();
+  if(state.currentPage==='meca-dashboard')renderMecaDashboard();
+  if(state.currentPage==='meca-obs')renderMecaObs();
+}
+
+async function deleteRepair(){
+  if(!_currentRepair||!_currentRepair.id)return;
+  var ok=await showConfirm('Supprimer la fiche','Cette action est irréversible. Les frais liés ne seront pas supprimés.','🗑️','Supprimer');
+  if(!ok)return;
+  var rid=_currentRepair.id;
+  db.repairs=db.repairs.filter(function(r){return String(r.id)!==String(rid);});
+  deleteFromSheets('deleteRepair',rid);
+  addAudit('Fiche réparation supprimée','#'+rid);
+  closeModal('repairModal');
+  showToast('🗑️ Fiche supprimée','error',3000);
+  if(state.currentPage==='meca-repairs')renderMecaRepairs();
+  if(state.currentPage==='reparations')renderRepairsGerant();
+}
+
+// ── Ouvrir modal frais pré-remplie depuis fiche réparation ──
+function openExpenseFromRepair(){
+  if(!_currentRepair||!_currentRepair.truckId){showToast('⚠️ Choisissez d\'abord un camion','warning');return;}
+  if(!_currentRepair.id){showToast('💡 Enregistrez d\'abord la fiche avant de saisir un frais','warning',4000);return;}
+  // Sauvegarder le contexte pour pré-remplissage de la modal frais
+  window._pendingRepairLink={
+    repairId:_currentRepair.id,
+    truckId:_currentRepair.truckId,
+    desc:'Réparation #'+_currentRepair.id+(_currentRepair.diagnostic?' — '+_currentRepair.diagnostic.substring(0,80):'')
+  };
+  closeModal('repairModal');
+  // Réouvrir la fiche après sauvegarde frais
+  window._afterExpenseReopenRepair=_currentRepair.id;
+  setTimeout(function(){openExpenseModal();},200);
+}
+
+// ── Carte de fiche réparation ──
+function renderRepairCard(r,readonly){
+  var truck=db.trucks.find(function(t){return String(t.id)===String(r.truckId);});
+  var done=r.status==='terminee';
+  var statusInfo=REPAIR_STATUSES[r.status]||REPAIR_STATUSES.a_diagnostiquer;
+  var v=String(r.voyants||'').split('|').filter(Boolean);
+  var a=String(r.anomalies||'').split('|').filter(Boolean);
+  var html='<div class="repair-card priority-'+(r.priority||'normale')+(done?' repair-done':'')+'" '+(readonly?'':'onclick="openRepairModal(\''+r.id+'\')"')+'>';
+  html+='<div class="repair-head"><div style="min-width:0;flex:1">';
+  html+='<div class="repair-title">🚛 '+(truck?escapeHtml(truck.plate):'(camion inconnu)')+' <span class="repair-priority p-'+(r.priority||'normale')+'">'+(r.priority==='haute'?'🔴 URGENT':(r.priority==='faible'?'🟢 FAIBLE':'🟡 NORMAL'))+'</span></div>';
+  html+='<div class="repair-meta">Fiche #'+r.id+' · Constat '+fmtDate(r.dateConstat)+(r.dateFin?' · Terminée '+fmtDate(r.dateFin):'')+'</div>';
+  html+='</div><span class="repair-status s-'+r.status+'">'+statusInfo.ico+' '+statusInfo.label+'</span></div>';
+  if(v.length>0||a.length>0){
+    html+='<div class="repair-tags">';
+    v.forEach(function(vid){var vo=VOYANTS_LIST.find(function(x){return x.id===vid;});if(vo)html+='<span class="repair-tag tag-voyant">'+vo.ico+' '+escapeHtml(vo.label)+'</span>';});
+    a.forEach(function(aid){var an=ANOMALIES_LIST.find(function(x){return x.id===aid;});if(an)html+='<span class="repair-tag tag-anomalie">'+an.ico+' '+escapeHtml(an.label)+'</span>';});
+    html+='</div>';
+  }
+  if(r.diagnostic)html+='<div style="margin-top:8px;font-size:.74rem;color:var(--t2);line-height:1.4"><b>Diagnostic :</b> '+escapeHtml(r.diagnostic.substring(0,150))+(r.diagnostic.length>150?'…':'')+'</div>';
+  html+='<div class="repair-summary">';
+  if(r.cout>0)html+='<span>💰 <b>'+fmt(r.cout)+'</b></span>';
+  if(r.dateDebut&&r.dateFin){var d1=new Date(r.dateDebut);var d2=new Date(r.dateFin);var days=Math.round((d2-d1)/86400000);html+='<span>⏱️ '+days+' j</span>';}
+  else if(r.dateDebut){var d1b=new Date(r.dateDebut);var today=new Date();var elapsed=Math.round((today-d1b)/86400000);html+='<span>⏱️ '+elapsed+' j en cours</span>';}
+  html+='</div></div>';
+  return html;
+}
+
+// ── Page mécano ──
+function renderMecaRepairs(){
+  var repairs=db.repairs||[];
+  // Stats
+  document.getElementById('repair-stat-a-diag').textContent=repairs.filter(function(r){return r.status==='a_diagnostiquer';}).length;
+  document.getElementById('repair-stat-en-cours').textContent=repairs.filter(function(r){return r.status==='en_cours';}).length;
+  document.getElementById('repair-stat-attente').textContent=repairs.filter(function(r){return r.status==='attente_piece';}).length;
+  var now=new Date();
+  var doneMonth=repairs.filter(function(r){if(r.status!=='terminee'||!r.dateFin)return false;var d=new Date(r.dateFin);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
+  document.getElementById('repair-stat-done').textContent=doneMonth.length;
+  // Liste filtrée
+  var filtered=repairs;
+  if(_currentRepairFilter==='open')filtered=repairs.filter(function(r){return r.status!=='terminee';});
+  else if(_currentRepairFilter==='terminee')filtered=repairs.filter(function(r){return r.status==='terminee';});
+  // Tri : priorité haute d'abord, puis date constat décroissante
+  var priOrder={haute:0,normale:1,faible:2};
+  filtered.sort(function(a,b){var pa=priOrder[a.priority]||1;var pb=priOrder[b.priority]||1;if(pa!==pb)return pa-pb;return (new Date(b.dateConstat||0))-(new Date(a.dateConstat||0));});
+  var list=document.getElementById('repairsList');
+  if(filtered.length===0){list.innerHTML='<div class="empty"><div class="empty-i">✅</div><div class="empty-t">Aucune fiche</div></div>';}
+  else{list.innerHTML=filtered.map(function(r){return renderRepairCard(r,false);}).join('');}
+}
+
+function filterRepairs(filter,btn){
+  _currentRepairFilter=filter;
+  document.querySelectorAll('#page-meca-repairs .tab').forEach(function(t){t.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  renderMecaRepairs();
+}
+
+// ── Page gérant ──
+function renderRepairsGerant(){
+  var repairs=db.repairs||[];
+  var open=repairs.filter(function(r){return r.status!=='terminee';});
+  document.getElementById('grepair-stat-open').textContent=open.length;
+  // Durée moyenne (sur fiches terminées)
+  var done=repairs.filter(function(r){return r.status==='terminee'&&r.dateDebut&&r.dateFin;});
+  if(done.length>0){
+    var totalDays=done.reduce(function(s,r){var d1=new Date(r.dateDebut);var d2=new Date(r.dateFin);return s+Math.max(0,Math.round((d2-d1)/86400000));},0);
+    document.getElementById('grepair-stat-avg').textContent=(totalDays/done.length).toFixed(1);
+  }else{
+    document.getElementById('grepair-stat-avg').textContent='—';
+  }
+  // Coût total mois (depuis frais liés)
+  var now=new Date();
+  var monthExpRep=(db.expenses||[]).filter(function(e){if(!e.repairId&&!e.repair_id)return false;var d=new Date(e.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
+  var totalCost=monthExpRep.reduce(function(s,e){return s+(parseFloat(e.amount)||0);},0);
+  // Si pas de frais liés trouvés, on prend le champ cout direct des fiches terminées ce mois
+  if(totalCost===0){
+    var doneMonth=repairs.filter(function(r){if(r.status!=='terminee'||!r.dateFin)return false;var d=new Date(r.dateFin);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
+    totalCost=doneMonth.reduce(function(s,r){return s+(parseFloat(r.cout)||0);},0);
+  }
+  document.getElementById('grepair-stat-cost').textContent=totalCost>0?fmt(totalCost):'—';
+  // Camion le plus sollicité
+  var truckCount={};
+  repairs.forEach(function(r){if(r.truckId)truckCount[r.truckId]=(truckCount[r.truckId]||0)+1;});
+  var topTruck=null;var topCount=0;Object.keys(truckCount).forEach(function(t){if(truckCount[t]>topCount){topCount=truckCount[t];topTruck=t;}});
+  if(topTruck){var tt=db.trucks.find(function(t){return String(t.id)===String(topTruck);});document.getElementById('grepair-stat-truck').textContent=tt?tt.plate:'—';}
+  else document.getElementById('grepair-stat-truck').textContent='—';
+  // Liste filtrée
+  var filtered=repairs;
+  if(_currentGRepairFilter==='open')filtered=open;
+  else if(_currentGRepairFilter==='terminee')filtered=repairs.filter(function(r){return r.status==='terminee';});
+  var priOrder={haute:0,normale:1,faible:2};
+  filtered.sort(function(a,b){var pa=priOrder[a.priority]||1;var pb=priOrder[b.priority]||1;if(pa!==pb)return pa-pb;return (new Date(b.dateConstat||0))-(new Date(a.dateConstat||0));});
+  var list=document.getElementById('gRepairsList');
+  if(filtered.length===0){list.innerHTML='<div class="empty"><div class="empty-i">🛠️</div><div class="empty-t">Aucune fiche de réparation</div></div>';}
+  else{list.innerHTML=filtered.map(function(r){return renderRepairCard(r,true);}).join('');}
+}
+
+function filterGRepairs(filter,btn){
+  _currentGRepairFilter=filter;
+  document.querySelectorAll('#page-reparations .tab').forEach(function(t){t.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  renderRepairsGerant();
+}
 
 function openTransportModal(oid,tid){const o=db.orders.find(x=>String(x.id)===String(oid));if(!o)return;const t=o.transports.find(x=>String(x.id)===String(tid));if(!t||t.done)return;state.currentOrder=o;state.currentTransport=t;state.paperPhotos=[];const isJournee=o.type==='journee';document.getElementById('transportModalTitle').textContent=isJournee?'Validation journée':'Transport #'+tid;document.getElementById('transportModalInfo').innerHTML='<div style="display:flex;flex-wrap:wrap;gap:5px"><span class="oc-m">🏢 '+clientName(o.clientId)+'</span><span class="oc-m">📍 '+o.address+'</span>'+(o.materialId?'<span class="oc-m">⚙️ '+materialName(o.materialId)+'</span>':'')+'<span class="oc-m">'+(isJournee?'📅 Prestation à la journée':'')+'</span></div>';document.getElementById('tm-tonnage-group').style.display=isJournee?'none':'';document.getElementById('tm-tonnage').value='';document.getElementById('tm-receiver-name').value='';document.getElementById('tm-receiver-func').value='';document.getElementById('tm-photo-preview').innerHTML='';document.getElementById('tm-photo-count').textContent='';document.getElementById('tm-photo-input').value='';initSigPad();openModal('transportModal');}
 
@@ -1943,6 +2404,38 @@ el.innerHTML=h;}
   <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Pondération gazole (%)</label><input type="number" class="fi" id="co-cnr-weight" placeholder="19.2" step="0.1" value="19.2" oninput="updateCnrPreview()" style="background:var(--sf2);color:var(--t2)"><div style="font-size:.6rem;color:var(--t4);margin-top:2px">Valeur CNR 2026 Régional EA — <a href="https://www.cnr.fr/espace-standard/4/ponderations" target="_blank" rel="noopener" style="color:var(--bl);text-decoration:underline">voir les pondérations officielles →</a></div></div><div class="fg"><label class="fl">Taux TVA (%)</label><input type="number" class="fi" id="co-tva" placeholder="20" step="0.1" value="20"></div></div>
   <div id="cnr-preview" style="margin-top:10px;padding:10px 12px;background:var(--bg);border-radius:var(--r);font-size:.78rem;display:none"></div>
   <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('companyModal')">Annuler</button><button class="btn btn-p btn-w" onclick="saveCompanyInfo()">💾 Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="repairModal"><div class="modal" style="max-width:640px"><div class="modal-bar"></div>
+  <div class="modal-title" id="repairModalTitle">🛠️ Fiche de réparation</div>
+  
+  <!-- STEPPER STATUTS -->
+  <div class="repair-stepper" id="repairStepper">
+    <button type="button" class="repair-step" data-status="a_diagnostiquer" onclick="setRepairStatus('a_diagnostiquer')">🟡 Diagnostic</button>
+    <button type="button" class="repair-step" data-status="en_cours" onclick="setRepairStatus('en_cours')">🔵 En cours</button>
+    <button type="button" class="repair-step" data-status="attente_piece" onclick="setRepairStatus('attente_piece')">🟣 Attente pièce</button>
+    <button type="button" class="repair-step" data-status="terminee" onclick="setRepairStatus('terminee')">✅ Terminée</button>
+  </div>
+  
+  <div class="fg2"><div class="fg"><label class="fl">🚛 Camion *</label><select class="fs" id="rep-truck"></select></div><div class="fg"><label class="fl">⚠️ Priorité</label><select class="fs" id="rep-priority"><option value="faible">🟢 Faible</option><option value="normale" selected>🟡 Normale</option><option value="haute">🔴 Haute / Urgent</option></select></div></div>
+  
+  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">📅 Date constat</label><input type="date" class="fi" id="rep-date-constat"></div><div class="fg"><label class="fl">📅 Date début intervention</label><input type="date" class="fi" id="rep-date-debut"></div></div>
+  
+  <div class="fg" style="margin-top:10px"><label class="fl">📝 Signalement initial (du chauffeur)</label>
+    <div id="rep-source-summary" style="background:var(--sf2);padding:10px;border-radius:8px;font-size:.74rem;color:var(--t3);min-height:30px;line-height:1.5">—</div>
+  </div>
+  
+  <div class="fg" style="margin-top:10px"><label class="fl" style="display:flex;align-items:center;justify-content:space-between"><span>🔍 Diagnostic mécanicien</span><button type="button" class="voice-mic-btn" id="repDiagVoiceBtn" onclick="toggleVoiceDictation('rep-diagnostic','repDiagVoiceBtn','repDiagVoiceStatus')"><span class="voice-mic-ico">🎤</span><span class="voice-mic-label">Dicter</span></button></label><textarea class="ft" id="rep-diagnostic" placeholder="Décrivez le diagnostic après inspection..." style="min-height:60px"></textarea><div class="voice-status" id="repDiagVoiceStatus"></div></div>
+  
+  <div class="fg" style="margin-top:10px"><label class="fl" style="display:flex;align-items:center;justify-content:space-between"><span>🔧 Actions effectuées</span><button type="button" class="voice-mic-btn" id="repActionsVoiceBtn" onclick="toggleVoiceDictation('rep-actions','repActionsVoiceBtn','repActionsVoiceStatus')"><span class="voice-mic-ico">🎤</span><span class="voice-mic-label">Dicter</span></button></label><textarea class="ft" id="rep-actions" placeholder="Vidange, remplacement, réparation..." style="min-height:60px"></textarea><div class="voice-status" id="repActionsVoiceStatus"></div></div>
+  
+  <div class="fg" style="margin-top:10px"><label class="fl">📦 Pièces commandées / utilisées</label><textarea class="ft" id="rep-pieces" placeholder="Référence des pièces, fournisseur..." style="min-height:50px"></textarea></div>
+  
+  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">📅 Date fin (terminée)</label><input type="date" class="fi" id="rep-date-fin"></div><div class="fg"><label class="fl">💰 Coût total (€)</label><div style="display:flex;gap:6px"><input type="number" class="fi" id="rep-cout" placeholder="0.00" step="0.01" style="flex:1"><button type="button" class="btn btn-o btn-s" onclick="openExpenseFromRepair()" title="Saisir un frais véhicule lié">💶 Frais</button></div></div></div>
+  
+  <div id="rep-linked-expenses" style="margin-top:10px;display:none;padding:10px;background:rgba(22,163,74,.08);border-left:3px solid var(--gn);border-radius:6px;font-size:.72rem"></div>
+  
+  <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('repairModal')">Annuler</button><button class="btn btn-x btn-w" id="repDeleteBtn" onclick="deleteRepair()" style="display:none">🗑️</button><button class="btn btn-p btn-w btn-l" onclick="saveRepair()">💾 Enregistrer</button></div>
 </div></div>
 
 <div class="mo" id="emailLdvModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title">📧 Envoyer la LDV par email</div>
