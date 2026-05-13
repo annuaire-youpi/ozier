@@ -400,6 +400,11 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
 .voyant-btn.active .voyant-label{color:var(--er)}
 @keyframes voyantBlink{0%,100%{opacity:1}50%{opacity:.55}}
 
+/* Boutons météo (similaires aux voyants mais accent bleu/info) */
+.meteo-btn{background:var(--sf2);border:2px solid var(--bd);border-radius:10px;padding:10px 8px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;font-family:inherit;font-size:.72rem;font-weight:700;color:var(--t3);text-align:center;line-height:1.2;letter-spacing:.01em}
+.meteo-btn:active{transform:scale(.96)}
+.meteo-btn.active{background:rgba(59,130,246,.12);border-color:var(--bl);color:var(--bl);box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+
 .anomalies-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
 .anomalie-btn{background:var(--sf2);border:1.5px solid var(--bd);border-radius:8px;padding:10px 8px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;font-family:inherit;display:flex;align-items:center;gap:8px;font-size:.74rem;font-weight:700;color:var(--t2);text-align:left;min-height:44px}
 .anomalie-btn:active{transform:scale(.97)}
@@ -502,7 +507,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
       <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
     </div>
-    <span class="ver-tag">v10.47 — 2026</span>
+    <span class="ver-tag">v10.49 — 2026</span>
   </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
@@ -698,8 +703,26 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
           <div id="fuelConsoDisplay" style="margin-top:10px;padding:10px;background:var(--sf2);border-radius:8px;font-size:.78rem;color:var(--t3);text-align:center"><span style="font-weight:700">Consommation :</span> <span id="fuelConsoValue" style="font-weight:900;color:var(--rd)">—</span></div>
         </div></div>
 
-        <!-- SECTION 3 : VOYANTS TABLEAU DE BORD -->
-        <div class="card" style="margin-bottom:12px"><div class="card-h"><div class="card-t">🚨 3. Voyants allumés au tableau de bord</div></div><div class="card-b">
+        <!-- SECTION 3 : SPÉCIFIQUE COMMANDE JOURNÉE (heures + météo) -->
+        <!-- Affichée automatiquement si le chauffeur a une commande "journée" en cours -->
+        <div class="card" id="ficheJourneeBlock" style="margin-bottom:12px;display:none"><div class="card-h"><div class="card-t">📅 3. Spécifique mission à la journée</div></div><div class="card-b">
+          <div id="ficheJourneeInfo" style="margin-bottom:10px;padding:8px 10px;background:rgba(22,163,74,.08);border-left:3px solid var(--gn);border-radius:6px;font-size:.72rem;color:var(--gn);font-weight:700"></div>
+          <div class="fg2"><div class="fg"><label class="fl">🕐 Heure début</label><input type="time" class="fi" id="fiche-h-start" value="06:00"></div><div class="fg"><label class="fl">🕔 Heure fin</label><input type="time" class="fi" id="fiche-h-end" value="17:00"></div></div>
+          <div class="fg" style="margin-top:10px"><label class="fl">🌦️ Météo du jour (optionnel)</label>
+            <div id="fiche-meteo-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px;margin-top:6px">
+              <button type="button" class="meteo-btn" data-meteo="ensoleille" onclick="toggleMeteo('ensoleille')">☀️ Ensoleillé</button>
+              <button type="button" class="meteo-btn" data-meteo="nuageux" onclick="toggleMeteo('nuageux')">⛅ Nuageux</button>
+              <button type="button" class="meteo-btn" data-meteo="pluie" onclick="toggleMeteo('pluie')">🌧️ Pluie</button>
+              <button type="button" class="meteo-btn" data-meteo="orage" onclick="toggleMeteo('orage')">⛈️ Orage</button>
+              <button type="button" class="meteo-btn" data-meteo="vent" onclick="toggleMeteo('vent')">💨 Vent fort</button>
+              <button type="button" class="meteo-btn" data-meteo="boue" onclick="toggleMeteo('boue')">🪣 Chantier boueux</button>
+            </div>
+            <input type="hidden" id="fiche-meteo" value="">
+          </div>
+        </div></div>
+
+        <!-- SECTION 4 : VOYANTS TABLEAU DE BORD -->
+        <div class="card" style="margin-bottom:12px"><div class="card-h"><div class="card-t">🚨 4. Voyants allumés au tableau de bord</div></div><div class="card-b">
           <div style="font-size:.72rem;color:var(--t3);margin-bottom:10px;line-height:1.4">Touchez chaque voyant qui s'est allumé aujourd'hui (même brièvement)</div>
           <div class="voyants-grid" id="voyantsGrid"></div>
           <div id="voyantsSelected" style="margin-top:10px;padding:10px;background:rgba(220,38,38,.06);border-left:3px solid var(--er);border-radius:6px;font-size:.74rem;display:none"><b style="color:var(--er)">⚠️ Voyants signalés :</b> <span id="voyantsSelectedList"></span></div>
@@ -938,9 +961,9 @@ if(data.camions?.length)db.trucks=data.camions.map(t=>({id:sid(t.id),plate:t.imm
 if(data.clients?.length)db.clients=data.clients.map(c=>({id:sid(c.id),company:c.entreprise||c.company||'',manager:c.gerant||c.manager||'',phone:normalizePhone(c.telephone||c.phone||''),email:c.email||'',chefWhatsapp:normalizePhone(c.chef_whatsapp||c.chefWhatsapp||''),chefEmail:c.chef_email||c.chefEmail||''}));
 if(data.commandes?.length)db.orders=data.commandes.map(o=>{const nbRaw=String(o.nb_estime||o.nbEstimated||'0');const nb=nbRaw.split(/[|,]/).reduce(function(s,v){return s+(parseInt(v)||0);},0);const done=parseInt(o.nb_fait||o.nbDone)||0;const oid=sid(o.id);const lt=(data.transports||[]).filter(t=>sid(t.commande_id)===oid);const transports=Array.from({length:nb},(_,i)=>{const transportId=i+1;var t=null;var hasValidNums=lt.some(function(x){var n=parseInt(x.transport_num||x.transportId);return!isNaN(n)&&n>0&&n<=1000;});if(hasValidNums){t=lt.find(function(x){var n=parseInt(x.transport_num||x.transportId);return!isNaN(n)&&n===transportId&&n<=1000;});}else{t=lt[i];}return t?{id:transportId,done:true,tonnage:(function(v){var n=parseFloat(String(v||'').replace(',','.'));return isNaN(n)?0:n;})(t.tonnage),receiver:t.receptionnaire||t.receiver,func:t.fonction||t.func,sig:'✓',ts:t.timestamp,paperPhotos:(function(p){if(!p)return [];return String(p).split('|').filter(Boolean).map(function(u){return {url:u,fileId:(u.match(/[-\w]{25,}/)||[''])[0]};});})(t.photo_papier_url||t.paperPhotos||t.photo_papier||'')}:{id:transportId,done:false,tonnage:null,receiver:null,func:null,sig:null,paperPhotos:[]};});return{id:oid,clientId:sid(o.client_id||o.clientId),address:o.adresse||o.address||'',date:cd(o.date_chantier||o.date),driverId:sid(o.chauffeur_id||o.driverId),truckId:sid(o.camion_id||o.truckId),type:o.type||'materiaux',materialId:o.materiau_id?sid(o.materiau_id):null,nbEstimated:nb,nbEstimatedRaw:nbRaw,nbDone:done,status:o.statut||o.status||'en_cours',invoiceSent:o.invoice_sent===true||o.invoice_sent==='true'||o.invoice_sent==='TRUE'||String(o.invoice_sent).toLowerCase()==='true',invoiceDate:o.invoice_date||o.invoiceDate||'',invoiceTo:o.invoice_to||o.invoiceTo||'',invoiceRef:o.invoice_ref||o.invoiceRef||'',paid:o.paid==='true'||o.paid===true||String(o.paid).toLowerCase()==='true',paidDate:o.paid_date||o.paidDate||'',chefWhatsapp:normalizePhone(o.chef_whatsapp||o.chefWhatsapp||''),chefEmail:o.chef_email||o.chefEmail||'',transports};});
 if(data.frais?.length)db.expenses=data.frais.map(f=>({id:sid(f.id),truckId:sid(f.camion_id||f.truckId),date:cd(f.date),type:f.type_frais||f.type||'',amount:parseFloat(f.montant||f.amount)||0,desc:f.description||f.desc||'',repairId:String(f.repair_id||f.repairId||'')}));
-if(data.fiches_jour?.length)db.dayReports=data.fiches_jour.map(f=>({id:String(f.id||''),driverId:String(f.chauffeur_id||f.driverId||''),driverName:f.chauffeur_nom||f.driverName||'',date:f.date||'',km:parseInt(f.kilometrage||f.km)||0,kmStart:parseInt(f.km_debut||f.kmStart)||0,fuelLiters:parseFloat(f.carburant_litres||f.fuelLiters)||0,fuelPrice:parseFloat(f.carburant_prix||f.fuelPrice)||0,voyants:f.voyants||'',anomalies:f.anomalies||'',notes:f.observations||f.notes||'',hasIssues:(function(){var vo=String(f.voyants||'').split('|').filter(Boolean);var an=String(f.anomalies||'').split('|').filter(Boolean);var n=String(f.observations||f.notes||'').trim();return vo.length>0||an.length>0||n.length>0;})()}));
+if(data.fiches_jour?.length)db.dayReports=data.fiches_jour.map(f=>({id:String(f.id||''),driverId:String(f.chauffeur_id||f.driverId||''),driverName:f.chauffeur_nom||f.driverName||'',date:f.date||'',km:parseInt(f.kilometrage||f.km)||0,kmStart:parseInt(f.km_debut||f.kmStart)||0,fuelLiters:parseFloat(f.carburant_litres||f.fuelLiters)||0,fuelPrice:parseFloat(f.carburant_prix||f.fuelPrice)||0,voyants:f.voyants||'',anomalies:f.anomalies||'',notes:f.observations||f.notes||'',heureDebut:cleanTimeString(f.heure_debut||f.heureDebut||''),heureFin:cleanTimeString(f.heure_fin||f.heureFin||''),meteo:f.meteo||'',hasIssues:(function(){var vo=String(f.voyants||'').split('|').filter(Boolean);var an=String(f.anomalies||'').split('|').filter(Boolean);var n=String(f.observations||f.notes||'').trim();return vo.length>0||an.length>0||n.length>0;})()}));
 if(data.reparations?.length)db.repairs=data.reparations.map(r=>({id:String(r.id||''),truckId:String(r.camion_id||r.truckId||''),dateConstat:cd(r.date_constat||r.dateConstat||''),dateDebut:cd(r.date_debut||r.dateDebut||''),dateFin:cd(r.date_fin||r.dateFin||''),sourceDriverId:String(r.source_chauffeur_id||r.sourceDriverId||''),voyants:r.voyants||'',anomalies:r.anomalies||'',notesChauffeur:r.notes_chauffeur||r.notesChauffeur||'',diagnostic:r.diagnostic||'',actions:r.actions||'',pieces:r.pieces||'',cout:parseFloat(r.cout)||0,status:r.statut||r.status||'a_diagnostiquer',priority:r.priorite||r.priority||'normale',naReason:r.na_reason||r.naReason||''}));else if(!db.repairs)db.repairs=[];
-if(data.jours_commande?.length)db.dayBDLs=data.jours_commande.map(j=>({id:String(j.id||''),orderId:String(j.order_id||j.orderId||''),dayNum:parseInt(j.day_num||j.dayNum)||1,date:cd(j.date||''),chefNom:j.chef_nom||j.chefNom||'',chefSignature:j.chef_signature||j.chefSignature||'',heureDebut:j.heure_debut||j.heureDebut||'',heureFin:j.heure_fin||j.heureFin||'',description:j.description||'',photoUrl:j.photo_url||j.photoUrl||'',whatsappSent:j.whatsapp_sent===true||j.whatsapp_sent==='true'||j.whatsapp_sent==='TRUE',emailSent:j.email_sent===true||j.email_sent==='true'||j.email_sent==='TRUE',createdAt:j.created_at||j.createdAt||'',chauffeurId:String(j.chauffeur_id||j.chauffeurId||'')}));else if(!db.dayBDLs)db.dayBDLs=[];
+if(data.jours_commande?.length)db.dayBDLs=data.jours_commande.map(j=>({id:String(j.id||''),orderId:String(j.order_id||j.orderId||''),dayNum:parseInt(j.day_num||j.dayNum)||1,date:cd(j.date||''),chefNom:j.chef_nom||j.chefNom||'',chefSignature:j.chef_signature||j.chefSignature||'',heureDebut:cleanTimeString(j.heure_debut||j.heureDebut||''),heureFin:cleanTimeString(j.heure_fin||j.heureFin||''),description:j.description||'',photoUrl:j.photo_url||j.photoUrl||'',whatsappSent:j.whatsapp_sent===true||j.whatsapp_sent==='true'||j.whatsapp_sent==='TRUE',emailSent:j.email_sent===true||j.email_sent==='true'||j.email_sent==='TRUE',createdAt:j.created_at||j.createdAt||'',chauffeurId:String(j.chauffeur_id||j.chauffeurId||'')}));else if(!db.dayBDLs)db.dayBDLs=[];
 if(data.materiaux?.length)db.materials=data.materiaux.map(m=>({id:String(m.id),name:m.nom||m.name||'',unit:m.unite||m.unit||'tonne'}));
 if(data.tarifs_clients?.length)db.clientTariffs=data.tarifs_clients.map(t=>{var typeVal=String(t.type||'').trim();var matVal=String(t.materiau_id||'').trim();if(/^\d{8,}$/.test(typeVal)&&(matVal==='journee'||matVal==='materiaux'||matVal===''))[typeVal,matVal]=[matVal,typeVal];return{id:String(t.id),clientId:String(t.client_id||t.clientId),type:typeVal||'materiaux',materialId:matVal?String(matVal):null,price:parseFloat(t.prix_unitaire||t.price)||0};});
 if(data.expense_types?.length){db.expenseTypes=data.expense_types.map(t=>({id:String(t.id),label:String(t.label||t.id)}));}else{db.expenseTypes=[];}
@@ -1469,6 +1492,38 @@ function normalizePhone(raw){
   return s;
 }
 
+// 🕐 Nettoie une heure récupérée de Sheets — gère le cas où Sheets renvoie un datetime ISO
+// Cas typique : "08:00" saisi → Sheets stocke en datetime → on récupère "1899-12-30T07:00:00.000Z"
+// Solution : extraire HH:MM et corriger le fuseau UTC → local
+function cleanTimeString(raw){
+  if(!raw)return '';
+  var s=String(raw).trim();
+  if(!s)return '';
+  // Si déjà au format HH:MM ou HH:MM:SS
+  if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(s)){
+    var parts=s.split(':');
+    return ('0'+parts[0]).slice(-2)+':'+parts[1];
+  }
+  // Si format ISO datetime → extraire l'heure
+  // Cas Sheets fuseau Martinique : Sheets renvoie en UTC, on doit reconvertir local
+  if(/^\d{4}-\d{2}-\d{2}T/.test(s)){
+    try{
+      var d=new Date(s);
+      if(isNaN(d.getTime()))return '';
+      // Utiliser l'heure locale (le navigateur ajuste automatiquement)
+      var h=('0'+d.getHours()).slice(-2);
+      var m=('0'+d.getMinutes()).slice(-2);
+      return h+':'+m;
+    }catch(e){return '';}
+  }
+  // Tentative de parsing brut (ex: "8h00", "08h", etc)
+  var m=s.match(/(\d{1,2})[h:](\d{2})?/);
+  if(m){
+    return ('0'+m[1]).slice(-2)+':'+(m[2]||'00');
+  }
+  return s;
+}
+
 function renderPlanning(){var drafts=db.draftOrders||[];var ready=drafts.filter(isPlanLineReady);var incomplete=drafts.length-ready.length;var totalCA=ready.reduce(function(s,d){return s+planLineCA(d);},0);
   autoShowHelpIfFirstTime('planning');
   document.getElementById('plan-stat-total').textContent=drafts.length;document.getElementById('plan-stat-ready').textContent=ready.length;document.getElementById('plan-stat-incomplete').textContent=incomplete;document.getElementById('plan-stat-ca').textContent=totalCA>0?fmt(totalCA):'—';
@@ -1555,6 +1610,15 @@ function renderSignalementHTML(f,compact){var v=String(f.voyants||'').split('|')
   if(severity==='high')html+='<span style="background:var(--er);color:#fff;font-size:.6rem;font-weight:900;padding:2px 7px;border-radius:99px;white-space:nowrap;letter-spacing:.04em">🚨 URGENT</span>';
   else if(severity==='med')html+='<span style="background:var(--wa);color:#fff;font-size:.6rem;font-weight:900;padding:2px 7px;border-radius:99px;white-space:nowrap;letter-spacing:.04em">⚠️ À VOIR</span>';
   html+='</div>';
+  // Bloc temps de travail + météo si renseigné (uniquement pour missions journée)
+  if(f.heureDebut&&f.heureFin){
+    html+='<div style="margin-top:6px;font-size:.68rem;color:var(--t3);background:rgba(59,130,246,.06);padding:5px 9px;border-radius:6px;display:inline-block">🕐 '+f.heureDebut+' → '+f.heureFin+'</div>';
+  }
+  if(f.meteo){
+    var meteoLabels={ensoleille:'☀️ Ensoleillé',nuageux:'⛅ Nuageux',pluie:'🌧️ Pluie',orage:'⛈️ Orage',vent:'💨 Vent fort',boue:'🪣 Chantier boueux'};
+    var meteoTags=String(f.meteo).split('|').filter(Boolean).map(function(m){return meteoLabels[m]||m;}).join(' · ');
+    if(meteoTags)html+=' <div style="margin-top:4px;font-size:.68rem;color:var(--t3);background:rgba(245,158,11,.08);padding:5px 9px;border-radius:6px;display:inline-block;margin-left:4px">🌦️ '+escapeHtml(meteoTags)+'</div>';
+  }
   if(v.length>0){html+='<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px"><span style="font-size:.66rem;color:var(--er);font-weight:800;align-self:center;margin-right:4px">🚨 Voyants :</span>';v.forEach(function(vid){var vo=VOYANTS_LIST.find(function(x){return x.id===vid;});if(vo)html+='<span style="background:rgba(220,38,38,.15);color:var(--er);font-size:.66rem;font-weight:800;padding:3px 8px;border-radius:99px;border:1px solid rgba(220,38,38,.3)">'+vo.ico+' '+escapeHtml(vo.label)+'</span>';});html+='</div>';}
   if(a.length>0){html+='<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px"><span style="font-size:.66rem;color:#92400E;font-weight:800;align-self:center;margin-right:4px">🔍 Anomalies :</span>';a.forEach(function(aid){var an=ANOMALIES_LIST.find(function(x){return x.id===aid;});if(an)html+='<span style="background:rgba(245,158,11,.15);color:#92400E;font-size:.66rem;font-weight:700;padding:3px 8px;border-radius:99px;border:1px solid rgba(245,158,11,.3)">'+an.ico+' '+escapeHtml(an.label)+'</span>';});html+='</div>';}
   if(n)html+='<div style="margin-top:8px;padding:8px 10px;background:rgba(0,0,0,.04);border-radius:6px;font-size:.74rem;color:var(--t2);font-style:italic;line-height:1.4">💬 '+escapeHtml(n)+'</div>';
@@ -2667,7 +2731,7 @@ function renderDriverFiche(){
     }
   }
   
-  updateVoyantsSelected();updateKmDelta();updateFuelConso();
+  updateVoyantsSelected();updateKmDelta();updateFuelConso();updateFicheJourneeBlock();
 }
 
 function toggleVoyant(id){_ficheVoyants[id]=!_ficheVoyants[id];if(!_ficheVoyants[id])delete _ficheVoyants[id];var btn=document.querySelector('[data-voyant="'+id+'"]');if(btn)btn.classList.toggle('active',!!_ficheVoyants[id]);updateVoyantsSelected();}
@@ -2678,6 +2742,49 @@ function updateVoyantsSelected(){var keys=Object.keys(_ficheVoyants).filter(func
 function updateKmDelta(){var s=parseInt(document.getElementById('fiche-km-start').value)||0;var e=parseInt(document.getElementById('fiche-km').value)||0;var d=e-s;var el=document.getElementById('kmDeltaValue');if(!el)return;if(s>0&&e>0&&d>=0&&d<2000)el.textContent=d+' km';else if(s>0&&e>0&&d<0)el.textContent='⚠️ Km fin < Km début';else el.textContent='—';updateFuelConso();}
 
 function updateFuelConso(){var s=parseInt(document.getElementById('fiche-km-start').value)||0;var e=parseInt(document.getElementById('fiche-km').value)||0;var d=e-s;var l=parseFloat(document.getElementById('fiche-conso').value)||0;var el=document.getElementById('fuelConsoValue');if(!el)return;if(d>0&&l>0){var conso=(l/d)*100;el.textContent=conso.toFixed(1)+' L/100km';if(conso>50)el.style.color='var(--er)';else if(conso>40)el.style.color='var(--wa)';else el.style.color='var(--gn)';}else{el.textContent='—';el.style.color='var(--rd)';}}
+
+// 📅 Détecte si le chauffeur connecté a une commande "journée" en cours et affiche/masque la section
+function updateFicheJourneeBlock(){
+  var block=document.getElementById('ficheJourneeBlock');
+  if(!block)return;
+  var did=state.currentUser?state.currentUser.id:null;
+  if(!did){block.style.display='none';return;}
+  // Cherche les commandes journée en cours affectées à ce chauffeur
+  var myJourneeOrders=(db.orders||[]).filter(function(o){
+    if(o.type!=='journee'||o.status!=='en_cours')return false;
+    return String(o.driverId||'').split(/[|,]/).some(function(d){return d.trim()===String(did);});
+  });
+  if(myJourneeOrders.length===0){
+    block.style.display='none';
+    return;
+  }
+  block.style.display='';
+  // Info synthétique
+  var info=document.getElementById('ficheJourneeInfo');
+  if(info){
+    var txt='';
+    if(myJourneeOrders.length===1){
+      var o=myJourneeOrders[0];
+      var cn=clientName(o.clientId);
+      txt='💼 Mission journée en cours : <b>'+escapeHtml(cn)+'</b>';
+    }else{
+      txt='💼 <b>'+myJourneeOrders.length+' missions à la journée</b> en cours — renseignez vos horaires effectifs';
+    }
+    info.innerHTML=txt;
+  }
+}
+
+// 🌦️ Toggle météo (multi-select)
+var _ficheMeteo={};
+function toggleMeteo(id){
+  _ficheMeteo[id]=!_ficheMeteo[id];
+  if(!_ficheMeteo[id])delete _ficheMeteo[id];
+  var btn=document.querySelector('[data-meteo="'+id+'"]');
+  if(btn)btn.classList.toggle('active',!!_ficheMeteo[id]);
+  // Mettre à jour le hidden input
+  var keys=Object.keys(_ficheMeteo).filter(function(k){return _ficheMeteo[k];});
+  document.getElementById('fiche-meteo').value=keys.join('|');
+}
 
 function ficheRAS(){
   // Vide tous les voyants et anomalies
@@ -2702,6 +2809,13 @@ async function submitFiche(){
   var anomalies=Object.keys(_ficheAnomalies).filter(function(k){return _ficheAnomalies[k];});
   var hasIssues=voyants.length>0||anomalies.length>0||document.getElementById('fiche-notes').value.trim().length>0;
   
+  // Champs spécifiques mission journée — uniquement si la section est visible (= chauffeur a une commande journée en cours)
+  var journeeBlock=document.getElementById('ficheJourneeBlock');
+  var isJourneeMode=journeeBlock&&journeeBlock.style.display!=='none';
+  var heureDebut=isJourneeMode?document.getElementById('fiche-h-start').value||'':'';
+  var heureFin=isJourneeMode?document.getElementById('fiche-h-end').value||'':'';
+  var meteo=isJourneeMode?(document.getElementById('fiche-meteo').value||''):'';
+  
   showLoader();await new Promise(r=>setTimeout(r,400));
   const p={
     driverId:state.currentUser.id,
@@ -2714,21 +2828,28 @@ async function submitFiche(){
     voyants:voyants.join('|'),
     anomalies:anomalies.join('|'),
     notes:document.getElementById('fiche-notes').value.trim(),
+    heureDebut:heureDebut,
+    heureFin:heureFin,
+    meteo:meteo,
     hasIssues:hasIssues,
     date:new Date().toISOString()
   };
   syncSheets('endOfDay',p);
   addAudit('Fiche jour',state.currentUser.name+' — '+kmEnd+' km'+(hasIssues?' · '+(voyants.length+anomalies.length)+' signalement(s)':''));
   
-  // Ajouter à db.dayReports local pour le mécano (si jamais il est connecté en même temps en démo)
+  // Ajouter à db.dayReports local
   if(!db.dayReports)db.dayReports=[];
-  db.dayReports.unshift({id:'local-'+Date.now(),driverId:state.currentUser.id,driverName:state.currentUser.name,date:new Date().toISOString().split('T')[0],km:kmEnd,kmStart:kmStart,fuelLiters:p.fuelLiters,fuelPrice:p.fuelPrice,voyants:p.voyants,anomalies:p.anomalies,notes:p.notes,hasIssues:hasIssues});
+  db.dayReports.unshift({id:'local-'+Date.now(),driverId:state.currentUser.id,driverName:state.currentUser.name,date:new Date().toISOString().split('T')[0],km:kmEnd,kmStart:kmStart,fuelLiters:p.fuelLiters,fuelPrice:p.fuelPrice,voyants:p.voyants,anomalies:p.anomalies,notes:p.notes,heureDebut:heureDebut,heureFin:heureFin,meteo:meteo,hasIssues:hasIssues});
   
   hideLoader();
   
   // Reset
-  _ficheVoyants={};_ficheAnomalies={};
-  ['fiche-km-start','fiche-km','fiche-conso','fiche-fuel-price','fiche-notes'].forEach(f=>document.getElementById(f).value='');
+  _ficheVoyants={};_ficheAnomalies={};_ficheMeteo={};
+  ['fiche-km-start','fiche-km','fiche-conso','fiche-fuel-price','fiche-notes','fiche-meteo'].forEach(function(f){var el=document.getElementById(f);if(el)el.value='';});
+  // Reset heures aux valeurs par défaut + boutons météo
+  if(document.getElementById('fiche-h-start'))document.getElementById('fiche-h-start').value='06:00';
+  if(document.getElementById('fiche-h-end'))document.getElementById('fiche-h-end').value='17:00';
+  document.querySelectorAll('.meteo-btn.active').forEach(function(b){b.classList.remove('active');});
   renderDriverFiche();
   
   if(hasIssues){showToast('📤 Fiche envoyée — '+(voyants.length+anomalies.length)+' signalement(s) transmis au mécanicien','success',6000);}
