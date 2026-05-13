@@ -502,7 +502,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
       <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
     </div>
-    <span class="ver-tag">v10.44 — 2026</span>
+    <span class="ver-tag">v10.45 — 2026</span>
   </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
@@ -810,6 +810,17 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
   <div style="margin-top:10px"><label class="fl">Affectations (camion + chauffeur + nb transports) *</label><div id="om-assignments" style="margin-top:6px"></div><button type="button" class="btn btn-o btn-s" onclick="addAssignment()" style="margin-top:6px">+ Ajouter un camion</button></div>
   <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Type *</label><select class="fs" id="om-type" onchange="toggleOrderType()"><option value="materiaux">Matériaux (tonne)</option><option value="journee">Journée</option></select></div><div class="fg" id="om-mat-group"><label class="fl">Matériau</label><select class="fs" id="om-material"></select></div></div>
   <div class="fg" style="margin-top:10px"><input type="hidden" id="om-nb" value="1"></div>
+  
+  <!-- Section Chef de chantier (visible UNIQUEMENT pour type "journée") -->
+  <div id="om-chef-section" style="display:none;margin-top:12px;padding:12px;background:rgba(22,163,74,.06);border-left:3px solid var(--gn);border-radius:6px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+      <div style="font-size:.78rem;font-weight:800;color:var(--gn)">📋 Chef de chantier (envoi BDL journée)</div>
+      <button type="button" id="om-chef-default-btn" class="btn btn-o btn-s" onclick="loadChefFromClient()" style="display:none">📥 Reprendre du client</button>
+    </div>
+    <div style="font-size:.66rem;color:var(--t3);margin-bottom:8px;line-height:1.4">Le BDL de chaque jour sera envoyé automatiquement sur WhatsApp + Email à ces coordonnées.</div>
+    <div class="fg2"><div class="fg"><label class="fl">📱 WhatsApp *</label><input type="tel" class="fi" id="om-chef-whatsapp" placeholder="0696 00 00 00"></div><div class="fg"><label class="fl">📧 Email</label><input type="email" class="fi" id="om-chef-email" placeholder="chef@..."></div></div>
+  </div>
+  
   <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('orderModal')">Annuler</button><button class="btn btn-p btn-w" onclick="saveOrder()">Enregistrer</button></div>
 </div></div>
 <div class="mo" id="driverModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title" id="driverModalTitle">Nouveau chauffeur</div>
@@ -829,6 +840,11 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
   <div class="fg"><label class="fl">Entreprise *</label><input type="text" class="fi" id="cm-company" placeholder="SARL Dupont BTP"></div>
   <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Gérant</label><input type="text" class="fi" id="cm-manager" placeholder="M. Dupont"></div><div class="fg"><label class="fl">Téléphone</label><input type="tel" class="fi" id="cm-phone" placeholder="06 00 00 00 00"></div></div>
   <div class="fg" style="margin-top:10px"><label class="fl">Email</label><input type="email" class="fi" id="cm-email" placeholder="contact@..."></div>
+  <div style="margin-top:14px;padding:10px 12px;background:rgba(22,163,74,.06);border-left:3px solid var(--gn);border-radius:6px">
+    <div style="font-size:.74rem;font-weight:800;color:var(--gn);margin-bottom:8px">📋 Chef de chantier référent (commandes journée)</div>
+    <div style="font-size:.66rem;color:var(--t3);margin-bottom:8px;line-height:1.4">Pour l'envoi automatique des bons de prestation lors des missions à la journée. Réutilisable automatiquement à chaque nouvelle commande.</div>
+    <div class="fg2"><div class="fg"><label class="fl">📱 WhatsApp chef</label><input type="tel" class="fi" id="cm-chef-whatsapp" placeholder="0696 00 00 00"></div><div class="fg"><label class="fl">📧 Email chef</label><input type="email" class="fi" id="cm-chef-email" placeholder="chef@..."></div></div>
+  </div>
   <div class="div"></div>
   <div style="font-size:.86rem;font-weight:900;margin-bottom:8px">💰 Tarifs négociés</div>
   <div style="font-size:.7rem;color:var(--bl);margin-bottom:10px;padding:6px 10px;background:var(--blb);border-radius:6px">💡 Utilisés pour calculer le CA et la marge</div>
@@ -885,7 +901,7 @@ function recordFailedAttempt(){try{const k=getLockoutKey();const raw=localStorag
 function clearLockout(){try{localStorage.removeItem(getLockoutKey());}catch(e){}}
 function logAuthAttempt(success,who,reason){const entry={ts:new Date().toISOString(),success:success,who:who||'inconnu',role:loginRole,reason:reason||'',ua:(navigator.userAgent||'').substring(0,80)};try{const raw=localStorage.getItem('sotransnord_auth_log')||'[]';const arr=JSON.parse(raw);arr.push(entry);if(arr.length>200)arr.splice(0,arr.length-200);localStorage.setItem('sotransnord_auth_log',JSON.stringify(arr));}catch(e){}if(state.mode==='real'){try{fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'logAuth',data:entry})});}catch(e){}}}
 let state={mode:'real',role:null,currentUser:null,currentPage:null,pinValue:'',pinAttempts:0,pinLocked:false,editingId:null,currentTransport:null,currentOrder:null,filterOrders:'all'};
-let db={drivers:[],trucks:[],clients:[],materials:[],tariffs:[{id:1,type:'materiaux',name:'Sable 0/4 — Standard',price:18.50},{id:2,type:'materiaux',name:'Gravier 4/6 — Standard',price:22.00},{id:3,type:'journee',name:'Journée chauffeur + camion',price:950.00},{id:4,type:'materiaux',name:'Remblais — Standard',price:12.00}],expenses:[],dayReports:[],orders:[],audit:[],clientTariffs:[],annualData:{},draftOrders:[],repairs:[]};
+let db={drivers:[],trucks:[],clients:[],materials:[],tariffs:[{id:1,type:'materiaux',name:'Sable 0/4 — Standard',price:18.50},{id:2,type:'materiaux',name:'Gravier 4/6 — Standard',price:22.00},{id:3,type:'journee',name:'Journée chauffeur + camion',price:950.00},{id:4,type:'materiaux',name:'Remblais — Standard',price:12.00}],expenses:[],dayReports:[],orders:[],audit:[],clientTariffs:[],annualData:{},draftOrders:[],repairs:[],dayBDLs:[]};
 (function(){const now=new Date();[now.getFullYear()-1,now.getFullYear()].forEach(yr=>{db.annualData[yr]={};const s=[0.55,0.60,0.80,1.10,1.25,1.30,1.20,0.90,1.15,1.10,0.75,0.50];for(let m=0;m<12;m++){if(yr===now.getFullYear()&&m>now.getMonth()){db.annualData[yr][m]=null;continue;}const ca=Math.round((28000+Math.random()*8000)*s[m]);const byType={carburant:Math.round(1400+Math.random()*600+s[m]*400),vidange:[2,5,8,11].includes(m)?Math.round(150+Math.random()*80):0,reparation:Math.round(Math.random()<0.35?200+Math.random()*900:0),pneus:Math.round(Math.random()<0.2?400+Math.random()*600:0),assurance:580,autre:Math.round(Math.random()*200)};const total_dep=Object.values(byType).reduce((s,v)=>s+v,0);const marge=ca-total_dep;db.annualData[yr][m]={ca,byType,total_dep,marge,pct_marge:ca>0?Math.round((marge/ca)*100):0};}});})();
 const SHEETS_BASE='https://script.google.com/macros/s/AKfycbzfYAn6rlb01517GoR8PYQUqdSIsbl6Px0PRlsZYEIlq_T6wE8TikxE8_qW92BobLLekQ/exec';
 let remoteConfig={};
@@ -919,11 +935,12 @@ async function syncNow(){const btn=document.getElementById('topbarSyncBtn');if(b
 async function loadRealData(){const url=getSheetsBase();if(!url){showToast('⚠️ URL manquante','error');return;}const r=await fetch(url,{method:'POST',body:JSON.stringify({action:'getAll'})});const data=await r.json();function sid(v){return String(v).trim();}
 if(data.chauffeurs?.length)db.drivers=data.chauffeurs.map(d=>({id:sid(d.id),name:d.nom||d.name||'',phone:normalizePhone(d.telephone||d.phone||''),email:d.email||'',licence:d.permis||d.licence||'C',pin:String(d.pin||''),status:d.statut||d.status||'actif',birth:cd(d.date_naissance||d.birth||''),cqc:cd(d.cqc||''),medical:cd(d.medical||''),docs:[]}));
 if(data.camions?.length)db.trucks=data.camions.map(t=>({id:sid(t.id),plate:t.immatriculation||t.plate||'',type:t.type||'',km:parseInt(t.kilometrage||t.km)||0,ct:cd(t.date_ct||t.ct),tachy:cd(t.tachygraphe||t.tachy||''),limiteur:cd(t.limiteur||''),status:t.statut||t.status||'actif',docs:[]}));
-if(data.clients?.length)db.clients=data.clients.map(c=>({id:sid(c.id),company:c.entreprise||c.company||'',manager:c.gerant||c.manager||'',phone:c.telephone||c.phone||'',email:c.email||''}));
-if(data.commandes?.length)db.orders=data.commandes.map(o=>{const nbRaw=String(o.nb_estime||o.nbEstimated||'0');const nb=nbRaw.split(/[|,]/).reduce(function(s,v){return s+(parseInt(v)||0);},0);const done=parseInt(o.nb_fait||o.nbDone)||0;const oid=sid(o.id);const lt=(data.transports||[]).filter(t=>sid(t.commande_id)===oid);const transports=Array.from({length:nb},(_,i)=>{const transportId=i+1;var t=null;var hasValidNums=lt.some(function(x){var n=parseInt(x.transport_num||x.transportId);return!isNaN(n)&&n>0&&n<=1000;});if(hasValidNums){t=lt.find(function(x){var n=parseInt(x.transport_num||x.transportId);return!isNaN(n)&&n===transportId&&n<=1000;});}else{t=lt[i];}return t?{id:transportId,done:true,tonnage:(function(v){var n=parseFloat(String(v||'').replace(',','.'));return isNaN(n)?0:n;})(t.tonnage),receiver:t.receptionnaire||t.receiver,func:t.fonction||t.func,sig:'✓',ts:t.timestamp,paperPhotos:(function(p){if(!p)return [];return String(p).split('|').filter(Boolean).map(function(u){return {url:u,fileId:(u.match(/[-\w]{25,}/)||[''])[0]};});})(t.photo_papier_url||t.paperPhotos||t.photo_papier||'')}:{id:transportId,done:false,tonnage:null,receiver:null,func:null,sig:null,paperPhotos:[]};});return{id:oid,clientId:sid(o.client_id||o.clientId),address:o.adresse||o.address||'',date:cd(o.date_chantier||o.date),driverId:sid(o.chauffeur_id||o.driverId),truckId:sid(o.camion_id||o.truckId),type:o.type||'materiaux',materialId:o.materiau_id?sid(o.materiau_id):null,nbEstimated:nb,nbEstimatedRaw:nbRaw,nbDone:done,status:o.statut||o.status||'en_cours',invoiceSent:o.invoice_sent===true||o.invoice_sent==='true'||o.invoice_sent==='TRUE'||String(o.invoice_sent).toLowerCase()==='true',invoiceDate:o.invoice_date||o.invoiceDate||'',invoiceTo:o.invoice_to||o.invoiceTo||'',invoiceRef:o.invoice_ref||o.invoiceRef||'',paid:o.paid==='true'||o.paid===true||String(o.paid).toLowerCase()==='true',paidDate:o.paid_date||o.paidDate||'',transports};});
+if(data.clients?.length)db.clients=data.clients.map(c=>({id:sid(c.id),company:c.entreprise||c.company||'',manager:c.gerant||c.manager||'',phone:normalizePhone(c.telephone||c.phone||''),email:c.email||'',chefWhatsapp:normalizePhone(c.chef_whatsapp||c.chefWhatsapp||''),chefEmail:c.chef_email||c.chefEmail||''}));
+if(data.commandes?.length)db.orders=data.commandes.map(o=>{const nbRaw=String(o.nb_estime||o.nbEstimated||'0');const nb=nbRaw.split(/[|,]/).reduce(function(s,v){return s+(parseInt(v)||0);},0);const done=parseInt(o.nb_fait||o.nbDone)||0;const oid=sid(o.id);const lt=(data.transports||[]).filter(t=>sid(t.commande_id)===oid);const transports=Array.from({length:nb},(_,i)=>{const transportId=i+1;var t=null;var hasValidNums=lt.some(function(x){var n=parseInt(x.transport_num||x.transportId);return!isNaN(n)&&n>0&&n<=1000;});if(hasValidNums){t=lt.find(function(x){var n=parseInt(x.transport_num||x.transportId);return!isNaN(n)&&n===transportId&&n<=1000;});}else{t=lt[i];}return t?{id:transportId,done:true,tonnage:(function(v){var n=parseFloat(String(v||'').replace(',','.'));return isNaN(n)?0:n;})(t.tonnage),receiver:t.receptionnaire||t.receiver,func:t.fonction||t.func,sig:'✓',ts:t.timestamp,paperPhotos:(function(p){if(!p)return [];return String(p).split('|').filter(Boolean).map(function(u){return {url:u,fileId:(u.match(/[-\w]{25,}/)||[''])[0]};});})(t.photo_papier_url||t.paperPhotos||t.photo_papier||'')}:{id:transportId,done:false,tonnage:null,receiver:null,func:null,sig:null,paperPhotos:[]};});return{id:oid,clientId:sid(o.client_id||o.clientId),address:o.adresse||o.address||'',date:cd(o.date_chantier||o.date),driverId:sid(o.chauffeur_id||o.driverId),truckId:sid(o.camion_id||o.truckId),type:o.type||'materiaux',materialId:o.materiau_id?sid(o.materiau_id):null,nbEstimated:nb,nbEstimatedRaw:nbRaw,nbDone:done,status:o.statut||o.status||'en_cours',invoiceSent:o.invoice_sent===true||o.invoice_sent==='true'||o.invoice_sent==='TRUE'||String(o.invoice_sent).toLowerCase()==='true',invoiceDate:o.invoice_date||o.invoiceDate||'',invoiceTo:o.invoice_to||o.invoiceTo||'',invoiceRef:o.invoice_ref||o.invoiceRef||'',paid:o.paid==='true'||o.paid===true||String(o.paid).toLowerCase()==='true',paidDate:o.paid_date||o.paidDate||'',chefWhatsapp:normalizePhone(o.chef_whatsapp||o.chefWhatsapp||''),chefEmail:o.chef_email||o.chefEmail||'',transports};});
 if(data.frais?.length)db.expenses=data.frais.map(f=>({id:sid(f.id),truckId:sid(f.camion_id||f.truckId),date:cd(f.date),type:f.type_frais||f.type||'',amount:parseFloat(f.montant||f.amount)||0,desc:f.description||f.desc||'',repairId:String(f.repair_id||f.repairId||'')}));
 if(data.fiches_jour?.length)db.dayReports=data.fiches_jour.map(f=>({id:String(f.id||''),driverId:String(f.chauffeur_id||f.driverId||''),driverName:f.chauffeur_nom||f.driverName||'',date:f.date||'',km:parseInt(f.kilometrage||f.km)||0,kmStart:parseInt(f.km_debut||f.kmStart)||0,fuelLiters:parseFloat(f.carburant_litres||f.fuelLiters)||0,fuelPrice:parseFloat(f.carburant_prix||f.fuelPrice)||0,voyants:f.voyants||'',anomalies:f.anomalies||'',notes:f.observations||f.notes||'',hasIssues:(function(){var vo=String(f.voyants||'').split('|').filter(Boolean);var an=String(f.anomalies||'').split('|').filter(Boolean);var n=String(f.observations||f.notes||'').trim();return vo.length>0||an.length>0||n.length>0;})()}));
 if(data.reparations?.length)db.repairs=data.reparations.map(r=>({id:String(r.id||''),truckId:String(r.camion_id||r.truckId||''),dateConstat:cd(r.date_constat||r.dateConstat||''),dateDebut:cd(r.date_debut||r.dateDebut||''),dateFin:cd(r.date_fin||r.dateFin||''),sourceDriverId:String(r.source_chauffeur_id||r.sourceDriverId||''),voyants:r.voyants||'',anomalies:r.anomalies||'',notesChauffeur:r.notes_chauffeur||r.notesChauffeur||'',diagnostic:r.diagnostic||'',actions:r.actions||'',pieces:r.pieces||'',cout:parseFloat(r.cout)||0,status:r.statut||r.status||'a_diagnostiquer',priority:r.priorite||r.priority||'normale',naReason:r.na_reason||r.naReason||''}));else if(!db.repairs)db.repairs=[];
+if(data.jours_commande?.length)db.dayBDLs=data.jours_commande.map(j=>({id:String(j.id||''),orderId:String(j.order_id||j.orderId||''),dayNum:parseInt(j.day_num||j.dayNum)||1,date:cd(j.date||''),chefNom:j.chef_nom||j.chefNom||'',heureDebut:j.heure_debut||j.heureDebut||'',heureFin:j.heure_fin||j.heureFin||'',description:j.description||'',photoUrl:j.photo_url||j.photoUrl||'',whatsappSent:j.whatsapp_sent===true||j.whatsapp_sent==='true'||j.whatsapp_sent==='TRUE',emailSent:j.email_sent===true||j.email_sent==='true'||j.email_sent==='TRUE',createdAt:j.created_at||j.createdAt||'',chauffeurId:String(j.chauffeur_id||j.chauffeurId||'')}));else if(!db.dayBDLs)db.dayBDLs=[];
 if(data.materiaux?.length)db.materials=data.materiaux.map(m=>({id:String(m.id),name:m.nom||m.name||'',unit:m.unite||m.unit||'tonne'}));
 if(data.tarifs_clients?.length)db.clientTariffs=data.tarifs_clients.map(t=>{var typeVal=String(t.type||'').trim();var matVal=String(t.materiau_id||'').trim();if(/^\d{8,}$/.test(typeVal)&&(matVal==='journee'||matVal==='materiaux'||matVal===''))[typeVal,matVal]=[matVal,typeVal];return{id:String(t.id),clientId:String(t.client_id||t.clientId),type:typeVal||'materiaux',materialId:matVal?String(matVal):null,price:parseFloat(t.prix_unitaire||t.price)||0};});
 if(data.expense_types?.length){db.expenseTypes=data.expense_types.map(t=>({id:String(t.id),label:String(t.label||t.id)}));}else{db.expenseTypes=[];}
@@ -1050,17 +1067,87 @@ function isExpSoon(d){if(!d)return false;const dt=new Date(d);const now=new Date
 function renderImpayes(){const el=document.getElementById('dashImpayes');if(!el)return;const impayes=db.orders.filter(o=>o.invoiceSent&&!o.paid);if(!impayes.length){el.innerHTML='';return;}let total=0;let oldest=999;impayes.forEach(o=>{const tarif=db.clientTariffs.find(t=>String(t.clientId)===String(o.clientId)&&t.type===o.type&&(o.type==='journee'||String(t.materialId)===String(o.materialId)));const doneT=o.transports.filter(t=>t.done);let st=0;const price=tarif?tarif.price:0;doneT.forEach(t=>{st+=(parseFloat(t.tonnage)||0)*price;});const co=getCompanyInfo()||{};const cnrRef=parseFloat(co.cnr_ref)||0;const cnrCur=parseFloat(co.cnr_current)||0;const cnrW=(parseFloat(co.cnr_weight)||16.3)/100;if(cnrRef>0&&cnrCur>0&&cnrCur!==cnrRef)st+=st*cnrW*(cnrCur-cnrRef)/cnrRef;total+=st*1.2;if(o.invoiceDate){const d=new Date(o.invoiceDate);if(!isNaN(d)){const days=Math.ceil((new Date()-d)/(1000*60*60*24));if(days>0&&days<oldest)oldest=days;}}});el.innerHTML='<div class="card" style="border-left:3px solid #D4A017;margin-bottom:0"><div class="card-h"><span class="card-t">💰 Factures impayees</span><span class="badge" style="background:#D4A017;color:#fff">'+impayes.length+'</span></div><div class="card-b" style="padding:12px 14px"><div style="display:flex;gap:20px;flex-wrap:wrap"><div><div style="font-size:1.3rem;font-weight:900;color:#D4A017">'+fmt(total)+'</div><div style="font-size:.68rem;color:var(--t3)">Total TTC a encaisser</div></div>'+(oldest<999?'<div><div style="font-size:1.3rem;font-weight:900;color:var(--er)">'+oldest+' j</div><div style="font-size:.68rem;color:var(--t3)">Plus ancienne facture</div></div>':'')+'<div><div style="font-size:1.3rem;font-weight:900">'+impayes.filter(o=>{const d=new Date(o.invoiceDate);return!isNaN(d)&&(new Date()-d)/(1000*60*60*24)>30;}).length+'</div><div style="font-size:.68rem;color:var(--t3)">A relancer (+30j)</div></div></div></div></div>';}
 function renderAlerts(){const alerts=[];const now=new Date();const in30=new Date(now.getTime()+30*24*60*60*1000);function chk(date,label,icon){if(!date)return;const d=new Date(date);const diff=Math.ceil((d-now)/(1000*60*60*24));if(diff<0)alerts.push({icon,label,msg:'Expiré depuis '+Math.abs(diff)+' jour(s)',urgent:true});else if(diff<=30)alerts.push({icon,label,msg:'Expire dans '+diff+' jour(s)',urgent:diff<=7});}db.trucks.forEach(t=>{chk(t.ct,t.plate+' — Contrôle technique','🔧');chk(t.tachy,t.plate+' — Tachygraphe','⏱️');chk(t.limiteur,t.plate+' — Limiteur de vitesse','🛑');});db.drivers.forEach(d=>{chk(d.cqc,d.name+' — Carte CQC (FIMO/FCO)','🎓');chk(d.medical,d.name+' — Visite médicale','🏥');});const el=document.getElementById('dashAlerts');if(!alerts.length){el.innerHTML='';return;}alerts.sort((a,b)=>a.urgent===b.urgent?0:a.urgent?-1:1);el.innerHTML='<div class="card" style="border-left:3px solid var(--er);margin-bottom:0"><div class="card-h"><span class="card-t">⚠️ Alertes échéances</span><span class="badge bg-rd">'+alerts.length+'</span></div><div class="card-b" style="padding:8px 12px;display:flex;flex-direction:column;gap:6px">'+alerts.map(a=>'<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);background:'+(a.urgent?'var(--erb)':'var(--wab)')+'"><span style="font-size:1.1rem">'+a.icon+'</span><div style="flex:1;min-width:0"><div style="font-weight:800;font-size:.8rem">'+a.label+'</div><div style="font-size:.72rem;color:'+(a.urgent?'var(--er)':'var(--wa)')+'">'+a.msg+'</div></div></div>').join('')+'</div></div>';}
 function renderDashboard(){document.getElementById('dashDate').textContent=today();renderAlerts();renderImpayes();const active=db.orders.filter(o=>o.status==='en_cours').length;const td=db.orders.filter(o=>o.date===new Date().toISOString().split('T')[0]).reduce((s,o)=>s+o.nbEstimated,0);const now=new Date();const me=db.expenses.filter(e=>{const d=new Date(e.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((s,e)=>s+e.amount,0);const mfFiches=(db.dayReports||[]).filter(f=>{const d=new Date(f.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((s,f)=>s+(parseFloat(f.fuelPrice)||0),0);const md2=state.mode==='real'?computeRealMD():db.annualData;const ay=md2?.[now.getFullYear()];const mg=ay?.[now.getMonth()];document.getElementById('stat-commandes').textContent=active;document.getElementById('stat-transports').textContent=td;document.getElementById('stat-ca').textContent=mg?fmt(mg.ca):'—';document.getElementById('stat-frais').textContent=fmt(me+mfFiches);const recent=db.orders.filter(o=>o.status==='en_cours');document.getElementById('recentOrders').innerHTML=recent.length?recent.map(o=>ocHTML(o)).join(''):'<div class="empty"><div class="empty-i">📋</div><div class="empty-t">Aucune commande en cours</div></div>';}
-function ocHTML(o){const sm={en_cours:{c:'bg-yl',l:'En cours'},termine:{c:'bg-gn',l:'Terminé'}};const s=sm[o.status]||{c:'bg-gr',l:o.status};const p=o.nbEstimated>0?Math.round((o.nbDone/o.nbEstimated)*100):0;return'<div class="oc"><div class="oc-head"><div class="oc-name">'+clientName(o.clientId)+'</div><span class="badge '+s.c+'">'+s.l+'</span></div><div class="oc-meta"><span class="oc-m">📅 '+fmtDate(o.date)+'</span><span class="oc-m">📍 '+o.address+'</span><span class="oc-m">🚛 '+(o.truckId||'').split(/[|,]/).map(function(tid){return truckPlate(tid.trim());}).join(', ')+'</span><span class="oc-m">👤 '+(o.driverId||'').split(/[|,]/).map(function(did){return driverName(did.trim());}).join(', ')+'</span></div><div class="oc-prog"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:.76rem;font-weight:800">'+o.nbDone+'/'+o.nbEstimated+'</span><span style="font-size:.7rem;color:var(--t4)">'+p+'%</span></div><div class="prog-wrap"><div class="prog-fill'+(p>=100?' full':'')+'" style="width:'+p+'%"></div></div></div><div class="oc-acts">'+'<button class="btn btn-d btn-s" onclick="showOrderLDVs(\''+o.id+'\')">📄 Documents</button>'+(o.status==='termine'?'<button class="btn btn-s" style="background:'+(o.paid?'#D4A017':o.invoiceSent?'var(--gn)':'var(--bl)')+';color:#fff" onclick="'+(o.paid?'facturer(\''+o.id+'\')':o.invoiceSent?'markPaid(\''+o.id+'\')':'facturer(\''+o.id+'\')')+'">'+(o.paid?'💰 Payé ✓':o.invoiceSent?'💰 Marquer payé':'💶 À facturer')+'</button>':'')+'<button class="btn btn-g btn-s" onclick="editOrder(\''+o.id+'\')">✏️</button><button class="btn btn-x btn-s" onclick="deleteOrder(\''+o.id+'\')">🗑️</button></div></div>';}
+function ocHTML(o){
+  const sm={en_cours:{c:'bg-yl',l:'En cours'},termine:{c:'bg-gn',l:'Terminé'}};
+  const s=sm[o.status]||{c:'bg-gr',l:o.status};
+  // Pour les commandes journée, nbDone = nb de BDL signés
+  var isJournee=o.type==='journee';
+  var nbDone=o.nbDone||0;
+  var extended=false;
+  if(isJournee){
+    var myDays=(db.dayBDLs||[]).filter(function(j){return String(j.orderId)===String(o.id);});
+    nbDone=myDays.length;
+    extended=nbDone>o.nbEstimated;
+  }
+  const p=o.nbEstimated>0?Math.round((nbDone/o.nbEstimated)*100):0;
+  // Badge spécial mission journée
+  var journeeBadge='';
+  if(isJournee){
+    if(extended){journeeBadge='<span style="background:var(--wa);color:#fff;font-size:.6rem;font-weight:900;padding:2px 7px;border-radius:99px;margin-left:6px;letter-spacing:.04em">🟠 PROLONGÉE +'+(nbDone-o.nbEstimated)+'J</span>';}
+    else if(nbDone===0){journeeBadge='<span style="background:rgba(22,163,74,.15);color:var(--gn);font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:99px;margin-left:6px;border:1px solid rgba(22,163,74,.3)">🟢 À DÉMARRER</span>';}
+    else if(nbDone<o.nbEstimated){journeeBadge='<span style="background:rgba(59,130,246,.15);color:var(--bl);font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:99px;margin-left:6px;border:1px solid rgba(59,130,246,.3)">🔵 JOURNÉE</span>';}
+    else{journeeBadge='<span style="background:rgba(22,163,74,.15);color:var(--gn);font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:99px;margin-left:6px;border:1px solid rgba(22,163,74,.3)">✅ TERMINÉE</span>';}
+  }
+  // Couleur barre progression
+  var progColor='';
+  if(isJournee&&extended)progColor=';background:var(--wa)';
+  
+  return'<div class="oc"><div class="oc-head"><div class="oc-name">'+clientName(o.clientId)+journeeBadge+'</div><span class="badge '+s.c+'">'+s.l+'</span></div>'+
+    '<div class="oc-meta"><span class="oc-m">📅 '+fmtDate(o.date)+'</span><span class="oc-m">📍 '+o.address+'</span><span class="oc-m">🚛 '+(o.truckId||'').split(/[|,]/).map(function(tid){return truckPlate(tid.trim());}).join(', ')+'</span><span class="oc-m">👤 '+(o.driverId||'').split(/[|,]/).map(function(did){return driverName(did.trim());}).join(', ')+'</span></div>'+
+    '<div class="oc-prog"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:.76rem;font-weight:800">'+nbDone+'/'+o.nbEstimated+(isJournee?' jours':'')+'</span><span style="font-size:.7rem;color:var(--t4)">'+p+'%</span></div><div class="prog-wrap"><div class="prog-fill'+(p>=100?' full':'')+'" style="width:'+Math.min(100,p)+'%'+progColor+'"></div></div></div>'+
+    '<div class="oc-acts">'+
+      (isJournee?'<button class="btn btn-d btn-s" onclick="showOrderJourneeDetails(\''+o.id+'\')">📋 Détail journée</button>':'')+
+      '<button class="btn btn-d btn-s" onclick="showOrderLDVs(\''+o.id+'\')">📄 Documents</button>'+
+      (o.status==='termine'?'<button class="btn btn-s" style="background:'+(o.paid?'#D4A017':o.invoiceSent?'var(--gn)':'var(--bl)')+';color:#fff" onclick="'+(o.paid?'facturer(\''+o.id+'\')':o.invoiceSent?'markPaid(\''+o.id+'\')':'facturer(\''+o.id+'\')')+'">'+(o.paid?'💰 Payé ✓':o.invoiceSent?'💰 Marquer payé':'💶 À facturer')+'</button>':'')+
+      '<button class="btn btn-g btn-s" onclick="editOrder(\''+o.id+'\')">✏️</button>'+
+      '<button class="btn btn-x btn-s" onclick="deleteOrder(\''+o.id+'\')">🗑️</button>'+
+    '</div></div>';
+}
 function renderOrders(){let list=db.orders;if(state.filterOrders==='en_cours')list=list.filter(o=>o.status==='en_cours');else if(state.filterOrders==='termine')list=list.filter(o=>o.status==='termine');else if(state.filterOrders==='a_facturer')list=list.filter(o=>o.status==='termine'&&!o.invoiceSent);else if(state.filterOrders==='envoyees')list=list.filter(o=>o.invoiceSent&&!o.paid);else if(state.filterOrders==='payees')list=list.filter(o=>o.paid);document.getElementById('ordersList').innerHTML=list.length?list.map(o=>ocHTML(o)).join(''):'<div class="empty"><div class="empty-i">📋</div><div class="empty-t">Aucune commande</div></div>';}
 function filterOrders(f,btn){state.filterOrders=f;document.querySelectorAll('#page-commandes .tab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderOrders();}
 /* anciennes fonctions assignment supprimées — remplacées ci-dessous */
-function openOrderModal(id){state.editingId=id||null;document.getElementById('orderModalTitle').textContent=id?'Modifier':'Nouvelle commande';document.getElementById('om-client').innerHTML=db.clients.map(c=>'<option value="'+c.id+'">'+c.company+'</option>').join('');document.getElementById('om-material').innerHTML=db.materials.map(m=>'<option value="'+m.id+'">'+m.name+'</option>').join('');document.getElementById('om-assignments').innerHTML='';if(id){const o=db.orders.find(x=>x.id===id);if(o){document.getElementById('om-client').value=o.clientId;document.getElementById('om-date').value=o.date;document.getElementById('om-address').value=o.address;document.getElementById('om-assignments').innerHTML='';var _tids=String(o.truckId||'').split(/[|,]/);var _dids=String(o.driverId||'').split(/[|,]/);var _nbs=String(o.nbEstimatedRaw||o.nbEstimated||'1').split(/[|,]/);for(var _i=0;_i<_tids.length;_i++){addAssignment(_tids[_i],_dids[_i]||'',parseInt(_nbs[_i])||1);}document.getElementById('om-type').value=o.type;if(o.materialId)document.getElementById('om-material').value=o.materialId;toggleOrderType();}}else{document.getElementById('om-date').value=new Date().toISOString().split('T')[0];document.getElementById('om-address').value='';addAssignment();toggleOrderType();}openModal('orderModal');}
-function toggleOrderType(){document.getElementById('om-mat-group').style.display=document.getElementById('om-type').value==='materiaux'?'':'none';}
+function openOrderModal(id){state.editingId=id||null;document.getElementById('orderModalTitle').textContent=id?'Modifier':'Nouvelle commande';document.getElementById('om-client').innerHTML=db.clients.map(c=>'<option value="'+c.id+'">'+c.company+'</option>').join('');document.getElementById('om-material').innerHTML=db.materials.map(m=>'<option value="'+m.id+'">'+m.name+'</option>').join('');document.getElementById('om-assignments').innerHTML='';document.getElementById('om-chef-whatsapp').value='';document.getElementById('om-chef-email').value='';if(id){const o=db.orders.find(x=>x.id===id);if(o){document.getElementById('om-client').value=o.clientId;document.getElementById('om-date').value=o.date;document.getElementById('om-address').value=o.address;document.getElementById('om-assignments').innerHTML='';var _tids=String(o.truckId||'').split(/[|,]/);var _dids=String(o.driverId||'').split(/[|,]/);var _nbs=String(o.nbEstimatedRaw||o.nbEstimated||'1').split(/[|,]/);for(var _i=0;_i<_tids.length;_i++){addAssignment(_tids[_i],_dids[_i]||'',parseInt(_nbs[_i])||1);}document.getElementById('om-type').value=o.type;if(o.materialId)document.getElementById('om-material').value=o.materialId;document.getElementById('om-chef-whatsapp').value=o.chefWhatsapp||'';document.getElementById('om-chef-email').value=o.chefEmail||'';toggleOrderType();}}else{document.getElementById('om-date').value=new Date().toISOString().split('T')[0];document.getElementById('om-address').value='';addAssignment();toggleOrderType();}openModal('orderModal');}
+
+function toggleOrderType(){
+  var type=document.getElementById('om-type').value;
+  document.getElementById('om-mat-group').style.display=type==='materiaux'?'':'none';
+  // Afficher la section chef SEULEMENT pour journée
+  document.getElementById('om-chef-section').style.display=type==='journee'?'':'none';
+  // Si on bascule en journée, proposer auto-remplissage depuis le client
+  if(type==='journee'){
+    var clientId=document.getElementById('om-client').value;
+    var client=db.clients.find(function(c){return String(c.id)===String(clientId);});
+    var btn=document.getElementById('om-chef-default-btn');
+    var hasChef=client&&(client.chefWhatsapp||client.chefEmail);
+    var currentFilled=document.getElementById('om-chef-whatsapp').value||document.getElementById('om-chef-email').value;
+    btn.style.display=(hasChef&&!currentFilled)?'':'none';
+    // Auto-remplir si champ vide ET client a un chef
+    if(hasChef&&!currentFilled){loadChefFromClient();}
+  }
+}
+
+function loadChefFromClient(){
+  var clientId=document.getElementById('om-client').value;
+  var client=db.clients.find(function(c){return String(c.id)===String(clientId);});
+  if(!client)return;
+  if(client.chefWhatsapp)document.getElementById('om-chef-whatsapp').value=client.chefWhatsapp;
+  if(client.chefEmail)document.getElementById('om-chef-email').value=client.chefEmail;
+  document.getElementById('om-chef-default-btn').style.display='none';
+  showToast('📥 Coordonnées chef de chantier reprises du client','success',3000);
+}
+
+function saveOrder(){const cid=parseInt(document.getElementById('om-client').value);const date=document.getElementById('om-date').value;const addr=document.getElementById('om-address').value.trim();const assigns=getAssignments();if(!assigns.length||assigns.some(function(a){return!a.truckId;})){showToast('⚠️ Sélectionnez au moins un camion','error');return;}const tid=assigns.map(function(a){return a.truckId;}).join('|');const did=assigns.map(function(a){return a.driverId;}).join('|');const type=document.getElementById('om-type').value;const nbArr=assigns.map(function(a){return a.nb;});const nb=nbArr.reduce(function(s,v){return s+v;},0);const nbEstimatedRaw=nbArr.join('|');const mid=type==='materiaux'?parseInt(document.getElementById('om-material').value):null;const chefWhatsapp=document.getElementById('om-chef-whatsapp').value.trim();const chefEmail=document.getElementById('om-chef-email').value.trim();if(!addr||!nb||nb<1){showToast('⚠️ Champs manquants','error');return;}
+  // Pour commandes journée, le WhatsApp chef est obligatoire
+  if(type==='journee'&&!chefWhatsapp&&!chefEmail){showToast('⚠️ Pour une commande "journée", renseignez au moins le WhatsApp OU l\'email du chef de chantier','error',5000);return;}
+  function buildSyncPayload(o){return Object.assign({},o,{nbEstimated:nbEstimatedRaw,nb_estime:nbEstimatedRaw,chauffeur_id:did,camion_id:tid,client_id:cid,adresse:addr,date_chantier:date,materiau_id:mid||'',statut:o.status||'en_cours',nb_fait:o.nbDone||0,chef_whatsapp:chefWhatsapp,chef_email:chefEmail});}
+  if(state.editingId){const o=db.orders.find(x=>String(x.id)===String(state.editingId));if(!o)return;Object.assign(o,{clientId:cid,date,address:addr,truckId:tid,driverId:did,type,materialId:mid,nbEstimated:nb,nbEstimatedRaw:nbEstimatedRaw,chefWhatsapp:chefWhatsapp,chefEmail:chefEmail});showToast('✅ Modifié','success');addAudit('Modif. commande','#'+o.id);syncSheets('updateOrder',buildSyncPayload(o));}
+  else{const tr=Array.from({length:nb},(_,i)=>({id:i+1,done:false,tonnage:null,receiver:null,func:null,sig:null}));const o={id:uid(),clientId:cid,date,address:addr,truckId:tid,driverId:did,type,materialId:mid,nbEstimated:nb,nbEstimatedRaw:nbEstimatedRaw,nbDone:0,status:'en_cours',transports:tr,chefWhatsapp:chefWhatsapp,chefEmail:chefEmail};db.orders.unshift(o);showToast('✅ Créée','success');addAudit('Nouvelle commande',clientName(cid));syncSheets('newOrder',buildSyncPayload(o));}
+  closeModal('orderModal');renderOrders();
+}
 function addAssignment(truckId,driverId,nb){var c=document.getElementById('om-assignments');var r=document.createElement('div');r.className='assign-row';r.style.cssText='display:flex;gap:6px;align-items:center';var ts=document.createElement('select');ts.className='fs assign-truck';ts.style.cssText='flex:2';ts.innerHTML='<option value="">— Camion —</option>'+db.trucks.map(function(t){return'<option value="'+t.id+'"'+(String(t.id)===String(truckId)?' selected':'')+'>'+t.plate+'</option>';}).join('');var ds=document.createElement('select');ds.className='fs assign-driver';ds.style.cssText='flex:2';ds.innerHTML='<option value="">— Chauffeur —</option>'+db.drivers.filter(function(d){return d.status==='actif';}).map(function(d){return'<option value="'+d.id+'"'+(String(d.id)===String(driverId)?' selected':'')+'>'+d.name+'</option>';}).join('');var ni=document.createElement('input');ni.type='number';ni.className='fi assign-nb';ni.style.cssText='flex:0 0 60px;text-align:center';ni.min='1';ni.value=nb||1;ni.placeholder='Nb';var rb=document.createElement('button');rb.type='button';rb.className='btn btn-x btn-s btn-i';rb.textContent='\u2715';rb.onclick=function(){r.remove();};r.appendChild(ts);r.appendChild(ds);r.appendChild(ni);r.appendChild(rb);c.appendChild(r);}
 function getAssignments(){return[].slice.call(document.querySelectorAll('#om-assignments .assign-row')).map(function(r){return{truckId:r.querySelector('.assign-truck').value,driverId:r.querySelector('.assign-driver').value,nb:parseInt(r.querySelector('.assign-nb').value)||1};});}
 function getAssignmentForTransport(order,tId){var tids=String(order.truckId||'').split(/[|,]/);var dids=String(order.driverId||'').split(/[|,]/);var nbs=String(order.nbEstimatedRaw||order.nbEstimated||'1').split(/[|,]/).map(function(v){return parseInt(v)||1;});var cum=0;for(var i=0;i<nbs.length;i++){cum+=nbs[i];if(tId<=cum)return{truckId:tids[i]||tids[0],driverId:dids[i]||dids[0]};}return{truckId:tids[0],driverId:dids[0]};}
 function getTransportsForDriver(order,driverId){var dids=String(order.driverId||'').split(/[|,]/);var nbs=String(order.nbEstimatedRaw||order.nbEstimated||'1').split(/[|,]/).map(function(v){return parseInt(v)||1;});var res=[];var start=0;for(var i=0;i<dids.length;i++){var cnt=nbs[i]||0;if(String(dids[i]).trim()===String(driverId)){for(var j=start;j<start+cnt&&j<order.transports.length;j++)res.push(order.transports[j]);}start+=cnt;}if(res.length)return res;return dids.length<=1?order.transports:[];}
-function saveOrder(){const cid=parseInt(document.getElementById('om-client').value);const date=document.getElementById('om-date').value;const addr=document.getElementById('om-address').value.trim();const assigns=getAssignments();if(!assigns.length||assigns.some(function(a){return!a.truckId;})){showToast('⚠️ Sélectionnez au moins un camion','error');return;}const tid=assigns.map(function(a){return a.truckId;}).join('|');const did=assigns.map(function(a){return a.driverId;}).join('|');const type=document.getElementById('om-type').value;const nbArr=assigns.map(function(a){return a.nb;});const nb=nbArr.reduce(function(s,v){return s+v;},0);const nbEstimatedRaw=nbArr.join('|');const mid=type==='materiaux'?parseInt(document.getElementById('om-material').value):null;if(!addr||!nb||nb<1){showToast('⚠️ Champs manquants','error');return;}function buildSyncPayload(o){return Object.assign({},o,{nbEstimated:nbEstimatedRaw,nb_estime:nbEstimatedRaw,chauffeur_id:did,camion_id:tid,client_id:cid,adresse:addr,date_chantier:date,materiau_id:mid||'',statut:o.status||'en_cours',nb_fait:o.nbDone||0});}if(state.editingId){const o=db.orders.find(x=>String(x.id)===String(state.editingId));if(!o)return;Object.assign(o,{clientId:cid,date,address:addr,truckId:tid,driverId:did,type,materialId:mid,nbEstimated:nb,nbEstimatedRaw:nbEstimatedRaw});showToast('✅ Modifié','success');addAudit('Modif. commande','#'+o.id);syncSheets('updateOrder',buildSyncPayload(o));}else{const tr=Array.from({length:nb},(_,i)=>({id:i+1,done:false,tonnage:null,receiver:null,func:null,sig:null}));const o={id:uid(),clientId:cid,date,address:addr,truckId:tid,driverId:did,type,materialId:mid,nbEstimated:nb,nbEstimatedRaw:nbEstimatedRaw,nbDone:0,status:'en_cours',transports:tr};db.orders.unshift(o);showToast('✅ Créée','success');addAudit('Nouvelle commande',clientName(cid));syncSheets('newOrder',buildSyncPayload(o));}closeModal('orderModal');renderOrders();}
 function editOrder(id){openOrderModal(id);}
 async function deleteFromSheets(a,id){const url=getSheetsBase();if(!url||state.mode!=='real')return;try{await fetch(url,{method:'POST',body:JSON.stringify({action:a,data:{id}})});}catch(e){}}
 async function deleteOrder(id){const ok=await showConfirm('Supprimer','Irréversible.','🗑️','Supprimer');if(!ok)return;db.orders=db.orders.filter(o=>String(o.id)!==String(id));addAudit('Suppression','Commande #'+id);deleteFromSheets('deleteOrder',id);renderPage(state.currentPage);showToast('Supprimée','error');}
@@ -1077,8 +1164,8 @@ function saveTruck(){const plate=document.getElementById('tm-plate').value.trim(
 function editTruck(id){openTruckModal(id);}
 async function deleteTruck(id){const ok=await showConfirm('Supprimer ?','','🚛','Supprimer');if(!ok)return;db.trucks=db.trucks.filter(t=>String(t.id)!==String(id));deleteFromSheets('deleteTruck',id);renderTrucks();showToast('Supprimé','error');}
 function renderClients(){document.getElementById('clientsTableBody').innerHTML=db.clients.length?db.clients.map(c=>'<tr><td style="font-weight:800">'+c.company+'</td><td>'+(c.manager||'—')+'</td><td>'+(c.phone||'—')+'</td><td>'+(c.email||'—')+'</td><td><div class="ta"><button class="btn btn-g btn-s btn-i" onclick="editClient(\''+c.id+'\')">✏️</button><button class="btn btn-x btn-s btn-i" onclick="deleteClient(\''+c.id+'\')">🗑️</button></div></td></tr>').join(''):'<tr><td colspan="5"><div class="empty"><div class="empty-i">🏢</div><div class="empty-t">Aucun client</div></div></td></tr>';}
-function openClientModal(id){state.editingId=id||null;document.getElementById('clientModalTitle').textContent=id?'Modifier':'Nouveau client';['cm-company','cm-manager','cm-phone','cm-email','cm-tarif-journee'].forEach(f=>document.getElementById(f).value='');document.getElementById('cm-tarifs-materiaux').innerHTML=db.materials.map(m=>'<div class="fg"><label class="fl">'+m.name+' (€/'+m.unit+')</label><input type="number" class="fi" id="cm-tarif-mat-'+m.id+'" placeholder="18.50" step="0.01"></div>').join('');if(id){const c=db.clients.find(x=>String(x.id)===String(id));if(c){document.getElementById('cm-company').value=c.company;document.getElementById('cm-manager').value=c.manager||'';document.getElementById('cm-phone').value=c.phone||'';document.getElementById('cm-email').value=c.email||'';const ts=db.clientTariffs.filter(t=>String(t.clientId)===String(id));const tj=ts.find(t=>t.type==='journee');if(tj)document.getElementById('cm-tarif-journee').value=tj.price;db.materials.forEach(m=>{const tm=ts.find(t=>String(t.materialId)===String(m.id));const inp=document.getElementById('cm-tarif-mat-'+m.id);if(tm&&inp)inp.value=tm.price;});}}openModal('clientModal');}
-function saveClient(){const company=document.getElementById('cm-company').value.trim();if(!company){showToast('⚠️ Nom requis','error');return;}const data={company,manager:document.getElementById('cm-manager').value.trim(),phone:document.getElementById('cm-phone').value.trim(),email:document.getElementById('cm-email').value.trim()};let cid;if(state.editingId){const c=db.clients.find(x=>String(x.id)===String(state.editingId));Object.assign(c,data);cid=state.editingId;showToast('✅ Mis à jour','success');syncSheets('updateClient',{id:state.editingId,...data});}else{cid=uid();db.clients.push({id:cid,...data});showToast('✅ Ajouté','success');syncSheets('newClient',{id:cid,...data});}db.clientTariffs=db.clientTariffs.filter(t=>String(t.clientId)!==String(cid));syncSheets('deleteTariffsByClient',{clientId:cid});const tj=parseFloat(document.getElementById('cm-tarif-journee').value);if(!isNaN(tj)&&tj>0){const t={id:uid(),clientId:cid,type:'journee',materialId:null,price:tj};db.clientTariffs.push(t);syncSheets('newTariffClient',t);}db.materials.forEach(m=>{const inp=document.getElementById('cm-tarif-mat-'+m.id);if(!inp)return;const p=parseFloat(inp.value);if(!isNaN(p)&&p>0){const t={id:uid(),clientId:cid,type:'materiaux',materialId:m.id,price:p};db.clientTariffs.push(t);syncSheets('newTariffClient',t);}});closeModal('clientModal');renderClients();}
+function openClientModal(id){state.editingId=id||null;document.getElementById('clientModalTitle').textContent=id?'Modifier':'Nouveau client';['cm-company','cm-manager','cm-phone','cm-email','cm-tarif-journee','cm-chef-whatsapp','cm-chef-email'].forEach(f=>document.getElementById(f).value='');document.getElementById('cm-tarifs-materiaux').innerHTML=db.materials.map(m=>'<div class="fg"><label class="fl">'+m.name+' (€/'+m.unit+')</label><input type="number" class="fi" id="cm-tarif-mat-'+m.id+'" placeholder="18.50" step="0.01"></div>').join('');if(id){const c=db.clients.find(x=>String(x.id)===String(id));if(c){document.getElementById('cm-company').value=c.company;document.getElementById('cm-manager').value=c.manager||'';document.getElementById('cm-phone').value=c.phone||'';document.getElementById('cm-email').value=c.email||'';document.getElementById('cm-chef-whatsapp').value=c.chefWhatsapp||'';document.getElementById('cm-chef-email').value=c.chefEmail||'';const ts=db.clientTariffs.filter(t=>String(t.clientId)===String(id));const tj=ts.find(t=>t.type==='journee');if(tj)document.getElementById('cm-tarif-journee').value=tj.price;db.materials.forEach(m=>{const tm=ts.find(t=>String(t.materialId)===String(m.id));const inp=document.getElementById('cm-tarif-mat-'+m.id);if(tm&&inp)inp.value=tm.price;});}}openModal('clientModal');}
+function saveClient(){const company=document.getElementById('cm-company').value.trim();if(!company){showToast('⚠️ Nom requis','error');return;}const data={company,manager:document.getElementById('cm-manager').value.trim(),phone:document.getElementById('cm-phone').value.trim(),email:document.getElementById('cm-email').value.trim(),chefWhatsapp:document.getElementById('cm-chef-whatsapp').value.trim(),chefEmail:document.getElementById('cm-chef-email').value.trim()};let cid;if(state.editingId){const c=db.clients.find(x=>String(x.id)===String(state.editingId));Object.assign(c,data);cid=state.editingId;showToast('✅ Mis à jour','success');syncSheets('updateClient',{id:state.editingId,...data});}else{cid=uid();db.clients.push({id:cid,...data});showToast('✅ Ajouté','success');syncSheets('newClient',{id:cid,...data});}db.clientTariffs=db.clientTariffs.filter(t=>String(t.clientId)!==String(cid));syncSheets('deleteTariffsByClient',{clientId:cid});const tj=parseFloat(document.getElementById('cm-tarif-journee').value);if(!isNaN(tj)&&tj>0){const t={id:uid(),clientId:cid,type:'journee',materialId:null,price:tj};db.clientTariffs.push(t);syncSheets('newTariffClient',t);}db.materials.forEach(m=>{const inp=document.getElementById('cm-tarif-mat-'+m.id);if(!inp)return;const p=parseFloat(inp.value);if(!isNaN(p)&&p>0){const t={id:uid(),clientId:cid,type:'materiaux',materialId:m.id,price:p};db.clientTariffs.push(t);syncSheets('newTariffClient',t);}});closeModal('clientModal');renderClients();}
 function editClient(id){openClientModal(id);}
 async function deleteClient(id){const ok=await showConfirm('Supprimer ?','','🏢','Supprimer');if(!ok)return;db.clients=db.clients.filter(c=>String(c.id)!==String(id));deleteFromSheets('deleteClient',id);renderClients();showToast('Supprimé','error');}
 function showDonTab(t,btn){['chauffeurs','camions','clients','materiaux','frais'].forEach(x=>{const el=document.getElementById('don-tab-'+x);if(el)el.classList[x===t?'remove':'add']('hidden');});document.querySelectorAll('#don-tabs .tab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');if(t==='frais')renderFiches();}
@@ -1150,11 +1237,112 @@ if(row.t==='p')return'<tr><td class="rl pr">'+row.l+'</td>'+MONTHS.map((_,i)=>{c
 const rt=kt[row.k]||0;return'<tr><td class="rl '+(row.lc||'')+'">'+row.l+'</td>'+MONTHS.map((_,i)=>{const d=data[i];const ic=isCY&&i===CM;if(!d)return'<td class="c'+(ic?' cur':'')+'">—</td>';let v;if(row.k==='ca'||row.k==='total_dep')v=d[row.k]||0;else v=(d.byType&&d.byType[row.k])||0;const bw=row.k==='ca'?Math.round((v/mx)*50):0;const ct=row.k==='ca'?'<div class="mbw" style="color:var(--gn)"><div class="mb" style="width:'+bw+'px;background:var(--gn)"></div><span>'+fmt(v)+'</span></div>':'<span class="'+(row.cls||'')+'">'+(row.fn||fmt)(v)+'</span>';return'<td class="c'+(ic?' cur':'')+'" style="font-weight:'+(row.b?700:400)+'">'+ct+'</td>';}).join('')+'<td class="c tc '+(row.cls||'')+'">'+fmt(rt)+'</td></tr>';}).join('');}
 function selMY(y){margeY=y;renderMarginTable();}
 function fO(v){return v>0?fmt(v):'<span style="color:var(--t5)">—</span>';}
-function computeRealMD(){const r={};const now=new Date();const types=((state.mode==='demo'?(db.expenseTypes||defaultExpenseTypes()):(db.expenseTypes||[])));[now.getFullYear()-1,now.getFullYear()].forEach(yr=>{r[yr]={};for(let m=0;m<12;m++){if(yr===now.getFullYear()&&m>now.getMonth()){r[yr][m]=null;continue;}const me=db.expenses.filter(e=>{const d=new Date(e.date);return d.getMonth()===m&&d.getFullYear()===yr;});const byType={};types.forEach(t=>{byType[t.id]=me.filter(e=>e.type===t.id).reduce((s,e)=>s+(parseFloat(e.amount)||0),0);});const knownIds=types.map(t=>t.id);const orphans=me.filter(e=>!knownIds.includes(e.type)).reduce((s,e)=>s+(parseFloat(e.amount)||0),0);const carbuFiches=(db.dayReports||[]).filter(f=>{const d=new Date(f.date);return d.getMonth()===m&&d.getFullYear()===yr;}).reduce((s,f)=>s+(parseFloat(f.fuelPrice)||0),0);byType._carbu_fiches=carbuFiches;byType._orphans=orphans;const td=Object.values(byType).reduce((s,v)=>s+v,0);let ca=0;db.orders.forEach(o=>{if(!o.date||!o.nbDone||o.nbDone<=0)return;const d=new Date(o.date);if(d.getMonth()!==m||d.getFullYear()!==yr)return;const t=db.clientTariffs.find(t=>String(t.clientId)===String(o.clientId)&&t.type===o.type&&(o.type==='journee'||String(t.materialId)===String(o.materialId)));if(!t)return;if(o.type==='journee')ca+=o.nbDone*t.price;else ca+=o.transports.filter(x=>x.done&&x.tonnage).reduce((s,x)=>s+parseFloat(x.tonnage||0),0)*t.price;});const marge=ca-td;r[yr][m]={ca,byType,total_dep:td,marge,pct_marge:ca>0?Math.round((marge/ca)*100):0};}});return r;}
+// Pour les commandes journée, le vrai nbDone = nb de BDL journée signés (qui peut dépasser nbEstimated en cas de prolongation)
+function getEffectiveNbDone(order){
+  if(!order)return 0;
+  if(order.type==='journee'){
+    var days=(db.dayBDLs||[]).filter(function(j){return String(j.orderId)===String(order.id);});
+    return days.length;
+  }
+  return parseInt(order.nbDone)||0;
+}
+
+function computeRealMD(){const r={};const now=new Date();const types=((state.mode==='demo'?(db.expenseTypes||defaultExpenseTypes()):(db.expenseTypes||[])));[now.getFullYear()-1,now.getFullYear()].forEach(yr=>{r[yr]={};for(let m=0;m<12;m++){if(yr===now.getFullYear()&&m>now.getMonth()){r[yr][m]=null;continue;}const me=db.expenses.filter(e=>{const d=new Date(e.date);return d.getMonth()===m&&d.getFullYear()===yr;});const byType={};types.forEach(t=>{byType[t.id]=me.filter(e=>e.type===t.id).reduce((s,e)=>s+(parseFloat(e.amount)||0),0);});const knownIds=types.map(t=>t.id);const orphans=me.filter(e=>!knownIds.includes(e.type)).reduce((s,e)=>s+(parseFloat(e.amount)||0),0);const carbuFiches=(db.dayReports||[]).filter(f=>{const d=new Date(f.date);return d.getMonth()===m&&d.getFullYear()===yr;}).reduce((s,f)=>s+(parseFloat(f.fuelPrice)||0),0);byType._carbu_fiches=carbuFiches;byType._orphans=orphans;const td=Object.values(byType).reduce((s,v)=>s+v,0);let ca=0;db.orders.forEach(o=>{if(!o.date)return;const effectiveNbDone=getEffectiveNbDone(o);if(effectiveNbDone<=0)return;const d=new Date(o.date);if(d.getMonth()!==m||d.getFullYear()!==yr)return;const t=db.clientTariffs.find(t=>String(t.clientId)===String(o.clientId)&&t.type===o.type&&(o.type==='journee'||String(t.materialId)===String(o.materialId)));if(!t)return;if(o.type==='journee')ca+=effectiveNbDone*t.price;else ca+=o.transports.filter(x=>x.done&&x.tonnage).reduce((s,x)=>s+parseFloat(x.tonnage||0),0)*t.price;});const marge=ca-td;r[yr][m]={ca,byType,total_dep:td,marge,pct_marge:ca>0?Math.round((marge/ca)*100):0};}});return r;}
 function renderAudit(){document.getElementById('auditTableBody').innerHTML=db.audit.length?db.audit.map(a=>'<tr><td style="white-space:nowrap;font-size:.72rem">'+a.ts+'</td><td style="font-size:.78rem">'+a.user+'</td><td><span class="badge bg-bl">'+a.action+'</span></td><td style="font-size:.76rem;color:var(--t3)">'+a.detail+'</td></tr>').join(''):'<tr><td colspan="4"><div class="empty"><div class="empty-i">🔍</div><div class="empty-t">Historique vide</div></div></td></tr>';}
 async function clearAudit(){const ok=await showConfirm('Vider ?','','🗑️','Vider');if(!ok)return;db.audit=[];renderAudit();showToast('Vidé','error');}
 function renderDriverAlerts(){const el=document.getElementById('driverAlerts');if(!el)return;const d=db.drivers.find(x=>x.id===state.currentUser.id);if(!d){el.innerHTML='';return;}const alerts=[];const now=new Date();function chk(date,label,icon){if(!date)return;const dt=new Date(date);const diff=Math.ceil((dt-now)/(1000*60*60*24));if(diff<0)alerts.push({icon,label,msg:'Expiré depuis '+Math.abs(diff)+' jour(s)',urgent:true});else if(diff<=30)alerts.push({icon,label,msg:'Expire dans '+diff+' jour(s)',urgent:diff<=7});}chk(d.cqc,'Carte CQC (FIMO/FCO)','🎓');chk(d.medical,'Visite médicale','🏥');if(!alerts.length){el.innerHTML='';return;}el.innerHTML='<div class="card" style="border-left:3px solid var(--er)"><div class="card-h"><span class="card-t">⚠️ Mes échéances</span><span class="badge bg-rd">'+alerts.length+'</span></div><div class="card-b" style="padding:8px 12px;display:flex;flex-direction:column;gap:6px">'+alerts.map(a=>'<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);background:'+(a.urgent?'var(--erb)':'var(--wab)')+'"><span style="font-size:1.1rem">'+a.icon+'</span><div style="flex:1"><div style="font-weight:800;font-size:.8rem">'+a.label+'</div><div style="font-size:.72rem;color:'+(a.urgent?'var(--er)':'var(--wa)')+'">'+a.msg+'</div></div></div>').join('')+'</div></div>';}
-function renderDriverDay(){const d=new Date();renderDriverAlerts();document.getElementById('driverDayDate').textContent=d.toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});const did=state.currentUser.id;const tds=d.toISOString().split('T')[0];const orders=db.orders.filter(o=>String(o.driverId||'').split(/[|,]/).some(function(d){return d.trim()===String(did);})&&o.status==='en_cours');let all=[];orders.forEach(o=>{var myT=getTransportsForDriver(o,did);myT.forEach(t=>{all.push({...t,orderId:o.id,cn:clientName(o.clientId),addr:o.address,mat:o.materialId?materialName(o.materialId):null,od:o.date});});});const tot=all.length;const dn=all.filter(t=>t.done).length;const pct=tot>0?Math.round((dn/tot)*100):0;document.getElementById('driverProgress').textContent=dn+'/'+tot;const bar=document.getElementById('driverProgressBar');bar.style.width=pct+'%';bar.className='prog-fill'+(pct>=100?' full':'');const list=document.getElementById('driverTransportList');if(!all.length){list.innerHTML='<div class="empty"><div class="empty-i">🚛</div><div class="empty-t">Aucun transport</div></div>';return;}list.innerHTML=all.map((t,i)=>{const isT=t.od===tds;const db2=isT?'<span class="badge bg-gn" style="font-size:.6rem">Aujourd\'hui</span>':'<span class="badge bg-yl" style="font-size:.6rem">📅 '+fmtDate(t.od)+'</span>';return'<div class="tr-item'+(t.done?' done':'')+'" onclick="'+(t.done?'':'openTransportModal(\''+t.orderId+'\',\''+t.id+'\')')+'"><div class="tr-num">'+(i+1)+'</div><div class="tr-info"><div class="tr-client" style="display:flex;align-items:center;gap:5px">'+t.cn+' '+db2+'</div><div class="tr-meta">📍 '+t.addr+(t.mat?' · '+t.mat:'')+'</div>'+(t.done?'<div style="font-size:.76rem;color:var(--gn);margin-top:4px">✅ '+t.tonnage+'T — '+t.receiver+'</div>':'<div style="font-size:.72rem;color:var(--t4);margin-top:4px;font-style:italic">Appuyez pour valider</div>')+'<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-d btn-s" onclick="event.stopPropagation();openLDV(\''+t.orderId+'\',\''+t.id+'\')">📄 Lettre de voiture</button>'+(t.done?' <button class="btn btn-s" onclick="event.stopPropagation();openBDL(\''+t.orderId+'\',\''+t.id+'\')" style="background:var(--gn);color:#fff">📦 BDL ✓</button>':'')+'</div></div>'+(t.done?'<span style="font-size:1.2rem">✅</span>':'<span class="tr-arr">›</span>')+'</div>';}).join('');}
+function renderDriverDay(){const d=new Date();renderDriverAlerts();document.getElementById('driverDayDate').textContent=d.toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});const did=state.currentUser.id;const tds=d.toISOString().split('T')[0];const orders=db.orders.filter(o=>String(o.driverId||'').split(/[|,]/).some(function(d){return d.trim()===String(did);})&&o.status==='en_cours');
+  // Séparer les commandes journée des matériaux
+  var journeeOrders=orders.filter(function(o){return o.type==='journee';});
+  var matOrders=orders.filter(function(o){return o.type!=='journee';});
+  
+  let all=[];
+  matOrders.forEach(o=>{var myT=getTransportsForDriver(o,did);myT.forEach(t=>{all.push({...t,orderId:o.id,cn:clientName(o.clientId),addr:o.address,mat:o.materialId?materialName(o.materialId):null,od:o.date});});});
+  const tot=all.length;const dn=all.filter(t=>t.done).length;const pct=tot>0?Math.round((dn/tot)*100):0;
+  document.getElementById('driverProgress').textContent=dn+'/'+tot;
+  const bar=document.getElementById('driverProgressBar');bar.style.width=pct+'%';bar.className='prog-fill'+(pct>=100?' full':'');
+  const list=document.getElementById('driverTransportList');
+  
+  // Construction du HTML
+  var html='';
+  
+  // 1) Cartes mission journée d'abord (prioritaire)
+  if(journeeOrders.length>0){
+    html+=journeeOrders.map(function(o){return renderJourneeOrderCard(o,did);}).join('');
+  }
+  
+  // 2) Cartes transports matériaux
+  if(all.length>0){
+    html+=all.map(function(t,i){const isT=t.od===tds;const db2=isT?'<span class="badge bg-gn" style="font-size:.6rem">Aujourd\'hui</span>':'<span class="badge bg-yl" style="font-size:.6rem">📅 '+fmtDate(t.od)+'</span>';return'<div class="tr-item'+(t.done?' done':'')+'" onclick="'+(t.done?'':'openTransportModal(\''+t.orderId+'\',\''+t.id+'\')')+'"><div class="tr-num">'+(i+1)+'</div><div class="tr-info"><div class="tr-client" style="display:flex;align-items:center;gap:5px">'+t.cn+' '+db2+'</div><div class="tr-meta">📍 '+t.addr+(t.mat?' · '+t.mat:'')+'</div>'+(t.done?'<div style="font-size:.76rem;color:var(--gn);margin-top:4px">✅ '+t.tonnage+'T — '+t.receiver+'</div>':'<div style="font-size:.72rem;color:var(--t4);margin-top:4px;font-style:italic">Appuyez pour valider</div>')+'<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-d btn-s" onclick="event.stopPropagation();openLDV(\''+t.orderId+'\',\''+t.id+'\')">📄 Lettre de voiture</button>'+(t.done?' <button class="btn btn-s" onclick="event.stopPropagation();openBDL(\''+t.orderId+'\',\''+t.id+'\')" style="background:var(--gn);color:#fff">📦 BDL ✓</button>':'')+'</div></div>'+(t.done?'<span style="font-size:1.2rem">✅</span>':'<span class="tr-arr">›</span>')+'</div>';}).join('');
+  }
+  
+  if(!html){list.innerHTML='<div class="empty"><div class="empty-i">🚛</div><div class="empty-t">Aucun transport ni mission</div></div>';return;}
+  list.innerHTML=html;
+}
+
+// Carte mission journée (commande type 'journee') vue chauffeur
+function renderJourneeOrderCard(o,did){
+  var clientObj=db.clients.find(function(c){return String(c.id)===String(o.clientId);});
+  var clientNm=clientObj?clientObj.company:'—';
+  var nbPrevu=parseInt(o.nbEstimated)||0;
+  var myDays=(db.dayBDLs||[]).filter(function(j){return String(j.orderId)===String(o.id);});
+  var nbSignes=myDays.length;
+  var pct=nbPrevu>0?Math.min(100,Math.round((nbSignes/nbPrevu)*100)):0;
+  var extended=nbSignes>nbPrevu;
+  var nextDay=nbSignes+1;
+  var todayISO=new Date().toISOString().split('T')[0];
+  var todayAlreadySigned=myDays.some(function(j){return j.date===todayISO;});
+  
+  // État pour CSS / message
+  var stateLabel='';
+  var stateBg='';
+  if(nbSignes===0){stateLabel='🟢 À démarrer';stateBg='rgba(22,163,74,.1)';}
+  else if(extended){stateLabel='🟠 Mission prolongée (+'+(nbSignes-nbPrevu)+'j)';stateBg='rgba(245,158,11,.12)';}
+  else if(nbSignes>=nbPrevu){stateLabel='✅ Mission terminée';stateBg='rgba(22,163,74,.1)';}
+  else{stateLabel='🔵 En cours';stateBg='rgba(59,130,246,.1)';}
+  
+  var html='<div style="background:'+stateBg+';border:1px solid var(--bd);border-left:4px solid var(--gn);border-radius:var(--r2);padding:14px;margin-bottom:10px">';
+  html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:10px">';
+  html+='<div style="min-width:0;flex:1"><div style="font-size:.66rem;color:var(--t3);letter-spacing:.04em;font-weight:700">CMD #'+o.id+' · JOURNÉE</div>';
+  html+='<div style="font-weight:900;font-size:.94rem;margin-top:2px">📅 '+escapeHtml(clientNm)+'</div>';
+  html+='<div style="font-size:.72rem;color:var(--t3);margin-top:2px">📍 '+escapeHtml(o.address||'')+'</div></div>';
+  html+='<span style="font-size:.66rem;font-weight:800;padding:4px 9px;border-radius:99px;background:#fff;border:1px solid var(--bd);white-space:nowrap">'+stateLabel+'</span>';
+  html+='</div>';
+  
+  // Barre de progression
+  html+='<div style="margin:10px 0"><div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:.7rem"><span style="color:var(--t3);font-weight:700">Progression</span><span style="font-weight:900">'+nbSignes+' / '+nbPrevu+' jours</span></div>';
+  html+='<div style="height:6px;background:var(--sf2);border-radius:99px;overflow:hidden"><div style="width:'+pct+'%;height:100%;background:'+(extended?'var(--wa)':(nbSignes>=nbPrevu?'var(--gn)':'var(--bl)'))+';transition:width .3s"></div></div></div>';
+  
+  // Liste compacte des derniers jours signés (3 derniers)
+  if(myDays.length>0){
+    var sortedDays=myDays.slice().sort(function(a,b){return b.dayNum-a.dayNum;}).slice(0,3);
+    html+='<div style="margin-top:10px;padding:8px 10px;background:rgba(0,0,0,.03);border-radius:6px"><div style="font-size:.66rem;color:var(--t3);font-weight:700;margin-bottom:6px">DERNIERS JOURS SIGNÉS</div>';
+    sortedDays.forEach(function(j){
+      html+='<div style="display:flex;align-items:center;gap:8px;padding:3px 0;font-size:.72rem"><span>✅</span>';
+      html+='<span style="font-weight:700">Jour '+j.dayNum+'</span>';
+      html+='<span style="color:var(--t3)">·</span>';
+      html+='<span style="color:var(--t3)">'+(j.date?fmtDate(j.date):'—')+'</span>';
+      if(j.chefNom)html+='<span style="color:var(--t3)">· '+escapeHtml(j.chefNom)+'</span>';
+      if(j.whatsappSent)html+='<span title="WhatsApp envoyé" style="color:#25D366">📱</span>';
+      if(j.emailSent)html+='<span title="Email envoyé" style="color:var(--bl)">📧</span>';
+      html+='</div>';
+    });
+    if(myDays.length>3)html+='<div style="font-size:.65rem;color:var(--t4);margin-top:4px;font-style:italic">+ '+(myDays.length-3)+' autres jours</div>';
+    html+='</div>';
+  }
+  
+  // Bouton principal
+  if(todayAlreadySigned){
+    var todayJ=myDays.find(function(j){return j.date===todayISO;});
+    html+='<div style="margin-top:12px;padding:10px;background:rgba(22,163,74,.1);border:1px solid var(--gn);border-radius:8px;text-align:center;font-size:.78rem;color:var(--gn);font-weight:800">✅ Jour '+todayJ.dayNum+' du '+fmtDate(todayISO)+' déjà signé</div>';
+    html+='<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-o btn-s" onclick="openDayBDLModal(\''+o.id+'\',\''+todayJ.id+'\')">👁️ Voir / Renvoyer</button></div>';
+  }else{
+    html+='<button class="btn btn-p btn-w btn-l" style="margin-top:12px;padding:12px;font-size:.86rem;font-weight:900" onclick="openDayBDLModal(\''+o.id+'\')">📋 Signer le BDL du jour '+nextDay+(extended?' (prolongation)':'')+'</button>';
+  }
+  
+  html+='</div>';
+  return html;
+}
 function renderDriverProfile(){const d=db.drivers.find(x=>x.id===state.currentUser.id);if(!d){document.getElementById('driverProfileContent').innerHTML='—';return;}document.getElementById('driverProfileContent').innerHTML='<div style="display:flex;align-items:center;gap:14px;margin-bottom:16px"><div style="width:52px;height:52px;border-radius:var(--r2);background:var(--rd);display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:900;color:#fff">'+initials(d.name)+'</div><div><div style="font-size:1.05rem;font-weight:900">'+d.name+'</div><div style="font-size:.76rem;color:var(--t3)">Permis '+d.licence+'</div></div></div><div class="fg2"><div class="fg"><label class="fl">Téléphone</label><div class="fi" style="background:var(--sf2)">'+(d.phone||'—')+'</div></div><div class="fg"><label class="fl">Email</label><div class="fi" style="background:var(--sf2)">'+(d.email||'—')+'</div><div style="margin-top:16px"><button class="btn btn-d btn-w" onclick="openPinChange()">🔐 Changer mon code PIN</button></div></div></div>';}
 
 function togglePageHelp(id){var el=document.getElementById('help-'+id);if(!el)return;var visible=el.style.display!=='none';el.style.display=visible?'none':'';if(!visible){try{localStorage.setItem('sn_help_seen_'+id,'1');}catch(e){}}}
@@ -1802,6 +1990,365 @@ function filterGRepairs(filter,btn){
   document.querySelectorAll('#page-reparations .tab').forEach(function(t){t.classList.remove('on');});
   if(btn)btn.classList.add('on');
   renderRepairsGerant();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 📋 BONS DE PRESTATION JOURNÉE (commande type 'journee') — v10.45
+// ═══════════════════════════════════════════════════════════════
+var _currentDayBDL=null;
+var _currentDayBDLPhoto=null; // {base64, mimeType, url}
+
+function openDayBDLModal(orderId,bdlId){
+  var order=db.orders.find(function(o){return String(o.id)===String(orderId);});
+  if(!order){showToast('⚠️ Commande introuvable','error');return;}
+  var client=db.clients.find(function(c){return String(c.id)===String(order.clientId);});
+  var todayISO=new Date().toISOString().split('T')[0];
+  var myDays=(db.dayBDLs||[]).filter(function(j){return String(j.orderId)===String(order.id);});
+  var nbPrevu=parseInt(order.nbEstimated)||0;
+  
+  // Charger BDL existant ou créer un nouveau
+  if(bdlId){
+    var existing=(db.dayBDLs||[]).find(function(j){return String(j.id)===String(bdlId);});
+    if(!existing){showToast('⚠️ BDL introuvable','error');return;}
+    _currentDayBDL=Object.assign({},existing);
+    _currentDayBDLPhoto=existing.photoUrl?{url:existing.photoUrl,already:true}:null;
+  }else{
+    var nextDay=myDays.length+1;
+    _currentDayBDL={
+      id:null,
+      orderId:String(order.id),
+      dayNum:nextDay,
+      date:todayISO,
+      chefNom:'',
+      heureDebut:'',
+      heureFin:'',
+      description:'',
+      photoUrl:'',
+      whatsappSent:false,
+      emailSent:false,
+      chauffeurId:state.currentUser?String(state.currentUser.id):''
+    };
+    _currentDayBDLPhoto=null;
+  }
+  
+  // Titre
+  var extended=_currentDayBDL.dayNum>nbPrevu;
+  document.getElementById('dayBDLModalTitle').textContent='📋 BDL Jour '+_currentDayBDL.dayNum+(nbPrevu>0?' / '+nbPrevu:'')+(extended?' (prolongation)':'');
+  
+  // Récap
+  var recap=document.getElementById('dayBDL-recap');
+  recap.innerHTML='<div><b>📁 Commande :</b> #'+order.id+'</div>';
+  recap.innerHTML+='<div><b>🏢 Client :</b> '+(client?escapeHtml(client.company):'—')+'</div>';
+  recap.innerHTML+='<div><b>📍 Chantier :</b> '+escapeHtml(order.address||'')+'</div>';
+  recap.innerHTML+='<div><b>📅 Date :</b> '+fmtDate(_currentDayBDL.date)+'</div>';
+  if(order.chefWhatsapp||order.chefEmail){
+    recap.innerHTML+='<div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--bd)"><b style="color:var(--gn)">📤 Destinataire :</b>';
+    if(order.chefWhatsapp)recap.innerHTML+=' 📱 '+escapeHtml(order.chefWhatsapp);
+    if(order.chefEmail)recap.innerHTML+=' · 📧 '+escapeHtml(order.chefEmail);
+    recap.innerHTML+='</div>';
+  }
+  
+  // Bandeau prolongation
+  document.getElementById('dayBDL-extended-banner').style.display=extended?'':'none';
+  
+  // Pré-remplir
+  document.getElementById('dayBDL-chef').value=_currentDayBDL.chefNom||'';
+  document.getElementById('dayBDL-h-start').value=_currentDayBDL.heureDebut||'08:00';
+  document.getElementById('dayBDL-h-end').value=_currentDayBDL.heureFin||'17:00';
+  document.getElementById('dayBDL-desc').value=_currentDayBDL.description||'';
+  
+  // Preview photo si existe
+  var prev=document.getElementById('dayBDL-photo-preview');
+  if(_currentDayBDLPhoto&&_currentDayBDLPhoto.url){
+    prev.innerHTML='<a href="'+_currentDayBDLPhoto.url+'" target="_blank" style="color:var(--gn);text-decoration:none;font-weight:700">✅ Photo enregistrée — cliquez pour voir</a>';
+  }else{
+    prev.innerHTML='Aucune photo';
+  }
+  
+  // Section envoi affichée seulement si BDL déjà enregistré
+  document.getElementById('dayBDL-send-section').style.display=_currentDayBDL.id?'':'none';
+  document.getElementById('dayBDL-save-btn').textContent=_currentDayBDL.id?'💾 Mettre à jour':'💾 Enregistrer le BDL';
+  
+  // Mettre à jour les libellés des boutons WhatsApp/Email selon le statut
+  updateDayBDLSendButtons();
+  
+  openModal('dayBDLModal');
+}
+
+function updateDayBDLSendButtons(){
+  var order=_currentDayBDL?db.orders.find(function(o){return String(o.id)===String(_currentDayBDL.orderId);}):null;
+  var wBtn=document.getElementById('dayBDL-whatsapp-btn');
+  var eBtn=document.getElementById('dayBDL-email-btn');
+  if(_currentDayBDL&&_currentDayBDL.whatsappSent){wBtn.innerHTML='📱 WhatsApp ✓ (renvoyer)';wBtn.style.opacity='.8';}
+  else{wBtn.innerHTML='📱 WhatsApp';wBtn.style.opacity='1';}
+  if(_currentDayBDL&&_currentDayBDL.emailSent){eBtn.innerHTML='📧 Email ✓ (renvoyer)';eBtn.style.opacity='.8';}
+  else{eBtn.innerHTML='📧 Email';eBtn.style.opacity='1';}
+  // Masquer boutons selon disponibilité destinataire
+  if(order){
+    wBtn.style.display=order.chefWhatsapp?'':'none';
+    eBtn.style.display=order.chefEmail?'':'none';
+  }
+}
+
+async function handleDayBDLPhoto(event){
+  var file=event.target.files[0];
+  if(!file)return;
+  // Compression
+  var img=new Image();
+  var reader=new FileReader();
+  reader.onload=function(e){
+    img.onload=function(){
+      var canvas=document.createElement('canvas');
+      var maxW=1600;
+      var ratio=img.width>maxW?maxW/img.width:1;
+      canvas.width=img.width*ratio;
+      canvas.height=img.height*ratio;
+      var ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      var dataUrl=canvas.toDataURL('image/jpeg',0.78);
+      _currentDayBDLPhoto={base64:dataUrl.split(',')[1],mimeType:'image/jpeg',preview:dataUrl};
+      var prev=document.getElementById('dayBDL-photo-preview');
+      prev.innerHTML='<img src="'+dataUrl+'" style="max-width:100%;max-height:200px;border-radius:6px;display:block;margin:0 auto"><div style="font-size:.66rem;color:var(--gn);margin-top:6px;font-weight:700">✅ Photo prête</div>';
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveDayBDL(){
+  if(!_currentDayBDL)return;
+  var chef=document.getElementById('dayBDL-chef').value.trim();
+  if(!chef){showToast('⚠️ Nom du chef de chantier requis','error');document.getElementById('dayBDL-chef').focus();return;}
+  if(!_currentDayBDLPhoto){showToast('⚠️ Photo du bon papier signé requise','error',5000);return;}
+  
+  _currentDayBDL.chefNom=chef;
+  _currentDayBDL.heureDebut=document.getElementById('dayBDL-h-start').value;
+  _currentDayBDL.heureFin=document.getElementById('dayBDL-h-end').value;
+  _currentDayBDL.description=document.getElementById('dayBDL-desc').value.trim();
+  
+  showLoader();
+  
+  // Upload photo si nouvelle
+  if(_currentDayBDLPhoto&&_currentDayBDLPhoto.base64){
+    try{
+      var url=getSheetsBase();
+      if(url){
+        var resp=await fetch(url,{method:'POST',body:JSON.stringify({action:'uploadDayBDLPhoto',data:{orderId:_currentDayBDL.orderId,dayNum:_currentDayBDL.dayNum,base64:_currentDayBDLPhoto.base64,mimeType:_currentDayBDLPhoto.mimeType}})});
+        var rj=await resp.json();
+        if(rj&&rj.url){
+          _currentDayBDL.photoUrl=rj.url;
+          _currentDayBDLPhoto.url=rj.url;
+          _currentDayBDLPhoto.already=true;
+          delete _currentDayBDLPhoto.base64;
+        }
+      }
+    }catch(e){console.error('Photo upload error',e);}
+  }
+  
+  var isNew=!_currentDayBDL.id;
+  if(isNew){
+    _currentDayBDL.id=uid();
+    db.dayBDLs.unshift(Object.assign({},_currentDayBDL));
+    // Incrémenter nbDone côté local
+    var ord=db.orders.find(function(o){return String(o.id)===String(_currentDayBDL.orderId);});
+    if(ord){
+      ord.nbDone=(db.dayBDLs||[]).filter(function(j){return String(j.orderId)===String(ord.id);}).length;
+    }
+    await syncSheets('signDayBDL',{
+      id:_currentDayBDL.id,
+      order_id:_currentDayBDL.orderId,
+      day_num:_currentDayBDL.dayNum,
+      date:_currentDayBDL.date,
+      chef_nom:_currentDayBDL.chefNom,
+      heure_debut:_currentDayBDL.heureDebut,
+      heure_fin:_currentDayBDL.heureFin,
+      description:_currentDayBDL.description,
+      photo_url:_currentDayBDL.photoUrl,
+      whatsapp_sent:false,
+      email_sent:false,
+      chauffeur_id:_currentDayBDL.chauffeurId
+    });
+    addAudit('BDL journée signé','Jour '+_currentDayBDL.dayNum+' — CMD #'+_currentDayBDL.orderId);
+  }else{
+    var idx=db.dayBDLs.findIndex(function(j){return String(j.id)===String(_currentDayBDL.id);});
+    if(idx>=0)db.dayBDLs[idx]=Object.assign({},_currentDayBDL);
+    await syncSheets('updateDayBDL',{
+      id:_currentDayBDL.id,
+      chef_nom:_currentDayBDL.chefNom,
+      heure_debut:_currentDayBDL.heureDebut,
+      heure_fin:_currentDayBDL.heureFin,
+      description:_currentDayBDL.description,
+      photo_url:_currentDayBDL.photoUrl
+    });
+  }
+  hideLoader();
+  
+  showToast('✅ BDL enregistré — vous pouvez maintenant l\'envoyer','success',4500);
+  // Afficher la section d'envoi maintenant que le BDL est enregistré
+  document.getElementById('dayBDL-send-section').style.display='';
+  document.getElementById('dayBDL-save-btn').textContent='💾 Mettre à jour';
+  updateDayBDLSendButtons();
+  // Re-render éventuel de la page
+  if(state.currentPage==='driver-day')renderDriverDay();
+}
+
+function buildDayBDLMessage(){
+  if(!_currentDayBDL)return '';
+  var order=db.orders.find(function(o){return String(o.id)===String(_currentDayBDL.orderId);});
+  var client=order?db.clients.find(function(c){return String(c.id)===String(order.clientId);}):null;
+  var driverName=state.currentUser?state.currentUser.name:'';
+  var company=remoteConfig.company_name||'SOTRANSNORD';
+  var msg='Bonjour '+(_currentDayBDL.chefNom||'')+',\n\n';
+  msg+='Voici le bon de prestation pour la journée du '+fmtDate(_currentDayBDL.date)+'.\n\n';
+  if(client)msg+='Chantier : '+client.company+'\n';
+  if(order&&order.address)msg+='Adresse : '+order.address+'\n';
+  msg+='Jour '+_currentDayBDL.dayNum+(order&&order.nbEstimated?' sur '+order.nbEstimated:'')+'\n';
+  if(_currentDayBDL.heureDebut&&_currentDayBDL.heureFin)msg+='Heures : '+_currentDayBDL.heureDebut+' → '+_currentDayBDL.heureFin+'\n';
+  if(_currentDayBDL.description)msg+='Travaux : '+_currentDayBDL.description+'\n';
+  if(_currentDayBDL.photoUrl)msg+='\n📎 Photo du bon signé : '+_currentDayBDL.photoUrl+'\n';
+  msg+='\nCordialement,\n'+driverName+'\n'+company;
+  return msg;
+}
+
+function sendDayBDLWhatsapp(){
+  if(!_currentDayBDL||!_currentDayBDL.id){showToast('⚠️ Enregistrez d\'abord le BDL','warning');return;}
+  var order=db.orders.find(function(o){return String(o.id)===String(_currentDayBDL.orderId);});
+  if(!order||!order.chefWhatsapp){showToast('⚠️ Aucun numéro WhatsApp défini sur la commande','error',5000);return;}
+  // Formater le numéro : retirer +, espaces, et préfixer 33 si numéro français qui commence par 0
+  var raw=String(order.chefWhatsapp).replace(/[\s+]/g,'');
+  var formatted=raw;
+  if(raw.charAt(0)==='0'&&raw.length===10)formatted='33'+raw.substring(1);
+  var msg=buildDayBDLMessage();
+  var url='https://wa.me/'+formatted+'?text='+encodeURIComponent(msg);
+  // Marquer comme envoyé
+  _currentDayBDL.whatsappSent=true;
+  var idx=db.dayBDLs.findIndex(function(j){return String(j.id)===String(_currentDayBDL.id);});
+  if(idx>=0)db.dayBDLs[idx].whatsappSent=true;
+  syncSheets('updateDayBDL',{id:_currentDayBDL.id,whatsapp_sent:true});
+  updateDayBDLSendButtons();
+  // Ouvrir WhatsApp
+  window.open(url,'_blank');
+  showToast('📱 WhatsApp ouvert — appuyez sur "Envoyer" dans l\'app','success',5000);
+}
+
+async function sendDayBDLEmailAction(){
+  if(!_currentDayBDL||!_currentDayBDL.id){showToast('⚠️ Enregistrez d\'abord le BDL','warning');return;}
+  var order=db.orders.find(function(o){return String(o.id)===String(_currentDayBDL.orderId);});
+  if(!order||!order.chefEmail){showToast('⚠️ Aucune adresse email définie sur la commande','error',5000);return;}
+  showLoader();
+  var client=db.clients.find(function(c){return String(c.id)===String(order.clientId);});
+  try{
+    await syncSheets('sendDayBDLEmail',{
+      email:order.chefEmail,
+      chefNom:_currentDayBDL.chefNom,
+      date:fmtDate(_currentDayBDL.date),
+      clientName:client?client.company:'',
+      address:order.address||'',
+      dayNum:_currentDayBDL.dayNum,
+      nbTotal:order.nbEstimated,
+      heureDebut:_currentDayBDL.heureDebut,
+      heureFin:_currentDayBDL.heureFin,
+      description:_currentDayBDL.description,
+      driverName:state.currentUser?state.currentUser.name:'',
+      photoUrl:_currentDayBDL.photoUrl
+    });
+    _currentDayBDL.emailSent=true;
+    var idx=db.dayBDLs.findIndex(function(j){return String(j.id)===String(_currentDayBDL.id);});
+    if(idx>=0)db.dayBDLs[idx].emailSent=true;
+    syncSheets('updateDayBDL',{id:_currentDayBDL.id,email_sent:true});
+    updateDayBDLSendButtons();
+    showToast('📧 Email envoyé à '+order.chefEmail,'success',5000);
+  }catch(e){
+    showToast('⚠️ Erreur envoi email','error');
+  }
+  hideLoader();
+}
+
+function showOrderJourneeDetails(orderId){
+  var order=db.orders.find(function(o){return String(o.id)===String(orderId);});
+  if(!order){showToast('⚠️ Commande introuvable','error');return;}
+  var client=db.clients.find(function(c){return String(c.id)===String(order.clientId);});
+  var days=(db.dayBDLs||[]).filter(function(j){return String(j.orderId)===String(orderId);}).sort(function(a,b){return a.dayNum-b.dayNum;});
+  var nbPrevu=parseInt(order.nbEstimated)||0;
+  var nbSignes=days.length;
+  var extended=nbSignes>nbPrevu;
+  
+  // Calcul du CA = tarif journalier × nb jours signés
+  var tarif=getClientTarif(order.clientId,'journee',null);
+  var ca=tarif?tarif*nbSignes:0;
+  var caExtended=tarif?tarif*Math.max(0,nbSignes-nbPrevu):0;
+  
+  document.getElementById('journeeDetailTitle').textContent='📋 Mission CMD #'+order.id+' — '+(client?client.company:'—');
+  
+  var html='';
+  
+  // En-tête récap
+  html+='<div style="background:var(--sf2);padding:14px;border-radius:8px;margin-bottom:14px">';
+  html+='<div style="display:flex;flex-wrap:wrap;gap:10px;font-size:.74rem">';
+  html+='<div><b>🏢 Client :</b> '+(client?escapeHtml(client.company):'—')+'</div>';
+  html+='<div><b>📍 Chantier :</b> '+escapeHtml(order.address||'')+'</div>';
+  html+='<div><b>📅 Début :</b> '+fmtDate(order.date)+'</div>';
+  html+='</div>';
+  if(order.chefWhatsapp||order.chefEmail){
+    html+='<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);font-size:.7rem;color:var(--t3)">';
+    html+='<b>📋 Chef de chantier :</b>';
+    if(order.chefWhatsapp)html+=' 📱 '+escapeHtml(order.chefWhatsapp);
+    if(order.chefEmail)html+=' · 📧 '+escapeHtml(order.chefEmail);
+    html+='</div>';
+  }
+  html+='</div>';
+  
+  // Stats progression
+  var pct=nbPrevu>0?Math.min(100,Math.round((nbSignes/nbPrevu)*100)):0;
+  html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">';
+  html+='<div style="background:'+(extended?'rgba(245,158,11,.1)':'rgba(59,130,246,.08)')+';padding:10px;border-radius:8px;text-align:center"><div style="font-size:1.2rem;font-weight:900;color:'+(extended?'var(--wa)':'var(--bl)')+'">'+nbSignes+' / '+nbPrevu+'</div><div style="font-size:.62rem;color:var(--t3);font-weight:700;letter-spacing:.04em">JOURS SIGNÉS</div></div>';
+  html+='<div style="background:rgba(22,163,74,.08);padding:10px;border-radius:8px;text-align:center"><div style="font-size:1.2rem;font-weight:900;color:var(--gn)">'+fmt(ca)+'</div><div style="font-size:.62rem;color:var(--t3);font-weight:700;letter-spacing:.04em">CA CUMULÉ</div></div>';
+  html+='<div style="background:'+(extended?'rgba(245,158,11,.1)':'var(--sf2)')+';padding:10px;border-radius:8px;text-align:center"><div style="font-size:1.2rem;font-weight:900;color:'+(extended?'var(--wa)':'var(--t3)')+'">'+(extended?'+'+(nbSignes-nbPrevu)+'j':pct+'%')+'</div><div style="font-size:.62rem;color:var(--t3);font-weight:700;letter-spacing:.04em">'+(extended?'PROLONGATION':'PROGRESSION')+'</div></div>';
+  html+='</div>';
+  
+  // Bandeau prolongation avec CA supplémentaire
+  if(extended){
+    html+='<div style="padding:10px 12px;background:rgba(245,158,11,.12);border-left:3px solid var(--wa);border-radius:6px;margin-bottom:12px;font-size:.76rem">';
+    html+='<b style="color:#92400E">🟠 Mission prolongée de '+(nbSignes-nbPrevu)+' jour(s)</b><br>';
+    html+='<span style="color:var(--t3)">CA supplémentaire généré : <b>'+fmt(caExtended)+'</b> — pensez à un avenant si nécessaire</span>';
+    html+='</div>';
+  }
+  
+  // Timeline des jours
+  html+='<div style="font-weight:800;font-size:.78rem;margin-bottom:8px;color:var(--t2);letter-spacing:.04em">📅 TIMELINE DES JOURS SIGNÉS</div>';
+  if(days.length===0){
+    html+='<div class="empty"><div class="empty-i">📋</div><div class="empty-t">Aucun jour signé pour l\'instant</div></div>';
+  }else{
+    html+='<div style="display:flex;flex-direction:column;gap:8px">';
+    days.forEach(function(j){
+      var isExt=j.dayNum>nbPrevu;
+      var bgColor=isExt?'rgba(245,158,11,.06)':'var(--sf2)';
+      var borderColor=isExt?'var(--wa)':'var(--gn)';
+      html+='<div style="padding:12px;background:'+bgColor+';border-left:3px solid '+borderColor+';border-radius:8px">';
+      html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:6px">';
+      html+='<div><div style="font-weight:900;font-size:.84rem">Jour '+j.dayNum+(isExt?' <span style="background:var(--wa);color:#fff;font-size:.6rem;padding:1px 6px;border-radius:99px;margin-left:4px">+'+(j.dayNum-nbPrevu)+'</span>':'')+'</div>';
+      html+='<div style="font-size:.7rem;color:var(--t3);margin-top:1px">'+fmtDate(j.date)+(j.heureDebut&&j.heureFin?' · '+j.heureDebut+'→'+j.heureFin:'')+'</div></div>';
+      html+='<div style="display:flex;gap:4px;flex-wrap:wrap">';
+      if(j.whatsappSent)html+='<span style="font-size:.62rem;background:#25D366;color:#fff;padding:2px 7px;border-radius:99px;font-weight:800">📱 WhatsApp ✓</span>';
+      if(j.emailSent)html+='<span style="font-size:.62rem;background:var(--bl);color:#fff;padding:2px 7px;border-radius:99px;font-weight:800">📧 Email ✓</span>';
+      if(!j.whatsappSent&&!j.emailSent)html+='<span style="font-size:.62rem;background:var(--wa);color:#fff;padding:2px 7px;border-radius:99px;font-weight:800">⚠️ Non envoyé</span>';
+      html+='</div></div>';
+      // Détails
+      html+='<div style="font-size:.7rem;color:var(--t2)">';
+      if(j.chefNom)html+='<div><b>👤 Signé par :</b> '+escapeHtml(j.chefNom)+'</div>';
+      if(j.description)html+='<div style="margin-top:3px;font-style:italic">💬 '+escapeHtml(j.description)+'</div>';
+      html+='</div>';
+      // Photo
+      if(j.photoUrl){
+        html+='<div style="margin-top:8px"><a href="'+j.photoUrl+'" target="_blank" style="color:var(--bl);text-decoration:none;font-size:.7rem;font-weight:700">📎 Voir la photo du bon signé →</a></div>';
+      }
+      html+='</div>';
+    });
+    html+='</div>';
+  }
+  
+  document.getElementById('journeeDetailBody').innerHTML=html;
+  openModal('journeeDetailModal');
 }
 
 function openTransportModal(oid,tid){const o=db.orders.find(x=>String(x.id)===String(oid));if(!o)return;const t=o.transports.find(x=>String(x.id)===String(tid));if(!t||t.done)return;state.currentOrder=o;state.currentTransport=t;state.paperPhotos=[];const isJournee=o.type==='journee';document.getElementById('transportModalTitle').textContent=isJournee?'Validation journée':'Transport #'+tid;document.getElementById('transportModalInfo').innerHTML='<div style="display:flex;flex-wrap:wrap;gap:5px"><span class="oc-m">🏢 '+clientName(o.clientId)+'</span><span class="oc-m">📍 '+o.address+'</span>'+(o.materialId?'<span class="oc-m">⚙️ '+materialName(o.materialId)+'</span>':'')+'<span class="oc-m">'+(isJournee?'📅 Prestation à la journée':'')+'</span></div>';document.getElementById('tm-tonnage-group').style.display=isJournee?'none':'';document.getElementById('tm-tonnage').value='';document.getElementById('tm-receiver-name').value='';document.getElementById('tm-receiver-func').value='';document.getElementById('tm-photo-preview').innerHTML='';document.getElementById('tm-photo-count').textContent='';document.getElementById('tm-photo-input').value='';initSigPad();openModal('transportModal');}
@@ -2563,6 +3110,36 @@ el.innerHTML=h;}
   <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Pondération gazole (%)</label><input type="number" class="fi" id="co-cnr-weight" placeholder="19.2" step="0.1" value="19.2" oninput="updateCnrPreview()" style="background:var(--sf2);color:var(--t2)"><div style="font-size:.6rem;color:var(--t4);margin-top:2px">Valeur CNR 2026 Régional EA — <a href="https://www.cnr.fr/espace-standard/4/ponderations" target="_blank" rel="noopener" style="color:var(--bl);text-decoration:underline">voir les pondérations officielles →</a></div></div><div class="fg"><label class="fl">Taux TVA (%)</label><input type="number" class="fi" id="co-tva" placeholder="20" step="0.1" value="20"></div></div>
   <div id="cnr-preview" style="margin-top:10px;padding:10px 12px;background:var(--bg);border-radius:var(--r);font-size:.78rem;display:none"></div>
   <div style="display:flex;gap:8px;margin-top:18px"><button class="btn btn-o btn-w" onclick="closeModal('companyModal')">Annuler</button><button class="btn btn-p btn-w" onclick="saveCompanyInfo()">💾 Enregistrer</button></div>
+</div></div>
+
+<div class="mo" id="journeeDetailModal"><div class="modal" style="max-width:680px"><div class="modal-bar"></div>
+  <div class="modal-title" id="journeeDetailTitle">📋 Détail mission à la journée</div>
+  <div id="journeeDetailBody" style="max-height:70vh;overflow-y:auto"></div>
+  <div style="display:flex;gap:8px;margin-top:14px"><button class="btn btn-o btn-w" onclick="closeModal('journeeDetailModal')">Fermer</button></div>
+</div></div>
+
+<div class="mo" id="dayBDLModal"><div class="modal" style="max-width:600px"><div class="modal-bar"></div>
+  <div class="modal-title" id="dayBDLModalTitle">📋 Bon de prestation du jour</div>
+  <div id="dayBDL-recap" style="padding:10px 12px;background:var(--sf2);border-radius:8px;font-size:.74rem;color:var(--t2);line-height:1.5;margin-bottom:12px"></div>
+  <div id="dayBDL-extended-banner" style="display:none;padding:10px 12px;background:rgba(245,158,11,.12);border-left:3px solid var(--wa);border-radius:6px;font-size:.74rem;color:#92400E;font-weight:700;margin-bottom:12px">🟠 Cette journée est une prolongation au-delà du nombre de jours prévus. Le gérant sera notifié.</div>
+  <div class="fg"><label class="fl">👤 Nom du chef de chantier qui signe *</label><input type="text" class="fi" id="dayBDL-chef" placeholder="M. Durand"></div>
+  <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">🕐 Heure début</label><input type="time" class="fi" id="dayBDL-h-start"></div><div class="fg"><label class="fl">🕔 Heure fin</label><input type="time" class="fi" id="dayBDL-h-end"></div></div>
+  <div class="fg" style="margin-top:10px"><label class="fl" style="display:flex;align-items:center;justify-content:space-between"><span>📝 Travaux effectués (optionnel)</span><button type="button" class="voice-mic-btn" id="dayBDLVoiceBtn" onclick="toggleVoiceDictation('dayBDL-desc','dayBDLVoiceBtn','dayBDLVoiceStatus')"><span class="voice-mic-ico">🎤</span><span class="voice-mic-label">Dicter</span></button></label><textarea class="ft" id="dayBDL-desc" placeholder="Ex: transport de matériaux du dépôt vers le chantier, 3 rotations..." style="min-height:60px"></textarea><div class="voice-status" id="dayBDLVoiceStatus"></div></div>
+  <div class="fg" style="margin-top:14px">
+    <label class="fl">📸 Photo du bon papier signé sur place *</label>
+    <div id="dayBDL-photo-preview" style="margin-top:6px;min-height:60px;display:flex;align-items:center;justify-content:center;background:var(--sf2);border:2px dashed var(--bd);border-radius:8px;padding:14px;text-align:center;color:var(--t4);font-size:.74rem">Aucune photo</div>
+    <input type="file" id="dayBDL-photo-input" accept="image/*" capture="environment" style="display:none" onchange="handleDayBDLPhoto(event)">
+    <button type="button" class="btn btn-o btn-w" style="margin-top:8px" onclick="document.getElementById('dayBDL-photo-input').click()">📸 Prendre une photo</button>
+  </div>
+  <div id="dayBDL-send-section" style="display:none;margin-top:14px;padding:12px;background:rgba(59,130,246,.08);border-left:3px solid var(--bl);border-radius:6px">
+    <div style="font-size:.74rem;color:var(--bl);font-weight:800;margin-bottom:8px">📤 Envoyer au chef de chantier</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button type="button" id="dayBDL-whatsapp-btn" class="btn btn-s" onclick="sendDayBDLWhatsapp()" style="background:#25D366;color:#fff;font-weight:800">📱 WhatsApp</button>
+      <button type="button" id="dayBDL-email-btn" class="btn btn-s" onclick="sendDayBDLEmailAction()" style="background:var(--bl);color:#fff;font-weight:800">📧 Email</button>
+    </div>
+    <div style="font-size:.62rem;color:var(--t4);margin-top:6px;font-style:italic">Le bon sera marqué comme envoyé dès le tap</div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:18px" id="dayBDL-actions"><button class="btn btn-o btn-w" onclick="closeModal('dayBDLModal')">Fermer</button><button class="btn btn-p btn-w btn-l" id="dayBDL-save-btn" onclick="saveDayBDL()">💾 Enregistrer le BDL</button></div>
 </div></div>
 
 <div class="mo" id="repairModal"><div class="modal" style="max-width:640px"><div class="modal-bar"></div>
