@@ -502,7 +502,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
       <button class="access-pill access-pill--gerant" id="apill-gerant" onclick="switchLoginRole('gerant')"><span class="ap-ico">👔</span><span>Gérant</span></button>
       <button class="access-pill access-pill--mecano" id="apill-mecano" onclick="switchLoginRole('mecano')"><span class="ap-ico">🔧</span><span>Mécanicien</span></button>
     </div>
-    <span class="ver-tag">v10.45 — 2026</span>
+    <span class="ver-tag">v10.46 — 2026</span>
   </div>
 </div>
 <div id="screen-select-driver" class="hidden"></div><div id="screen-pin" class="hidden"></div>
@@ -581,7 +581,7 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
           <div style="color:var(--t2);margin-top:3px"><b>5.</b> <b>✓ Payée</b> → tampon vert "PAYÉ" appliqué à la facture</div>
           <div style="color:var(--t2);margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)"><b>💡 Astuce</b> : utilisez les onglets en haut pour filtrer par statut. Le bouton <b>"📋 Planning"</b> dans le menu permet de créer plusieurs commandes d'un coup.</div>
         </div></div>
-        <div class="tabs tabs-wrap"><button class="tab on" onclick="filterOrders('all',this)">Toutes</button><button class="tab" onclick="filterOrders('en_cours',this)">En cours</button><button class="tab" onclick="filterOrders('termine',this)">Terminées</button><button class="tab" onclick="filterOrders('a_facturer',this)">À facturer</button><button class="tab" onclick="filterOrders('envoyees',this)">Envoyées</button><button class="tab" onclick="filterOrders('payees',this)">Payées</button></div>
+        <div class="tabs tabs-wrap"><button class="tab on" onclick="filterOrders('en_cours',this)">En cours</button><button class="tab" onclick="filterOrders('all',this)">Toutes</button><button class="tab" onclick="filterOrders('termine',this)">Terminées</button><button class="tab" onclick="filterOrders('a_facturer',this)">À facturer</button><button class="tab" onclick="filterOrders('envoyees',this)">Envoyées</button><button class="tab" onclick="filterOrders('payees',this)">Payées</button></div>
         <div id="ordersList"></div>
       </div>
       <div class="page" id="page-donnees">
@@ -807,8 +807,8 @@ canvas#sigPad{display:block;width:100%;touch-action:none}
 <div class="mo" id="orderModal"><div class="modal"><div class="modal-bar"></div><div class="modal-title" id="orderModalTitle">Nouvelle commande</div>
   <div class="fg2"><div class="fg"><label class="fl">Client *</label><select class="fs" id="om-client"></select></div><div class="fg"><label class="fl">Date chantier *</label><input type="date" class="fi" id="om-date"></div></div>
   <div class="fg" style="margin-top:10px"><label class="fl">Adresse livraison *</label><input type="text" class="fi" id="om-address" placeholder="Rue, ville..."></div>
-  <div style="margin-top:10px"><label class="fl">Affectations (camion + chauffeur + nb transports) *</label><div id="om-assignments" style="margin-top:6px"></div><button type="button" class="btn btn-o btn-s" onclick="addAssignment()" style="margin-top:6px">+ Ajouter un camion</button></div>
   <div class="fg2" style="margin-top:10px"><div class="fg"><label class="fl">Type *</label><select class="fs" id="om-type" onchange="toggleOrderType()"><option value="materiaux">Matériaux (tonne)</option><option value="journee">Journée</option></select></div><div class="fg" id="om-mat-group"><label class="fl">Matériau</label><select class="fs" id="om-material"></select></div></div>
+  <div style="margin-top:10px"><label class="fl" id="om-assignments-label">Affectations (camion + chauffeur + nb transports) *</label><div id="om-assignments" style="margin-top:6px"></div><button type="button" class="btn btn-o btn-s" onclick="addAssignment()" style="margin-top:6px">+ Ajouter un camion</button></div>
   <div class="fg" style="margin-top:10px"><input type="hidden" id="om-nb" value="1"></div>
   
   <!-- Section Chef de chantier (visible UNIQUEMENT pour type "journée") -->
@@ -900,7 +900,7 @@ function checkLockout(){try{const raw=localStorage.getItem(getLockoutKey());if(!
 function recordFailedAttempt(){try{const k=getLockoutKey();const raw=localStorage.getItem(k);const data=raw?JSON.parse(raw):{attempts:0,lastAttempt:0};data.attempts=(data.attempts||0)+1;data.lastAttempt=Date.now();localStorage.setItem(k,JSON.stringify(data));return data.attempts;}catch(e){return 0;}}
 function clearLockout(){try{localStorage.removeItem(getLockoutKey());}catch(e){}}
 function logAuthAttempt(success,who,reason){const entry={ts:new Date().toISOString(),success:success,who:who||'inconnu',role:loginRole,reason:reason||'',ua:(navigator.userAgent||'').substring(0,80)};try{const raw=localStorage.getItem('sotransnord_auth_log')||'[]';const arr=JSON.parse(raw);arr.push(entry);if(arr.length>200)arr.splice(0,arr.length-200);localStorage.setItem('sotransnord_auth_log',JSON.stringify(arr));}catch(e){}if(state.mode==='real'){try{fetch(getSheetsBase(),{method:'POST',body:JSON.stringify({action:'logAuth',data:entry})});}catch(e){}}}
-let state={mode:'real',role:null,currentUser:null,currentPage:null,pinValue:'',pinAttempts:0,pinLocked:false,editingId:null,currentTransport:null,currentOrder:null,filterOrders:'all'};
+let state={mode:'real',role:null,currentUser:null,currentPage:null,pinValue:'',pinAttempts:0,pinLocked:false,editingId:null,currentTransport:null,currentOrder:null,filterOrders:'en_cours'};
 let db={drivers:[],trucks:[],clients:[],materials:[],tariffs:[{id:1,type:'materiaux',name:'Sable 0/4 — Standard',price:18.50},{id:2,type:'materiaux',name:'Gravier 4/6 — Standard',price:22.00},{id:3,type:'journee',name:'Journée chauffeur + camion',price:950.00},{id:4,type:'materiaux',name:'Remblais — Standard',price:12.00}],expenses:[],dayReports:[],orders:[],audit:[],clientTariffs:[],annualData:{},draftOrders:[],repairs:[],dayBDLs:[]};
 (function(){const now=new Date();[now.getFullYear()-1,now.getFullYear()].forEach(yr=>{db.annualData[yr]={};const s=[0.55,0.60,0.80,1.10,1.25,1.30,1.20,0.90,1.15,1.10,0.75,0.50];for(let m=0;m<12;m++){if(yr===now.getFullYear()&&m>now.getMonth()){db.annualData[yr][m]=null;continue;}const ca=Math.round((28000+Math.random()*8000)*s[m]);const byType={carburant:Math.round(1400+Math.random()*600+s[m]*400),vidange:[2,5,8,11].includes(m)?Math.round(150+Math.random()*80):0,reparation:Math.round(Math.random()<0.35?200+Math.random()*900:0),pneus:Math.round(Math.random()<0.2?400+Math.random()*600:0),assurance:580,autre:Math.round(Math.random()*200)};const total_dep=Object.values(byType).reduce((s,v)=>s+v,0);const marge=ca-total_dep;db.annualData[yr][m]={ca,byType,total_dep,marge,pct_marge:ca>0?Math.round((marge/ca)*100):0};}});})();
 const SHEETS_BASE='https://script.google.com/macros/s/AKfycbzfYAn6rlb01517GoR8PYQUqdSIsbl6Px0PRlsZYEIlq_T6wE8TikxE8_qW92BobLLekQ/exec';
@@ -1113,6 +1113,27 @@ function toggleOrderType(){
   document.getElementById('om-mat-group').style.display=type==='materiaux'?'':'none';
   // Afficher la section chef SEULEMENT pour journée
   document.getElementById('om-chef-section').style.display=type==='journee'?'':'none';
+  
+  // 🆕 Label de la section affectations + placeholders dynamiques selon type
+  var lbl=document.getElementById('om-assignments-label');
+  if(lbl){
+    if(type==='journee'){
+      lbl.innerHTML='Affectations (camion + chauffeur + <b style="color:var(--gn)">nb de JOURS</b>) *';
+    }else{
+      lbl.innerHTML='Affectations (camion + chauffeur + <b style="color:var(--bl)">nb de ROTATIONS</b>) *';
+    }
+  }
+  // Mettre à jour les inputs nb existants (placeholder + titre)
+  document.querySelectorAll('#om-assignments .assign-nb').forEach(function(inp){
+    if(type==='journee'){
+      inp.placeholder='Jours';
+      inp.title='Nombre de jours prévus';
+    }else{
+      inp.placeholder='Rot.';
+      inp.title='Nombre de rotations';
+    }
+  });
+  
   // Si on bascule en journée, proposer auto-remplissage depuis le client
   if(type==='journee'){
     var clientId=document.getElementById('om-client').value;
@@ -1144,7 +1165,7 @@ function saveOrder(){const cid=parseInt(document.getElementById('om-client').val
   else{const tr=Array.from({length:nb},(_,i)=>({id:i+1,done:false,tonnage:null,receiver:null,func:null,sig:null}));const o={id:uid(),clientId:cid,date,address:addr,truckId:tid,driverId:did,type,materialId:mid,nbEstimated:nb,nbEstimatedRaw:nbEstimatedRaw,nbDone:0,status:'en_cours',transports:tr,chefWhatsapp:chefWhatsapp,chefEmail:chefEmail};db.orders.unshift(o);showToast('✅ Créée','success');addAudit('Nouvelle commande',clientName(cid));syncSheets('newOrder',buildSyncPayload(o));}
   closeModal('orderModal');renderOrders();
 }
-function addAssignment(truckId,driverId,nb){var c=document.getElementById('om-assignments');var r=document.createElement('div');r.className='assign-row';r.style.cssText='display:flex;gap:6px;align-items:center';var ts=document.createElement('select');ts.className='fs assign-truck';ts.style.cssText='flex:2';ts.innerHTML='<option value="">— Camion —</option>'+db.trucks.map(function(t){return'<option value="'+t.id+'"'+(String(t.id)===String(truckId)?' selected':'')+'>'+t.plate+'</option>';}).join('');var ds=document.createElement('select');ds.className='fs assign-driver';ds.style.cssText='flex:2';ds.innerHTML='<option value="">— Chauffeur —</option>'+db.drivers.filter(function(d){return d.status==='actif';}).map(function(d){return'<option value="'+d.id+'"'+(String(d.id)===String(driverId)?' selected':'')+'>'+d.name+'</option>';}).join('');var ni=document.createElement('input');ni.type='number';ni.className='fi assign-nb';ni.style.cssText='flex:0 0 60px;text-align:center';ni.min='1';ni.value=nb||1;ni.placeholder='Nb';var rb=document.createElement('button');rb.type='button';rb.className='btn btn-x btn-s btn-i';rb.textContent='\u2715';rb.onclick=function(){r.remove();};r.appendChild(ts);r.appendChild(ds);r.appendChild(ni);r.appendChild(rb);c.appendChild(r);}
+function addAssignment(truckId,driverId,nb){var c=document.getElementById('om-assignments');var r=document.createElement('div');r.className='assign-row';r.style.cssText='display:flex;gap:6px;align-items:center';var ts=document.createElement('select');ts.className='fs assign-truck';ts.style.cssText='flex:2';ts.innerHTML='<option value="">— Camion —</option>'+db.trucks.map(function(t){return'<option value="'+t.id+'"'+(String(t.id)===String(truckId)?' selected':'')+'>'+t.plate+'</option>';}).join('');var ds=document.createElement('select');ds.className='fs assign-driver';ds.style.cssText='flex:2';ds.innerHTML='<option value="">— Chauffeur —</option>'+db.drivers.filter(function(d){return d.status==='actif';}).map(function(d){return'<option value="'+d.id+'"'+(String(d.id)===String(driverId)?' selected':'')+'>'+d.name+'</option>';}).join('');var ni=document.createElement('input');ni.type='number';ni.className='fi assign-nb';ni.style.cssText='flex:0 0 70px;text-align:center';ni.min='1';ni.value=nb||1;var typeEl=document.getElementById('om-type');var curType=typeEl?typeEl.value:'materiaux';ni.placeholder=curType==='journee'?'Jours':'Rot.';ni.title=curType==='journee'?'Nombre de jours prévus':'Nombre de rotations';var rb=document.createElement('button');rb.type='button';rb.className='btn btn-x btn-s btn-i';rb.textContent='\u2715';rb.onclick=function(){r.remove();};r.appendChild(ts);r.appendChild(ds);r.appendChild(ni);r.appendChild(rb);c.appendChild(r);}
 function getAssignments(){return[].slice.call(document.querySelectorAll('#om-assignments .assign-row')).map(function(r){return{truckId:r.querySelector('.assign-truck').value,driverId:r.querySelector('.assign-driver').value,nb:parseInt(r.querySelector('.assign-nb').value)||1};});}
 function getAssignmentForTransport(order,tId){var tids=String(order.truckId||'').split(/[|,]/);var dids=String(order.driverId||'').split(/[|,]/);var nbs=String(order.nbEstimatedRaw||order.nbEstimated||'1').split(/[|,]/).map(function(v){return parseInt(v)||1;});var cum=0;for(var i=0;i<nbs.length;i++){cum+=nbs[i];if(tId<=cum)return{truckId:tids[i]||tids[0],driverId:dids[i]||dids[0]};}return{truckId:tids[0],driverId:dids[0]};}
 function getTransportsForDriver(order,driverId){var dids=String(order.driverId||'').split(/[|,]/);var nbs=String(order.nbEstimatedRaw||order.nbEstimated||'1').split(/[|,]/).map(function(v){return parseInt(v)||1;});var res=[];var start=0;for(var i=0;i<dids.length;i++){var cnt=nbs[i]||0;if(String(dids[i]).trim()===String(driverId)){for(var j=start;j<start+cnt&&j<order.transports.length;j++)res.push(order.transports[j]);}start+=cnt;}if(res.length)return res;return dids.length<=1?order.transports:[];}
@@ -2210,14 +2231,55 @@ function buildDayBDLMessage(){
   return msg;
 }
 
+// 📱 Détecte l'indicatif pays correct pour un numéro français/antillais
+// Mobiles Martinique : 0696, 0696 → +596
+// Mobiles Guadeloupe : 0690, 0690 → +590
+// Mobiles Guyane : 0694 → +594
+// Mobiles Réunion : 0692, 0693 → +262
+// Mobiles France métropolitaine : 06, 07 → +33
+// Fixes Martinique : 0596 → +596 / Guadeloupe : 0590 → +590 / Guyane : 0594 → +594
+function formatPhoneForWhatsApp(phone){
+  var raw=String(phone||'').replace(/[\s+\-\.]/g,'');
+  if(!raw)return '';
+  // Déjà au format international avec indicatif
+  if(raw.charAt(0)==='+'||raw.startsWith('00')){
+    return raw.replace(/^00/,'').replace(/^\+/,'');
+  }
+  // Détection préfixe DOM même sans le 0 initial (Sheets supprime parfois le 0)
+  if(raw.length===9&&!raw.startsWith('0')){
+    var p3=raw.substring(0,3);
+    if(p3==='596'||p3==='696')return '596'+raw; // Martinique
+    if(p3==='590'||p3==='690')return '590'+raw; // Guadeloupe
+    if(p3==='594'||p3==='694')return '594'+raw; // Guyane
+    if(p3==='692'||p3==='693')return '262'+raw; // Réunion
+    return '33'+raw; // Par défaut France métropolitaine
+  }
+  // Format 10 chiffres commençant par 0
+  if(raw.length===10&&raw.charAt(0)==='0'){
+    var prefix4=raw.substring(0,4);
+    var prefix3=raw.substring(0,3);
+    // Martinique mobile et fixe (0596, 0696)
+    if(prefix4==='0596'||prefix4==='0696')return '596'+raw.substring(1);
+    // Guadeloupe mobile et fixe (0590, 0690)
+    if(prefix4==='0590'||prefix4==='0690')return '590'+raw.substring(1);
+    // Guyane (0594, 0694)
+    if(prefix4==='0594'||prefix4==='0694')return '594'+raw.substring(1);
+    // Réunion / Mayotte mobiles (0692, 0693)
+    if(prefix4==='0692'||prefix4==='0693')return '262'+raw.substring(1);
+    // France métropolitaine (tout autre numéro à 10 chiffres commençant par 0)
+    return '33'+raw.substring(1);
+  }
+  // Inconnu : on retourne tel quel, l'utilisateur verra l'erreur dans WhatsApp
+  return raw;
+}
+
 function sendDayBDLWhatsapp(){
   if(!_currentDayBDL||!_currentDayBDL.id){showToast('⚠️ Enregistrez d\'abord le BDL','warning');return;}
   var order=db.orders.find(function(o){return String(o.id)===String(_currentDayBDL.orderId);});
   if(!order||!order.chefWhatsapp){showToast('⚠️ Aucun numéro WhatsApp défini sur la commande','error',5000);return;}
-  // Formater le numéro : retirer +, espaces, et préfixer 33 si numéro français qui commence par 0
-  var raw=String(order.chefWhatsapp).replace(/[\s+]/g,'');
-  var formatted=raw;
-  if(raw.charAt(0)==='0'&&raw.length===10)formatted='33'+raw.substring(1);
+  // Formatage intelligent du numéro selon préfixe local (Martinique, Guadeloupe, France métro...)
+  var formatted=formatPhoneForWhatsApp(order.chefWhatsapp);
+  if(!formatted){showToast('⚠️ Numéro WhatsApp invalide','error',5000);return;}
   var msg=buildDayBDLMessage();
   var url='https://wa.me/'+formatted+'?text='+encodeURIComponent(msg);
   // Marquer comme envoyé
@@ -2228,7 +2290,7 @@ function sendDayBDLWhatsapp(){
   updateDayBDLSendButtons();
   // Ouvrir WhatsApp
   window.open(url,'_blank');
-  showToast('📱 WhatsApp ouvert — appuyez sur "Envoyer" dans l\'app','success',5000);
+  showToast('📱 WhatsApp ouvert (+'+formatted.substring(0,3)+') — appuyez sur "Envoyer" dans l\'app','success',5000);
 }
 
 async function sendDayBDLEmailAction(){
@@ -2274,9 +2336,10 @@ function showOrderJourneeDetails(orderId){
   var extended=nbSignes>nbPrevu;
   
   // Calcul du CA = tarif journalier × nb jours signés
-  var tarif=getClientTarif(order.clientId,'journee',null);
-  var ca=tarif?tarif*nbSignes:0;
-  var caExtended=tarif?tarif*Math.max(0,nbSignes-nbPrevu):0;
+  var tarifObj=db.clientTariffs.find(function(t){return String(t.clientId)===String(order.clientId)&&t.type==='journee';});
+  var tarif=tarifObj?tarifObj.price:0;
+  var ca=tarif*nbSignes;
+  var caExtended=tarif*Math.max(0,nbSignes-nbPrevu);
   
   document.getElementById('journeeDetailTitle').textContent='📋 Mission CMD #'+order.id+' — '+(client?client.company:'—');
   
